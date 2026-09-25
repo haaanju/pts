@@ -6,6 +6,7 @@ export default defineConfig({
     "../tokens/src/primitive.tokens.json",
     "../tokens/src/semantic/spacing.tokens.json",
     "../tokens/src/semantic/border.tokens.json",
+    "../tokens/src/semantic/typography.tokens.json",
   ],
   outDir: "./dist/",
   plugins: [
