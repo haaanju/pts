@@ -4,6 +4,7 @@
 //   3. all contexts of a modifier define the same token names
 //   4. color pairs meet WCAG contrast (pairs are derived from the naming rules in CLAUDE.md)
 // Exits with code 1 on any failure.
+// Disabled tokens and border/default (decorative) are exempt from contrast.
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -15,7 +16,11 @@ type Ref = { $ref: string };
 const SRC = join(dirname(fileURLToPath(import.meta.url)), "../src");
 const TEXT = 4.5; // WCAG 1.4.3
 const UI = 3; // WCAG 1.4.11
-const PAGE = ["default", "subtle"];
+// backgrounds that plain (non on-) foregrounds and borders may sit on
+const PAGE = ["default", "default-hover", "default-pressed", "subtle"];
+const STATES = ["", "-hover", "-pressed"];
+// inactive components are exempt from WCAG contrast (1.4.3, 1.4.11)
+const EXEMPT = (name: string) => name === "disabled" || name === "default";
 
 const readJson = (file: string) => JSON.parse(readFileSync(join(SRC, file), "utf8"));
 
@@ -59,14 +64,17 @@ const contrast = (a: string, b: string) => {
 const contrastPairs = (ids: string[]): [string, string, number][] => {
   const names = (group: string) => ids.filter((id) => id.startsWith(`color.${group}.`)).map((id) => id.split(".")[2]);
   const pairs: [string, string, number][] = [];
-  for (const name of names("foreground")) {
-    const backgrounds = name.startsWith("on-") ? [name.slice(3)] : PAGE;
-    for (const bg of backgrounds) pairs.push([`color.foreground.${name}`, `color.background.${bg}`, TEXT]);
+  const backgrounds = new Set(names("background"));
+  for (const name of names("foreground").filter((n) => n !== "disabled")) {
+    // on-X sits on background/X and its interaction states
+    const base = name.slice(3);
+    const targets = name.startsWith("on-") ? [base, ...STATES.slice(1).map((s) => base + s).filter((b) => backgrounds.has(b))] : PAGE;
+    for (const bg of targets) pairs.push([`color.foreground.${name}`, `color.background.${bg}`, TEXT]);
   }
-  for (const name of names("border").filter((n) => n !== "default")) {
+  for (const name of names("border").filter((n) => !EXEMPT(n))) {
     for (const bg of PAGE) pairs.push([`color.border.${name}`, `color.background.${bg}`, UI]);
   }
-  const solid = names("background").filter((n) => ![...PAGE, "inverse"].includes(n) && !n.endsWith("-subtle"));
+  const solid = names("background").filter((n) => ![...PAGE, "inverse", "disabled"].includes(n) && !n.endsWith("-subtle"));
   for (const name of solid) {
     for (const bg of PAGE) pairs.push([`color.background.${name}`, `color.background.${bg}`, UI]);
   }

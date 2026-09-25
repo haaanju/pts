@@ -42,5 +42,15 @@
       "$type": "dimension",
       "$value": "{dimension.4}"
     }
+  },
+  "focus-ring": {
+    "width": {
+      "$type": "dimension",
+      "$value": "{dimension.2}"
+    },
+    "offset": {
+      "$type": "dimension",
+      "$value": "{dimension.2}"
+    }
   }
 }

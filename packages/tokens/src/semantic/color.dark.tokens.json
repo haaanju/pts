@@ -5,6 +5,14 @@
         "$type": "color",
         "$value": "{palette.neutral.950}"
       },
+      "default-hover": {
+        "$type": "color",
+        "$value": "{palette.neutral.900}"
+      },
+      "default-pressed": {
+        "$type": "color",
+        "$value": "{palette.neutral.800}"
+      },
       "subtle": {
         "$type": "color",
         "$value": "{palette.neutral.900}"
@@ -13,9 +21,33 @@
         "$type": "color",
         "$value": "{palette.white}"
       },
+      "primary": {
+        "$type": "color",
+        "$value": "{palette.neutral.200}"
+      },
+      "primary-hover": {
+        "$type": "color",
+        "$value": "{palette.neutral.100}"
+      },
+      "primary-pressed": {
+        "$type": "color",
+        "$value": "{palette.neutral.50}"
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{palette.neutral.900}"
+      },
       "danger": {
         "$type": "color",
-        "$value": "{palette.red.500}"
+        "$value": "{palette.red.400}"
+      },
+      "danger-hover": {
+        "$type": "color",
+        "$value": "{palette.red.300}"
+      },
+      "danger-pressed": {
+        "$type": "color",
+        "$value": "{palette.red.200}"
       },
       "danger-subtle": {
         "$type": "color",
@@ -25,6 +57,14 @@
         "$type": "color",
         "$value": "{palette.orange.500}"
       },
+      "warning-hover": {
+        "$type": "color",
+        "$value": "{palette.orange.400}"
+      },
+      "warning-pressed": {
+        "$type": "color",
+        "$value": "{palette.orange.300}"
+      },
       "warning-subtle": {
         "$type": "color",
         "$value": "{palette.orange.900}"
@@ -33,13 +73,29 @@
         "$type": "color",
         "$value": "{palette.green.500}"
       },
+      "success-hover": {
+        "$type": "color",
+        "$value": "{palette.green.400}"
+      },
+      "success-pressed": {
+        "$type": "color",
+        "$value": "{palette.green.300}"
+      },
       "success-subtle": {
         "$type": "color",
         "$value": "{palette.green.900}"
       },
       "info": {
         "$type": "color",
-        "$value": "{palette.blue.500}"
+        "$value": "{palette.blue.400}"
+      },
+      "info-hover": {
+        "$type": "color",
+        "$value": "{palette.blue.300}"
+      },
+      "info-pressed": {
+        "$type": "color",
+        "$value": "{palette.blue.200}"
       },
       "info-subtle": {
         "$type": "color",
@@ -47,7 +103,15 @@
       },
       "recommend": {
         "$type": "color",
-        "$value": "{palette.purple.400}"
+        "$value": "{palette.purple.300}"
+      },
+      "recommend-hover": {
+        "$type": "color",
+        "$value": "{palette.purple.200}"
+      },
+      "recommend-pressed": {
+        "$type": "color",
+        "$value": "{palette.purple.100}"
       },
       "recommend-subtle": {
         "$type": "color",
@@ -55,17 +119,25 @@
       }
     },
     "foreground": {
+      "on-primary": {
+        "$type": "color",
+        "$value": "{palette.black}"
+      },
       "default": {
         "$type": "color",
         "$value": "{palette.neutral.50}"
       },
       "muted": {
         "$type": "color",
-        "$value": "{palette.neutral.500}"
+        "$value": "{palette.neutral.400}"
       },
       "on-inverse": {
         "$type": "color",
         "$value": "{palette.neutral.950}"
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{palette.neutral.600}"
       },
       "on-danger": {
         "$type": "color",
@@ -73,7 +145,7 @@
       },
       "danger": {
         "$type": "color",
-        "$value": "{palette.red.300}"
+        "$value": "{palette.red.200}"
       },
       "on-danger-subtle": {
         "$type": "color",
@@ -135,7 +207,15 @@
       },
       "strong": {
         "$type": "color",
-        "$value": "{palette.neutral.600}"
+        "$value": "{palette.neutral.500}"
+      },
+      "focus": {
+        "$type": "color",
+        "$value": "{palette.neutral.50}"
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{palette.neutral.800}"
       },
       "danger": {
         "$type": "color",
@@ -155,7 +235,7 @@
       },
       "recommend": {
         "$type": "color",
-        "$value": "{palette.purple.400}"
+        "$value": "{palette.purple.300}"
       }
     }
   }

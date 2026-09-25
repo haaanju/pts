@@ -68,14 +68,19 @@ pts/
   - semantic `font-size/N`: 100 단위 **단계 번호**, 400=16px(본문 기본). 100=10 … 1000=48
   - semantic `line-height`: **배수(unitless)**. tight=1.2, normal=1.5, loose=1.75
   - semantic `letter-spacing`: normal=0
-  - semantic `color/<속성>/<역할>[-<강도>]`: 속성 background, foreground, border → 역할 → 강도
-    - 중립: `background/default, subtle, inverse`, `foreground/default, muted, on-inverse`, `border/default, strong`
-    - 상태 역할: danger(red), warning(orange), success(green), info(blue), recommend(purple). 각각 `background/<role>`, `background/<role>-subtle`, `foreground/<role>`, `foreground/on-<role>`, `foreground/on-<role>-subtle`, `border/<role>`
-    - **짝 규칙**: `foreground/on-X`는 `background/X` 위에서 쓴다. `on-`이 없는 foreground는 `background/default`, `background/subtle` 위에서 쓴다
+  - semantic `focus-ring/width`, `focus-ring/offset`: 포커스 링 두께와 간격 (둘 다 2px). 색은 `color/border/focus`
+  - semantic `color/<속성>/<역할>[-<강도>][-<상태>]`: 속성 background, foreground, border → 역할 → 강도 → 상태
+    - 페이지 배경: `background/default`, `default-hover`, `default-pressed`, `subtle`. 투명 요소(목록 항목 등)의 hover/pressed는 `default-hover`, `default-pressed`
+    - 중립: `background/inverse`, `foreground/default, muted, on-inverse`, `border/default, strong, focus`
+    - primary: **모노크롬**(neutral). `background/primary[-hover|-pressed]`, `foreground/on-primary`
+    - 상태 역할: danger(red), warning(orange), success(green), info(blue), recommend(purple). 각각 `background/<role>[-hover|-pressed]`, `background/<role>-subtle`, `foreground/<role>`, `foreground/on-<role>`, `foreground/on-<role>-subtle`, `border/<role>`
+    - disabled: `background/disabled`, `foreground/disabled`, `border/disabled`
+    - **상태 방향**: hover → pressed로 갈수록 light는 어두워지고 dark는 밝아진다
+    - **짝 규칙**: `foreground/on-X`는 `background/X`와 그 hover/pressed 위에서 쓴다. `on-`이 없는 foreground와 border는 페이지 배경 위에서 쓴다
   - **접근성 (두 테마 모두 필수)**:
-    - 글자(foreground): 짝이 되는 배경 대비 4.5:1 이상 (WCAG 1.4.3)
-    - UI 경계(`border/strong`, `border/<role>`, solid `background/<role>`): `background/default`, `background/subtle` 대비 3:1 이상 (WCAG 1.4.11)
-    - `border/default`는 장식용 구분선으로 1.4.11 대상이 아니다
+    - 글자(foreground): 짝이 되는 모든 배경 대비 4.5:1 이상 (WCAG 1.4.3)
+    - UI 경계(`border/*`, solid `background/*`와 그 상태): 페이지 배경 대비 3:1 이상 (WCAG 1.4.11). 포커스 링도 여기에 포함
+    - 예외: `border/default`(장식용 구분선), `*/disabled`(비활성 요소)
     - 검사할 쌍은 `npm run check`가 이 이름 규칙에서 자동으로 만든다. 새 color 토큰도 이 규칙을 따라야 검사 대상이 된다
   - semantic `text/<role>-<size>`: `$type: typography` 합성 토큰. 역할 display, heading, body, label, caption, code × 크기 lg, md, sm. 5개 속성(fontFamily, fontSize, fontWeight, letterSpacing, lineHeight)을 모두 채운다
 
