@@ -3,39 +3,30 @@ import { PageHeader, Section, TextStyles, FontPreview, TokenTable } from "./comp
 
 <Meta title="Foundations/Typography" />
 
-<PageHeader eyebrow="Foundations" title="Typography">
+<PageHeader eyebrow="Foundations" title="Typography" groups={["text", "font-family", "font-size", "font-weight", "line-height", "letter-spacing"]}>
   Aspekta for sans, IBM Plex for serif and mono. Composite text styles bundle size, weight, line height and letter spacing.
 </PageHeader>
 
-<Section title="Text styles">Apply with the font shorthand. Letter spacing is a separate variable: --text-*-letter-spacing.</Section>
-<TextStyles />
-
-<Section title="Font family" />
-<FontPreview kind="family" />
-
-<Section title="Font size" />
-<FontPreview kind="size" />
-
-<Section title="Font weight" />
-<FontPreview kind="weight" />
-
-<Section title="Line height" />
-<TokenTable prefix="line-height" />
-
-<Section title="Letter spacing" />
-<TokenTable prefix="letter-spacing" />
-
-<Section title="Sans coverage">
-  Aspekta is a Latin-only variable font (weight 100–900). A few characters it lacks, such as ^ ~ ± •, render in the
-  next family of the stack (system-ui). It has no tabular figures, so use font-family.mono where digits must line up.
+<Section title="Text styles" lead="Apply with the font shorthand. Letter spacing is a separate variable: --text-*-letter-spacing.">
+  <TextStyles />
 </Section>
 
-<div className="sb-unstyled pts" style={{ font: "var(--text-body-lg)", display: "grid", gap: "var(--space-300)", margin: "var(--space-400) 0 var(--layout-100)" }}>
-  <div>Aspekta: The quick brown fox jumps over the lazy dog 0123456789</div>
-  <div>Fallback glyphs: about ~5 min · 2^8 · ±4px · Home • Settings</div>
-  <div style={{ display: "flex", gap: "var(--layout-100)" }}>
-    <span>Proportional<br />1,111.11<br />9,999.99</span>
-    <span style={{ fontFamily: "var(--font-family-mono)" }}>Mono<br />1,111.11<br />9,999.99</span>
-  </div>
-</div>
+<Section title="Font family"><FontPreview kind="family" /></Section>
+<Section title="Font size"><FontPreview kind="size" /></Section>
+<Section title="Font weight"><FontPreview kind="weight" /></Section>
+<Section title="Line height"><TokenTable prefix="line-height" /></Section>
+<Section title="Letter spacing"><TokenTable prefix="letter-spacing" /></Section>
 
+<Section
+  title="Sans coverage"
+  lead="Aspekta is Latin only (weight 100–900). Missing characters such as ^ ~ ± • render in system-ui. It has no tabular figures, so use font-family.mono where digits must line up."
+>
+  <div style={{ font: "var(--text-body-lg)", display: "grid", gap: "var(--space-300)" }}>
+    <div>Aspekta: The quick brown fox jumps over the lazy dog 0123456789</div>
+    <div>Fallback glyphs: about ~5 min · 2^8 · ±4px · Home • Settings</div>
+    <div style={{ display: "flex", gap: "var(--layout-100)" }}>
+      <span>Proportional<br />1,111.11<br />9,999.99</span>
+      <span style={{ fontFamily: "var(--font-family-mono)" }}>Mono<br />1,111.11<br />9,999.99</span>
+    </div>
+  </div>
+</Section>

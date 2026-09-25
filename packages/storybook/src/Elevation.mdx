@@ -3,17 +3,15 @@ import { PageHeader, Section, Shadows, Overlay } from "./components";
 
 <Meta title="Foundations/Elevation" />
 
-<PageHeader eyebrow="Foundations" title="Elevation">
+<PageHeader eyebrow="Foundations" title="Elevation" groups={["shadow"]}>
   Shadows lift surfaces off the page. Geometry is shared; dark uses higher opacity so shadows stay visible.
 </PageHeader>
 
-<Section title="Shadow" />
-<Shadows />
+<Section title="Shadow"><Shadows /></Section>
 
-<Section title="Raised surface">
-  Cards, popovers and modals use color.background.raised. In light it matches the page and the shadow does the lifting;
-  in dark it is one step lighter, because shadows barely show on a dark page.
+<Section
+  title="Raised surface"
+  lead="Cards, popovers and modals use color.background.raised. In light it matches the page and the shadow does the lifting; in dark it is one step lighter, because shadows barely show on a dark page."
+>
+  <Overlay />
 </Section>
-
-<Section title="Overlay">color.background.overlay is the scrim behind modals.</Section>
-<Overlay />

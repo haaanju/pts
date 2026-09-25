@@ -3,19 +3,17 @@ import { PageHeader, Section, RadiusSamples, StrokeSamples, FocusRing, TokenTabl
 
 <Meta title="Foundations/Border" />
 
-<PageHeader eyebrow="Foundations" title="Border">
+<PageHeader eyebrow="Foundations" title="Border" groups={["radius", "stroke", "focus-ring"]}>
   Corner radius, stroke widths, and the keyboard focus ring.
 </PageHeader>
 
-<Section title="Radius" />
-<RadiusSamples />
+<Section title="Radius"><RadiusSamples /></Section>
+<Section title="Stroke"><StrokeSamples /></Section>
 
-<Section title="Stroke" />
-<StrokeSamples />
-
-<Section title="Focus ring">
-  outline: var(--focus-ring-width) solid var(--color-border-focus); outline-offset: var(--focus-ring-offset). The offset keeps the
-  ring distinct from the near-black primary button.
+<Section
+  title="Focus ring"
+  lead="outline: var(--focus-ring-width) solid var(--color-border-focus); outline-offset: var(--focus-ring-offset). The offset keeps the ring distinct from the near-black primary button."
+>
+  <FocusRing />
+  <TokenTable prefix="focus-ring" />
 </Section>
-<FocusRing />
-<TokenTable prefix="focus-ring" />

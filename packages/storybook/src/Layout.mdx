@@ -3,16 +3,18 @@ import { PageHeader, Section, Bars, TokenTable, ZIndexStack } from "./components
 
 <Meta title="Foundations/Layout" />
 
-<PageHeader eyebrow="Foundations" title="Layout">
+<PageHeader eyebrow="Foundations" title="Layout" groups={["breakpoint", "z-index"]}>
   Responsive breakpoints and stacking order.
 </PageHeader>
 
-<Section title="Breakpoint">
-  Mobile first (min-width). CSS custom properties can't be used inside media queries, so write the value directly
-  or use a preprocessor; the variables exist for reference and JS.
+<Section
+  title="Breakpoint"
+  lead="Mobile first (min-width). Custom properties can't be used inside media queries, so write the value directly or use a preprocessor; the variables exist for reference and JS."
+>
+  <Bars prefix="breakpoint" max={1280} />
 </Section>
-<Bars prefix="breakpoint" max={1280} />
 
-<Section title="Z-index" />
-<ZIndexStack />
-<TokenTable prefix="z-index" />
+<Section title="Z-index">
+  <ZIndexStack />
+  <TokenTable prefix="z-index" />
+</Section>

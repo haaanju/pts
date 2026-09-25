@@ -3,28 +3,15 @@ import { PageHeader, Section, Palette } from "../components";
 
 <Meta title="Color/Palette" />
 
-<PageHeader eyebrow="Color" title="Palette">
-  Primitive colors. Higher numbers are darker. Product code should use semantic color tokens;
-  the palette is for defining them. W and B show contrast against white and black.
+<PageHeader eyebrow="Color" title="Palette" groups={["palette"]}>
+  Primitive colors. Higher numbers are darker. Product code should use semantic color tokens; the palette is for
+  defining them.
 </PageHeader>
 
-<Section title="Neutral" />
-<Palette hue="neutral" />
-
-<Section title="Red" />
-<Palette hue="red" />
-
-<Section title="Orange" />
-<Palette hue="orange" />
-
-<Section title="Green" />
-<Palette hue="green" />
-
-<Section title="Blue" />
-<Palette hue="blue" />
-
-<Section title="Purple" />
-<Palette hue="purple" />
-
-<Section title="Black alpha">For shadows and the modal scrim only.</Section>
-<Palette hue="black-alpha" />
+<Section title="Neutral" lead="12 steps. W and B show contrast against white and black."><Palette hue="neutral" /></Section>
+<Section title="Red" lead="Danger."><Palette hue="red" /></Section>
+<Section title="Orange" lead="Warning."><Palette hue="orange" /></Section>
+<Section title="Green" lead="Success."><Palette hue="green" /></Section>
+<Section title="Blue" lead="Info."><Palette hue="blue" /></Section>
+<Section title="Purple" lead="Recommend."><Palette hue="purple" /></Section>
+<Section title="Black alpha" lead="For shadows and the modal scrim only."><Palette hue="black-alpha" /></Section>

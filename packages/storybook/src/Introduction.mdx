@@ -4,24 +4,26 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
 <Meta title="Overview/Introduction" />
 
 <PageHeader eyebrow="PTS" title="Personal Token System">
-  Design tokens in DTCG format, built with Terrazzo. Every page is generated from the token source,
-  so what you see here is exactly what ships.
+  Design tokens in DTCG format, built with Terrazzo. Every page is generated from the token source, so what you see
+  here is exactly what ships.
 </PageHeader>
 
-<Stats />
+<Section title="At a glance">
+  <Stats />
+</Section>
 
-<Section title="Foundations" />
+<Section title="Foundations" lead="Start here to browse each category.">
+  <CategoryCards />
+</Section>
 
-<CategoryCards />
+<Section title="How it's built" lead="Two tiers. Primitives hold raw values; semantic tokens express intent.">
+  <TierTable />
 
-<Section title="How it's built" />
+  Color and shadow change between **light** and **dark**. Light values live on `:root` and `[data-theme="light"]`;
+  dark values apply under `prefers-color-scheme: dark` or `[data-theme="dark"]`.
+</Section>
 
-<TierTable />
-
-Color and shadow change between **light** and **dark**. Light values live on `:root`; dark values apply under
-`prefers-color-scheme: dark` or `[data-theme="dark"]`.
-
-<Section title="Usage" />
+<Section title="Usage" lead="Import the fonts, then the tokens.">
 
 ```css
 @import "@pts/fonts"; /* Aspekta @font-face */
@@ -44,7 +46,9 @@ Color and shadow change between **light** and **dark**. Light values live on `:r
 }
 ```
 
-<Section title="Accessibility" />
+</Section>
 
-Every foreground meets **4.5:1** on its paired background, and borders and solid fills meet **3:1** against the page,
-in both themes. `npm run check` enforces this on every commit.
+<Section title="Accessibility">
+  Every foreground meets **4.5:1** on its paired background, and borders and solid fills meet **3:1** against the page,
+  in both themes. `npm run check` enforces this on every commit.
+</Section>

@@ -15,18 +15,37 @@ const Block = ({ children, className = "" }: { children: ReactNode; className?: 
 
 // ---------- page chrome ----------
 
-export const PageHeader = ({ eyebrow, title, children }: { eyebrow: string; title: string; children?: ReactNode }) => (
-  <Block className="pts-header">
-    <span className="pts-eyebrow">{eyebrow}</span>
-    <h1 className="pts-title">{title}</h1>
-    {children && <div className="pts-lead">{children}</div>}
+/** Token count for one or more group prefixes, e.g. ["palette"] → "72 tokens" */
+const countLabel = (prefixes: string[]) => {
+  const n = prefixes.reduce((sum, p) => sum + group(p).length, 0);
+  return `${n} token${n === 1 ? "" : "s"}`;
+};
+
+/**
+ * Editorial page header: meta on the left, title and lead on the right, between hairlines.
+ * `groups` adds a token count to the meta column.
+ */
+export const PageHeader = ({ eyebrow, title, groups, children }: { eyebrow: string; title: string; groups?: string[]; children?: ReactNode }) => (
+  <Block className="pts-header pts-grid">
+    <div className="pts-header-meta">
+      <span className="pts-eyebrow">{eyebrow}</span>
+      {groups && <span className="pts-alias">{countLabel(groups)}</span>}
+    </div>
+    <div>
+      <h1 className="pts-title">{title}</h1>
+      {children && <div className="pts-lead">{children}</div>}
+    </div>
   </Block>
 );
 
-export const Section = ({ title, children }: { title: string; children?: ReactNode }) => (
-  <Block className="pts-section">
-    <h2 className="pts-section-title">{title}</h2>
-    {children && <div className="pts-section-lead">{children}</div>}
+/** Two-column section: title and lead on the left, content on the right. */
+export const Section = ({ title, lead, children }: { title: string; lead?: ReactNode; children?: ReactNode }) => (
+  <Block className="pts-section pts-grid">
+    <div className="pts-section-head">
+      <h2 className="pts-section-title">{title}</h2>
+      {lead && <div className="pts-section-lead">{lead}</div>}
+    </div>
+    <div className="pts-section-body">{children}</div>
   </Block>
 );
 

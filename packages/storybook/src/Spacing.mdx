@@ -3,12 +3,9 @@ import { PageHeader, Section, Bars } from "./components";
 
 <Meta title="Foundations/Spacing" />
 
-<PageHeader eyebrow="Foundations" title="Spacing">
+<PageHeader eyebrow="Foundations" title="Spacing" groups={["space", "layout"]}>
   Space for component-level gaps and padding; layout for larger gaps between regions.
 </PageHeader>
 
-<Section title="Space">space.N = N ÷ 25 px.</Section>
-<Bars prefix="space" />
-
-<Section title="Layout">Gaps of 40px and more.</Section>
-<Bars prefix="layout" />
+<Section title="Space" lead="space.N = N ÷ 25 px."><Bars prefix="space" /></Section>
+<Section title="Layout" lead="Gaps of 40px and more."><Bars prefix="layout" /></Section>

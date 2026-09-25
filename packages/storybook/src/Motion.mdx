@@ -3,18 +3,13 @@ import { PageHeader, Section, MotionDemo, TokenTable } from "./components";
 
 <Meta title="Foundations/Motion" />
 
-<PageHeader eyebrow="Foundations" title="Motion">
-  Durations and easing curves. Hover a track to play it. Respect prefers-reduced-motion in components that animate.
+<PageHeader eyebrow="Foundations" title="Motion" groups={["motion"]}>
+  Durations and easing curves. Respect prefers-reduced-motion in components that animate.
 </PageHeader>
 
-<MotionDemo />
+<Section title="Preview" lead="Hover a track to play it. enter (decelerate) for elements appearing, exit (accelerate) for elements leaving, standard for moving or resizing.">
+  <MotionDemo />
+</Section>
 
-- `enter` (decelerate): elements appearing
-- `exit` (accelerate): elements leaving
-- `standard`: moving or resizing on screen
-
-<Section title="Duration" />
-<TokenTable prefix="motion.duration" />
-
-<Section title="Easing" />
-<TokenTable prefix="motion.easing" />
+<Section title="Duration"><TokenTable prefix="motion.duration" /></Section>
+<Section title="Easing"><TokenTable prefix="motion.easing" /></Section>

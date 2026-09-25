@@ -25,6 +25,7 @@ With ~260 tokens across two themes, the JSON files are no longer a practical way
 - Sidebar groups: Overview, Color, Foundations. The onboarding checklist, what's-new notifications, and canvas toolbar are disabled, since this Storybook has docs only.
 - Storybook MDX has no GFM tables by default; tables are React components instead.
 - All docs content and sample text are English.
+- Layout (revised, inspired by an editorial reference that also uses Aspekta): a two-column grid with meta and section headings on the left and content on the right, hairlines instead of cards, content width 1280px, collapsing to one column below 1024px.
 - Verified by building the static Storybook and screenshotting every page with headless Chrome.
 
 ## Documented in
