@@ -385,6 +385,17 @@ body {
 .pts-card-ramp span {
   flex: 1;
 }
+.pts-card-steps {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-100);
+  height: 48px;
+}
+.pts-card-steps span {
+  width: 12px;
+  border-radius: var(--radius-xs);
+  background: var(--color-background-primary);
+}
 .pts-card-themes {
   display: flex;
   gap: var(--space-200);

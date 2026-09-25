@@ -49,7 +49,9 @@ export const Section = ({ title, lead, children }: { title: string; lead?: React
   </Block>
 );
 
-const CATEGORIES: { title: string; path: string; description: string; preview: ReactNode }[] = [
+type Category = { title: string; path: string; description: string; preview: ReactNode };
+
+const SEMANTIC_PAGES: Category[] = [
   {
     title: "Color",
     path: "semantic-color",
@@ -82,10 +84,13 @@ const CATEGORIES: { title: string; path: string; description: string; preview: R
   { title: "Size", path: "semantic-size", description: "Icons and control heights", preview: <span className="pts-card-size" /> },
   { title: "Motion", path: "semantic-motion", description: "Durations and easing", preview: <span className="pts-card-motion" /> },
   { title: "Layout", path: "semantic-layout", description: "Breakpoints and z-index", preview: <span className="pts-card-layers" /> },
+];
+
+const PRIMITIVE_PAGES: Category[] = [
   {
-    title: "Primitives",
+    title: "Palette",
     path: "primitive-palette",
-    description: "Palette and scales, for defining tokens",
+    description: "Hues and neutrals",
     preview: (
       <div className="pts-card-ramp">
         {["red", "orange", "green", "blue", "purple"].map((h) => (
@@ -94,11 +99,23 @@ const CATEGORIES: { title: string; path: string; description: string; preview: R
       </div>
     ),
   },
+  {
+    title: "Scales",
+    path: "primitive-scales",
+    description: "Dimension, type, and motion values",
+    preview: (
+      <div className="pts-card-steps">
+        {[4, 8, 16, 24, 32, 48].map((n) => (
+          <span key={n} style={{ height: token(`dimension.${n}`).css }} />
+        ))}
+      </div>
+    ),
+  },
 ];
 
-export const CategoryCards = () => (
+export const CategoryCards = ({ tier }: { tier: "semantic" | "primitive" }) => (
   <Block className="pts-cards">
-    {CATEGORIES.map((c) => (
+    {(tier === "semantic" ? SEMANTIC_PAGES : PRIMITIVE_PAGES).map((c) => (
       <a key={c.path} className="pts-card-link" href={`./?path=/docs/${c.path}--docs`} target="_top">
         <div className="pts-card-preview">{c.preview}</div>
         <strong>{c.title}</strong>

@@ -12,8 +12,12 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
   <Stats />
 </Section>
 
-<Section title="Browse" lead="Semantic tokens are what products use. Primitives are the raw values behind them.">
-  <CategoryCards />
+<Section title="Semantic" lead="What products use. Every value here has a role, switches with the theme where needed, and is contrast-checked.">
+  <CategoryCards tier="semantic" />
+</Section>
+
+<Section title="Primitive" lead="The raw values behind the semantic tokens. Reference for defining tokens, not for product code.">
+  <CategoryCards tier="primitive" />
 </Section>
 
 <Section title="How it's built" lead="Two tiers. Primitives hold raw values; semantic tokens express intent.">
