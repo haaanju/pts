@@ -2,6 +2,8 @@
 
 A personal study project: building my own design token pipeline while learning how design token monorepos work.
 
+The system's display name is **Plain** (Storybook title and docs). `pts` / `@pts/*` remain the code and package names.
+
 ## Language
 
 - **Every deliverable is in English**: code, comments, token names and descriptions, docs, ADRs, Storybook content, commit messages, and PR text. No Korean in the repository.

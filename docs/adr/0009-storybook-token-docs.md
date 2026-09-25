@@ -25,6 +25,8 @@ With ~260 tokens across two themes, the JSON files are no longer a practical way
 - Sidebar groups (revised): Overview, Semantic, Primitive. The earlier Overview / Color / Foundations split mixed two criteria (Color by tier, everything else by category). Grouping by tier mirrors `primitive/` and `semantic/` in the source; semantic comes first because product code uses it, and primitives (Palette, Scales) are marked as reference. Every token now appears on some page. The onboarding checklist, what's-new notifications, and canvas toolbar are disabled, since this Storybook has docs only.
 - Storybook MDX has no GFM tables by default; tables are React components instead.
 - All docs content and sample text are English.
+- Display name: **Plain** (sidebar brand and Introduction title), chosen to match the restrained, monochrome style; package names stay `@pts/*`.
+- Spacing: sections, tables, cards, and specimens use generous token spacing (e.g. `layout.100`–`layout.300` between and within sections) so pages read with more negative space.
 - Layout (revised, inspired by an editorial reference that also uses Aspekta): the page header is a two-column grid (meta left, title right) and hairlines replace cards. Two-column sections were tried and reverted: wide tables such as the semantic foreground table left the heading column mostly empty, so sections stack heading over full-width content (1080px).
 - Verified by building the static Storybook and screenshotting every page with headless Chrome.
 

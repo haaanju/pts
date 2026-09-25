@@ -30,7 +30,7 @@ export const saveMode = (mode: Mode) => {
 export const resolveMode = (globalValue: unknown): Mode => asMode(globalValue) ?? readSaved() ?? "light";
 
 const shared = {
-  brandTitle: "PTS — Personal Token System",
+  brandTitle: "Plain",
   brandTarget: "_self",
   fontBase: '"Aspekta", system-ui, sans-serif', // font-family.sans
   fontCode: '"IBM Plex Mono", ui-monospace, monospace', // font-family.mono
