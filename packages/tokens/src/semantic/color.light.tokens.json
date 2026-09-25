@@ -116,6 +116,10 @@
       "recommend-subtle": {
         "$type": "color",
         "$value": "{palette.purple.100}"
+      },
+      "overlay": {
+        "$type": "color",
+        "$value": "{palette.black-alpha.50}"
       }
     },
     "foreground": {

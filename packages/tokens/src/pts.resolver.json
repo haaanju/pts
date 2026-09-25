@@ -15,6 +15,9 @@
           "$ref": "primitive/palette.tokens.json"
         },
         {
+          "$ref": "primitive/motion.tokens.json"
+        },
+        {
           "$ref": "semantic/spacing.tokens.json"
         },
         {
@@ -22,6 +25,18 @@
         },
         {
           "$ref": "semantic/typography.tokens.json"
+        },
+        {
+          "$ref": "semantic/size.tokens.json"
+        },
+        {
+          "$ref": "semantic/breakpoint.tokens.json"
+        },
+        {
+          "$ref": "semantic/motion.tokens.json"
+        },
+        {
+          "$ref": "semantic/z-index.tokens.json"
         }
       ]
     }
@@ -32,11 +47,17 @@
         "light": [
           {
             "$ref": "semantic/color.light.tokens.json"
+          },
+          {
+            "$ref": "semantic/shadow.light.tokens.json"
           }
         ],
         "dark": [
           {
             "$ref": "semantic/color.dark.tokens.json"
+          },
+          {
+            "$ref": "semantic/shadow.dark.tokens.json"
           }
         ]
       },

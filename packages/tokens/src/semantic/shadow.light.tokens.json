@@ -1,0 +1,44 @@
+{
+  "shadow": {
+    "sm": {
+      "$type": "shadow",
+      "$value": {
+        "color": "{palette.black-alpha.10}",
+        "offsetX": "{dimension.0}",
+        "offsetY": "{dimension.1}",
+        "blur": "{dimension.2}",
+        "spread": "{dimension.0}"
+      }
+    },
+    "md": {
+      "$type": "shadow",
+      "$value": {
+        "color": "{palette.black-alpha.10}",
+        "offsetX": "{dimension.0}",
+        "offsetY": "{dimension.4}",
+        "blur": "{dimension.8}",
+        "spread": "{dimension.0}"
+      }
+    },
+    "lg": {
+      "$type": "shadow",
+      "$value": {
+        "color": "{palette.black-alpha.15}",
+        "offsetX": "{dimension.0}",
+        "offsetY": "{dimension.8}",
+        "blur": "{dimension.16}",
+        "spread": "{dimension.0}"
+      }
+    },
+    "xl": {
+      "$type": "shadow",
+      "$value": {
+        "color": "{palette.black-alpha.20}",
+        "offsetX": "{dimension.0}",
+        "offsetY": "{dimension.16}",
+        "blur": "{dimension.32}",
+        "spread": "{dimension.0}"
+      }
+    }
+  }
+}

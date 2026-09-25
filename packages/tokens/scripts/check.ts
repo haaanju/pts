@@ -4,7 +4,7 @@
 //   3. all contexts of a modifier define the same token names
 //   4. color pairs meet WCAG contrast (pairs are derived from the naming rules in CLAUDE.md)
 // Exits with code 1 on any failure.
-// Disabled tokens and border/default (decorative) are exempt from contrast.
+// Disabled tokens, border/default (decorative), and background/overlay (scrim) are exempt from contrast.
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -45,7 +45,10 @@ const aliasesIn = (value: unknown): string[] => {
 const resolveHex = (tokens: Tokens, id: string): string => {
   let token = tokens[id];
   while (typeof token.$value === "string") token = tokens[token.$value.slice(1, -1)];
-  return (token.$value as { hex: string }).hex;
+  const { hex, alpha = 1 } = token.$value as { hex: string; alpha?: number };
+  // contrast is only defined here for opaque colors; translucent ones depend on what is underneath
+  if (alpha < 1) throw new Error(`${id} is translucent (alpha ${alpha}) and cannot be contrast-checked`);
+  return hex;
 };
 
 const luminance = (hex: string) => {
@@ -74,7 +77,8 @@ const contrastPairs = (ids: string[]): [string, string, number][] => {
   for (const name of names("border").filter((n) => !EXEMPT(n))) {
     for (const bg of PAGE) pairs.push([`color.border.${name}`, `color.background.${bg}`, UI]);
   }
-  const solid = names("background").filter((n) => ![...PAGE, "inverse", "disabled"].includes(n) && !n.endsWith("-subtle"));
+  // overlay is a translucent scrim, not a UI boundary
+  const solid = names("background").filter((n) => ![...PAGE, "inverse", "disabled", "overlay"].includes(n) && !n.endsWith("-subtle"));
   for (const name of solid) {
     for (const bg of PAGE) pairs.push([`color.background.${name}`, `color.background.${bg}`, UI]);
   }
@@ -106,9 +110,13 @@ for (const [modifier, { contexts }] of Object.entries(resolver.modifiers as Reco
         errors.push(`${label}: ${fg} expects ${bg}, which does not exist`);
         continue;
       }
-      const ratio = contrast(resolveHex(tokens, fg), resolveHex(tokens, bg));
-      checked++;
-      if (ratio < min) errors.push(`${label}: ${fg} on ${bg} = ${ratio.toFixed(2)} (needs ${min})`);
+      try {
+        const ratio = contrast(resolveHex(tokens, fg), resolveHex(tokens, bg));
+        checked++;
+        if (ratio < min) errors.push(`${label}: ${fg} on ${bg} = ${ratio.toFixed(2)} (needs ${min})`);
+      } catch (e) {
+        errors.push(`${label}: ${(e as Error).message}`);
+      }
     }
   }
 }

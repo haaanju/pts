@@ -1,0 +1,32 @@
+{
+  "size": {
+    "icon": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{dimension.16}"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{dimension.20}"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{dimension.24}"
+      }
+    },
+    "control": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{dimension.32}"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{dimension.40}"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{dimension.48}"
+      }
+    }
+  }
+}

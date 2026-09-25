@@ -1,0 +1,32 @@
+{
+  "motion": {
+    "duration": {
+      "fast": {
+        "$type": "duration",
+        "$value": "{duration.100}"
+      },
+      "normal": {
+        "$type": "duration",
+        "$value": "{duration.200}"
+      },
+      "slow": {
+        "$type": "duration",
+        "$value": "{duration.300}"
+      }
+    },
+    "easing": {
+      "standard": {
+        "$type": "cubicBezier",
+        "$value": "{easing.standard}"
+      },
+      "enter": {
+        "$type": "cubicBezier",
+        "$value": "{easing.decelerate}"
+      },
+      "exit": {
+        "$type": "cubicBezier",
+        "$value": "{easing.accelerate}"
+      }
+    }
+  }
+}
