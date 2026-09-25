@@ -38,9 +38,9 @@ export const PageHeader = ({ eyebrow, title, groups, children }: { eyebrow: stri
   </Block>
 );
 
-/** Two-column section: title and lead on the left, content on the right. */
+/** Section: hairline, then title and lead, then full-width content. */
 export const Section = ({ title, lead, children }: { title: string; lead?: ReactNode; children?: ReactNode }) => (
-  <Block className="pts-section pts-grid">
+  <Block className="pts-section">
     <div className="pts-section-head">
       <h2 className="pts-section-title">{title}</h2>
       {lead && <div className="pts-section-lead">{lead}</div>}

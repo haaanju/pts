@@ -142,7 +142,7 @@ pts/
 ## Token Docs (Storybook)
 
 - Docs are generated from the token JSON. New tokens in an existing group appear without code changes.
-- Page layout is editorial: `<PageHeader eyebrow title groups>` (meta left, title right) and `<Section title lead>…</Section>` (heading left, content right), separated by hairlines. No cards or boxes; `ThemeCell` is the only filled surface because its background is the information.
+- Page layout is editorial: `<PageHeader eyebrow title groups>` (meta left, title right), then `<Section title lead>…</Section>` blocks (hairline, heading and lead, full-width content). No cards or boxes; `ThemeCell` is the only filled surface because its background is the information.
 - When adding a new **group**, wrap its block in a section on the matching `.mdx` page (e.g. `<Section title="New group"><TokenTable prefix="new-group" /></Section>`) and add the prefix to the page's `groups`.
 - Groups that differ by theme are shown with light and dark side by side. `ThemeCell` sets `data-theme` so CSS variables inside it resolve to that theme.
 - Contrast badges use the same pairing rules as `npm run check`.

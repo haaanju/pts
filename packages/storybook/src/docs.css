@@ -7,8 +7,8 @@
 
 .sbdocs,
 .pts {
-  --docs-content-width: 1280px;
-  --docs-side-column: 280px; /* left column of the editorial grid */
+  --docs-content-width: 1080px;
+  --docs-side-column: 280px; /* meta column of the page header */
   --docs-measure: 720px; /* max line length for lead text */
   --docs-card-preview-height: 96px;
   --docs-ramp-height: 96px;
@@ -195,7 +195,7 @@ body {
 
 /* ---------- editorial grid ---------- */
 
-/* Left column: meta / section heading. Right column: title / content. Hairlines separate rows. */
+/* Page header grid: meta on the left, title on the right. */
 .pts-grid {
   display: grid;
   grid-template-columns: var(--docs-side-column) minmax(0, 1fr);
@@ -246,23 +246,26 @@ body {
 /* ---------- section ---------- */
 
 .pts-section {
-  padding: var(--space-400) 0 var(--layout-200);
+  padding: var(--space-500) 0 var(--layout-200);
+  border-top: var(--stroke-thin) solid var(--color-border-default);
 }
 .pts-section-head {
   display: flex;
   flex-direction: column;
   gap: var(--space-200);
+  margin-bottom: var(--space-500);
 }
 .pts .pts-section-title {
-  font: var(--text-heading-sm);
-  letter-spacing: var(--text-heading-sm-letter-spacing);
+  font: var(--text-heading-md);
+  letter-spacing: var(--text-heading-md-letter-spacing);
   margin: 0;
   color: var(--color-foreground-default);
 }
 .pts .pts-section-lead,
 .pts .pts-section-lead p {
-  font: var(--text-body-sm);
+  font: var(--text-body-md);
   color: var(--color-foreground-muted);
+  max-width: var(--docs-measure);
   margin: 0;
 }
 .pts-section-body {
@@ -499,7 +502,10 @@ body {
   display: inline-block;
 }
 .pts-preview-cell {
-  width: 1%;
+  width: 1%; /* shrink to content; the pair wraps if the table runs out of room */
+}
+.pts-token-cell .pts-var,
+.pts-value-cell .pts-alias {
   white-space: nowrap;
 }
 
@@ -513,10 +519,13 @@ body {
 
 .pts-pair {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-200);
+  min-width: 160px; /* docs sample geometry: keeps the sample and its badge together */
 }
 .pts-pair-sample {
+  white-space: nowrap;
   padding: var(--space-100) var(--space-300);
   border-radius: var(--radius-md);
   font: var(--text-label-md);
