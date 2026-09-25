@@ -27,7 +27,8 @@ export default defineConfig({
       permutations: [
         {
           input: { theme: "light" },
-          prepare: (contents) => `:root {\n  ${contents}\n}`,
+          // [data-theme="light"] also lets a light region sit inside a dark page.
+          prepare: (contents) => `:root,\n[data-theme="light"] {\n  ${contents}\n}`,
         },
         {
           input: { theme: "dark" },

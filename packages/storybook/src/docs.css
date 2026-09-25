@@ -62,8 +62,49 @@
   background: var(--color-background-subtle);
   color: var(--color-foreground-default);
 }
-.sbdocs-content pre {
+body {
+  background: var(--color-background-default);
+}
+
+/* Code blocks: Storybook's source block is styled for its own static theme, so surface and
+   syntax colors are overridden with tokens to follow the light/dark toggle. */
+.sbdocs .docblock-source {
+  background: var(--color-background-subtle) !important;
+  border: var(--stroke-thin) solid var(--color-border-default) !important;
   border-radius: var(--radius-lg) !important;
+  box-shadow: none !important;
+}
+.sbdocs .docblock-source pre,
+.sbdocs .docblock-source code {
+  background: transparent !important;
+  color: var(--color-foreground-default) !important;
+  font-family: var(--font-family-mono) !important;
+}
+.sbdocs .docblock-source .token.punctuation,
+.sbdocs .docblock-source .token.comment {
+  color: var(--color-foreground-muted) !important;
+}
+.sbdocs .docblock-source .token.selector,
+.sbdocs .docblock-source .token.class-name {
+  color: var(--color-foreground-default) !important;
+}
+.sbdocs .docblock-source .token.property {
+  color: var(--color-foreground-info) !important;
+}
+.sbdocs .docblock-source .token.string,
+.sbdocs .docblock-source .token.url {
+  color: var(--color-foreground-success) !important;
+}
+.sbdocs .docblock-source .token.atrule,
+.sbdocs .docblock-source .token.rule,
+.sbdocs .docblock-source .token.keyword,
+.sbdocs .docblock-source .token.function {
+  color: var(--color-foreground-recommend) !important;
+}
+.sbdocs .docblock-source button {
+  background: var(--color-background-default) !important;
+  color: var(--color-foreground-default) !important;
+  border-color: var(--color-border-default) !important;
 }
 
 /* ---------- shared ---------- */
@@ -404,7 +445,7 @@
   width: var(--docs-chip-width);
   height: var(--docs-chip-height);
   border-radius: var(--radius-md);
-  box-shadow: inset 0 0 0 var(--stroke-thin) var(--palette-black-alpha-10);
+  box-shadow: inset 0 0 0 var(--stroke-thin) var(--color-border-default);
 }
 
 .pts-pair {
@@ -416,7 +457,7 @@
   padding: var(--space-100) var(--space-300);
   border-radius: var(--radius-md);
   font: var(--text-label-md);
-  box-shadow: inset 0 0 0 var(--stroke-thin) var(--palette-black-alpha-10);
+  box-shadow: inset 0 0 0 var(--stroke-thin) var(--color-border-default);
 }
 
 /* ---------- palette ---------- */
@@ -429,7 +470,9 @@
   height: var(--docs-ramp-height);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: inset 0 0 0 var(--stroke-thin) var(--palette-black-alpha-10);
+  /* outline paints above the steps, so the edge stays visible when a step matches the page */
+  outline: var(--stroke-thin) solid var(--color-border-default);
+  outline-offset: calc(-1 * var(--stroke-thin));
   /* checkerboard behind translucent steps */
   --checker: var(--color-background-default-pressed);
   --half: calc(var(--docs-checker-size) / 2);

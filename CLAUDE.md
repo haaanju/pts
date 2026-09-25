@@ -45,7 +45,7 @@ pts/
     │   ├── terrazzo.config.ts
     │   └── dist/tokens.css      # build output (gitignored)
     └── storybook/               # @pts/storybook — token documentation
-        ├── .storybook/          # main, manager/docs theme, preview (loads tokens.css, docs fixed to light)
+        ├── .storybook/          # main, theme (light/dark UI themes), manager (theme toggle), preview (tokens.css, theme sync)
         └── src/
             ├── tokens.ts        # data layer: reads the resolver, resolves aliases per theme
             ├── components.tsx   # doc blocks (TokenTable, Palette, ForegroundTable, …)
@@ -61,7 +61,7 @@ pts/
 - `npm run check`: validates tokens (`packages/tokens/scripts/check.ts`) per theme — missing `$type`, broken aliases, token-name mismatches between themes, and color contrast. The pre-commit hook runs it on every commit and blocks the commit on failure.
   - The hook is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
 - `npm run build`: builds every workspace (`@pts/css` → `packages/css/dist/tokens.css`).
-  - Light values go on `:root`; dark values under `@media (prefers-color-scheme: dark)` and `[data-theme="dark"]`. `data-theme="light"` forces light.
+  - Light values go on `:root` and `[data-theme="light"]`; dark values under `@media (prefers-color-scheme: dark)` and `[data-theme="dark"]`. `data-theme` on `<html>` forces a theme; on any element it themes that subtree (e.g. a light region inside a dark page).
   - `terrazzo.config.ts` reads the dark context files in the resolver to decide which groups go in the dark blocks.
 - `npm run storybook`: token docs dev server (http://localhost:6006). Builds `@pts/css` first.
 - `npm run build-storybook`: static docs build (`packages/storybook/dist`).
@@ -139,7 +139,9 @@ pts/
 - Contrast badges use the same pairing rules as `npm run check`.
 - Sample text in the docs is English only.
 - Docs styling dogfoods the tokens: color, type, spacing, radius, stroke, shadow, and motion come from `@pts/css` variables. Values that only describe the docs layout or sample geometry are `--docs-*` variables at the top of `docs.css`; never add product tokens just for the docs. Card preview illustrations may use raw geometry.
-- The Storybook UI theme (`.storybook/theme.ts`) uses hex copies of token values, since the manager can't read CSS variables. Update it if those tokens change.
+- Light/dark: the sun/moon button at the top right toggles a `theme` global. The preview sets `data-theme` on `<html>` from it, so the whole docs page switches through token variables; the manager switches between the two UI themes. The choice is saved in localStorage; `?globals=theme:dark` in the URL also works.
+- The Storybook UI themes (`.storybook/theme.ts`) use hex copies of token values, since the manager can't read CSS variables. Update them if those tokens change.
+- Manager files (`.storybook/manager.tsx`, `theme.ts`, `main.ts`) are only compiled at startup: restart `npm run storybook` after editing them. The manager uses the classic JSX runtime, so `manager.tsx` imports React.
 
 ## Decisions
 
