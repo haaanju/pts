@@ -1,0 +1,8 @@
+{
+  "name": "pts",
+  "private": true,
+  "description": "Personal Token System — design token monorepo",
+  "workspaces": [
+    "packages/*"
+  ]
+}

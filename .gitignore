@@ -1,0 +1,9 @@
+# Local settings
+.claude/settings.local.json
+
+# Node
+node_modules/
+dist/
+
+# OS
+.DS_Store

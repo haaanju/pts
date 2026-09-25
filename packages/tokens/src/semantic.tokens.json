@@ -1,0 +1,40 @@
+{
+  "space": {
+    "0": {
+      "$type": "dimension",
+      "$value": "{dimension.0}"
+    },
+    "50": {
+      "$type": "dimension",
+      "$value": "{dimension.2}"
+    },
+    "100": {
+      "$type": "dimension",
+      "$value": "{dimension.4}"
+    },
+    "200": {
+      "$type": "dimension",
+      "$value": "{dimension.8}"
+    },
+    "300": {
+      "$type": "dimension",
+      "$value": "{dimension.12}"
+    },
+    "400": {
+      "$type": "dimension",
+      "$value": "{dimension.16}"
+    },
+    "500": {
+      "$type": "dimension",
+      "$value": "{dimension.20}"
+    },
+    "600": {
+      "$type": "dimension",
+      "$value": "{dimension.24}"
+    },
+    "800": {
+      "$type": "dimension",
+      "$value": "{dimension.32}"
+    }
+  }
+}
