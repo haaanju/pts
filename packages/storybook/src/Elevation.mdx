@@ -1,18 +1,14 @@
 import { Meta } from "@storybook/addon-docs/blocks";
-import { Shadows, Overlay } from "./components";
+import { PageHeader, Section, Shadows, Overlay } from "./components";
 
-<Meta title="Elevation" />
+<Meta title="Foundations/Elevation" />
 
-# Elevation
+<PageHeader eyebrow="Foundations" title="Elevation">
+  Shadows lift surfaces off the page. Geometry is shared; dark uses higher opacity so shadows stay visible.
+</PageHeader>
 
-## Shadow
-
-Same geometry in both themes; dark uses higher opacity so shadows stay visible on a dark page.
-
+<Section title="Shadow" />
 <Shadows />
 
-## Overlay
-
-`color.background.overlay` is the scrim behind modals.
-
+<Section title="Overlay">color.background.overlay is the scrim behind modals.</Section>
 <Overlay />

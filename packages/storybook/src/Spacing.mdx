@@ -1,18 +1,14 @@
 import { Meta } from "@storybook/addon-docs/blocks";
-import { Bars } from "./components";
+import { PageHeader, Section, Bars } from "./components";
 
-<Meta title="Spacing" />
+<Meta title="Foundations/Spacing" />
 
-# Spacing
+<PageHeader eyebrow="Foundations" title="Spacing">
+  Space for component-level gaps and padding; layout for larger gaps between regions.
+</PageHeader>
 
-## Space
-
-Component-level gaps and padding. `space.N` = N ÷ 25 px.
-
+<Section title="Space">space.N = N ÷ 25 px.</Section>
 <Bars prefix="space" />
 
-## Layout
-
-Gaps larger than component spacing (40px+).
-
+<Section title="Layout">Gaps of 40px and more.</Section>
 <Bars prefix="layout" />

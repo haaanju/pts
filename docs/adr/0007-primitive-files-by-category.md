@@ -21,5 +21,5 @@ Semantic tokens were split into `semantic/<category>.tokens.json` (ADR 0002), bu
 
 ## Documented in
 
-- `CLAUDE.md` — Structure, Token rules (파일)
+- `CLAUDE.md` — Structure, Token Rules (Files)
 - `packages/tokens/src/pts.resolver.json`

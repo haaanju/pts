@@ -21,9 +21,13 @@ With ~260 tokens across two themes, the JSON files are no longer a practical way
 - TypeScript is pinned to 5.9: TypeScript 7 (native) does not yet expose the JS API used by Storybook's React docgen.
 - Pages: Introduction, Color (Palette, Semantic), Typography, Spacing, Border, Elevation, Size, Motion, Layout.
 - IBM Plex fonts are loaded from Google Fonts in `preview-head.html` for the docs only; the token packages still do not ship fonts.
+- Design: the docs are styled with PTS tokens themselves (`docs.css`), with a custom manager/docs theme (`.storybook/theme.ts`) in the same monochrome palette and IBM Plex. Blocks are wrapped in `sb-unstyled` to opt out of Storybook's markdown styles.
+- Sidebar groups: Overview, Color, Foundations. The onboarding checklist, what's-new notifications, and canvas toolbar are disabled, since this Storybook has docs only.
+- Storybook MDX has no GFM tables by default; tables are React components instead.
+- All docs content and sample text are English.
 - Verified by building the static Storybook and screenshotting every page with headless Chrome.
 
 ## Documented in
 
-- `CLAUDE.md` — Structure, Commands, 토큰 문서 (Storybook)
+- `CLAUDE.md` — Structure, Commands, Token Docs (Storybook)
 - `packages/storybook/`

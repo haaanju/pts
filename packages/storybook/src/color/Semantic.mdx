@@ -1,23 +1,21 @@
 import { Meta } from "@storybook/addon-docs/blocks";
-import { BackgroundTable, ForegroundTable, BorderTable } from "../components";
+import { PageHeader, Section, BackgroundTable, ForegroundTable, BorderTable } from "../components";
 
 <Meta title="Color/Semantic" />
 
-# Semantic color
+<PageHeader eyebrow="Color" title="Semantic color">
+  Named property → role → emphasis → state, e.g. color.background.danger-hover. Light and dark are shown side by side.
+</PageHeader>
 
-Named **property → role → emphasis → state**: `color.background.danger-hover`.
+- `foreground.on-X` sits on `background.X` and its `-hover` / `-pressed` states.
+- Other foregrounds sit on the page backgrounds: `default`, `default-hover`, `default-pressed`, `subtle`.
+- Text needs **4.5:1**; borders and solid fills need **3:1**. `disabled`, `border.default` and `background.overlay` are exempt.
 
-- `foreground.on-X` sits on `background.X` (and its `-hover` / `-pressed`).
-- Other foregrounds sit on the page backgrounds (`default`, `default-hover`, `default-pressed`, `subtle`).
-- Text needs **4.5:1**, borders and solid fills **3:1**. `disabled`, `border.default` and `background.overlay` are exempt.
-
-The ratios below use the paired background (foregrounds) or `background.default` (borders). `npm run check` tests every pairing.
-
-## Background
+<Section title="Background" />
 <BackgroundTable />
 
-## Foreground
+<Section title="Foreground">Each sample sits on its paired background. `npm run check` tests every pairing, including hover and pressed.</Section>
 <ForegroundTable />
 
-## Border
+<Section title="Border">Ratios are against background.default.</Section>
 <BorderTable />

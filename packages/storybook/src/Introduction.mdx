@@ -1,25 +1,27 @@
 import { Meta } from "@storybook/addon-docs/blocks";
+import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./components";
 
-<Meta title="Introduction" />
+<Meta title="Overview/Introduction" />
 
-# PTS — Personal Token System
+<PageHeader eyebrow="PTS" title="Personal Token System">
+  Design tokens in DTCG format, built with Terrazzo. Every page is generated from the token source,
+  so what you see here is exactly what ships.
+</PageHeader>
 
-Design tokens written in [DTCG](https://www.designtokens.org/) format and built with [Terrazzo](https://terrazzo.app).
-Every page here is generated from `packages/tokens/src` through `pts.resolver.json`, so it always matches the source.
+<Stats />
 
-## Tiers
+<Section title="Foundations" />
 
-| Tier | Files | Role |
-|------|-------|------|
-| primitive | `primitive/*.tokens.json` | Raw values: `dimension`, `palette`, `typeface`, `weight`, `ratio`, `duration`, `easing` |
-| semantic | `semantic/*.tokens.json` | Intent: `space`, `color`, `text`, `shadow`, `size`, `motion`, … Aliases primitives |
+<CategoryCards />
 
-## Themes
+<Section title="How it's built" />
 
-Color and shadow differ between **light** and **dark**. Those pages show both side by side.
-In CSS, light values live on `:root`; dark values apply under `prefers-color-scheme: dark` or `[data-theme="dark"]`.
+<TierTable />
 
-## Usage
+Color and shadow change between **light** and **dark**. Light values live on `:root`; dark values apply under
+`prefers-color-scheme: dark` or `[data-theme="dark"]`.
+
+<Section title="Usage" />
 
 ```css
 @import "@pts/css";
@@ -32,14 +34,16 @@ In CSS, light values live on `:root`; dark values apply under `prefers-color-sch
   color: var(--color-foreground-on-primary);
   font: var(--text-label-md);
 }
-.button:hover { background: var(--color-background-primary-hover); }
+.button:hover {
+  background: var(--color-background-primary-hover);
+}
 .button:focus-visible {
   outline: var(--focus-ring-width) solid var(--color-border-focus);
   outline-offset: var(--focus-ring-offset);
 }
 ```
 
-## Accessibility
+<Section title="Accessibility" />
 
-Every foreground meets **4.5:1** on the background it is paired with, and borders and solid fills meet **3:1** against the page, in both themes.
-`npm run check` enforces this on every commit.
+Every foreground meets **4.5:1** on its paired background, and borders and solid fills meet **3:1** against the page,
+in both themes. `npm run check` enforces this on every commit.

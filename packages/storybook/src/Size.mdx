@@ -1,15 +1,14 @@
 import { Meta } from "@storybook/addon-docs/blocks";
-import { TokenTable } from "./components";
+import { PageHeader, Section, IconSizes, ControlSizes } from "./components";
 
-<Meta title="Size" />
+<Meta title="Foundations/Size" />
 
-# Size
+<PageHeader eyebrow="Foundations" title="Size">
+  Fixed sizes for icons and interactive controls.
+</PageHeader>
 
-## Icon
-<TokenTable prefix="size.icon" preview={(t) => <div style={{ width: t.css, height: t.css, background: "var(--color-background-primary)", borderRadius: "var(--radius-xs)" }} />} />
+<Section title="Icon" />
+<IconSizes />
 
-## Control height
-
-Shared by buttons, inputs and selects so they align in a row. `lg` (48px) meets touch target guidance.
-
-<TokenTable prefix="size.control" preview={(t) => <div style={{ height: t.css, width: 120, background: "var(--color-background-subtle)", border: "var(--stroke-thin) solid var(--color-border-strong)", borderRadius: "var(--radius-md)" }} />} />
+<Section title="Control height">Shared by buttons, inputs and selects so they align in a row. lg (48px) meets touch target guidance.</Section>
+<ControlSizes />

@@ -146,3 +146,6 @@ export const pairedBackground = (foregroundId: string) => {
   const name = leaf(foregroundId);
   return name.startsWith("on-") ? `color.background.${name.slice(3)}` : "color.background.default";
 };
+
+/** Total number of tokens (identical across themes) */
+export const tokenCount = () => Object.keys(byTheme.light).length;

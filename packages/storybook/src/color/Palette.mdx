@@ -1,35 +1,30 @@
 import { Meta } from "@storybook/addon-docs/blocks";
-import { Palette } from "../components";
+import { PageHeader, Section, Palette } from "../components";
 
 <Meta title="Color/Palette" />
 
-# Palette
+<PageHeader eyebrow="Color" title="Palette">
+  Primitive colors. Higher numbers are darker. Product code should use semantic color tokens;
+  the palette is for defining them. W and B show contrast against white and black.
+</PageHeader>
 
-Primitive colors (`palette.*`). Higher numbers are darker. Use semantic `color.*` tokens in product code;
-reach for the palette only when defining new semantic tokens.
-
-`W` / `B` show the contrast ratio against white and black.
-
-## Neutral
+<Section title="Neutral" />
 <Palette hue="neutral" />
 
-## Red
+<Section title="Red" />
 <Palette hue="red" />
 
-## Orange
+<Section title="Orange" />
 <Palette hue="orange" />
 
-## Green
+<Section title="Green" />
 <Palette hue="green" />
 
-## Blue
+<Section title="Blue" />
 <Palette hue="blue" />
 
-## Purple
+<Section title="Purple" />
 <Palette hue="purple" />
 
-## Black alpha
-
-For shadows and the modal scrim only.
-
+<Section title="Black alpha">For shadows and the modal scrim only.</Section>
 <Palette hue="black-alpha" />

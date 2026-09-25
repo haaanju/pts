@@ -1,27 +1,26 @@
 import { Meta } from "@storybook/addon-docs/blocks";
-import { TextStyles, TokenTable } from "./components";
+import { PageHeader, Section, TextStyles, FontPreview, TokenTable } from "./components";
 
-<Meta title="Typography" />
+<Meta title="Foundations/Typography" />
 
-# Typography
+<PageHeader eyebrow="Foundations" title="Typography">
+  IBM Plex in three families. Composite text styles bundle size, weight, line height and letter spacing.
+</PageHeader>
 
-## Text styles
-
-Composite `text.*` tokens. Apply with the `font` shorthand; letter spacing is a separate variable (`--text-*-letter-spacing`).
-
+<Section title="Text styles">Apply with the font shorthand. Letter spacing is a separate variable: --text-*-letter-spacing.</Section>
 <TextStyles />
 
-## Font family
-<TokenTable prefix="font-family" preview={(t) => <span style={{ fontFamily: t.css }}>Aa 가나다 0123</span>} />
+<Section title="Font family" />
+<FontPreview kind="family" />
 
-## Font size
-<TokenTable prefix="font-size" preview={(t) => <span style={{ fontSize: t.css }}>Aa</span>} />
+<Section title="Font size" />
+<FontPreview kind="size" />
 
-## Font weight
-<TokenTable prefix="font-weight" preview={(t) => <span style={{ fontWeight: t.css }}>Aa 가나다</span>} />
+<Section title="Font weight" />
+<FontPreview kind="weight" />
 
-## Line height
+<Section title="Line height" />
 <TokenTable prefix="line-height" />
 
-## Letter spacing
+<Section title="Letter spacing" />
 <TokenTable prefix="letter-spacing" />

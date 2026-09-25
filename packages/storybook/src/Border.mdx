@@ -1,21 +1,21 @@
 import { Meta } from "@storybook/addon-docs/blocks";
-import { RadiusSamples, StrokeSamples, FocusRing, TokenTable } from "./components";
+import { PageHeader, Section, RadiusSamples, StrokeSamples, FocusRing, TokenTable } from "./components";
 
-<Meta title="Border" />
+<Meta title="Foundations/Border" />
 
-# Border
+<PageHeader eyebrow="Foundations" title="Border">
+  Corner radius, stroke widths, and the keyboard focus ring.
+</PageHeader>
 
-## Radius
+<Section title="Radius" />
 <RadiusSamples />
 
-## Stroke
+<Section title="Stroke" />
 <StrokeSamples />
 
-## Focus ring
-
-`outline: var(--focus-ring-width) solid var(--color-border-focus); outline-offset: var(--focus-ring-offset);`
-The offset keeps the ring distinct from the near-black primary button.
-
+<Section title="Focus ring">
+  outline: var(--focus-ring-width) solid var(--color-border-focus); outline-offset: var(--focus-ring-offset). The offset keeps the
+  ring distinct from the near-black primary button.
+</Section>
 <FocusRing />
-
 <TokenTable prefix="focus-ring" />
