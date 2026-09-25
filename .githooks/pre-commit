@@ -1,0 +1,4 @@
+#!/bin/sh
+# Validate tokens before every commit (see CLAUDE.md → Commands).
+# Skip once with: git commit --no-verify
+npm run check --silent

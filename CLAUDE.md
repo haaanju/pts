@@ -13,6 +13,7 @@
 
 ```
 pts/
+├── .githooks/pre-commit         # 커밋 전 npm run check
 ├── docs/adr/                    # 의사결정 기록 (English)
 └── packages/
     ├── tokens/                  # @pts/tokens — DTCG 소스, SSoT
@@ -37,7 +38,8 @@ pts/
 
 ## Commands
 
-- `npm run check`: 토큰 검증 (`packages/tokens/scripts/check.ts`). `$type` 누락, 끊긴 alias, 모드 간 토큰 이름 불일치, 컬러 대비를 테마별로 확인한다. 토큰을 수정하면 커밋 전에 실행한다
+- `npm run check`: 토큰 검증 (`packages/tokens/scripts/check.ts`). `$type` 누락, 끊긴 alias, 모드 간 토큰 이름 불일치, 컬러 대비를 테마별로 확인한다. pre-commit hook(`.githooks/pre-commit`)이 커밋마다 자동 실행하며, 실패하면 커밋이 막힌다
+- hook은 `npm install` 시 `prepare` 스크립트가 `git config core.hooksPath .githooks`로 연결한다. 한 번만 건너뛰려면 `git commit --no-verify`
 - `npm run build`: 모든 workspace 빌드 (`@pts/css` → `packages/css/dist/tokens.css`)
   - light 값은 `:root`, dark 값은 `@media (prefers-color-scheme: dark)`와 `[data-theme="dark"]`에 출력. `data-theme="light"`로 라이트를 강제할 수 있다
 
