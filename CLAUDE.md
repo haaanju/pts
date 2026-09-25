@@ -6,38 +6,53 @@
 
 - Package Manager: npm (workspaces)
 - Token Format: DTCG (W3C Design Token Community Group)
-- Language: TypeScript (코드가 생기는 단계에서 도입)
+- Build Tool: Terrazzo (`@terrazzo/cli` + 플랫폼별 plugin)
+- Language: TypeScript
 
 ## Structure
 
 ```
 pts/
-├── docs/adr/            # 의사결정 기록 (English)
+├── docs/adr/                    # 의사결정 기록 (English)
 └── packages/
-    └── tokens/          # @pts/tokens — DTCG 소스, SSoT
-        └── src/
-            ├── primitive.tokens.json   # 원시값
-            └── semantic.tokens.json    # 용도별 토큰 (primitive alias)
+    ├── tokens/                  # @pts/tokens — DTCG 소스, SSoT
+    │   └── src/
+    │       ├── primitive.tokens.json
+    │       └── semantic/
+    │           ├── spacing.tokens.json   # space, layout
+    │           └── border.tokens.json    # radius, stroke
+    └── css/                     # @pts/css — CSS custom properties
+        ├── terrazzo.config.ts
+        └── dist/tokens.css      # 빌드 결과 (gitignore)
 ```
 
-새 패키지는 `packages/<name>`에 `@pts/<name>`으로 추가한다.
+- 새 패키지는 `packages/<name>`에 `@pts/<name>`으로 추가한다. 출력 패키지는 `@pts/tokens`에 의존한다.
+- 새 토큰 파일을 만들면 출력 패키지의 `terrazzo.config.ts` `tokens` 목록에도 추가한다.
+
+## Commands
+
+- `npm run build`: 모든 workspace 빌드 (`@pts/css` → `packages/css/dist/tokens.css`)
 
 ## Token 규칙
 
 - **계층**: primitive → semantic. semantic은 primitive만 참조한다. component 계층은 필요할 때 추가한다.
+- **파일**: primitive는 한 파일에 둔다. semantic은 카테고리별로 `semantic/<category>.tokens.json`에 나눈다.
 - **포맷**: 모든 토큰에 `$type`을 명시한다. 그룹 단위 `$type` 상속은 쓰지 않는다.
 - **dimension**: 단위는 `px`, 객체 형태로 쓴다. `{ "value": 16, "unit": "px" }`
 - **alias**: 파일과 상관없이 최상위 그룹부터 참조한다. `"{dimension.16}"`
 - **네이밍**: kebab-case.
   - primitive `dimension/N`: N은 px 값. 예외로 `dimension/max` = 9999px
-  - semantic `space/N`: 숫자 스케일, px = N ÷ 25 (예: `space/400` = 16px). 범위는 `space/0 – 800`(0–32px), 컴포넌트 내부 간격용. 그보다 큰 간격은 layout 토큰으로 분리 (예정)
+  - semantic `space/N`: px = N ÷ 25 (예: `space/400` = 16px). 범위 `space/0 – 800`(0–32px), 컴포넌트 내부 간격용
+  - semantic `layout/N`: 100 단위 **단계 번호**(px와 무관), 40px 이상 큰 간격. 100=40, 200=48, 300=64. 사이값은 150처럼 끼워 넣는다
+  - semantic `radius`: **티셔츠 사이즈**. none=0, xs=2, sm=4, md=8, lg=12, xl=16, `full`=max
+  - semantic `stroke`: **굵기 이름**. thin=1, thick=2, thicker=4. 0 값 토큰은 두지 않는다 (테두리 없음은 border 제거로 표현)
 
 토큰 구조를 바꾸는 결정은 ADR로 남긴다 (`docs/adr/NNNN-kebab-case-title.md`).
 
 ## 보류 중
 
 - Figma 동기화 방식
-- 빌드 도구 (Terrazzo 등)와 플랫폼 출력
+- CSS 외 플랫폼 출력
 
 ## Git Convention
 

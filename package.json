@@ -4,5 +4,8 @@
   "description": "Personal Token System — design token monorepo",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present"
+  }
 }

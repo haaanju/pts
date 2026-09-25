@@ -1,0 +1,22 @@
+{
+  "name": "@pts/css",
+  "version": "0.0.0",
+  "private": true,
+  "description": "CSS custom properties built from @pts/tokens",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/tokens.css"
+  },
+  "scripts": {
+    "build": "tz build"
+  },
+  "dependencies": {
+    "@pts/tokens": "*"
+  },
+  "devDependencies": {
+    "@terrazzo/cli": "^2.7.1",
+    "@terrazzo/plugin-css": "^2.7.1"
+  }
+}

@@ -1,40 +1,46 @@
 {
-  "space": {
-    "0": {
+  "radius": {
+    "none": {
       "$type": "dimension",
       "$value": "{dimension.0}"
     },
-    "50": {
+    "xs": {
       "$type": "dimension",
       "$value": "{dimension.2}"
     },
-    "100": {
+    "sm": {
       "$type": "dimension",
       "$value": "{dimension.4}"
     },
-    "200": {
+    "md": {
       "$type": "dimension",
       "$value": "{dimension.8}"
     },
-    "300": {
+    "lg": {
       "$type": "dimension",
       "$value": "{dimension.12}"
     },
-    "400": {
+    "xl": {
       "$type": "dimension",
       "$value": "{dimension.16}"
     },
-    "500": {
+    "full": {
       "$type": "dimension",
-      "$value": "{dimension.20}"
+      "$value": "{dimension.max}"
+    }
+  },
+  "stroke": {
+    "thin": {
+      "$type": "dimension",
+      "$value": "{dimension.1}"
     },
-    "600": {
+    "thick": {
       "$type": "dimension",
-      "$value": "{dimension.24}"
+      "$value": "{dimension.2}"
     },
-    "800": {
+    "thicker": {
       "$type": "dimension",
-      "$value": "{dimension.32}"
+      "$value": "{dimension.4}"
     }
   }
 }

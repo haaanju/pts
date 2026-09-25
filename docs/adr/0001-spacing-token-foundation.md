@@ -19,10 +19,10 @@ These choices become the conventions every later category follows:
 ## Implementation notes
 
 - `packages/tokens/src/primitive.tokens.json`: `dimension/0, 2, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64`, plus `dimension/max` (9999px)
-- `packages/tokens/src/semantic.tokens.json`: `space/0 … space/800` (0–32px), each aliasing `{dimension.*}`. Spacing is scoped to component-level gaps; larger gaps (40px+) will live in a separate layout tier, so the numeric names stay small
+- `packages/tokens/src/semantic.tokens.json` (later moved to `semantic/spacing.tokens.json`, see ADR 0002): `space/0 … space/800` (0–32px), each aliasing `{dimension.*}`. Spacing is scoped to component-level gaps; larger gaps (40px+) will live in a separate layout tier, so the numeric names stay small
 - Every token declares `$type` explicitly; no group-level inheritance.
 - Aliases use the full path from the top-level group, regardless of file.
-- Deferred: Figma sync mechanism, build tool, platform outputs.
+- Deferred: Figma sync mechanism, build tool, platform outputs. (Build tool and CSS output: see ADR 0003.)
 
 ## Documented in
 
