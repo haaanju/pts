@@ -80,7 +80,7 @@ const CATEGORIES: { title: string; path: string; description: string; preview: R
 export const CategoryCards = () => (
   <Block className="pts-cards">
     {CATEGORIES.map((c) => (
-      <a key={c.path} className="pts-card-link" href={`?path=/docs/${c.path}--docs`} target="_top">
+      <a key={c.path} className="pts-card-link" href={`./?path=/docs/${c.path}--docs`} target="_top">
         <div className="pts-card-preview">{c.preview}</div>
         <strong>{c.title}</strong>
         <span>{c.description}</span>

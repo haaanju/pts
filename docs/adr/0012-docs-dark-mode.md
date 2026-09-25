@@ -15,7 +15,9 @@ The docs were fixed to light, with dark values only visible in side-by-side cell
 
 ## Implementation notes
 
-- Toggle: a `TOOLEXTRA` addon in `.storybook/manager.tsx` using `@storybook/icons` (sun/moon). The choice is saved in localStorage only when the user clicks, so a `?globals=theme:dark` URL is respected on a fresh visit.
+- Toggle: a `TOOLEXTRA` addon in `.storybook/manager.tsx` using `@storybook/icons` (sun/moon). Clicking saves the choice in localStorage and sets the `theme` global.
+- Mode resolution (`resolveMode` in `.storybook/theme.ts`), applied independently by manager and preview: explicit global (toggle or `?globals=theme:…`) → saved choice → light. The global is declared in `globalTypes` without a default, so an unset value falls back to the saved choice. An earlier version restored the saved choice by sending a global update from the manager on mount; that update could arrive before the preview was ready, so full-page loads came back light.
+- Links inside docs pages use `./?path=…` with `target="_top"`: a bare `?path=…` resolves against `iframe.html` and loads the preview without the Storybook UI.
 - The canvas toolbar is shown again for the toggle; the built-in backgrounds, measure, outline, and viewport tools are disabled.
 - Code blocks: Storybook's source block uses a static theme, so its surface and syntax colors are overridden with color tokens (all contrast-checked foregrounds).
 - Dark manager `colorSecondary` is neutral.800: Storybook renders selected sidebar items with white text on it.
