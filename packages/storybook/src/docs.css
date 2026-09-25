@@ -1,4 +1,31 @@
-/* Token documentation styles. Built from PTS tokens wherever possible. */
+/*
+ * Token documentation styles.
+ * Visual language (color, type, spacing, radius, stroke, shadow, motion) comes from PTS tokens.
+ * Values that only describe the docs layout or sample geometry are --docs-* variables below:
+ * they are not product tokens, so they don't belong in @pts/tokens.
+ */
+
+.sbdocs,
+.pts {
+  --docs-content-width: 1080px;
+  --docs-measure: 720px; /* max line length for lead text */
+  --docs-card-preview-height: 96px;
+  --docs-ramp-height: 96px;
+  --docs-checker-size: 12px;
+  --docs-specimen-label-width: 220px;
+  --docs-bar-track-width: 240px;
+  --docs-bar-height: 8px;
+  --docs-skeleton-height: 12px;
+  --docs-sample-width: 72px;
+  --docs-sample-height: 48px;
+  --docs-chip-width: 64px;
+  --docs-chip-height: 32px;
+  --docs-overlay-height: 160px;
+  --docs-track-height: 28px;
+  --docs-dot-size: 20px;
+  --docs-stack-height: var(--docs-stack-height);
+  --docs-layer-width: 240px;
+}
 
 /* ---------- docs page ---------- */
 
@@ -7,15 +34,15 @@
   padding: var(--layout-200) var(--layout-100);
 }
 .sbdocs.sbdocs-content {
-  max-width: 1080px;
+  max-width: var(--docs-content-width);
   font-family: var(--font-family-sans);
   color: var(--color-foreground-default);
 }
 .sbdocs-content h2:not(.sb-unstyled *) {
   font: var(--text-heading-md);
+  letter-spacing: var(--text-heading-md-letter-spacing);
   border-bottom: none;
   margin: var(--layout-200) 0 var(--space-400);
-  letter-spacing: -0.01em;
 }
 .sbdocs-content h3:not(.sb-unstyled *) {
   font: var(--text-heading-sm);
@@ -28,8 +55,8 @@
 }
 .sbdocs-content :not(pre) > code:not(.sb-unstyled *) {
   font-family: var(--font-family-mono);
-  font-size: 0.875em;
-  padding: 1px var(--space-100);
+  font-size: var(--font-size-300);
+  padding: var(--space-50) var(--space-100);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--color-background-subtle);
@@ -73,7 +100,7 @@
   font-family: var(--font-family-mono);
   font-size: var(--font-size-200);
   color: var(--color-foreground-muted);
-  padding: 2px var(--space-100);
+  padding: var(--space-50) var(--space-100);
   margin-left: calc(-1 * var(--space-100));
   border-radius: var(--radius-sm);
   transition: background var(--motion-duration-fast) var(--motion-easing-standard);
@@ -94,7 +121,7 @@
   font-family: var(--font-family-mono);
   font-size: var(--font-size-200);
   font-weight: var(--font-weight-medium);
-  padding: 2px var(--space-200);
+  padding: var(--space-50) var(--space-200);
   border-radius: var(--radius-full);
   white-space: nowrap;
 }
@@ -133,13 +160,13 @@
   display: inline-block;
   font: var(--text-label-sm);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--letter-spacing-wide);
   color: var(--color-foreground-muted);
   margin-bottom: var(--space-300);
 }
 .pts .pts-title {
   font: var(--text-display-md);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--text-display-md-letter-spacing);
   margin: 0 0 var(--space-400);
   color: var(--color-foreground-default);
 }
@@ -147,7 +174,7 @@
 .pts .pts-lead p {
   font: var(--text-body-lg);
   color: var(--color-foreground-muted);
-  max-width: 680px;
+  max-width: var(--docs-measure);
   margin: 0;
 }
 
@@ -156,7 +183,7 @@
 }
 .pts .pts-section-title {
   font: var(--text-heading-md);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--text-heading-md-letter-spacing);
   margin: 0 0 var(--space-200);
   color: var(--color-foreground-default);
 }
@@ -165,7 +192,7 @@
   font: var(--text-body-md);
   color: var(--color-foreground-muted);
   margin: 0;
-  max-width: 720px;
+  max-width: var(--docs-measure);
 }
 
 /* ---------- intro ---------- */
@@ -186,7 +213,7 @@
 }
 .pts-stats strong {
   font: var(--text-heading-lg);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--text-heading-lg-letter-spacing);
 }
 .pts-stats span {
   font: var(--text-label-md);
@@ -216,7 +243,7 @@
 .pts-card-link:hover {
   box-shadow: var(--shadow-md);
   border-color: var(--color-border-strong);
-  transform: translateY(-2px);
+  transform: translateY(calc(-1 * var(--space-50)));
 }
 .pts-card-link:focus-visible {
   outline: var(--focus-ring-width) solid var(--color-border-focus);
@@ -233,12 +260,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 96px;
+  height: var(--docs-card-preview-height);
   margin-bottom: var(--space-300);
   border-radius: var(--radius-md);
   background: var(--color-background-subtle);
   overflow: hidden;
 }
+/* Card preview illustrations: raw geometry is intentional (drawings, not UI). */
 .pts-card-ramp {
   display: flex;
   width: 70%;
@@ -264,7 +292,7 @@
 }
 .pts-card-type {
   font: var(--text-display-md);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--text-display-md-letter-spacing);
 }
 .pts-card-bars {
   display: flex;
@@ -334,7 +362,7 @@
 .pts-table th {
   font: var(--text-label-sm);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--letter-spacing-wide);
   color: var(--color-foreground-muted);
   text-align: left;
   padding: var(--space-200) var(--space-300);
@@ -361,7 +389,7 @@
 }
 .pts-token-cell > * + *,
 .pts-value-cell > * + * {
-  margin-top: 2px;
+  margin-top: var(--space-50);
 }
 .pts-token-cell .pts-var {
   display: inline-block;
@@ -373,10 +401,10 @@
 
 .pts-chip {
   display: block;
-  width: 64px;
-  height: 32px;
+  width: var(--docs-chip-width);
+  height: var(--docs-chip-height);
   border-radius: var(--radius-md);
-  box-shadow: inset 0 0 0 1px var(--palette-black-alpha-10);
+  box-shadow: inset 0 0 0 var(--stroke-thin) var(--palette-black-alpha-10);
 }
 
 .pts-pair {
@@ -388,7 +416,7 @@
   padding: var(--space-100) var(--space-300);
   border-radius: var(--radius-md);
   font: var(--text-label-md);
-  box-shadow: inset 0 0 0 1px var(--palette-black-alpha-10);
+  box-shadow: inset 0 0 0 var(--stroke-thin) var(--palette-black-alpha-10);
 }
 
 /* ---------- palette ---------- */
@@ -398,17 +426,24 @@
 }
 .pts-ramp {
   display: flex;
-  height: 96px;
+  height: var(--docs-ramp-height);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px var(--palette-black-alpha-10);
+  box-shadow: inset 0 0 0 var(--stroke-thin) var(--palette-black-alpha-10);
+  /* checkerboard behind translucent steps */
+  --checker: var(--color-background-default-pressed);
+  --half: calc(var(--docs-checker-size) / 2);
   background-image:
-    linear-gradient(45deg, #eee 25%, transparent 25%),
-    linear-gradient(-45deg, #eee 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #eee 75%),
-    linear-gradient(-45deg, transparent 75%, #eee 75%);
-  background-size: 12px 12px;
-  background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+    linear-gradient(45deg, var(--checker) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--checker) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--checker) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--checker) 75%);
+  background-size: var(--docs-checker-size) var(--docs-checker-size);
+  background-position:
+    0 0,
+    0 var(--half),
+    var(--half) calc(-1 * var(--half)),
+    calc(-1 * var(--half)) 0;
 }
 .pts-ramp-step {
   flex: 1;
@@ -428,7 +463,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-50);
   padding: 0 var(--space-200);
   min-width: 0;
 }
@@ -447,7 +482,7 @@
 }
 .pts-specimen {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: var(--docs-specimen-label-width) 1fr;
   gap: var(--space-500);
   align-items: baseline;
   padding: var(--space-500) 0;
@@ -456,7 +491,7 @@
 .pts-specimen-meta {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-50);
 }
 .pts-specimen-meta .pts-var {
   align-self: flex-start;
@@ -468,19 +503,19 @@
 /* ---------- scales ---------- */
 
 .pts-bar-track {
-  width: 240px;
+  width: var(--docs-bar-track-width);
 }
 .pts-bar {
-  height: 8px;
-  min-width: 2px;
+  height: var(--docs-bar-height);
+  min-width: var(--space-50);
   max-width: 100%;
   background: var(--color-background-primary);
   border-radius: var(--radius-full);
 }
 
 .pts-box {
-  width: 72px;
-  height: 48px;
+  width: var(--docs-sample-width);
+  height: var(--docs-sample-height);
   background: var(--color-background-default-pressed);
 }
 .pts-box-outline {
@@ -522,7 +557,7 @@
 .pts-shadow-card {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-50);
   padding: var(--space-400);
   border-radius: var(--radius-lg);
   background: var(--color-background-raised);
@@ -532,16 +567,16 @@
 }
 
 .pts-skeleton {
-  height: 12px;
+  height: var(--docs-skeleton-height);
   margin-bottom: var(--space-300);
   border-radius: var(--radius-full);
   background: var(--color-background-default-pressed);
 }
 .pts-modal {
   position: absolute;
-  top: 24px;
-  right: 24px;
-  bottom: 24px;
+  top: var(--space-600);
+  right: var(--space-600);
+  bottom: var(--space-600);
   width: 50%;
   display: flex;
   flex-direction: column;
@@ -555,23 +590,23 @@
 
 .pts-track {
   position: relative;
-  height: 28px;
+  height: var(--docs-track-height);
   background: var(--color-background-subtle);
   border-radius: var(--radius-full);
   cursor: pointer;
 }
 .pts-dot {
   position: absolute;
-  left: 4px;
-  top: 4px;
-  width: 20px;
-  height: 20px;
+  left: var(--space-100);
+  top: var(--space-100);
+  width: var(--docs-dot-size);
+  height: var(--docs-dot-size);
   border-radius: var(--radius-full);
   background: var(--color-background-primary);
   transition-property: left;
 }
 .pts-track:hover .pts-dot {
-  left: calc(100% - 24px);
+  left: calc(100% - var(--docs-dot-size) - var(--space-100));
 }
 
 /* ---------- layers ---------- */
@@ -579,7 +614,7 @@
 .pts-stack {
   position: relative;
   isolation: isolate; /* keep demo z-indexes from escaping above Storybook UI */
-  height: 340px;
+  height: var(--docs-stack-height);
   margin: var(--space-400) 0;
 }
 .pts-layer {
@@ -587,7 +622,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 240px;
+  width: var(--docs-layer-width);
   padding: var(--space-200) var(--space-300);
   background: var(--color-background-raised);
   border: var(--stroke-thin) solid var(--color-border-default);

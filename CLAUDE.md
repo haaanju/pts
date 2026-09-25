@@ -28,7 +28,7 @@ pts/
     │       ├── pts.resolver.json         # combines token files + theme modifier (build entry point)
     │       ├── primitive/
     │       │   ├── dimension.tokens.json   # dimension
-    │       │   ├── typography.tokens.json  # typeface, weight, ratio
+    │       │   ├── typography.tokens.json  # typeface, weight, ratio, tracking
     │       │   ├── palette.tokens.json     # palette (incl. black-alpha)
     │       │   └── motion.tokens.json      # duration, easing
     │       └── semantic/
@@ -86,6 +86,7 @@ pts/
 - `typeface/<font-name>`: font stack array, including fallbacks.
 - `weight/N`: numeric font weight (400, 500, 600, 700).
 - `ratio/N`: N = value × 100 (`ratio/150` = 1.5).
+- `tracking/N`: letter spacing in px, N = px × 100; negative values use `neg-` (`tracking/neg-50` = -0.5px).
 - `palette/<hue>/N`: higher is darker. Hues (red, orange, green, blue, purple) have 10 steps (50–900); `neutral` has 12 (50–1000). Plus `palette/white`, `palette/black`.
 - `palette/black-alpha/N`: black at N% opacity (5–90), for shadows and scrims only. There are no standalone opacity tokens.
 - `duration/N`: N ms. `easing/standard, decelerate, accelerate`: cubic Bézier.
@@ -101,7 +102,7 @@ pts/
 - `font-weight`: regular, medium, semibold, bold.
 - `font-size/N`: ordinal steps, 400 = 16px (body default). 100 = 10 … 1000 = 48.
 - `line-height`: unitless multipliers. tight = 1.2, normal = 1.5, loose = 1.75.
-- `letter-spacing`: normal = 0.
+- `letter-spacing`: tighter = -1px, tight = -0.5px, normal = 0, wide = 1px. px because DTCG dimensions only allow px/rem (no em). Display styles use tighter, heading-lg/md tight, the rest normal; wide is for uppercase labels.
 - `text/<role>-<size>`: `$type: typography` composites. Roles display, heading, body, label, caption, code × sizes lg, md, sm. All five properties (fontFamily, fontSize, fontWeight, letterSpacing, lineHeight) are required.
 - `size/icon/sm, md, lg` = 16, 20, 24. `size/control/sm, md, lg` = 32, 40, 48 (shared control height for buttons, inputs, selects).
 - `breakpoint/sm, md, lg, xl` = 640, 768, 1024, 1280 (min-width). Emitted as CSS variables for reference only; custom properties can't be used inside media queries.
@@ -137,6 +138,8 @@ pts/
 - Groups that differ by theme are shown with light and dark side by side. `ThemeCell` sets `data-theme` so CSS variables inside it resolve to that theme.
 - Contrast badges use the same pairing rules as `npm run check`.
 - Sample text in the docs is English only.
+- Docs styling dogfoods the tokens: color, type, spacing, radius, stroke, shadow, and motion come from `@pts/css` variables. Values that only describe the docs layout or sample geometry are `--docs-*` variables at the top of `docs.css`; never add product tokens just for the docs. Card preview illustrations may use raw geometry.
+- The Storybook UI theme (`.storybook/theme.ts`) uses hex copies of token values, since the manager can't read CSS variables. Update it if those tokens change.
 
 ## Decisions
 

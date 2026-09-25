@@ -330,7 +330,7 @@ export const TextStyles = () => (
 export const FontPreview = ({ kind }: { kind: "family" | "weight" | "size" }) => {
   const prefix = `font-${kind}`;
   const style = (t: TokenInfo): CSSProperties =>
-    kind === "family" ? { fontFamily: t.css } : kind === "weight" ? { fontWeight: t.css } : { fontSize: t.css, lineHeight: 1.1 };
+    kind === "family" ? { fontFamily: t.css } : kind === "weight" ? { fontWeight: t.css } : { fontSize: t.css, lineHeight: "var(--line-height-tight)" };
   return <TokenTable prefix={prefix} preview={(t) => <span style={style(t)}>{kind === "size" ? "Aa" : "Aa Bb Cc 0123"}</span>} />;
 };
 
@@ -371,7 +371,7 @@ export const ControlSizes = () => (
 export const FocusRing = () => (
   <Block className="pts-row">
     {THEMES.map((th) => (
-      <ThemeCell key={th} theme={th} style={{ padding: 32, display: "flex", alignItems: "center", gap: 16 }}>
+      <ThemeCell key={th} theme={th} style={{ padding: "var(--space-800)", display: "flex", alignItems: "center", gap: "var(--space-400)" }}>
         <button
           type="button"
           className="pts-focus-demo"
@@ -397,7 +397,7 @@ export const FocusRing = () => (
 export const Shadows = () => (
   <Block className="pts-row">
     {THEMES.map((th) => (
-      <ThemeCell key={th} theme={th} style={{ padding: 32 }}>
+      <ThemeCell key={th} theme={th} style={{ padding: "var(--space-800)" }}>
         <div className="pts-shadow-grid">
           {group("shadow", th).map((t) => (
             <div key={t.id} className="pts-shadow-card" style={{ boxShadow: t.css }}>
@@ -415,8 +415,8 @@ export const Shadows = () => (
 export const Overlay = () => (
   <Block className="pts-row">
     {THEMES.map((th) => (
-      <ThemeCell key={th} theme={th} style={{ position: "relative", height: 160, overflow: "hidden", padding: 0 }}>
-        <div style={{ padding: 20 }}>
+      <ThemeCell key={th} theme={th} style={{ position: "relative", height: "var(--docs-overlay-height)", overflow: "hidden", padding: 0 }}>
+        <div style={{ padding: "var(--space-500)" }}>
           <div className="pts-skeleton" style={{ width: "60%" }} />
           <div className="pts-skeleton" style={{ width: "80%" }} />
           <div className="pts-skeleton" style={{ width: "40%" }} />

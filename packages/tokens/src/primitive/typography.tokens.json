@@ -56,5 +56,35 @@
       "$type": "number",
       "$value": 1.75
     }
+  },
+  "tracking": {
+    "0": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0,
+        "unit": "px"
+      }
+    },
+    "100": {
+      "$type": "dimension",
+      "$value": {
+        "value": 1,
+        "unit": "px"
+      }
+    },
+    "neg-100": {
+      "$type": "dimension",
+      "$value": {
+        "value": -1,
+        "unit": "px"
+      }
+    },
+    "neg-50": {
+      "$type": "dimension",
+      "$value": {
+        "value": -0.5,
+        "unit": "px"
+      }
+    }
   }
 }
