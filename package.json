@@ -8,6 +8,8 @@
   "scripts": {
     "prepare": "git config core.hooksPath .githooks",
     "build": "npm run build --workspaces --if-present",
-    "check": "npm run check --workspaces --if-present"
+    "check": "npm run check --workspaces --if-present",
+    "storybook": "npm run storybook -w @pts/storybook",
+    "build-storybook": "npm run build-storybook -w @pts/storybook"
   }
 }

@@ -1,0 +1,19 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { MotionDemo, TokenTable } from "./components";
+
+<Meta title="Motion" />
+
+# Motion
+
+Hover a track to play the transition.
+
+<MotionDemo />
+
+- `enter` (decelerate): elements appearing
+- `exit` (accelerate): elements leaving
+- `standard`: moving or resizing on screen
+
+Respect `prefers-reduced-motion` in components that animate.
+
+<TokenTable prefix="motion.duration" />
+<TokenTable prefix="motion.easing" />

@@ -1,0 +1,27 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { TextStyles, TokenTable } from "./components";
+
+<Meta title="Typography" />
+
+# Typography
+
+## Text styles
+
+Composite `text.*` tokens. Apply with the `font` shorthand; letter spacing is a separate variable (`--text-*-letter-spacing`).
+
+<TextStyles />
+
+## Font family
+<TokenTable prefix="font-family" preview={(t) => <span style={{ fontFamily: t.css }}>Aa 가나다 0123</span>} />
+
+## Font size
+<TokenTable prefix="font-size" preview={(t) => <span style={{ fontSize: t.css }}>Aa</span>} />
+
+## Font weight
+<TokenTable prefix="font-weight" preview={(t) => <span style={{ fontWeight: t.css }}>Aa 가나다</span>} />
+
+## Line height
+<TokenTable prefix="line-height" />
+
+## Letter spacing
+<TokenTable prefix="letter-spacing" />

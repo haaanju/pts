@@ -1,0 +1,19 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { Bars, TokenTable, ZIndexStack } from "./components";
+
+<Meta title="Layout" />
+
+# Layout
+
+## Breakpoint
+
+Mobile first (`min-width`). CSS custom properties can't be used inside media queries,
+so write the value directly or use a preprocessor; the variables exist for reference and JS.
+
+<Bars prefix="breakpoint" max={1280} />
+
+## Z-index
+
+<ZIndexStack />
+
+<TokenTable prefix="z-index" />

@@ -35,9 +35,15 @@ pts/
     │           ├── z-index.tokens.json
     │           ├── color.{light,dark}.tokens.json  # color (theme별)
     │           └── shadow.{light,dark}.tokens.json # shadow (theme별)
-    └── css/                     # @pts/css — CSS custom properties
-        ├── terrazzo.config.ts
-        └── dist/tokens.css      # 빌드 결과 (gitignore)
+    ├── css/                     # @pts/css — CSS custom properties
+    │   ├── terrazzo.config.ts
+    │   └── dist/tokens.css      # 빌드 결과 (gitignore)
+    └── storybook/               # @pts/storybook — 토큰 문서 (Storybook 10, React + Vite)
+        ├── .storybook/          # main, preview (tokens.css 로드, 문서 화면은 light 고정)
+        └── src/
+            ├── tokens.ts        # resolver를 읽어 테마별로 alias를 풀어주는 데이터 계층
+            ├── components.tsx   # 문서 블록 (TokenTable, Palette, ForegroundTable …)
+            └── *.mdx            # 카테고리별 문서 페이지
 ```
 
 - 새 패키지는 `packages/<name>`에 `@pts/<name>`으로 추가한다. 출력 패키지는 `@pts/tokens`에 의존한다.
@@ -48,6 +54,8 @@ pts/
 
 - `npm run check`: 토큰 검증 (`packages/tokens/scripts/check.ts`). `$type` 누락, 끊긴 alias, 모드 간 토큰 이름 불일치, 컬러 대비를 테마별로 확인한다. pre-commit hook(`.githooks/pre-commit`)이 커밋마다 자동 실행하며, 실패하면 커밋이 막힌다
 - hook은 `npm install` 시 `prepare` 스크립트가 `git config core.hooksPath .githooks`로 연결한다. 한 번만 건너뛰려면 `git commit --no-verify`
+- `npm run storybook`: 토큰 문서 개발 서버 (http://localhost:6006). `@pts/css`를 먼저 빌드한다
+- `npm run build-storybook`: 정적 문서 빌드 (`packages/storybook/dist`)
 - `npm run build`: 모든 workspace 빌드 (`@pts/css` → `packages/css/dist/tokens.css`)
   - light 값은 `:root`, dark 값은 `@media (prefers-color-scheme: dark)`와 `[data-theme="dark"]`에 출력. `data-theme="light"`로 라이트를 강제할 수 있다
   - dark 블록에 넣을 그룹은 `terrazzo.config.ts`가 resolver의 dark context 파일에서 자동으로 읽는다
@@ -100,6 +108,13 @@ pts/
     - 반투명 색은 대비를 계산할 수 없으므로 검사 대상 쌍에 들어오면 `npm run check`가 오류를 낸다
     - 검사할 쌍은 `npm run check`가 이 이름 규칙에서 자동으로 만든다. 새 color 토큰도 이 규칙을 따라야 검사 대상이 된다
   - semantic `text/<role>-<size>`: `$type: typography` 합성 토큰. 역할 display, heading, body, label, caption, code × 크기 lg, md, sm. 5개 속성(fontFamily, fontSize, fontWeight, letterSpacing, lineHeight)을 모두 채운다
+
+## 토큰 문서 (Storybook)
+
+- 문서는 토큰 JSON에서 자동으로 만들어진다. 새 토큰은 기존 그룹에 속하면 코드 수정 없이 표에 나타난다
+- 새 **그룹**을 추가하면 해당 `.mdx` 페이지에 블록을 추가한다 (예: `<TokenTable prefix="새그룹" />`)
+- theme별 값이 다른 그룹은 light / dark 열을 나란히 보여준다. `ThemeCell`은 `data-theme`을 붙여 칸 안의 CSS 변수를 해당 테마 값으로 바꾼다
+- 대비 표시는 `npm run check`와 같은 짝 규칙(`on-X` ↔ `background/X`)을 쓴다
 
 토큰 구조를 바꾸는 결정은 ADR로 남긴다 (`docs/adr/NNNN-kebab-case-title.md`).
 

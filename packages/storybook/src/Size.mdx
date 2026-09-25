@@ -1,0 +1,15 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { TokenTable } from "./components";
+
+<Meta title="Size" />
+
+# Size
+
+## Icon
+<TokenTable prefix="size.icon" preview={(t) => <div style={{ width: t.css, height: t.css, background: "var(--color-background-primary)", borderRadius: "var(--radius-xs)" }} />} />
+
+## Control height
+
+Shared by buttons, inputs and selects so they align in a row. `lg` (48px) meets touch target guidance.
+
+<TokenTable prefix="size.control" preview={(t) => <div style={{ height: t.css, width: 120, background: "var(--color-background-subtle)", border: "var(--stroke-thin) solid var(--color-border-strong)", borderRadius: "var(--radius-md)" }} />} />

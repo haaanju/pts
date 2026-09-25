@@ -1,0 +1,29 @@
+{
+  "name": "@pts/storybook",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Token documentation (Storybook)",
+  "scripts": {
+    "prestorybook": "npm run build -w @pts/css",
+    "storybook": "storybook dev -p 6006",
+    "prebuild-storybook": "npm run build -w @pts/css",
+    "build-storybook": "storybook build -o dist"
+  },
+  "dependencies": {
+    "@pts/css": "*",
+    "@pts/tokens": "*"
+  },
+  "devDependencies": {
+    "@storybook/addon-docs": "^10.6.0",
+    "@storybook/react-vite": "^10.6.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "storybook": "^10.6.0",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.1"
+  }
+}
