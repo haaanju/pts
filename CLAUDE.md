@@ -113,7 +113,8 @@ pts/
 
 `color/<property>/<role>[-<emphasis>][-<state>]` — property is background, foreground, or border.
 
-- **Page backgrounds**: `background/default`, `default-hover`, `default-pressed`, `subtle`. Transparent elements (list items, ghost buttons) use `default-hover` / `default-pressed` for their states.
+- **Page backgrounds**: `background/default`, `default-hover`, `default-pressed`, `subtle`, `raised`. Transparent elements (list items, ghost buttons) use `default-hover` / `default-pressed` for their states.
+- **Raised surfaces**: cards, popovers, and modals use `background/raised` with a `shadow/*`. Light: same as the page (the shadow separates it). Dark: one step lighter than the page, since shadows barely show on dark.
 - **Neutral**: `background/inverse`, `background/overlay` (modal scrim), `foreground/default, muted, on-inverse`, `border/default, strong, focus`.
 - **Primary**: monochrome (neutral). `background/primary[-hover|-pressed]`, `foreground/on-primary`.
 - **Status roles**: danger (red), warning (orange), success (green), info (blue), recommend (purple). Each has `background/<role>[-hover|-pressed]`, `background/<role>-subtle`, `foreground/<role>`, `foreground/on-<role>`, `foreground/on-<role>-subtle`, `border/<role>`.

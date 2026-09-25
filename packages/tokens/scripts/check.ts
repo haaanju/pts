@@ -17,7 +17,7 @@ const SRC = join(dirname(fileURLToPath(import.meta.url)), "../src");
 const TEXT = 4.5; // WCAG 1.4.3
 const UI = 3; // WCAG 1.4.11
 // backgrounds that plain (non on-) foregrounds and borders may sit on
-const PAGE = ["default", "default-hover", "default-pressed", "subtle"];
+const PAGE = ["default", "default-hover", "default-pressed", "subtle", "raised"];
 const STATES = ["", "-hover", "-pressed"];
 // inactive components are exempt from WCAG contrast (1.4.3, 1.4.11)
 const EXEMPT = (name: string) => name === "disabled" || name === "default";

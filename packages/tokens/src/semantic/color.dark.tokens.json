@@ -17,6 +17,10 @@
         "$type": "color",
         "$value": "{palette.neutral.900}"
       },
+      "raised": {
+        "$type": "color",
+        "$value": "{palette.neutral.900}"
+      },
       "inverse": {
         "$type": "color",
         "$value": "{palette.white}"
