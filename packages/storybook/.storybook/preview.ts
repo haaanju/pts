@@ -29,7 +29,7 @@ const preview: Preview = {
     docs: { theme: light },
     options: {
       storySort: {
-        order: ["Overview", "Color", ["Palette", "Semantic"], "Foundations", ["Typography", "Spacing", "Border", "Elevation", "Size", "Motion", "Layout"]],
+        order: ["Overview", "Semantic", ["Color", "Typography", "Spacing", "Border", "Elevation", "Size", "Motion", "Layout"], "Primitive", ["Palette", "Scales"]],
       },
     },
   },

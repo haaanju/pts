@@ -51,20 +51,8 @@ export const Section = ({ title, lead, children }: { title: string; lead?: React
 
 const CATEGORIES: { title: string; path: string; description: string; preview: ReactNode }[] = [
   {
-    title: "Palette",
-    path: "color-palette",
-    description: "Primitive hues and neutrals",
-    preview: (
-      <div className="pts-card-ramp">
-        {["red", "orange", "green", "blue", "purple"].map((h) => (
-          <span key={h} style={{ background: token(`palette.${h}.500`).css }} />
-        ))}
-      </div>
-    ),
-  },
-  {
-    title: "Semantic color",
-    path: "color-semantic",
+    title: "Color",
+    path: "semantic-color",
     description: "Roles, states, light and dark",
     preview: (
       <div className="pts-card-themes">
@@ -76,10 +64,10 @@ const CATEGORIES: { title: string; path: string; description: string; preview: R
       </div>
     ),
   },
-  { title: "Typography", path: "foundations-typography", description: "Text styles and scales", preview: <span className="pts-card-type">Aa</span> },
+  { title: "Typography", path: "semantic-typography", description: "Text styles and scales", preview: <span className="pts-card-type">Aa</span> },
   {
     title: "Spacing",
-    path: "foundations-spacing",
+    path: "semantic-spacing",
     description: "Space and layout gaps",
     preview: (
       <div className="pts-card-bars">
@@ -89,11 +77,23 @@ const CATEGORIES: { title: string; path: string; description: string; preview: R
       </div>
     ),
   },
-  { title: "Border", path: "foundations-border", description: "Radius, stroke, focus ring", preview: <span className="pts-card-radius" /> },
-  { title: "Elevation", path: "foundations-elevation", description: "Shadows and overlay", preview: <span className="pts-card-shadow" /> },
-  { title: "Size", path: "foundations-size", description: "Icons and control heights", preview: <span className="pts-card-size" /> },
-  { title: "Motion", path: "foundations-motion", description: "Durations and easing", preview: <span className="pts-card-motion" /> },
-  { title: "Layout", path: "foundations-layout", description: "Breakpoints and z-index", preview: <span className="pts-card-layers" /> },
+  { title: "Border", path: "semantic-border", description: "Radius, stroke, focus ring", preview: <span className="pts-card-radius" /> },
+  { title: "Elevation", path: "semantic-elevation", description: "Shadows and raised surfaces", preview: <span className="pts-card-shadow" /> },
+  { title: "Size", path: "semantic-size", description: "Icons and control heights", preview: <span className="pts-card-size" /> },
+  { title: "Motion", path: "semantic-motion", description: "Durations and easing", preview: <span className="pts-card-motion" /> },
+  { title: "Layout", path: "semantic-layout", description: "Breakpoints and z-index", preview: <span className="pts-card-layers" /> },
+  {
+    title: "Primitives",
+    path: "primitive-palette",
+    description: "Palette and scales, for defining tokens",
+    preview: (
+      <div className="pts-card-ramp">
+        {["red", "orange", "green", "blue", "purple"].map((h) => (
+          <span key={h} style={{ background: token(`palette.${h}.500`).css }} />
+        ))}
+      </div>
+    ),
+  },
 ];
 
 export const CategoryCards = () => (

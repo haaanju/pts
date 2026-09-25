@@ -22,7 +22,7 @@ With ~260 tokens across two themes, the JSON files are no longer a practical way
 - Pages: Introduction, Color (Palette, Semantic), Typography, Spacing, Border, Elevation, Size, Motion, Layout.
 - IBM Plex fonts are loaded from Google Fonts in `preview-head.html` for the docs only; the token packages still do not ship fonts.
 - Design: the docs are styled with PTS tokens themselves (`docs.css`), with a custom manager/docs theme (`.storybook/theme.ts`) in the same monochrome palette and IBM Plex. Blocks are wrapped in `sb-unstyled` to opt out of Storybook's markdown styles.
-- Sidebar groups: Overview, Color, Foundations. The onboarding checklist, what's-new notifications, and canvas toolbar are disabled, since this Storybook has docs only.
+- Sidebar groups (revised): Overview, Semantic, Primitive. The earlier Overview / Color / Foundations split mixed two criteria (Color by tier, everything else by category). Grouping by tier mirrors `primitive/` and `semantic/` in the source; semantic comes first because product code uses it, and primitives (Palette, Scales) are marked as reference. Every token now appears on some page. The onboarding checklist, what's-new notifications, and canvas toolbar are disabled, since this Storybook has docs only.
 - Storybook MDX has no GFM tables by default; tables are React components instead.
 - All docs content and sample text are English.
 - Layout (revised, inspired by an editorial reference that also uses Aspekta): the page header is a two-column grid (meta left, title right) and hairlines replace cards. Two-column sections were tried and reverted: wide tables such as the semantic foreground table left the heading column mostly empty, so sections stack heading over full-width content (1080px).

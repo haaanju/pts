@@ -1,0 +1,37 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { PageHeader, Section, Bars, TokenTable } from "../components";
+
+<Meta title="Primitive/Scales" />
+
+<PageHeader eyebrow="Primitive" title="Scales" groups={["dimension", "typeface", "weight", "ratio", "tracking", "duration", "easing"]}>
+  The raw values behind the semantic tokens. This is reference for defining semantic tokens: product code uses the
+  semantic tokens (space, font-size, motion, …), never these directly.
+</PageHeader>
+
+<Section title="Dimension" lead="dimension.N is N px, plus dimension.max (9999px) for fully rounded corners. Used by space, layout, radius, stroke, size, font-size, breakpoint and shadow.">
+  <Bars prefix="dimension" />
+</Section>
+
+<Section title="Typeface" lead="Font stacks, including fallbacks. Aliased by font-family.">
+  <TokenTable prefix="typeface" preview={(t) => <span style={{ fontFamily: t.css }}>Aa Bb Cc 0123</span>} />
+</Section>
+
+<Section title="Weight" lead="Numeric font weights. Aliased by font-weight.">
+  <TokenTable prefix="weight" preview={(t) => <span style={{ fontWeight: t.css }}>Aa Bb Cc 0123</span>} />
+</Section>
+
+<Section title="Ratio" lead="ratio.N is N ÷ 100. Aliased by line-height.">
+  <TokenTable prefix="ratio" />
+</Section>
+
+<Section title="Tracking" lead="Letter spacing in px; neg- marks negative values. Aliased by letter-spacing.">
+  <TokenTable prefix="tracking" />
+</Section>
+
+<Section title="Duration" lead="duration.N is N ms. Aliased by motion.duration.">
+  <TokenTable prefix="duration" />
+</Section>
+
+<Section title="Easing" lead="Cubic Bézier curves. Aliased by motion.easing.">
+  <TokenTable prefix="easing" />
+</Section>

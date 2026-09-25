@@ -50,7 +50,9 @@ pts/
         └── src/
             ├── tokens.ts        # data layer: reads the resolver, resolves aliases per theme
             ├── components.tsx   # doc blocks (TokenTable, Palette, ForegroundTable, …)
-            └── *.mdx            # one page per category
+            ├── Introduction.mdx # Overview
+            ├── semantic/*.mdx   # Semantic group: Color, Typography, Spacing, Border, Elevation, Size, Motion, Layout
+            └── primitive/*.mdx  # Primitive group: Palette, Scales
 ```
 
 - Add new packages as `packages/<name>` named `@pts/<name>`. Output packages depend on `@pts/tokens`.
@@ -142,6 +144,7 @@ pts/
 ## Token Docs (Storybook)
 
 - Docs are generated from the token JSON. New tokens in an existing group appear without code changes.
+- The sidebar mirrors the tiers, ordered by how often each is used: Overview → Semantic → Primitive (a Component group would go above Semantic). Semantic pages show only semantic tokens; primitive pages are reference for defining tokens and say so, since product code uses semantic tokens only.
 - Page layout is editorial: `<PageHeader eyebrow title groups>` (meta left, title right), then `<Section title lead>…</Section>` blocks (hairline, heading and lead, full-width content). No cards or boxes; `ThemeCell` is the only filled surface because its background is the information.
 - When adding a new **group**, wrap its block in a section on the matching `.mdx` page (e.g. `<Section title="New group"><TokenTable prefix="new-group" /></Section>`) and add the prefix to the page's `groups`.
 - Groups that differ by theme are shown with light and dark side by side. `ThemeCell` sets `data-theme` so CSS variables inside it resolve to that theme.

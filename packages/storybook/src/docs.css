@@ -504,6 +504,9 @@ body {
 .pts-preview-cell {
   width: 1%; /* shrink to content; the pair wraps if the table runs out of room */
 }
+.pts-preview-cell > span {
+  white-space: nowrap; /* single-line specimens like "Aa Bb Cc 0123" */
+}
 .pts-token-cell .pts-var,
 .pts-value-cell .pts-alias {
   white-space: nowrap;
