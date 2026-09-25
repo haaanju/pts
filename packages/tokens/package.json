@@ -2,8 +2,12 @@
   "name": "@pts/tokens",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "description": "DTCG design token source (single source of truth)",
   "files": [
     "src"
-  ]
+  ],
+  "scripts": {
+    "check": "node scripts/check.ts"
+  }
 }

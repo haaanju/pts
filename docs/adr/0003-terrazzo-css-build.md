@@ -14,7 +14,7 @@ The token source needed a first platform output to complete one pass of the pipe
 
 ## Implementation notes
 
-- `packages/css/terrazzo.config.ts` lists token files explicitly; new token files must be added there.
+- `packages/css/terrazzo.config.ts` lists token files explicitly; new token files must be added there. (Superseded by the resolver entry point, see ADR 0005.)
 - Output: `packages/css/dist/tokens.css` (gitignored), variables on `:root`, named from the token path (`space.100` → `--space-100`).
 - Primitives are emitted too, because semantic variables reference them. Excluding them would break the `var()` chain.
 - `npm run build` at the root builds every workspace that has a `build` script.
