@@ -22,25 +22,26 @@ const countLabel = (prefixes: string[]) => {
 };
 
 /**
- * Editorial page header: meta on the left, title and lead on the right, between hairlines.
- * `groups` adds a token count to the meta column.
+ * Page header, stacked and left-aligned: meta line (eyebrow · token count), title, lead.
+ * `groups` adds the token count.
  */
 export const PageHeader = ({ eyebrow, title, groups, children }: { eyebrow: string; title: string; groups?: string[]; children?: ReactNode }) => (
-  <Block className="pts-header pts-grid">
+  <Block className="pts-header">
     <div className="pts-header-meta">
       <span className="pts-eyebrow">{eyebrow}</span>
       {groups && <span className="pts-alias">{countLabel(groups)}</span>}
     </div>
-    <div>
-      <h1 className="pts-title">{title}</h1>
-      {children && <div className="pts-lead">{children}</div>}
-    </div>
+    <h1 className="pts-title">{title}</h1>
+    {children && <div className="pts-lead">{children}</div>}
   </Block>
 );
 
-/** Section: hairline, then title and lead, then full-width content. */
-export const Section = ({ title, lead, children }: { title: string; lead?: ReactNode; children?: ReactNode }) => (
-  <Block className="pts-section">
+/**
+ * Section: title and lead, then full-width content. Sections are separated by space;
+ * `divider` adds a hairline above (used on the Introduction).
+ */
+export const Section = ({ title, lead, divider, children }: { title: string; lead?: ReactNode; divider?: boolean; children?: ReactNode }) => (
+  <Block className={divider ? "pts-section pts-section-divider" : "pts-section"}>
     <div className="pts-section-head">
       <h2 className="pts-section-title">{title}</h2>
       {lead && <div className="pts-section-lead">{lead}</div>}

@@ -8,7 +8,6 @@
 .sbdocs,
 .pts {
   --docs-content-width: 1080px;
-  --docs-side-column: 280px; /* meta column of the page header */
   --docs-measure: 720px; /* max line length for lead text */
   --docs-card-preview-height: 96px;
   --docs-ramp-height: 96px;
@@ -193,35 +192,16 @@ body {
   margin: 0 0 var(--layout-100);
 }
 
-/* ---------- editorial grid ---------- */
-
-/* Page header grid: meta on the left, title on the right. */
-.pts-grid {
-  display: grid;
-  grid-template-columns: var(--docs-side-column) minmax(0, 1fr);
-  column-gap: var(--layout-100);
-  border-top: var(--stroke-thin) solid var(--color-border-default);
-}
-@media (max-width: 1024px) {
-  /* breakpoint.lg — custom properties can't be used in media queries */
-  .pts-grid {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: var(--space-400);
-  }
-}
-
 /* ---------- header ---------- */
 
 .pts-header {
-  /* the first section's top hairline closes the header */
   padding: var(--space-600) 0 var(--layout-300);
 }
 .pts-header-meta {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: var(--space-100);
-  padding-bottom: var(--space-200);
+  align-items: baseline;
+  gap: var(--space-300);
+  margin-bottom: var(--space-400);
 }
 .pts-eyebrow {
   font: var(--text-label-sm);
@@ -246,7 +226,10 @@ body {
 /* ---------- section ---------- */
 
 .pts-section {
-  padding: var(--layout-100) 0 var(--layout-300);
+  padding: 0 0 var(--layout-300);
+}
+.pts-section-divider {
+  padding-top: var(--layout-100);
   border-top: var(--stroke-thin) solid var(--color-border-default);
 }
 .pts-section-head {

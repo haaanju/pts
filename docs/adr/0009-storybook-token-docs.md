@@ -27,7 +27,7 @@ With ~260 tokens across two themes, the JSON files are no longer a practical way
 - All docs content and sample text are English.
 - Display name: **Plain** (sidebar brand and Introduction title), chosen to match the restrained, monochrome style; package names stay `@pts/*`.
 - Spacing: sections, tables, cards, and specimens use generous token spacing (e.g. `layout.100`–`layout.300` between and within sections) so pages read with more negative space.
-- Layout (revised, inspired by an editorial reference that also uses Aspekta): the page header is a two-column grid (meta left, title right) and hairlines replace cards. Two-column sections were tried and reverted: wide tables such as the semantic foreground table left the heading column mostly empty, so sections stack heading over full-width content (1080px).
+- Layout (revised, inspired by an editorial reference that also uses Aspekta): hairlines replace cards. The page header was first a two-column grid (meta left, title right), then stacked and left-aligned; section dividers were kept only on the Introduction, since on reference pages like Palette they added lines without adding structure. Two-column sections were tried and reverted: wide tables such as the semantic foreground table left the heading column mostly empty, so sections stack heading over full-width content (1080px).
 - Verified by building the static Storybook and screenshotting every page with headless Chrome.
 
 ## Documented in

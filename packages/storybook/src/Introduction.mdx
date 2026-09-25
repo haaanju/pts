@@ -8,26 +8,26 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
   here is exactly what ships.
 </PageHeader>
 
-<Section title="At a glance">
+<Section divider title="At a glance">
   <Stats />
 </Section>
 
-<Section title="Semantic" lead="What products use. Every value here has a role, switches with the theme where needed, and is contrast-checked.">
+<Section divider title="Semantic" lead="What products use. Every value here has a role, switches with the theme where needed, and is contrast-checked.">
   <CategoryCards tier="semantic" />
 </Section>
 
-<Section title="Primitive" lead="The raw values behind the semantic tokens. Reference for defining tokens, not for product code.">
+<Section divider title="Primitive" lead="The raw values behind the semantic tokens. Reference for defining tokens, not for product code.">
   <CategoryCards tier="primitive" />
 </Section>
 
-<Section title="How it's built" lead="Two tiers. Primitives hold raw values; semantic tokens express intent.">
+<Section divider title="How it's built" lead="Two tiers. Primitives hold raw values; semantic tokens express intent.">
   <TierTable />
 
   Color and shadow change between **light** and **dark**. Light values live on `:root` and `[data-theme="light"]`;
   dark values apply under `prefers-color-scheme: dark` or `[data-theme="dark"]`.
 </Section>
 
-<Section title="Usage" lead="Import the fonts, then the tokens.">
+<Section divider title="Usage" lead="Import the fonts, then the tokens.">
 
 ```css
 @import "@pts/fonts"; /* Aspekta @font-face */
@@ -52,7 +52,7 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
 
 </Section>
 
-<Section title="Accessibility">
+<Section divider title="Accessibility">
   Every foreground meets **4.5:1** on its paired background, and borders and solid fills meet **3:1** against the page,
   in both themes. `npm run check` enforces this on every commit.
 </Section>
