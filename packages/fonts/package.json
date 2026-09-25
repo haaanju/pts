@@ -1,0 +1,14 @@
+{
+  "name": "@pts/fonts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Self-hosted font files and @font-face declarations",
+  "files": [
+    "fonts.css",
+    "files"
+  ],
+  "exports": {
+    ".": "./fonts.css"
+  },
+  "license": "OFL-1.1"
+}

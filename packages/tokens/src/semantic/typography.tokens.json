@@ -2,7 +2,7 @@
   "font-family": {
     "sans": {
       "$type": "fontFamily",
-      "$value": "{typeface.ibm-plex-sans}"
+      "$value": "{typeface.aspekta}"
     },
     "serif": {
       "$type": "fontFamily",

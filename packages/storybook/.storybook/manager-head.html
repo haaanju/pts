@@ -1,6 +1,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- Serif and mono families are IBM Plex (loaded here for the docs only). Sans is Aspekta from @pts/fonts. -->
 <link
   rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;700&display=swap"
+  href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:wght@400;700&display=swap"
 />
+<!-- Aspekta for the Storybook UI, served from @pts/fonts via staticDirs (see main.ts). -->
+<style>
+  @font-face {
+    font-family: "Aspekta";
+    src: url("./fonts/AspektaVF.woff2") format("woff2");
+    font-weight: 100 900;
+    font-display: swap;
+  }
+</style>

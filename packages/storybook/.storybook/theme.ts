@@ -32,8 +32,8 @@ export const resolveMode = (globalValue: unknown): Mode => asMode(globalValue) ?
 const shared = {
   brandTitle: "PTS — Personal Token System",
   brandTarget: "_self",
-  fontBase: '"IBM Plex Sans", system-ui, sans-serif',
-  fontCode: '"IBM Plex Mono", ui-monospace, monospace',
+  fontBase: '"Aspekta", system-ui, sans-serif', // font-family.sans
+  fontCode: '"IBM Plex Mono", ui-monospace, monospace', // font-family.mono
   appBorderRadius: 8, // radius.md
   inputBorderRadius: 8,
 };

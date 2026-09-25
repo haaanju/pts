@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@pts/css": "*",
+    "@pts/fonts": "*",
     "@pts/tokens": "*"
   },
   "devDependencies": {

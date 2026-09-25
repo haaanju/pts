@@ -1,0 +1,15 @@
+/*
+ * Aspekta by Ivo Dolenc — SIL Open Font License 1.1 (see files/LICENSE.txt).
+ * Shipped unmodified: "Aspekta" is a Reserved Font Name, so subsetting or converting the file
+ * would require renaming the family.
+ *
+ * Variable font, weight axis 100–900. Latin only; missing glyphs (e.g. ^ ~ ± •) fall back to the
+ * next family in the stack, and there are no tabular figures (use font-family/mono for numeric columns).
+ */
+@font-face {
+  font-family: "Aspekta";
+  src: url("./files/AspektaVF.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}

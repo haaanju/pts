@@ -1,10 +1,9 @@
 {
   "typeface": {
-    "ibm-plex-sans": {
+    "aspekta": {
       "$type": "fontFamily",
       "$value": [
-        "IBM Plex Sans",
-        "IBM Plex Sans KR",
+        "Aspekta",
         "system-ui",
         "sans-serif"
       ]

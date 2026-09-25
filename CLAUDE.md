@@ -41,6 +41,7 @@ pts/
     │           ├── z-index.tokens.json
     │           ├── color.{light,dark}.tokens.json   # color, per theme
     │           └── shadow.{light,dark}.tokens.json  # shadow, per theme
+    ├── fonts/                   # @pts/fonts — self-hosted fonts (Aspekta variable woff2 + OFL license, fonts.css)
     ├── css/                     # @pts/css — CSS custom properties
     │   ├── terrazzo.config.ts
     │   └── dist/tokens.css      # build output (gitignored)
@@ -83,7 +84,7 @@ pts/
 ### Primitives
 
 - `dimension/N`: N is the px value. Exception: `dimension/max` = 9999px.
-- `typeface/<font-name>`: font stack array, including fallbacks.
+- `typeface/<font-name>`: font stack array, including fallbacks. `aspekta` (sans), `ibm-plex-serif`, `ibm-plex-mono`.
 - `weight/N`: numeric font weight (400, 500, 600, 700).
 - `ratio/N`: N = value × 100 (`ratio/150` = 1.5).
 - `tracking/N`: letter spacing in px, N = px × 100; negative values use `neg-` (`tracking/neg-50` = -0.5px).
@@ -98,7 +99,7 @@ pts/
 - `radius`: t-shirt sizes. none = 0, xs = 2, sm = 4, md = 8, lg = 12, xl = 16, `full` = max.
 - `stroke`: weight names. thin = 1, thick = 2, thicker = 4. No zero-width token; "no border" means removing the border.
 - `focus-ring/width`, `focus-ring/offset`: 2px each. Color is `color/border/focus`.
-- `font-family`: sans, serif, mono (IBM Plex).
+- `font-family`: sans (Aspekta), serif and mono (IBM Plex). Use `mono` wherever digits must line up: Aspekta has no tabular figures.
 - `font-weight`: regular, medium, semibold, bold.
 - `font-size/N`: ordinal steps, 400 = 16px (body default). 100 = 10 … 1000 = 48.
 - `line-height`: unitless multipliers. tight = 1.2, normal = 1.5, loose = 1.75.
@@ -130,6 +131,13 @@ pts/
 - Exempt: `border/default` (decorative divider), `*/disabled` (inactive), `background/overlay` (translucent scrim).
 - Translucent colors can't be contrast-checked; `npm run check` errors if one enters a contrast pair.
 - `npm run check` derives the pairs from these naming rules, so new color tokens must follow them to be checked.
+
+## Fonts
+
+- Aspekta (sans) is self-hosted in `@pts/fonts`: one variable woff2 (weight 100–900) declared in `fonts.css`. Consumers `@import "@pts/fonts"` before `@pts/css`.
+- License: SIL OFL 1.1, kept in `packages/fonts/files/LICENSE.txt`. "Aspekta" is a Reserved Font Name, so ship the file unmodified (no subsetting or conversion) or rename the family.
+- Latin only; the product UI is English-only. Missing glyphs (e.g. `^ ~ ± •`) fall back to `system-ui`.
+- IBM Plex Serif and Mono are not bundled; the Storybook docs load them from Google Fonts.
 
 ## Token Docs (Storybook)
 

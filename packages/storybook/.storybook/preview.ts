@@ -1,6 +1,7 @@
 import type { Preview } from "@storybook/react-vite";
 import { GLOBALS_UPDATED, SET_GLOBALS } from "storybook/internal/core-events";
 import { addons } from "storybook/preview-api";
+import "@pts/fonts";
 import "@pts/css";
 import "../src/docs.css";
 import { light, resolveMode, THEME_GLOBAL } from "./theme";
