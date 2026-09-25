@@ -20,10 +20,13 @@ pts/
     │   ├── scripts/check.ts     # 토큰 검증 (npm run check)
     │   └── src/
     │       ├── pts.resolver.json         # 토큰 파일 조합 + theme 모드 정의 (빌드 진입점)
-    │       ├── primitive.tokens.json
+    │       ├── primitive/
+    │       │   ├── dimension.tokens.json   # dimension
+    │       │   ├── typography.tokens.json  # typeface, weight, ratio
+    │       │   └── palette.tokens.json     # palette
     │       └── semantic/
     │           ├── spacing.tokens.json   # space, layout
-    │           ├── border.tokens.json    # radius, stroke
+    │           ├── border.tokens.json    # radius, stroke, focus-ring
     │           ├── typography.tokens.json # font-*, line-height, letter-spacing, text
     │           ├── color.light.tokens.json # color (theme: light)
     │           └── color.dark.tokens.json  # color (theme: dark)
@@ -47,7 +50,7 @@ pts/
 
 - **계층**: primitive → semantic. semantic은 primitive만 참조한다. 예외: 합성 토큰(`text/*`)은 같은 semantic의 속성 토큰을 참조한다. component 계층은 필요할 때 추가한다.
 - **그룹 이름**: primitive와 semantic의 최상위 그룹 이름은 겹치지 않게 한다 (Terrazzo가 모든 파일을 한 네임스페이스로 합침). 예: primitive `weight` ↔ semantic `font-weight`
-- **파일**: primitive는 한 파일에 둔다. semantic은 카테고리별로 `semantic/<category>.tokens.json`에 나눈다.
+- **파일**: primitive와 semantic 모두 카테고리별로 `primitive/<category>.tokens.json`, `semantic/<category>.tokens.json`에 나눈다. 새 파일은 `pts.resolver.json`에 등록한다.
 - **포맷**: 모든 토큰에 `$type`을 명시한다. 그룹 단위 `$type` 상속은 쓰지 않는다.
 - **dimension**: 단위는 `px`, 객체 형태로 쓴다. `{ "value": 16, "unit": "px" }`
 - **color**: DTCG 2025.10 객체 형태. `{ "colorSpace": "srgb", "components": [r, g, b], "hex": "#rrggbb" }` (components는 0–1)

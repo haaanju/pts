@@ -6,7 +6,13 @@
     "base": {
       "sources": [
         {
-          "$ref": "primitive.tokens.json"
+          "$ref": "primitive/dimension.tokens.json"
+        },
+        {
+          "$ref": "primitive/typography.tokens.json"
+        },
+        {
+          "$ref": "primitive/palette.tokens.json"
         },
         {
           "$ref": "semantic/spacing.tokens.json"

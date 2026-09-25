@@ -1,0 +1,60 @@
+{
+  "typeface": {
+    "ibm-plex-sans": {
+      "$type": "fontFamily",
+      "$value": [
+        "IBM Plex Sans",
+        "IBM Plex Sans KR",
+        "system-ui",
+        "sans-serif"
+      ]
+    },
+    "ibm-plex-serif": {
+      "$type": "fontFamily",
+      "$value": [
+        "IBM Plex Serif",
+        "serif"
+      ]
+    },
+    "ibm-plex-mono": {
+      "$type": "fontFamily",
+      "$value": [
+        "IBM Plex Mono",
+        "ui-monospace",
+        "monospace"
+      ]
+    }
+  },
+  "weight": {
+    "400": {
+      "$type": "fontWeight",
+      "$value": 400
+    },
+    "500": {
+      "$type": "fontWeight",
+      "$value": 500
+    },
+    "600": {
+      "$type": "fontWeight",
+      "$value": 600
+    },
+    "700": {
+      "$type": "fontWeight",
+      "$value": 700
+    }
+  },
+  "ratio": {
+    "120": {
+      "$type": "number",
+      "$value": 1.2
+    },
+    "150": {
+      "$type": "number",
+      "$value": 1.5
+    },
+    "175": {
+      "$type": "number",
+      "$value": 1.75
+    }
+  }
+}
