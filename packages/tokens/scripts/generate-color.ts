@@ -69,9 +69,9 @@ const ALPHAS = [5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90];
 
 type ColorValue = { colorSpace: "srgb"; components: number[]; alpha?: number; hex: string };
 const colorToken = (hex: string, alpha?: number) => {
-  const value: ColorValue = { colorSpace: "srgb", components: hexToRgb(hex).map((v) => Math.round(v * 10000) / 10000) };
-  if (alpha !== undefined) value.alpha = alpha;
-  value.hex = hex;
+  const components = hexToRgb(hex).map((v) => Math.round(v * 10000) / 10000);
+  // key order (colorSpace, components, alpha, hex) is kept stable so regenerating produces no diff
+  const value: ColorValue = alpha === undefined ? { colorSpace: "srgb", components, hex } : { colorSpace: "srgb", components, alpha, hex };
   return { $type: "color", $value: value };
 };
 

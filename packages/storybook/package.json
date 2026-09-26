@@ -8,7 +8,8 @@
     "prestorybook": "npm run build -w @pts/css",
     "storybook": "storybook dev -p 6006",
     "prebuild-storybook": "npm run build -w @pts/css",
-    "build-storybook": "storybook build -o dist"
+    "build-storybook": "storybook build -o dist",
+    "typecheck": "tsc -p ."
   },
   "dependencies": {
     "@pts/css": "*",

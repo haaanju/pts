@@ -64,8 +64,12 @@ pts/
 
 ## Commands
 
-- `npm run check`: validates tokens (`packages/tokens/scripts/check.ts`) per theme — missing `$type`, broken aliases, token-name mismatches between themes, and color contrast. The pre-commit hook runs it on every commit and blocks the commit on failure.
-  - The hook is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
+- Node ≥ 22.18 (`engines`, `.nvmrc`): the `.ts` scripts run directly with Node's type stripping.
+- `npm run check`: validates tokens (`packages/tokens/scripts/check.ts`) per theme — missing `$type`, broken aliases, token-name mismatches between themes, color contrast, and visible background states.
+- `npm run lint`: Terrazzo's own DTCG validation (`tz check`).
+- `npm run typecheck`: TypeScript for the token scripts and Storybook.
+- The pre-commit hook runs check, lint, and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
+- CI (`.github/workflows/ci.yml`) runs the same checks plus both builds on pushes to `main` and on pull requests.
 - `npm run generate:color -w @pts/tokens`: regenerates `palette.tokens.json` and `color.{light,dark}.tokens.json` from the Figma anchors and the selection rules. **Color tokens are generated: change the script, not the JSON**, then run `npm run check`. On an unchanged script it produces no diff.
 - `npm run build`: builds every workspace (`@pts/css` → `packages/css/dist/tokens.css`).
   - Light values go on `:root` and `[data-theme="light"]`; dark values under `@media (prefers-color-scheme: dark)` and `[data-theme="dark"]`. `data-theme` on `<html>` forces a theme; on any element it themes that subtree (e.g. a light region inside a dark page).
