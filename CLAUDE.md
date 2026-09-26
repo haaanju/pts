@@ -27,31 +27,32 @@ pts/
 ├── .github/workflows/ci.yml     # CI: checks + both builds
 ├── docs/progress.md             # session handoff: current state, in flight, next
 ├── docs/adr/                    # architecture decision records
-└── packages/
-    ├── tokens/                  # @pts/tokens — DTCG source, single source of truth
-    │   ├── scripts/check.ts     # token validation (npm run check)
-    │   ├── scripts/generate-color.ts  # generates palette + semantic color (npm run generate:color)
-    │   └── src/
-    │       ├── pts.resolver.json         # combines token files + theme modifier (build entry point)
-    │       ├── primitive/
-    │       │   ├── dimension.tokens.json   # dimension
-    │       │   ├── typography.tokens.json  # typeface, weight, ratio, tracking
-    │       │   ├── palette.tokens.json     # palette (incl. black-alpha)
-    │       │   └── motion.tokens.json      # duration, easing
-    │       └── semantic/
-    │           ├── spacing.tokens.json     # space, layout
-    │           ├── border.tokens.json      # radius, stroke, focus-ring
-    │           ├── typography.tokens.json  # font-*, line-height, letter-spacing, text
-    │           ├── size.tokens.json        # size (icon, control)
-    │           ├── breakpoint.tokens.json
-    │           ├── motion.tokens.json      # motion (duration, easing)
-    │           ├── z-index.tokens.json
-    │           ├── color.{light,dark}.tokens.json   # color, per theme
-    │           └── shadow.{light,dark}.tokens.json  # shadow, per theme
-    ├── fonts/                   # @pts/fonts — self-hosted fonts: files/<font>/ (woff2 + OFL license) and fonts.css
-    ├── css/                     # @pts/css — CSS custom properties
-    │   ├── terrazzo.config.ts
-    │   └── dist/tokens.css      # build output (gitignored)
+├── tokens/                      # @pts/tokens — DTCG source, single source of truth (private)
+│   ├── scripts/check.ts         # token validation (npm run check)
+│   ├── scripts/generate-color.ts  # generates palette + semantic color (npm run generate:color)
+│   └── src/
+│       ├── pts.resolver.json         # combines token files + theme modifier (build entry point)
+│       ├── primitive/
+│       │   ├── dimension.tokens.json   # dimension
+│       │   ├── typography.tokens.json  # typeface, weight, ratio, tracking
+│       │   ├── palette.tokens.json     # palette (incl. black-alpha)
+│       │   └── motion.tokens.json      # duration, easing
+│       └── semantic/
+│           ├── spacing.tokens.json     # space, layout
+│           ├── border.tokens.json      # radius, stroke, focus-ring
+│           ├── typography.tokens.json  # font-*, line-height, letter-spacing, text
+│           ├── size.tokens.json        # size (icon, control)
+│           ├── breakpoint.tokens.json
+│           ├── motion.tokens.json      # motion (duration, easing)
+│           ├── z-index.tokens.json
+│           ├── color.{light,dark}.tokens.json   # color, per theme
+│           └── shadow.{light,dark}.tokens.json  # shadow, per theme
+├── packages/                    # shippable outputs, one package per platform
+│   └── web/                     # @pts/web — CSS custom properties and self-hosted fonts
+│       ├── terrazzo.config.ts   # one config; each web format is a plugin
+│       ├── fonts/               # fonts.css + <font>/ (woff2 + OFL license)
+│       └── dist/tokens.css      # build output (gitignored)
+└── apps/                        # things that run rather than get imported
     └── storybook/               # @pts/storybook — token documentation
         ├── .storybook/          # main, theme (light/dark UI themes), manager (theme toggle), preview (tokens.css, theme sync)
         └── src/
@@ -62,24 +63,25 @@ pts/
             └── primitive/*.mdx  # Primitive group: Palette, Scales
 ```
 
-- Add new packages as `packages/<name>` named `@pts/<name>`. Output packages depend on `@pts/tokens`.
+- Three roles, see ADR 0016: `tokens/` is the source; `packages/<platform>` (named `@pts/<platform>`) holds shippable outputs and depends on `@pts/tokens`; `apps/<name>` holds tools and docs that run.
+- A new format for an existing platform is a plugin in that platform's Terrazzo config plus a subpath export (e.g. JS/TS and SCSS go in `@pts/web`), not a new package.
 - Register every new token file in `pts.resolver.json`: theme-independent files go in `sets.base`, theme-specific files in the matching `modifiers.theme` context.
 - Files for different themes (`color.light` / `color.dark`) must define **the same set of token names**.
 
 ## Commands
 
 - Node ≥ 22.18 (`engines`, `.nvmrc`): the `.ts` scripts run directly with Node's type stripping.
-- `npm run check`: validates tokens (`packages/tokens/scripts/check.ts`) per theme — missing `$type`, broken aliases, token-name mismatches between themes, color contrast, and visible background states.
+- `npm run check`: validates tokens (`tokens/scripts/check.ts`) per theme — missing `$type`, broken aliases, token-name mismatches between themes, color contrast, and visible background states.
 - `npm run lint`: Terrazzo's own DTCG validation (`tz check`).
 - `npm run typecheck`: TypeScript for the token scripts and Storybook.
 - The pre-commit hook runs check, lint, and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
 - CI (`.github/workflows/ci.yml`) runs the same checks plus both builds on pushes to `main` and on pull requests.
 - `npm run generate:color -w @pts/tokens`: regenerates `palette.tokens.json` and `color.{light,dark}.tokens.json` from the Figma anchors and the selection rules. **Color tokens are generated: change the script, not the JSON**, then run `npm run check`. On an unchanged script it produces no diff.
-- `npm run build`: builds every workspace (`@pts/css` → `packages/css/dist/tokens.css`).
+- `npm run build`: builds every workspace (`@pts/web` → `packages/web/dist/tokens.css`).
   - Light values go on `:root` and `[data-theme="light"]`; dark values under `@media (prefers-color-scheme: dark)` and `[data-theme="dark"]`. `data-theme` on `<html>` forces a theme; on any element it themes that subtree (e.g. a light region inside a dark page).
   - `terrazzo.config.ts` reads the dark context files in the resolver to decide which groups go in the dark blocks.
-- `npm run storybook`: token docs dev server (http://localhost:6006). Builds `@pts/css` first.
-- `npm run build-storybook`: static docs build (`packages/storybook/dist`).
+- `npm run storybook`: token docs dev server (http://localhost:6006). Builds `@pts/web` first.
+- `npm run build-storybook`: static docs build (`apps/storybook/dist`).
 
 ## Token Rules
 
@@ -149,10 +151,10 @@ pts/
 
 ## Fonts
 
-- All three families are self-hosted in `@pts/fonts`; consumers `@import "@pts/fonts"` before `@pts/css`. Nothing is loaded from a font service.
+- All three families are self-hosted in `@pts/web`; consumers `@import "@pts/web/fonts.css"` before `@pts/web/tokens.css`. Nothing is loaded from a font service.
   - Aspekta (sans): one variable woff2, weight 100–900.
   - IBM Plex Mono and IBM Plex Serif: static woff2 at 400, 500, 600, 700 (the font-weight tokens).
-- Licenses: SIL OFL 1.1, one `LICENSE.txt` per folder in `packages/fonts/files/`. "Aspekta" and "Plex" are Reserved Font Names, so ship files unmodified (no subsetting or conversion) or rename the family.
+- Licenses: SIL OFL 1.1, one `LICENSE.txt` per folder in `packages/web/fonts/`. "Aspekta" and "Plex" are Reserved Font Names, so ship files unmodified (no subsetting or conversion) or rename the family.
 - Aspekta is Latin only; the product UI is English-only. Missing glyphs (e.g. `^ ~ ± •`) fall back to `system-ui`. It has no tabular figures: use `font-family/mono` where digits must line up.
 
 ## Token Docs (Storybook)
@@ -164,7 +166,7 @@ pts/
 - Groups that differ by theme are shown with light and dark side by side. `ThemeCell` sets `data-theme` so CSS variables inside it resolve to that theme.
 - Contrast badges use the same pairing rules as `npm run check`.
 - Sample text in the docs is English only.
-- Docs styling dogfoods the tokens: color, type, spacing, radius, stroke, shadow, and motion come from `@pts/css` variables. Values that only describe the docs layout or sample geometry are `--docs-*` variables at the top of `docs.css`; never add product tokens just for the docs. Card preview illustrations may use raw geometry.
+- Docs styling dogfoods the tokens: color, type, spacing, radius, stroke, shadow, and motion come from `@pts/web` variables. Values that only describe the docs layout or sample geometry are `--docs-*` variables at the top of `docs.css`; never add product tokens just for the docs. Card preview illustrations may use raw geometry.
 - Light/dark: the sun/moon button at the top right toggles a `theme` global. The preview sets `data-theme` on `<html>` from it, so the whole docs page switches through token variables; the manager switches between the two UI themes. The choice is saved in localStorage; `?globals=theme:dark` in the URL also works.
 - The Storybook UI themes (`.storybook/theme.ts`) use hex copies of token values, since the manager can't read CSS variables. Update them if those tokens change.
 - Manager files (`.storybook/manager.tsx`, `theme.ts`, `main.ts`) are only compiled at startup: restart `npm run storybook` after editing them. The manager uses the classic JSX runtime, so `manager.tsx` imports React.
@@ -187,7 +189,7 @@ Work continues across chats and machines through the repository only. Chat histo
 ## Deferred
 
 - Figma sync mechanism
-- Platform outputs other than CSS
+- Native platform outputs (iOS, Android)
 
 ## Git Convention
 

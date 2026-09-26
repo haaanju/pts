@@ -5,16 +5,15 @@
   "type": "module",
   "description": "Token documentation (Storybook)",
   "scripts": {
-    "prestorybook": "npm run build -w @pts/css",
+    "prestorybook": "npm run build -w @pts/web",
     "storybook": "storybook dev -p 6006",
-    "prebuild-storybook": "npm run build -w @pts/css",
+    "prebuild-storybook": "npm run build -w @pts/web",
     "build-storybook": "storybook build -o dist",
     "typecheck": "tsc -p ."
   },
   "dependencies": {
-    "@pts/css": "*",
-    "@pts/fonts": "*",
-    "@pts/tokens": "*"
+    "@pts/tokens": "*",
+    "@pts/web": "*"
   },
   "devDependencies": {
     "@storybook/addon-docs": "^10.6.0",

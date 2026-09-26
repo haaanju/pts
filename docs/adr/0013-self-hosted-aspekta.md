@@ -1,6 +1,6 @@
 # 0013. Self-Hosted Aspekta as the Sans Family
 
-- Status: accepted (amended by 0015)
+- Status: accepted (amended by 0015, 0016)
 - Date: 2026-09-26
 
 ## What we learned

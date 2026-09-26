@@ -9,11 +9,12 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- None.
+- `feature/restructure-packages`: source moved to `tokens/`, docs to `apps/storybook`, `@pts/css` + `@pts/fonts` merged into `@pts/web` (ADR 0016). Built CSS is byte-identical. After merge: release `v0.2.0` (breaking: package names and import paths).
 
 ## Next
 
-- Deferred (see CLAUDE.md): Figma sync, platform outputs other than CSS.
+- JS/TS and SCSS outputs in `@pts/web`: add Terrazzo plugins to `packages/web/terrazzo.config.ts` and subpath exports.
+- Deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android).
 
 ## Open questions
 

@@ -208,7 +208,7 @@ const Exempt = () => <span className="pts-badge pts-exempt">Exempt</span>;
 
 /**
  * A cell rendered in a given theme. data-theme="dark" makes every token variable inside
- * resolve to its dark value (see the [data-theme] block in @pts/css).
+ * resolve to its dark value (see the [data-theme] block in @pts/web tokens.css).
  */
 const ThemeCell = ({ theme, children, style }: { theme: Theme; children: ReactNode; style?: CSSProperties }) => (
   <div data-theme={theme} className="pts-theme-cell" style={{ background: pageBg(theme), color: pageFg(theme), ...style }}>

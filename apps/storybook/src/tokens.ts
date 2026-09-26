@@ -21,9 +21,9 @@ export interface TokenInfo {
   css: string;
 }
 
-const files = import.meta.glob("../../tokens/src/**/*.json", { eager: true, import: "default" }) as Record<string, Json>;
+const files = import.meta.glob("../../../tokens/src/**/*.json", { eager: true, import: "default" }) as Record<string, Json>;
 const read = (ref: string) => {
-  const file = files[`../../tokens/src/${ref}`];
+  const file = files[`../../../tokens/src/${ref}`];
   if (!file) throw new Error(`Token file not found: ${ref}`);
   return file;
 };
@@ -127,7 +127,7 @@ export const isThemed = (prefix: string) =>
 /** Last path segment, e.g. "color.background.default" → "default" */
 export const leaf = (id: string) => id.slice(id.lastIndexOf(".") + 1);
 
-// ---- contrast (WCAG 2.x) — same rules as packages/tokens/scripts/check.ts ----
+// ---- contrast (WCAG 2.x) — same rules as tokens/scripts/check.ts ----
 
 const luminance = (hex: string) => {
   const [r, g, b] = [1, 3, 5]

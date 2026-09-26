@@ -8,17 +8,18 @@ Plain is a personal study project: a small design token monorepo built end to en
 
 | Package | What it holds |
 |---------|---------------|
-| [`@pts/tokens`](packages/tokens) | The token source (DTCG JSON), the resolver that combines files and themes, and the validation and generation scripts |
-| [`@pts/css`](packages/css) | CSS custom properties built from the tokens (`dist/tokens.css`) |
-| [`@pts/fonts`](packages/fonts) | Self-hosted fonts and their `@font-face` declarations: Aspekta (sans), IBM Plex Mono, IBM Plex Serif |
-| [`@pts/storybook`](packages/storybook) | Token documentation, generated from the token source |
+| [`@pts/tokens`](tokens) | The token source (DTCG JSON), the resolver that combines files and themes, and the validation and generation scripts |
+| [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`) and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
+| [`@pts/storybook`](apps/storybook) | Token documentation, generated from the token source |
+
+The source lives in `tokens/`, shippable outputs in `packages/` (one package per platform), and the docs in `apps/`. JS/TS and SCSS outputs are planned for `@pts/web`.
 
 ## Tokens
 
 Two tiers:
 
-- **Primitive** (`packages/tokens/src/primitive/`): raw values such as `dimension.16`, `palette.red.600`, `duration.200`.
-- **Semantic** (`packages/tokens/src/semantic/`): values with a role, such as `space.400`, `color.background.danger`, `text.body-md`. Semantic tokens alias primitives. Product code uses semantic tokens only.
+- **Primitive** (`tokens/src/primitive/`): raw values such as `dimension.16`, `palette.red.600`, `duration.200`.
+- **Semantic** (`tokens/src/semantic/`): values with a role, such as `space.400`, `color.background.danger`, `text.body-md`. Semantic tokens alias primitives. Product code uses semantic tokens only.
 
 Categories: color, typography, spacing, border, elevation, size, motion, and layout.
 
@@ -27,8 +28,8 @@ Color and shadow have **light** and **dark** values, combined by a DTCG resolver
 ## Usage
 
 ```css
-@import "@pts/fonts"; /* @font-face for Aspekta and IBM Plex */
-@import "@pts/css"; /* token custom properties */
+@import "@pts/web/fonts.css"; /* @font-face for Aspekta and IBM Plex */
+@import "@pts/web/tokens.css"; /* token custom properties */
 
 .button {
   height: var(--size-control-md);
@@ -71,7 +72,7 @@ Requires Node 22.18 or later (see `.nvmrc`); the TypeScript scripts run directly
 ```sh
 npm install              # also installs the pre-commit hook
 npm run storybook        # token docs at http://localhost:6006
-npm run build            # build @pts/css
+npm run build            # build @pts/web
 ```
 
 | Command | What it does |
@@ -79,7 +80,7 @@ npm run build            # build @pts/css
 | `npm run check` | Validates the tokens: types, aliases, theme parity, contrast, visible states |
 | `npm run lint` | Terrazzo's DTCG validation |
 | `npm run typecheck` | TypeScript for the scripts and Storybook |
-| `npm run build` | Builds `@pts/css` |
+| `npm run build` | Builds `@pts/web` |
 | `npm run build-storybook` | Builds the static docs |
 | `npm run generate:color -w @pts/tokens` | Regenerates the palette and semantic color tokens |
 
@@ -87,7 +88,7 @@ npm run build            # build @pts/css
 
 The pre-commit hook runs `check`, `lint`, and `typecheck`. CI runs the same checks plus both builds on every push to `main` and every pull request.
 
-**Color tokens are generated.** `packages/tokens/scripts/generate-color.ts` holds the palette anchors and the rules that pick each semantic step. To change a color, edit the script and regenerate; don't edit the color JSON by hand.
+**Color tokens are generated.** `tokens/scripts/generate-color.ts` holds the palette anchors and the rules that pick each semantic step. To change a color, edit the script and regenerate; don't edit the color JSON by hand.
 
 ## Decisions and conventions
 
@@ -97,13 +98,17 @@ The pre-commit hook runs `check`, `lint`, and `typecheck`. CI runs the same chec
 
 ## Status
 
+Planned:
+
+- JS/TS and SCSS outputs in `@pts/web`
+
 Deferred for now:
 
 - Syncing the tokens to Figma Variables
-- Platform outputs other than CSS
+- Native platforms (iOS, Android)
 
 ## Licenses
 
-The fonts in `@pts/fonts` are licensed under the SIL Open Font License 1.1; each font folder in [`packages/fonts/files/`](packages/fonts/files) includes its license. They are shipped unmodified.
+The fonts in `@pts/web` are licensed under the SIL Open Font License 1.1; each font folder in [`packages/web/fonts/`](packages/web/fonts) includes its license. They are shipped unmodified.
 
 The rest of the repository has no license yet.

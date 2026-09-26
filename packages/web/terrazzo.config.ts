@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { defineConfig } from "@terrazzo/cli";
 import css from "@terrazzo/plugin-css";
 
-const RESOLVER = "../tokens/src/pts.resolver.json";
+const RESOLVER = "../../tokens/src/pts.resolver.json";
 
 // Groups whose values differ by theme, read from the theme contexts in the resolver
 // (e.g. ["color.**", "shadow.**"]). Only these are repeated in the dark blocks.
@@ -10,7 +10,7 @@ const readJson = (path: string) => JSON.parse(readFileSync(new URL(path, import.
 const themeGroups = [
   ...new Set(
     (readJson(RESOLVER).modifiers.theme.contexts.dark as { $ref: string }[]).flatMap(({ $ref }) =>
-      Object.keys(readJson(`../tokens/src/${$ref}`)).map((group) => `${group}.**`),
+      Object.keys(readJson(`../../tokens/src/${$ref}`)).map((group) => `${group}.**`),
     ),
   ),
 ];

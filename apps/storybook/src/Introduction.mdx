@@ -30,8 +30,8 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
 <Section divider title="Usage" lead="Import the fonts, then the tokens.">
 
 ```css
-@import "@pts/fonts"; /* Aspekta @font-face */
-@import "@pts/css";
+@import "@pts/web/fonts.css"; /* @font-face for Aspekta and IBM Plex */
+@import "@pts/web/tokens.css"; /* token custom properties */
 
 .button {
   height: var(--size-control-md);

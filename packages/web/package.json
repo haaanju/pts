@@ -1,13 +1,15 @@
 {
-  "name": "@pts/css",
+  "name": "@pts/web",
   "version": "0.1.1",
   "private": true,
-  "description": "CSS custom properties built from @pts/tokens",
+  "description": "Web output of @pts/tokens: CSS custom properties and self-hosted fonts",
   "files": [
-    "dist"
+    "dist",
+    "fonts"
   ],
   "exports": {
-    ".": "./dist/tokens.css"
+    "./tokens.css": "./dist/tokens.css",
+    "./fonts.css": "./fonts/fonts.css"
   },
   "scripts": {
     "build": "tz build",

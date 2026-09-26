@@ -3,7 +3,9 @@
   "private": true,
   "description": "Plain — DTCG design tokens built with Terrazzo",
   "workspaces": [
-    "packages/*"
+    "tokens",
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "prepare": "git config core.hooksPath .githooks",
