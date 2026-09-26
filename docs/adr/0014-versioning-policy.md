@@ -7,7 +7,7 @@
 
 The packages sat at `0.0.0` with no tags, so there was no way to tell which state of the tokens a consumer was on, or whether an update was safe to take. Even as a solo project, the goal is to version it the way a published design system would.
 
-For a token system, the public API is the set of token names (the CSS custom property names). Consumers break when a name disappears or starts meaning something else, not when a new token appears.
+For design tokens, the public API is the set of token names (the CSS custom property names). Consumers break when a name disappears or starts meaning something else, not when a new token appears.
 
 Two monorepo strategies were considered: independent versions per package (`@pts/css@0.2.1`) or one fixed version for all packages. The packages are built from the same source and change together, so a single version is simpler and says more.
 

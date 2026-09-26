@@ -1,8 +1,8 @@
-# PTS — Personal Token System
+# Plain
 
 A personal study project: building my own design token pipeline while learning how design token monorepos work.
 
-The system's display name is **Plain** (Storybook title and docs). `pts` / `@pts/*` remain the code and package names.
+**Plain** is the display name (Storybook title and docs). `pts` / `@pts/*` are the code, package, and repository names.
 
 ## Language
 

@@ -1,7 +1,7 @@
 {
   "name": "pts",
   "private": true,
-  "description": "Personal Token System — design token monorepo",
+  "description": "Plain — DTCG design tokens built with Terrazzo",
   "workspaces": [
     "packages/*"
   ],

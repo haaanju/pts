@@ -5,7 +5,7 @@
 
 ## What we learned
 
-Starting the token system from scratch, the first slice needs to be small enough to focus on structure rather than content. Spacing is a plain numeric scale, which makes it a good vehicle for settling format, layering, naming, and repo layout before tackling harder categories like color (modes) or typography (composite values).
+Starting the design tokens from scratch, the first slice needs to be small enough to focus on structure rather than content. Spacing is a plain numeric scale, which makes it a good vehicle for settling format, layering, naming, and repo layout before tackling harder categories like color (modes) or typography (composite values).
 
 ## Why it matters
 
