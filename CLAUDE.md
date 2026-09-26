@@ -21,7 +21,9 @@ A personal study project: building my own design token pipeline while learning h
 
 ```
 pts/
-├── .githooks/pre-commit         # runs npm run check before every commit
+├── README.md                    # human-facing overview (usage, commands, status)
+├── .githooks/pre-commit         # runs check, lint, typecheck before every commit
+├── .github/workflows/ci.yml     # CI: checks + both builds
 ├── docs/adr/                    # architecture decision records
 └── packages/
     ├── tokens/                  # @pts/tokens — DTCG source, single source of truth
