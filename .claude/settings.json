@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && git fetch --quiet 2>/dev/null; echo '## git'; git status -sb | head -20; echo; git log --oneline -8; echo; echo '## docs/progress.md'; cat docs/progress.md 2>/dev/null",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}

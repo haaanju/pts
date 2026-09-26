@@ -22,8 +22,10 @@ A personal study project: building my own design token pipeline while learning h
 ```
 pts/
 ├── README.md                    # human-facing overview (usage, commands, status)
+├── .claude/settings.json        # SessionStart hook: fetches, prints git state and docs/progress.md
 ├── .githooks/pre-commit         # runs check, lint, typecheck before every commit
 ├── .github/workflows/ci.yml     # CI: checks + both builds
+├── docs/progress.md             # session handoff: current state, in flight, next
 ├── docs/adr/                    # architecture decision records
 └── packages/
     ├── tokens/                  # @pts/tokens — DTCG source, single source of truth
@@ -172,6 +174,15 @@ pts/
 Record decisions that change token structure, naming, tooling, or the pipeline as ADRs: `docs/adr/NNNN-kebab-case-title.md`, in English.
 
 - Status lifecycle: `proposed` while under discussion, `accepted` once implemented. When a later ADR changes an accepted one, add `(amended by NNNN)` to its status; use `superseded by NNNN` only when it is replaced entirely.
+
+## Continuity
+
+Work continues across chats and machines through the repository only. Chat history and Claude's local memory stay on one machine, so don't rely on them.
+
+- A session starts with git state and `docs/progress.md` in context (the SessionStart hook in `.claude/settings.json`). If the branch is behind its upstream, pull before editing.
+- `docs/progress.md` is the handoff note: current state, in-flight branches, next steps, open questions. When a unit of work is done, or before stopping mid-task, update it in the same commit. Record what isn't obvious from the code and git log; keep it short and replace stale lines instead of appending history.
+- Push work branches before switching machines. Uncommitted changes don't travel.
+- Decisions go in ADRs, rules in this file, not in `progress.md`.
 
 ## Deferred
 

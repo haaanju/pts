@@ -83,6 +83,8 @@ npm run build            # build @pts/css
 | `npm run build-storybook` | Builds the static docs |
 | `npm run generate:color -w @pts/tokens` | Regenerates the palette and semantic color tokens |
 
+**Working across machines.** Everything needed to continue lives in the repository. On a new machine: clone, `nvm use`, `npm install`. Pull before starting and push before switching. [`docs/progress.md`](docs/progress.md) records where work left off.
+
 The pre-commit hook runs `check`, `lint`, and `typecheck`. CI runs the same checks plus both builds on every push to `main` and every pull request.
 
 **Color tokens are generated.** `packages/tokens/scripts/generate-color.ts` holds the palette anchors and the rules that pick each semantic step. To change a color, edit the script and regenerate; don't edit the color JSON by hand.
