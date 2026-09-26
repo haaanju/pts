@@ -26,6 +26,7 @@ pts/
 └── packages/
     ├── tokens/                  # @pts/tokens — DTCG source, single source of truth
     │   ├── scripts/check.ts     # token validation (npm run check)
+    │   ├── scripts/generate-color.ts  # generates palette + semantic color (npm run generate:color)
     │   └── src/
     │       ├── pts.resolver.json         # combines token files + theme modifier (build entry point)
     │       ├── primitive/
@@ -65,6 +66,7 @@ pts/
 
 - `npm run check`: validates tokens (`packages/tokens/scripts/check.ts`) per theme — missing `$type`, broken aliases, token-name mismatches between themes, and color contrast. The pre-commit hook runs it on every commit and blocks the commit on failure.
   - The hook is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
+- `npm run generate:color -w @pts/tokens`: regenerates `palette.tokens.json` and `color.{light,dark}.tokens.json` from the Figma anchors and the selection rules. **Color tokens are generated: change the script, not the JSON**, then run `npm run check`. On an unchanged script it produces no diff.
 - `npm run build`: builds every workspace (`@pts/css` → `packages/css/dist/tokens.css`).
   - Light values go on `:root` and `[data-theme="light"]`; dark values under `@media (prefers-color-scheme: dark)` and `[data-theme="dark"]`. `data-theme` on `<html>` forces a theme; on any element it themes that subtree (e.g. a light region inside a dark page).
   - `terrazzo.config.ts` reads the dark context files in the resolver to decide which groups go in the dark blocks.

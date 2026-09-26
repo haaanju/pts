@@ -8,6 +8,7 @@
     "src"
   ],
   "scripts": {
-    "check": "node scripts/check.ts"
+    "check": "node scripts/check.ts",
+    "generate:color": "node scripts/generate-color.ts"
   }
 }
