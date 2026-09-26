@@ -18,10 +18,10 @@ Two options were considered: Aspekta for display and headings only with IBM Plex
 
 ## Implementation notes
 
-- `packages/fonts/files/AspektaVF.woff2` (30 KB) and `LICENSE.txt`, from the upstream repo (`@aspekta/fonts@2.100`).
+- `packages/fonts/files/aspekta/AspektaVF.woff2` (30 KB) and `LICENSE.txt` (moved into a per-font folder in ADR 0015), from the upstream repo (`@aspekta/fonts@2.100`).
 - `packages/fonts/fonts.css`: `@font-face { font-family: "Aspekta"; font-weight: 100 900; font-display: swap; }`; the package exports it as `@pts/fonts`.
 - `typeface/aspekta` = `["Aspekta", "system-ui", "sans-serif"]`; `font-family/sans` aliases it. `typeface/ibm-plex-sans` (and its IBM Plex Sans KR fallback) was removed.
-- Storybook: the preview imports `@pts/fonts`; the manager gets the file through `staticDirs` and an `@font-face` in `manager-head.html`. Google Fonts now loads only IBM Plex Serif and Mono.
+- Storybook: the preview imports `@pts/fonts`; the manager gets the file through `staticDirs` and an `@font-face` in `manager-head.html`. Google Fonts then loaded only IBM Plex Serif and Mono; ADR 0015 bundled those too.
 - Verified with `document.fonts` in both the docs iframe and the manager (Aspekta `loaded`), plus screenshots of the Typography page, including a coverage section that shows fallback glyphs and proportional vs mono digits.
 
 ## Documented in

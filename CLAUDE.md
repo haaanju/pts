@@ -44,7 +44,7 @@ pts/
     │           ├── z-index.tokens.json
     │           ├── color.{light,dark}.tokens.json   # color, per theme
     │           └── shadow.{light,dark}.tokens.json  # shadow, per theme
-    ├── fonts/                   # @pts/fonts — self-hosted fonts (Aspekta variable woff2 + OFL license, fonts.css)
+    ├── fonts/                   # @pts/fonts — self-hosted fonts: files/<font>/ (woff2 + OFL license) and fonts.css
     ├── css/                     # @pts/css — CSS custom properties
     │   ├── terrazzo.config.ts
     │   └── dist/tokens.css      # build output (gitignored)
@@ -141,10 +141,11 @@ pts/
 
 ## Fonts
 
-- Aspekta (sans) is self-hosted in `@pts/fonts`: one variable woff2 (weight 100–900) declared in `fonts.css`. Consumers `@import "@pts/fonts"` before `@pts/css`.
-- License: SIL OFL 1.1, kept in `packages/fonts/files/LICENSE.txt`. "Aspekta" is a Reserved Font Name, so ship the file unmodified (no subsetting or conversion) or rename the family.
-- Latin only; the product UI is English-only. Missing glyphs (e.g. `^ ~ ± •`) fall back to `system-ui`.
-- IBM Plex Serif and Mono are not bundled; the Storybook docs load them from Google Fonts.
+- All three families are self-hosted in `@pts/fonts`; consumers `@import "@pts/fonts"` before `@pts/css`. Nothing is loaded from a font service.
+  - Aspekta (sans): one variable woff2, weight 100–900.
+  - IBM Plex Mono and IBM Plex Serif: static woff2 at 400, 500, 600, 700 (the font-weight tokens).
+- Licenses: SIL OFL 1.1, one `LICENSE.txt` per folder in `packages/fonts/files/`. "Aspekta" and "Plex" are Reserved Font Names, so ship files unmodified (no subsetting or conversion) or rename the family.
+- Aspekta is Latin only; the product UI is English-only. Missing glyphs (e.g. `^ ~ ± •`) fall back to `system-ui`. It has no tabular figures: use `font-family/mono` where digits must line up.
 
 ## Token Docs (Storybook)
 
