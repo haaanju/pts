@@ -170,4 +170,7 @@ Record decisions that change token structure, naming, tooling, or the pipeline a
 
 - **main**: stable
 - **feature/xxx**: work branches
-- Releases: tags (`v1.0.0`)
+- Releases: annotated tags on `main` (`v0.1.0`), see ADR 0014
+  - Semantic Versioning, one fixed version for every `@pts/*` package. Bump all workspaces together: `npm version X.Y.Z --workspaces --no-git-tag-version`.
+  - `0.x` during initial development: breaking changes bump MINOR, new tokens and fixes bump PATCH. From `1.0.0`, standard SemVer.
+  - Breaking = renaming or removing a token, changing what a name means, or changing the output format or selectors. Adjusting a value within its role is a fix.
