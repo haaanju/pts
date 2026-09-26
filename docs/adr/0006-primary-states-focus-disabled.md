@@ -1,6 +1,6 @@
 # 0006. Primary, Interaction States, Focus, and Disabled Colors
 
-- Status: proposed
+- Status: accepted (amended by 0015)
 - Date: 2026-09-25
 
 ## What we learned

@@ -1,6 +1,6 @@
 # 0004. Typography Tokens
 
-- Status: proposed
+- Status: accepted (amended by 0011, 0013)
 - Date: 2026-09-25
 
 ## What we learned

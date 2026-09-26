@@ -1,6 +1,6 @@
 # 0003. Terrazzo CSS Build
 
-- Status: proposed
+- Status: accepted (amended by 0005, 0012)
 - Date: 2026-09-25
 
 ## What we learned

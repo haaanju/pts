@@ -1,6 +1,6 @@
 # 0001. Spacing Token Foundation
 
-- Status: proposed
+- Status: accepted (amended by 0002, 0003, 0007)
 - Date: 2026-09-25
 
 ## What we learned

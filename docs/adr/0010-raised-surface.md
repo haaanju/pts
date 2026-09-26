@@ -1,6 +1,6 @@
 # 0010. Raised Surface Background
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-09-25
 
 ## What we learned

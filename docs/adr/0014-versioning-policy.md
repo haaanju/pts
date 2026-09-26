@@ -1,6 +1,6 @@
 # 0014. Versioning Policy
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-09-26
 
 ## What we learned

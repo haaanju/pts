@@ -1,6 +1,6 @@
 # 0007. Primitive Files by Category
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-09-25
 
 ## What we learned

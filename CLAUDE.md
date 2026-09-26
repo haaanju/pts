@@ -169,6 +169,8 @@ pts/
 
 Record decisions that change token structure, naming, tooling, or the pipeline as ADRs: `docs/adr/NNNN-kebab-case-title.md`, in English.
 
+- Status lifecycle: `proposed` while under discussion, `accepted` once implemented. When a later ADR changes an accepted one, add `(amended by NNNN)` to its status; use `superseded by NNNN` only when it is replaced entirely.
+
 ## Deferred
 
 - Figma sync mechanism
