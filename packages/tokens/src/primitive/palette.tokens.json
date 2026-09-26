@@ -133,6 +133,18 @@
           "hex": "#404040"
         }
       },
+      "850": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.1961,
+            0.1961,
+            0.1961
+          ],
+          "hex": "#323232"
+        }
+      },
       "900": {
         "$type": "color",
         "$value": {

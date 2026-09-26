@@ -39,7 +39,7 @@
       },
       "disabled": {
         "$type": "color",
-        "$value": "{palette.neutral.100}"
+        "$value": "{palette.neutral.50}"
       },
       "danger": {
         "$type": "color",

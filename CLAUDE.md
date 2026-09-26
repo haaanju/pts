@@ -92,7 +92,7 @@ pts/
 - `weight/N`: numeric font weight (400, 500, 600, 700).
 - `ratio/N`: N = value × 100 (`ratio/150` = 1.5).
 - `tracking/N`: letter spacing in px, N = px × 100; negative values use `neg-` (`tracking/neg-50` = -0.5px).
-- `palette/<hue>/N`: higher is darker. Hues (red, orange, green, blue, purple) have 10 steps (50–900); `neutral` has 12 (50–1000). Plus `palette/white`, `palette/black`.
+- `palette/<hue>/N`: higher is darker. Hues (red, orange, green, blue, purple) have 10 steps (50–900); `neutral` has 13 (50–1000, including 850). Plus `palette/white`, `palette/black`.
 - `palette/black-alpha/N`: black at N% opacity (5–90), for shadows and scrims only. There are no standalone opacity tokens.
 - `duration/N`: N ms. `easing/standard, decelerate, accelerate`: cubic Bézier.
 
@@ -135,6 +135,7 @@ pts/
 - Exempt: `border/default` (decorative divider), `*/disabled` (inactive), `background/overlay` (translucent scrim).
 - Translucent colors can't be contrast-checked; `npm run check` errors if one enters a contrast pair.
 - `npm run check` derives the pairs from these naming rules, so new color tokens must follow them to be checked.
+- States must be visible: `background/X`, `X-hover`, and `X-pressed` resolve to different colors, and `default-hover` / `default-pressed` differ from `subtle`, `raised`, and `disabled` (a hover inside a card must show). `npm run check` enforces this.
 
 ## Fonts
 

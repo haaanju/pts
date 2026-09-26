@@ -3,6 +3,8 @@
 //   2. every alias resolves
 //   3. all contexts of a modifier define the same token names
 //   4. color pairs meet WCAG contrast (pairs are derived from the naming rules in CLAUDE.md)
+//   5. interaction states are visible: every background state differs from its base, and the page
+//      hover/pressed states differ from every surface they can sit on and from disabled
 // Exits with code 1 on any failure.
 // Disabled tokens, border/default (decorative), and background/overlay (scrim) are exempt from contrast.
 import { readFileSync } from "node:fs";
@@ -85,6 +87,21 @@ const contrastPairs = (ids: string[]): [string, string, number][] => {
   return pairs;
 };
 
+// Backgrounds that must resolve to different colors, so a state change is actually visible.
+const distinctBackgrounds = (ids: string[]): [string, string][] => {
+  const names = new Set(ids.filter((id) => id.startsWith("color.background.")).map((id) => id.split(".")[2]));
+  const pairs: [string, string][] = [];
+  for (const base of names) {
+    const states = STATES.map((s) => base + s).filter((n) => names.has(n));
+    for (let i = 0; i < states.length; i++) for (let j = i + 1; j < states.length; j++) pairs.push([states[i], states[j]]);
+  }
+  // hover/pressed on transparent elements must show on every surface and differ from disabled
+  for (const state of ["default-hover", "default-pressed"].filter((n) => names.has(n))) {
+    for (const other of ["subtle", "raised", "disabled"].filter((n) => names.has(n))) pairs.push([state, other]);
+  }
+  return pairs.map(([a, b]) => [`color.background.${a}`, `color.background.${b}`]);
+};
+
 const resolver = readJson("pts.resolver.json");
 const base = load(Object.values(resolver.sets as Record<string, { sources: Ref[] }>).flatMap((s) => s.sources));
 const errors: string[] = [];
@@ -104,6 +121,10 @@ for (const [modifier, { contexts }] of Object.entries(resolver.modifiers as Reco
       for (const ref of aliasesIn(token.$value)) if (!tokens[ref]) errors.push(`${label}: ${id} → {${ref}} does not resolve`);
     }
     if (errors.length) continue;
+
+    for (const [a, b] of distinctBackgrounds(Object.keys(tokens))) {
+      if (resolveHex(tokens, a) === resolveHex(tokens, b)) errors.push(`${label}: ${a} and ${b} are the same color, so the state is invisible`);
+    }
 
     for (const [fg, bg, min] of contrastPairs(Object.keys(tokens))) {
       if (!tokens[fg] || !tokens[bg]) {

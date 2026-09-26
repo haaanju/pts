@@ -7,7 +7,7 @@
       },
       "default-hover": {
         "$type": "color",
-        "$value": "{palette.neutral.900}"
+        "$value": "{palette.neutral.850}"
       },
       "default-pressed": {
         "$type": "color",
