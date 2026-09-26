@@ -4,12 +4,12 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## Current state
 
-- Latest release: `v0.1.1`.
+- Latest release: `v0.2.0`: source in `tokens/`, web output in `@pts/web`, docs in `apps/storybook` (ADR 0016).
 - `main` is stable. CI and the pre-commit hook run check, lint, and typecheck.
 
 ## In flight
 
-- `feature/restructure-packages`: source moved to `tokens/`, docs to `apps/storybook`, `@pts/css` + `@pts/fonts` merged into `@pts/web` (ADR 0016). Built CSS is byte-identical. After merge: release `v0.2.0` (breaking: package names and import paths).
+- None.
 
 ## Next
 
