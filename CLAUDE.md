@@ -205,7 +205,7 @@ Work continues across chats and machines through the repository only. Chat histo
 ## Deferred
 
 - Figma sync mechanism. Figma is treated as one consumer of the tokens: when tokens change, update its variables and specimens by hand (or a one-off script). The plan is Pro, so the REST variables API (Enterprise only) is not an option.
-- Native platform outputs (iOS, Android)
+- Native platform outputs (iOS, Android). Terrazzo has no Android plugin and a pre-1.0 Swift one: write a custom Terrazzo plugin rather than adding Style Dictionary (ADR 0022).
 
 ## Git Convention
 
