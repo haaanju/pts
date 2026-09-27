@@ -1,6 +1,6 @@
 {
-  // Type-checks the Node scripts. They run directly with Node's type stripping,
-  // so only erasable TypeScript syntax is allowed.
+  // Type-checks the scripts, the lint plugin, and the Terrazzo config. They run without a build step
+  // (Node's type stripping, or Terrazzo's config loader), so only erasable TypeScript syntax is allowed.
   "compilerOptions": {
     "target": "ES2023",
     "module": "NodeNext",
@@ -13,5 +13,5 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["scripts"]
+  "include": ["scripts", "lint", "terrazzo.config.ts"]
 }

@@ -1,8 +1,8 @@
 // Reads the DTCG source through pts.resolver.json and resolves every token per theme,
 // so the docs always reflect the current token files.
-import { contrastPairs } from "../../../tokens/scripts/pairs.ts";
+import { contrastPairs } from "../../../tokens/lint/pairs.ts";
 
-export { isExempt, TEXT, UI } from "../../../tokens/scripts/pairs.ts";
+export { isExempt, TEXT, UI } from "../../../tokens/lint/pairs.ts";
 
 type Json = Record<string, any>;
 type Ref = { $ref: string };
@@ -130,7 +130,7 @@ export const isThemed = (prefix: string) =>
 /** Last path segment, e.g. "intent.danger.surface.strong" → "strong" */
 export const leaf = (id: string) => id.slice(id.lastIndexOf(".") + 1);
 
-// ---- contrast (WCAG 2.x) — same rules as tokens/scripts/check.ts ----
+// ---- contrast (WCAG 2.x) — same rules as the pts/contrast lint rule ----
 
 const luminance = (hex: string) => {
   const [r, g, b] = [1, 3, 5]

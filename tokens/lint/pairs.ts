@@ -1,5 +1,5 @@
 // Color pairing rules (ADR 0019), derived from token names alone.
-// Shared by scripts/check.ts and the Storybook docs so both test the same pairs.
+// Shared by the pts/contrast and pts/visible-steps lint rules and the Storybook docs, so both test the same pairs.
 // Ids are dot paths without the tier, e.g. "intent.danger.content.inverse".
 
 export const TEXT = 4.5; // WCAG 1.4.3

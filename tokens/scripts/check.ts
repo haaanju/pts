@@ -16,7 +16,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { contrastPairs, distinctBackgrounds } from "./pairs.ts";
+import { contrastPairs, distinctBackgrounds } from "../lint/pairs.ts";
 
 type Token = { $type?: string; $value: unknown; $description?: string };
 type Tokens = Record<string, Token>;

@@ -9,10 +9,15 @@
   ],
   "scripts": {
     "check": "node scripts/check.ts",
+    "lint": "tz check",
     "typecheck": "tsc -p ."
   },
   "devDependencies": {
+    "@terrazzo/cli": "^2.7.1",
+    "@terrazzo/parser": "^2.7.1",
+    "@terrazzo/token-tools": "^2.7.1",
     "@types/node": "^22.20.4",
+    "colorjs.io": "^0.7.1",
     "typescript": "~5.9.3"
   }
 }
