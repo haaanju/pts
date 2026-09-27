@@ -8,8 +8,7 @@
     "src"
   ],
   "scripts": {
-    "check": "node scripts/check.ts",
-    "lint": "tz check",
+    "check": "tz check",
     "typecheck": "tsc -p ."
   },
   "devDependencies": {

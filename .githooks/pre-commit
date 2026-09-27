@@ -1,6 +1,5 @@
 #!/bin/sh
 # Validate before every commit (see CLAUDE.md → Commands). Skip once with: git commit --no-verify
 set -e
-npm run check --silent      # $type, aliases, theme parity, contrast, visible states, source rules
-npm run lint --silent       # Terrazzo's own DTCG validation
-npm run typecheck --silent  # scripts and Storybook
+npm run check --silent      # tz check in tokens/: Terrazzo's built-in rules and the pts/* rules (ADR 0021)
+npm run typecheck --silent  # lint plugin and Storybook

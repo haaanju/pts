@@ -12,8 +12,7 @@
     "./fonts.css": "./fonts/fonts.css"
   },
   "scripts": {
-    "build": "tz build",
-    "lint": "tz check"
+    "build": "tz build"
   },
   "dependencies": {
     "@pts/tokens": "*"

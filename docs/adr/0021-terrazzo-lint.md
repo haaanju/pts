@@ -1,6 +1,6 @@
 # 0021. Terrazzo Lint
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-09-27
 
 ## What we learned
@@ -20,7 +20,7 @@ Each built-in rule was turned on against the current tokens (Terrazzo 2.7.1):
 
 Three facts about how Terrazzo lints shaped the design:
 
-- **Lint sees one theme.** With a resolver, the parser applies the default input (`theme: light`) and passes those tokens to every rule; a rule has no access to the resolver. Breaking the dark `content/base` left `tz check` passing, while the same break in light failed. A built-in rule can't check anything per theme.
+- **Lint sees one theme.** With a resolver, the parser applies the default input (`theme: light`) and passes those tokens to every rule; a rule has no access to the resolver. Breaking the dark `content/base` left `tz check` passing, while the same break in light failed. Even a broken alias in the dark file passed. A built-in rule can't check anything per theme.
 - **Tokens don't know their file.** After the resolver merges the sources, a token's `source.filename` is the resolver, not the `.tokens.json` file it came from, so rules about files (tiers, registration) read the files themselves.
 - **Setting `lint.rules` replaces the recommended set** instead of adding to it, so the config spreads `RECOMMENDED_CONFIG` first.
 
@@ -58,7 +58,7 @@ tokens/
 ├── terrazzo.config.ts   lint only: no build plugins
 └── lint/
     ├── index.ts         the pts plugin: registers the rules
-    ├── themes.ts        parses the resolver once and applies each theme
+    ├── source.ts        every theme (parses the resolver once, applies each permutation) and every file with its tier
     ├── pairs.ts         contrast pairs (moved from scripts/; Storybook imports it)
     └── rules/           one file per rule
 ```
@@ -76,10 +76,17 @@ Validation belongs to the source, not to an output (ADR 0016). Platform packages
 
 ## Implementation notes
 
-(Filled in when implemented.)
+- `pts/theme-parity` also reports a theme that fails to resolve, which covers the broken dark alias above.
+- `pts/contrast` computes ratios the way `a11y/min-contrast` does (`tokenToColor` from `@terrazzo/token-tools`, `contrastWCAG21` from `colorjs.io`). It checks the same 308 pairs as `check.ts` did (154 per theme), with the same lowest ratios: text 4.69 (light) / 4.58 (dark), UI 3.22. A content name that is neither a level nor `inverse` is now reported once, by name.
+- The documented tier exceptions are rule options in the config: `pts/tier-aliases` takes `rawValues: ["z-index"]` and `semanticAliases: ["text"]`.
+- `core/descriptions` ignores the primitive groups, read from the primitive files (`primitiveGroups()`), so a new semantic group needs descriptions without a config change.
+- Rules report with `messageId` and `data`, like the built-in rules, so messages live in each rule's `meta.messages`.
+- Verified by breaking each rule on purpose: a broken dark alias, a token missing from dark, a different dark description, a dark-only contrast failure, an unknown content name, a translucent color in a pair, an invisible dark step, a hex mismatch, a raw value and a semantic alias in the semantic tier, an unregistered file, a missing description, a 10px caption, a camelCase name, and a display-p3 color. Each failed `npm run check` with exit code 1 and a message naming the token.
+- `@pts/tokens` depends on `@terrazzo/cli`, `@terrazzo/parser`, `@terrazzo/token-tools`, and `colorjs.io`. `packages/web` loses its `lint` script; its `tz build` still runs the recommended rules.
 
 ## Documented in
 
 - `CLAUDE.md` — Structure, Commands, Token Rules
 - `CONTRIBUTING.md` — What the checks catch
 - `README.md` — Development
+- `.githooks/pre-commit`, `.github/workflows/ci.yml`

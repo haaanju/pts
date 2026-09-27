@@ -24,14 +24,18 @@ pts/
 ├── README.md                    # human-facing overview (usage, commands, status)
 ├── CONTRIBUTING.md              # how to change tokens: flow, format, common changes, what the checks catch
 ├── .claude/settings.json        # SessionStart hook: fetches, prints git state and docs/progress.md
-├── .githooks/pre-commit         # runs check, lint, typecheck before every commit
+├── .githooks/pre-commit         # runs check and typecheck before every commit
 ├── .github/workflows/ci.yml     # CI: checks + both builds
 ├── .github/pull_request_template.md  # change type (ADR 0014) and the Figma / docs / ADR checklist
 ├── docs/progress.md             # session handoff: current state, in flight, next
 ├── docs/adr/                    # architecture decision records
 ├── tokens/                      # @pts/tokens — DTCG source, single source of truth (private)
-│   ├── scripts/check.ts         # token validation (npm run check)
-│   ├── scripts/pairs.ts         # color pairing rules, shared by check.ts and the Storybook docs
+│   ├── terrazzo.config.ts       # lint only: Terrazzo's built-in rules + the pts/* rules (npm run check)
+│   ├── lint/                    # the pts lint plugin (ADR 0021)
+│   │   ├── index.ts             # registers the pts/* rules
+│   │   ├── source.ts            # every theme (via Terrazzo's resolver) and every file with its tier
+│   │   ├── pairs.ts             # color pairing rules, shared by pts/contrast and the Storybook docs
+│   │   └── rules/               # one file per rule, each saying why a built-in rule can't do it
 │   └── src/
 │       ├── pts.resolver.json         # combines token files + theme modifier (build entry point)
 │       ├── primitive/
@@ -74,11 +78,14 @@ pts/
 
 ## Commands
 
-- Node ≥ 22.18 (`engines`, `.nvmrc`): the `.ts` scripts run directly with Node's type stripping.
-- `npm run check`: validates tokens (`tokens/scripts/check.ts`) per theme — missing `$type`, broken aliases, token-name mismatches between themes, color contrast, visible background states, color `hex` matching `components`, a `$description` on every semantic color, semantic tokens aliasing primitives (the tier rules below), and token files missing from the resolver.
-- `npm run lint`: Terrazzo's own DTCG validation (`tz check`).
-- `npm run typecheck`: TypeScript for the token scripts and Storybook.
-- The pre-commit hook runs check, lint, and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
+- Node ≥ 22.18 (`engines`, `.nvmrc`).
+- `npm run check`: `tz check` in `tokens/` (ADR 0021). Rules in `tokens/terrazzo.config.ts`, in three blocks:
+  - Terrazzo's recommended rules: DTCG value shapes (`core/valid-*`), kebab-case names (as an error).
+  - Terrazzo's built-in rules, turned on: `$type` required, a `$description` on every semantic token, srgb colors, text at least 12px.
+  - `pts/*` (`tokens/lint/`), for what built-in rules can't check. Terrazzo lints the default theme only, so these apply every theme themselves: every theme resolves with the same names and descriptions (`theme-parity`), contrast (`contrast`), visible steps (`visible-steps`); and they read the files for `hex` matching `components` (`color-hex`), the tier rules below (`tier-aliases`), and files missing from the resolver (`registered-files`).
+  - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it.
+- `npm run typecheck`: TypeScript for the lint plugin and Storybook.
+- The pre-commit hook runs check and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
 - CI (`.github/workflows/ci.yml`) runs the same checks plus both builds on pushes to `main` and on pull requests.
 - `npm run build`: builds every workspace (`@pts/web` → `packages/web/dist/tokens.css`).
   - Light values go on `:root` and `[data-theme="light"]`; dark values under `@media (prefers-color-scheme: dark)` and `[data-theme="dark"]`. `data-theme` on `<html>` forces a theme; on any element it themes that subtree (e.g. a light region inside a dark page).
@@ -93,7 +100,7 @@ pts/
 - **Tiers**: primitive → semantic. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `z-index` holds values directly because stacking order has no meaning outside its role. Add a component tier when components exist.
 - **Group names**: primitive and semantic top-level groups never share a name (Terrazzo merges all files into one namespace). Example: primitive `weight` ↔ semantic `font-weight`.
 - **Files**: both tiers are split by category: `primitive/<category>.tokens.json`, `semantic/<category>.tokens.json`.
-- **Format**: every token declares `$type`. No group-level `$type` inheritance.
+- **Format**: every token declares `$type`. No group-level `$type` inheritance. Every semantic token has a `$description` that says when to use it, the same in every theme file; the Figma variable descriptions carry the same text.
 - **Dimension**: `px`, object form: `{ "value": 16, "unit": "px" }`.
 - **Color**: DTCG 2025.10 object form: `{ "colorSpace": "srgb", "components": [r, g, b], "hex": "#rrggbb" }` (components 0–1, optional `alpha`).
 - **Themes**: the DTCG resolver's `theme` modifier (`light` | `dark`, default `light`). Do not use `$extensions.mode`.
@@ -120,7 +127,7 @@ pts/
 - `focus-ring/width`, `focus-ring/offset`: 2px each. Color is `border/focus`.
 - `font-family`: sans (Aspekta), serif and mono (IBM Plex). Use `mono` wherever digits must line up: Aspekta has no tabular figures.
 - `font-weight`: regular, medium, semibold, bold.
-- `font-size/N`: ordinal steps, 400 = 16px (body default). 100 = 10 … 1000 = 48.
+- `font-size/N`: ordinal steps, 400 = 16px (body default). 100 = 10 … 1000 = 48. Text styles use 200 (12px) or larger: 12px is the minimum for text (`a11y/min-font-size`), so no text style uses 100.
 - `line-height`: unitless multipliers. tight = 1.2, normal = 1.5, loose = 1.75.
 - `letter-spacing`: tighter = -1px, tight = -0.5px, normal = 0, wide = 1px. px because DTCG dimensions only allow px/rem (no em). Display styles use tighter, heading-lg/md tight, the rest normal; wide is for uppercase labels.
 - `text/<role>-<size>`: `$type: typography` composites. Roles display, heading, body, label, caption, code × sizes lg, md, sm. All five properties (fontFamily, fontSize, fontWeight, letterSpacing, lineHeight) are required.
@@ -153,7 +160,7 @@ always/        white, black
 - **Intents**: danger (red), warning (orange), success (green), info (blue), discovery (purple: new features, onboarding, recommendations, AI). Role first, then the same `surface` / `content` / `border` words as the neutral colors. `surface/subtle` is the soft fill (alerts, banners, soft badges), `surface/base` the strong fill (buttons, strong badges, tags). An intent's `content/base` also sits on its own `surface/subtle`.
 - **States**: interaction states are strength steps, and `$description` says hover or pressed. Every pressable fill has `strong` / `stronger`; component-specific states (selected, checked) go to a future component tier (ADR 0018). `disabled/*` is shared by every control. From hover to pressed, light gets darker and dark gets lighter.
 - **Utility**: colors outside the pairing system (the modal scrim). **Always**: the same in every theme, for icons and text on images; theme-independent, so they live in `semantic/color.tokens.json` (base set).
-- **Descriptions**: every semantic color has a `$description` (required by `npm run check`) that says when to use it and which content goes on a fill. The Figma variable descriptions carry the same text.
+- **Descriptions**: a color's `$description` also says which content goes on a fill.
 - **Figma**: variable scopes follow the name (`content/*` and `disabled/content` → text and shape fills plus strokes; a `border` segment → strokes; `always/*` → all; everything else → frame and shape fills). The `Theme` collection holds only values that change with the theme; shadow offsets, blurs, and spreads are in `Semantic`. Primitives are hidden from pickers.
 
 ### Accessibility (required in both themes)
@@ -162,7 +169,7 @@ always/        white, black
 - UI boundaries (`border/base`, `border/focus`, intent `border/base`, `inverse/*`, and an intent's `surface/base`, `strong`, `stronger`): 3:1 against `background` and `surface/*` (WCAG 1.4.11).
 - Exempt: `disabled/*` (inactive), `border/subtle` and intent `border/subtle` (decorative), `utility/*` (translucent scrim), `always/*` (sits on images; pair `always/white` with a dark overlay).
 - Translucent colors can't be contrast-checked; `npm run check` errors if one enters a contrast pair.
-- `npm run check` derives the pairs from these names (`tokens/scripts/pairs.ts`), so new color tokens must follow them to be checked. A content name other than a level (`base`, `subtle`) or `inverse` is reported.
+- `npm run check` derives the pairs from these names (`tokens/lint/pairs.ts`), so new color tokens must follow them to be checked. A content name other than a level (`base`, `subtle`) or `inverse` is reported.
 - Steps must be visible: every step of a surface ladder (the neutral `background` / `surface/*`, `inverse/*`, each intent's `surface/*`) differs from the others, and `surface/strong` / `stronger` differ from `disabled/surface`. `npm run check` enforces this.
 
 ## Fonts
@@ -180,7 +187,7 @@ always/        white, black
 - Page layout: `<PageHeader eyebrow title groups>` (stacked, left-aligned: eyebrow · token count, title, lead), then `<Section title lead>…</Section>` blocks (heading and lead, full-width content). Sections are separated by space, not lines; only the Introduction uses `<Section divider>`. Table rows keep hairlines for scanning. No cards or boxes; `ThemeCell` is the only filled surface because its background is the information.
 - When adding a new **group**, wrap its block in a section on the matching `.mdx` page (e.g. `<Section title="New group"><TokenTable prefix="new-group" /></Section>`) and add the prefix to the page's `groups`.
 - Groups that differ by theme are shown with light and dark side by side. `ThemeCell` sets `data-theme` so CSS variables inside it resolve to that theme.
-- Contrast badges use the same pairing rules as `npm run check` (both import `tokens/scripts/pairs.ts`); each badge shows the lowest ratio among a token's pairs.
+- Contrast badges use the same pairing rules as `npm run check` (both import `tokens/lint/pairs.ts`); each badge shows the lowest ratio among a token's pairs.
 - Sample text in the docs is English only.
 - Docs styling dogfoods the tokens: color, type, spacing, radius, stroke, shadow, and motion come from `@pts/web` variables. Values that only describe the docs layout or sample geometry are `--docs-*` variables at the top of `docs.css`; never add product tokens just for the docs. Card preview illustrations may use raw geometry.
 - Light/dark: the sun/moon button at the top right toggles a `theme` global. The preview sets `data-theme` on `<html>` from it, so the whole docs page switches through token variables; the manager switches between the two UI themes. The choice is saved in localStorage; `?globals=theme:dark` in the URL also works.

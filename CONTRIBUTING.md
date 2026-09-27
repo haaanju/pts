@@ -27,7 +27,7 @@ A release (a version tag) is cut separately, when the owner decides; see [ADR 00
   npm install              # also installs a hook that runs the checks before each commit
   git switch -c feature/my-change
   # edit, then
-  npm run check            # the token rules; the fastest feedback
+  npm run check            # every token rule (tz check); the fastest feedback
   npm run storybook        # the docs at http://localhost:6006, with your change
   ```
 
@@ -58,7 +58,7 @@ A semantic token points at a primitive with an alias, the full path in braces:
 }
 ```
 
-Every semantic color needs a `$description`: when to use it, and which content goes on it. Keep it the same as the Figma variable's description.
+Every semantic token needs a `$description`: when to use it (for a color, also which content goes on it). Keep it the same in the light and dark files, and the same as the Figma variable's description.
 
 A primitive color holds the value itself. `hex` and `components` must describe the same color; `components` are the red, green, and blue channels from 0 to 1 (the hex pair ÷ 255, four decimals):
 
@@ -97,14 +97,13 @@ CI runs these on every pull request. A red check blocks the merge; open the fail
 
 | Check | Catches |
 |---|---|
-| `npm run check` | A missing `$type`; an alias pointing at nothing; light and dark files with different names; text below 4.5:1 or UI below 3:1 contrast in either theme; hover or pressed states that look the same as the resting fill; a `hex` that doesn't match its `components`; a semantic color without a `$description`; a semantic token with a raw value or pointing at another semantic token; a token file missing from the resolver |
-| `npm run lint` | Values that aren't valid DTCG (wrong shape, unit, or type) |
+| `npm run check` | Values that aren't valid DTCG (wrong shape, unit, or type); a name that isn't kebab-case; a missing `$type`; an alias pointing at nothing, in either theme; light and dark files with different names or descriptions; text below 4.5:1 or UI below 3:1 contrast in either theme; hover or pressed states that look the same as the resting fill; a `hex` that doesn't match its `components`; a color outside srgb; a semantic token without a `$description`; a text style below 12px; a semantic token with a raw value or pointing at another semantic token; a token file missing from the resolver |
 | `npm run typecheck`, `npm run build`, `npm run build-storybook` | Changes that break the CSS output or the docs |
 
-Messages name the file and the token:
+Messages start with the rule that failed, then name the theme or file and the token:
 
 ```
-✗ theme=dark: intent.danger.content.base on background = 3.87 (needs 4.5)
+✗  lint:pts/contrast: theme=dark: intent.danger.content.base on background = 3.87 (needs 4.5)
 ```
 
 Here the danger text is too dark on the dark page: point it at a lighter step in `color.dark.tokens.json`.

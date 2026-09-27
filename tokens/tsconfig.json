@@ -1,5 +1,5 @@
 {
-  // Type-checks the scripts, the lint plugin, and the Terrazzo config. They run without a build step
+  // Type-checks the lint plugin and the Terrazzo config. They run without a build step
   // (Node's type stripping, or Terrazzo's config loader), so only erasable TypeScript syntax is allowed.
   "compilerOptions": {
     "target": "ES2023",
@@ -13,5 +13,5 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["scripts", "lint", "terrazzo.config.ts"]
+  "include": ["lint", "terrazzo.config.ts"]
 }

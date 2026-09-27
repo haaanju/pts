@@ -67,7 +67,7 @@ Contrast is checked in both themes on every commit:
 
 ## Development
 
-Requires Node 22.18 or later (see `.nvmrc`); the TypeScript scripts run directly with Node's type stripping.
+Requires Node 22.18 or later (see `.nvmrc`).
 
 ```sh
 npm install              # also installs the pre-commit hook
@@ -77,17 +77,16 @@ npm run build            # build @pts/web
 
 | Command | What it does |
 |---------|--------------|
-| `npm run check` | Validates the tokens: types, aliases, theme parity, contrast, visible states, hex values, semantic color descriptions, tier rules, unregistered files |
-| `npm run lint` | Terrazzo's DTCG validation |
-| `npm run typecheck` | TypeScript for the scripts and Storybook |
+| `npm run check` | Validates the tokens with Terrazzo (`tz check` in `tokens/`): its built-in rules plus the project's `pts/*` rules for both themes: contrast, visible states, theme parity, hex values, descriptions, tier rules, unregistered files |
+| `npm run typecheck` | TypeScript for the lint plugin and Storybook |
 | `npm run build` | Builds `@pts/web` |
 | `npm run build-storybook` | Builds the static docs |
 
 **Working across machines.** Everything needed to continue lives in the repository. On a new machine: clone, `nvm use`, `npm install`. Pull before starting and push before switching. [`docs/progress.md`](docs/progress.md) records where work left off.
 
-The pre-commit hook runs `check`, `lint`, and `typecheck`. CI runs the same checks plus both builds on every push to `main` and every pull request.
+The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus both builds on every push to `main` and every pull request.
 
-**Changing tokens.** Edit the JSON in `tokens/src/` directly, color included, then run `npm run check`. It enforces contrast, visible states, the tier rules, and a description on every semantic color. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full flow.
+**Changing tokens.** Edit the JSON in `tokens/src/` directly, color included, then run `npm run check`. It enforces contrast, visible states, the tier rules, and a description on every semantic token. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full flow.
 
 ## Decisions and conventions
 

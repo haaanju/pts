@@ -17,4 +17,4 @@
 - [ ] A new group has a section on its Storybook page, and its prefix is in the page's `groups`
 - [ ] A decision about structure, naming, or tooling has an ADR
 
-<!-- Leave items that don't apply unchecked. CI runs check, lint, typecheck, and both builds; it must pass before merging. -->
+<!-- Leave items that don't apply unchecked. CI runs check, typecheck, and both builds; it must pass before merging. -->
