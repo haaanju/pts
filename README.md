@@ -77,7 +77,7 @@ npm run build            # build @pts/web
 
 | Command | What it does |
 |---------|--------------|
-| `npm run check` | Validates the tokens: types, aliases, theme parity, contrast, visible states, hex values, semantic color descriptions, tier rules |
+| `npm run check` | Validates the tokens: types, aliases, theme parity, contrast, visible states, hex values, semantic color descriptions, tier rules, unregistered files |
 | `npm run lint` | Terrazzo's DTCG validation |
 | `npm run typecheck` | TypeScript for the scripts and Storybook |
 | `npm run build` | Builds `@pts/web` |

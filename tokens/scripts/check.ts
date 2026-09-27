@@ -9,10 +9,11 @@
 //   7. every semantic color has a $description
 //   8. semantic tokens alias primitives (exceptions: text/* composites alias semantic property tokens,
 //      and z-index holds raw values)
+//   9. every token file is in pts.resolver.json (an unregistered file is silently left out of the build)
 // Exits with code 1 on any failure.
 // Exempt from contrast: disabled/* (inactive), border/subtle (decorative), utility/* (outside the
 // pairing system; the scrim is translucent), always/* (sits on images, whose colors are unknown).
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { contrastPairs, distinctBackgrounds } from "./pairs.ts";
@@ -121,6 +122,9 @@ const refs = [
   ...Object.values(resolver.modifiers as Record<string, { contexts: Record<string, Ref[]> }>).flatMap((m) => Object.values(m.contexts).flat()),
 ];
 const files = [...new Set(refs.map((r) => r.$ref))].map((file) => ({ file, tier: file.split("/")[0], tokens: flatten(readJson(file)) }));
+for (const file of readdirSync(SRC, { recursive: true, encoding: "utf8" })) {
+  if (file.endsWith(".tokens.json") && !files.some((f) => f.file === file)) errors.push(`${file} is not in pts.resolver.json, so nothing reads it`);
+}
 const tierOf: Record<string, string> = Object.fromEntries(files.flatMap(({ tier, tokens }) => Object.keys(tokens).map((id) => [id, tier])));
 
 for (const { file, tier, tokens } of files) {

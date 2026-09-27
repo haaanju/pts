@@ -53,7 +53,7 @@ Some guarantees currently come from the generator, not from `npm run check`, and
 
 | Step | Catches |
 |---|---|
-| `npm run check` | missing `$type`, broken aliases, token-name mismatches between themes, contrast (4.5:1 / 3:1), invisible steps; **added:** a semantic color without a `$description`, a semantic token with a raw value where the tier rules require an alias, a color whose `hex` and `components` disagree |
+| `npm run check` | missing `$type`, broken aliases, token-name mismatches between themes, contrast (4.5:1 / 3:1), invisible steps; **added:** a semantic color without a `$description`, a semantic token with a raw value where the tier rules require an alias, a color whose `hex` and `components` disagree, a token file missing from the resolver (otherwise silently left out of the build) |
 | `npm run lint` | Terrazzo's DTCG validation (`tz check`): value shapes, units, types |
 | `npm run typecheck` | the scripts and Storybook still compile against the token data |
 | `npm run build` | Terrazzo can produce `tokens.css` |

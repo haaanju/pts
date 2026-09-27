@@ -14,7 +14,6 @@
 ## Checklist
 
 - [ ] Figma matches: the variables and specimens show the new values (hand-drawn contrast badges and hex labels included)
-- [ ] A new token file is registered in `tokens/src/pts.resolver.json`
 - [ ] A new group has a section on its Storybook page, and its prefix is in the page's `groups`
 - [ ] A decision about structure, naming, or tooling has an ADR
 

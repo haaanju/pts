@@ -25,7 +25,7 @@ pts/
 ├── .claude/settings.json        # SessionStart hook: fetches, prints git state and docs/progress.md
 ├── .githooks/pre-commit         # runs check, lint, typecheck before every commit
 ├── .github/workflows/ci.yml     # CI: checks + both builds
-├── .github/pull_request_template.md  # change type (ADR 0014) and the Figma / resolver / docs checklist
+├── .github/pull_request_template.md  # change type (ADR 0014) and the Figma / docs / ADR checklist
 ├── docs/progress.md             # session handoff: current state, in flight, next
 ├── docs/adr/                    # architecture decision records
 ├── tokens/                      # @pts/tokens — DTCG source, single source of truth (private)
@@ -67,14 +67,14 @@ pts/
 
 - Three roles, see ADR 0016: `tokens/` is the source; `packages/<platform>` (named `@pts/<platform>`) holds shippable outputs and depends on `@pts/tokens`; `apps/<name>` holds tools and docs that run.
 - A new format for an existing platform is a plugin in that platform's Terrazzo config plus a subpath export (e.g. JS/TS and SCSS go in `@pts/web`), not a new package.
-- Register every new token file in `pts.resolver.json`: theme-independent files go in `sets.base`, theme-specific files in the matching `modifiers.theme` context.
+- Register every new token file in `pts.resolver.json`: theme-independent files go in `sets.base`, theme-specific files in the matching `modifiers.theme` context. `npm run check` reports a file that isn't registered.
 - Files for different themes (`color.light` / `color.dark`) must define **the same set of token names**.
 - The token JSON is edited by hand, color included; nothing generates it (ADR 0020). `npm run check` enforces the rules a generator would.
 
 ## Commands
 
 - Node ≥ 22.18 (`engines`, `.nvmrc`): the `.ts` scripts run directly with Node's type stripping.
-- `npm run check`: validates tokens (`tokens/scripts/check.ts`) per theme — missing `$type`, broken aliases, token-name mismatches between themes, color contrast, visible background states, color `hex` matching `components`, a `$description` on every semantic color, and semantic tokens aliasing primitives (the tier rules below).
+- `npm run check`: validates tokens (`tokens/scripts/check.ts`) per theme — missing `$type`, broken aliases, token-name mismatches between themes, color contrast, visible background states, color `hex` matching `components`, a `$description` on every semantic color, semantic tokens aliasing primitives (the tier rules below), and token files missing from the resolver.
 - `npm run lint`: Terrazzo's own DTCG validation (`tz check`).
 - `npm run typecheck`: TypeScript for the token scripts and Storybook.
 - The pre-commit hook runs check, lint, and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
