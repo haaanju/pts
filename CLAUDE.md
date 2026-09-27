@@ -183,6 +183,7 @@ always/        white, black
 ## Token Docs (Storybook)
 
 - Docs are generated from the token JSON. New tokens in an existing group appear without code changes.
+- A token's `$description` shows under its name and CSS variable (`TokenTable`, text style specimens, shadow cards), in `text/caption`. Edit the description in the JSON, not in the docs.
 - The sidebar mirrors the tiers, ordered by how often each is used: Overview → Semantic → Primitive (a Component group would go above Semantic). Semantic pages show only semantic tokens; primitive pages are reference for defining tokens and say so, since product code uses semantic tokens only.
 - Page layout: `<PageHeader eyebrow title groups>` (stacked, left-aligned: eyebrow · token count, title, lead), then `<Section title lead>…</Section>` blocks (heading and lead, full-width content). Sections are separated by space, not lines; only the Introduction uses `<Section divider>`. Table rows keep hairlines for scanning. No cards or boxes; `ThemeCell` is the only filled surface because its background is the information.
 - When adding a new **group**, wrap its block in a section on the matching `.mdx` page (e.g. `<Section title="New group"><TokenTable prefix="new-group" /></Section>`) and add the prefix to the page's `groups`.

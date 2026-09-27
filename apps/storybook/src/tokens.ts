@@ -22,6 +22,8 @@ export interface TokenInfo {
   display: string;
   /** value usable in inline CSS */
   css: string;
+  /** $description: when to use the token (every semantic token has one; primitives don't) */
+  description?: string;
 }
 
 const files = import.meta.glob("../../../tokens/src/**/*.json", { eager: true, import: "default" }) as Record<string, Json>;
@@ -105,6 +107,7 @@ const build = (theme: Theme): Record<string, TokenInfo> => {
         resolved,
         display: format(t.$type, resolved, false),
         css: format(t.$type, resolved, true),
+        description: t.$description,
       };
       return [id, info];
     }),

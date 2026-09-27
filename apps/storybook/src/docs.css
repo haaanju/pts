@@ -13,6 +13,7 @@
   --docs-ramp-height: 96px;
   --docs-checker-size: 12px;
   --docs-specimen-label-width: 220px;
+  --docs-description-width: 320px; /* wraps token descriptions so the token column stays narrow */
   --docs-bar-track-width: 240px;
   --docs-bar-height: 8px;
   --docs-skeleton-height: 12px;
@@ -133,6 +134,14 @@ body {
   font-family: var(--font-family-mono);
   font-size: var(--font-size-200);
   color: var(--content-subtle);
+}
+
+/* A token's $description: when to use it. Caption is the docs' own helper-text style. */
+.pts-description {
+  font: var(--text-caption);
+  letter-spacing: var(--text-caption-letter-spacing);
+  color: var(--content-subtle);
+  max-width: var(--docs-description-width);
 }
 
 .pts-var {
