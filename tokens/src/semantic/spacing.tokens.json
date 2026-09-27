@@ -2,53 +2,65 @@
   "space": {
     "0": {
       "$type": "dimension",
-      "$value": "{dimension.0}"
+      "$value": "{dimension.0}",
+      "$description": "No gap. For removing padding or a gap explicitly."
     },
     "50": {
       "$type": "dimension",
-      "$value": "{dimension.2}"
+      "$value": "{dimension.2}",
+      "$description": "The tightest gap, between parts of one element, such as a badge and its dot."
     },
     "100": {
       "$type": "dimension",
-      "$value": "{dimension.4}"
+      "$value": "{dimension.4}",
+      "$description": "Gap between closely related items, such as an icon and its text in small controls."
     },
     "200": {
       "$type": "dimension",
-      "$value": "{dimension.8}"
+      "$value": "{dimension.8}",
+      "$description": "Default gap between an icon and its label, and between items in a compact group."
     },
     "300": {
       "$type": "dimension",
-      "$value": "{dimension.12}"
+      "$value": "{dimension.12}",
+      "$description": "Padding inside small controls and badges; gap between items in a list."
     },
     "400": {
       "$type": "dimension",
-      "$value": "{dimension.16}"
+      "$value": "{dimension.16}",
+      "$description": "Default padding inside components, and the gap between related elements."
     },
     "500": {
       "$type": "dimension",
-      "$value": "{dimension.20}"
+      "$value": "{dimension.20}",
+      "$description": "Padding inside medium containers such as alerts, menus, and popovers."
     },
     "600": {
       "$type": "dimension",
-      "$value": "{dimension.24}"
+      "$value": "{dimension.24}",
+      "$description": "Padding inside cards and modals; gap between groups within a component."
     },
     "800": {
       "$type": "dimension",
-      "$value": "{dimension.32}"
+      "$value": "{dimension.32}",
+      "$description": "The largest component-level gap, between sections inside a card or modal. For larger gaps, use layout/*."
     }
   },
   "layout": {
     "100": {
       "$type": "dimension",
-      "$value": "{dimension.40}"
+      "$value": "{dimension.40}",
+      "$description": "Gap between sections of a page. The smallest layout step; below it, use space/*."
     },
     "200": {
       "$type": "dimension",
-      "$value": "{dimension.48}"
+      "$value": "{dimension.48}",
+      "$description": "Gap between major page regions, such as the header and the content."
     },
     "300": {
       "$type": "dimension",
-      "$value": "{dimension.64}"
+      "$value": "{dimension.64}",
+      "$description": "The largest page gap, around page sections and hero areas."
     }
   }
 }

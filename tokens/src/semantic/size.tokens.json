@@ -3,29 +3,35 @@
     "icon": {
       "sm": {
         "$type": "dimension",
-        "$value": "{dimension.16}"
+        "$value": "{dimension.16}",
+        "$description": "Icons in small controls and next to small text."
       },
       "md": {
         "$type": "dimension",
-        "$value": "{dimension.20}"
+        "$value": "{dimension.20}",
+        "$description": "Default icon size, next to body text and in medium controls."
       },
       "lg": {
         "$type": "dimension",
-        "$value": "{dimension.24}"
+        "$value": "{dimension.24}",
+        "$description": "Icons in large controls, and standalone icons."
       }
     },
     "control": {
       "sm": {
         "$type": "dimension",
-        "$value": "{dimension.32}"
+        "$value": "{dimension.32}",
+        "$description": "Height of small buttons, inputs, and selects, for dense layouts."
       },
       "md": {
         "$type": "dimension",
-        "$value": "{dimension.40}"
+        "$value": "{dimension.40}",
+        "$description": "Default height of buttons, inputs, and selects."
       },
       "lg": {
         "$type": "dimension",
-        "$value": "{dimension.48}"
+        "$value": "{dimension.48}",
+        "$description": "Height of large buttons, inputs, and selects. Meets the 44–48px touch target guidance."
       }
     }
   }

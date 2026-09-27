@@ -8,7 +8,8 @@
         "offsetY": "{dimension.1}",
         "blur": "{dimension.2}",
         "spread": "{dimension.0}"
-      }
+      },
+      "$description": "Slight lift for elements resting on a surface, such as cards."
     },
     "md": {
       "$type": "shadow",
@@ -18,7 +19,8 @@
         "offsetY": "{dimension.4}",
         "blur": "{dimension.8}",
         "spread": "{dimension.0}"
-      }
+      },
+      "$description": "Elements floating next to their trigger: dropdowns, menus, and popovers."
     },
     "lg": {
       "$type": "shadow",
@@ -28,7 +30,8 @@
         "offsetY": "{dimension.8}",
         "blur": "{dimension.16}",
         "spread": "{dimension.0}"
-      }
+      },
+      "$description": "Elements above the page flow, such as toasts and sticky headers while scrolling."
     },
     "xl": {
       "$type": "shadow",
@@ -38,7 +41,8 @@
         "offsetY": "{dimension.16}",
         "blur": "{dimension.32}",
         "spread": "{dimension.0}"
-      }
+      },
+      "$description": "The highest elevation, for modals and sheets."
     }
   }
 }

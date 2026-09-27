@@ -14,7 +14,6 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 - `feature/terrazzo-lint`: ADR 0021 (proposed), all validation moves to `tz check` in `tokens/`: Terrazzo's built-in rules first, `pts/*` plugin rules for per-theme and source checks. Order: semantic descriptions and `text/caption` 12px, then the config and plugin, then remove `check.ts`. Figma descriptions and caption size are updated after the branch.
 
-- None.
 
 ## Next
 

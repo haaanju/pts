@@ -2,55 +2,67 @@
   "radius": {
     "none": {
       "$type": "dimension",
-      "$value": "{dimension.0}"
+      "$value": "{dimension.0}",
+      "$description": "Square corners, for elements flush with an edge, such as full-width banners and table cells."
     },
     "xs": {
       "$type": "dimension",
-      "$value": "{dimension.2}"
+      "$value": "{dimension.2}",
+      "$description": "Barely rounded corners for small elements such as checkboxes and inline code."
     },
     "sm": {
       "$type": "dimension",
-      "$value": "{dimension.4}"
+      "$value": "{dimension.4}",
+      "$description": "Corners for small components: badges, tags, and tooltips."
     },
     "md": {
       "$type": "dimension",
-      "$value": "{dimension.8}"
+      "$value": "{dimension.8}",
+      "$description": "Default corners for controls: buttons, inputs, and selects."
     },
     "lg": {
       "$type": "dimension",
-      "$value": "{dimension.12}"
+      "$value": "{dimension.12}",
+      "$description": "Corners for containers: cards, popovers, and menus."
     },
     "xl": {
       "$type": "dimension",
-      "$value": "{dimension.16}"
+      "$value": "{dimension.16}",
+      "$description": "Corners for large containers such as modals and sheets."
     },
     "full": {
       "$type": "dimension",
-      "$value": "{dimension.max}"
+      "$value": "{dimension.max}",
+      "$description": "Fully rounded ends, for pills, avatars, and circular buttons."
     }
   },
   "stroke": {
     "thin": {
       "$type": "dimension",
-      "$value": "{dimension.1}"
+      "$value": "{dimension.1}",
+      "$description": "Default border width for dividers, inputs, and cards."
     },
     "thick": {
       "$type": "dimension",
-      "$value": "{dimension.2}"
+      "$value": "{dimension.2}",
+      "$description": "Emphasized borders, such as an underline indicator or a strong divider."
     },
     "thicker": {
       "$type": "dimension",
-      "$value": "{dimension.4}"
+      "$value": "{dimension.4}",
+      "$description": "The heaviest line, for accent bars such as the edge of a callout."
     }
   },
   "focus-ring": {
     "width": {
       "$type": "dimension",
-      "$value": "{dimension.2}"
+      "$value": "{dimension.2}",
+      "$description": "Width of the keyboard focus ring. Use with border/focus as the color."
     },
     "offset": {
       "$type": "dimension",
-      "$value": "{dimension.2}"
+      "$value": "{dimension.2}",
+      "$description": "Gap between an element and its focus ring, so the ring stays distinct from the element's fill and border."
     }
   }
 }

@@ -3,29 +3,35 @@
     "duration": {
       "fast": {
         "$type": "duration",
-        "$value": "{duration.100}"
+        "$value": "{duration.100}",
+        "$description": "Small, immediate feedback: hover, press, and toggle changes."
       },
       "normal": {
         "$type": "duration",
-        "$value": "{duration.200}"
+        "$value": "{duration.200}",
+        "$description": "Default for most transitions: elements appearing, expanding, or moving."
       },
       "slow": {
         "$type": "duration",
-        "$value": "{duration.300}"
+        "$value": "{duration.300}",
+        "$description": "Large transitions, such as a modal or sheet entering."
       }
     },
     "easing": {
       "standard": {
         "$type": "cubicBezier",
-        "$value": "{easing.standard}"
+        "$value": "{easing.standard}",
+        "$description": "Elements moving or resizing on screen."
       },
       "enter": {
         "$type": "cubicBezier",
-        "$value": "{easing.decelerate}"
+        "$value": "{easing.decelerate}",
+        "$description": "Elements appearing: starts fast and slows to rest."
       },
       "exit": {
         "$type": "cubicBezier",
-        "$value": "{easing.accelerate}"
+        "$value": "{easing.accelerate}",
+        "$description": "Elements leaving: starts slow and speeds up."
       }
     }
   }
