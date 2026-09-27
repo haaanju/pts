@@ -12,13 +12,13 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
+- `feature/terrazzo-lint`: ADR 0021 (proposed), all validation moves to `tz check` in `tokens/`: Terrazzo's built-in rules first, `pts/*` plugin rules for per-theme and source checks. Order: semantic descriptions and `text/caption` 12px, then the config and plugin, then remove `check.ts`. Figma descriptions and caption size are updated after the branch.
+
 - None.
 
 ## Next
 
-1. Terrazzo lint (chosen next): turn on Terrazzo's built-in lint rules (`core/descriptions`, `a11y/min-contrast`, `core/consistent-naming`, `core/duplicate-values`, …) and decide which checks stay in `check.ts`.
-
-Other candidates, in the recommended order (not decided yet):
+Candidates after Terrazzo lint, in the recommended order (not decided yet):
 
 1. First component (Button): validates `inverse` and its `strong`/`stronger` steps, an intent's `surface/base`/`strong`/`stronger` (danger for destructive buttons), the focus ring, `disabled/*`, and control height, and starts the component tier (ADR 0018).
 2. JS/TS and SCSS outputs in `@pts/web`: Terrazzo plugins in `packages/web/terrazzo.config.ts` plus subpath exports. Smallest, but nothing consumes them yet.
@@ -27,4 +27,4 @@ Still deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android; thro
 
 ## Open questions
 
-- Which of the other candidates comes after Terrazzo lint.
+- Which of the candidates above comes first.
