@@ -207,6 +207,7 @@ Work continues across chats and machines through the repository only. Chat histo
 - A session starts with git state and `docs/progress.md` in context (the SessionStart hook in `.claude/settings.json`). If the branch is behind its upstream, pull before editing.
 - `docs/progress.md` is the handoff note: current state, in-flight branches, next steps, open questions. When a unit of work is done, or before stopping mid-task, update it in the same commit. Record what isn't obvious from the code and git log; keep it short and replace stale lines instead of appending history.
 - Push work branches before switching machines. Uncommitted changes don't travel.
+- Several sessions may share this checkout. Before switching branches here, check for busy sessions (`ListAgents`) and work in a separate git worktree if there is one. After an action that changes another session's branch or files (a rebase, a merge, an edit to a shared file), message that session directly (`SendMessage`): what changed, the new commit hashes, and which files to re-read.
 - Decisions go in ADRs, rules in this file, not in `progress.md`.
 
 ## Deferred
