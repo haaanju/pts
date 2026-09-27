@@ -6,6 +6,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 - Latest release: `v0.3.0`: semantic colors renamed by property and intent (ADR 0017), interaction states only on pressable fills (ADR 0018). The Figma `Theme` collection uses the same names and scopes; primitives are hidden from pickers.
 - `main` is stable. CI and the pre-commit hook run check, lint, and typecheck.
+- Figma `pts` file: every specimen page uses one table style (header with token count, section title with its path such as `space/*`, column headers, short token names; Color adds a contrast column). Every frame pins its Theme mode. Specimens are drawn by hand, so the contrast badges and hex values are static text: redraw them when values change.
 
 ## In flight
 
@@ -13,9 +14,14 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## Next
 
-- JS/TS and SCSS outputs in `@pts/web`: add Terrazzo plugins to `packages/web/terrazzo.config.ts` and subpath exports.
-- Deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android).
+Candidates, in the recommended order (not decided yet):
+
+1. Figma sync: renaming variables, setting scopes, and redrawing specimens were all manual in 0.3.0. Start with an ADR comparing approaches (Figma plugin, REST API, a script over the Figma MCP). Scopes can be derived from the property segment (ADR 0017); specimen generation could be part of it.
+2. First component (Button): validates `inverse` and its states, `danger` hover/pressed, the focus ring, disabled, and control height, and starts the component tier (ADR 0018).
+3. JS/TS and SCSS outputs in `@pts/web`: Terrazzo plugins in `packages/web/terrazzo.config.ts` plus subpath exports. Smallest, but nothing consumes them yet.
+
+Still deferred (see CLAUDE.md): native platforms (iOS, Android).
 
 ## Open questions
 
-- None.
+- Which of the candidates above comes first.
