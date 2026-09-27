@@ -4,13 +4,12 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## Current state
 
-- Latest release: `v0.2.0`: source in `tokens/`, web output in `@pts/web`, docs in `apps/storybook` (ADR 0016).
+- Latest release: `v0.3.0`: semantic colors renamed by property and intent (ADR 0017), interaction states only on pressable fills (ADR 0018). The Figma `Theme` collection uses the same names and scopes; primitives are hidden from pickers.
 - `main` is stable. CI and the pre-commit hook run check, lint, and typecheck.
 
 ## In flight
 
-- `feature/color-naming`: new semantic color names (ADR 0017) and interaction-state scope (ADR 0018), implemented and accepted. Not merged or released yet.
-  - Remaining: apply the new names and scopes to the Figma `Theme` collection (the `Theme (naming test)` collection in the `pts` file has the final structure; delete it afterwards), merge to `main`, and release `0.3.0` (breaking: every semantic color name and the primitive group change).
+- None.
 
 ## Next
 

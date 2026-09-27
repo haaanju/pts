@@ -1,6 +1,6 @@
 {
   "name": "@pts/web",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Web output of @pts/tokens: CSS custom properties and self-hosted fonts",
   "files": [
