@@ -10,13 +10,17 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/color-surface-pairs`: ADR 0019 (proposed) renames semantic colors to fill / `on-` pairs (`surface`/`on-surface`, `inverse`/`on-inverse`), moves disabled to a `disabled/` group, and turns hover/pressed into `strong`/`stronger`. Next: try the names in the Figma test collection, then implement in `generate-color.ts` and `pairs.ts`.
+- `feature/color-surface-pairs`: ADR 0019 (proposed) renames semantic colors to fill / `on-` pairs (`surface`/`on-surface`, `inverse`/`on-inverse`), moves disabled to a `disabled/` group, and turns hover/pressed into `strong`/`stronger`. Committed as a draft; no token or code changes yet.
+  1. Figma: rename the `Theme` variables per the ADR's old → new table, set scopes by the name rule, and add descriptions. Variables only; specimens later.
+  2. Code: `generate-color.ts` (names, `$description`), `pairs.ts` (pairs from `on-`), docs, then accept the ADR and update CLAUDE.md, README, and ADR 0017/0018 status.
+  3. Redraw the Figma Color specimen, then release `0.4.0`.
+- The Figma MCP must be authenticated with the personal account that owns the `pts` file; a work account only has view access. To switch, clear the figma server's authentication in `/mcp` and reconnect.
 
 ## Next
 
 Candidates, in the recommended order (not decided yet):
 
-1. First component (Button): validates `inverse` and its states, `danger` hover/pressed, the focus ring, disabled, and control height, and starts the component tier (ADR 0018).
+1. First component (Button), after ADR 0019 lands: validates `inverse` and its `strong`/`stronger` steps, danger `emphasis-strong`/`stronger`, the focus ring, disabled, and control height, and starts the component tier (ADR 0018).
 2. JS/TS and SCSS outputs in `@pts/web`: Terrazzo plugins in `packages/web/terrazzo.config.ts` plus subpath exports. Smallest, but nothing consumes them yet.
 
 Still deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android).
