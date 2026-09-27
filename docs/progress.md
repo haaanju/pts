@@ -10,7 +10,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- None.
+- `feature/color-surface-pairs`: ADR 0019 (proposed) renames semantic colors to fill / `on-` pairs (`surface`/`on-surface`, `inverse`/`on-inverse`), moves disabled to a `disabled/` group, and turns hover/pressed into `strong`/`stronger`. Next: try the names in the Figma test collection, then implement in `generate-color.ts` and `pairs.ts`.
 
 ## Next
 
