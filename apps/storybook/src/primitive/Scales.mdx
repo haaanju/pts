@@ -12,7 +12,7 @@ import { PageHeader, Section, Bars, TokenTable } from "../components";
   <Bars prefix="dimension" />
 </Section>
 
-<Section title="Typeface" lead="Font stacks, including fallbacks. Aliased by font-family.">
+<Section title="Typeface" lead="Font stacks, including fallbacks. Aliased by font-family. Font sizes have no primitive of their own: font-size aliases dimension.* directly.">
   <TokenTable prefix="typeface" preview={(t) => <span style={{ fontFamily: t.css }}>Aa Bb Cc 0123</span>} />
 </Section>
 
