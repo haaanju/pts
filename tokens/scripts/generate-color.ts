@@ -1,6 +1,9 @@
 // Generates the color tokens:
-//   src/primitive/palette.tokens.json
+//   src/primitive/color.tokens.json          palette
+//   src/semantic/color.tokens.json           theme-independent colors (always/*)
 //   src/semantic/color.{light,dark}.tokens.json
+//
+// Names and pairing rules: ADR 0017. Which fills get hover/pressed: ADR 0018.
 //
 // Palette: Figma anchor values (the original exploration file) plus in-between steps as OKLab
 // midpoints. Semantic: fixed choices for surfaces, plus steps picked as the nearest step to a
@@ -102,7 +105,7 @@ const hexOf = (ref: string) => {
 // JSON keys: numeric-looking keys are ordered by JS, which matches the step order here.
 const orderedGroup = (steps: Record<string, string>) => Object.fromEntries(Object.entries(steps).map(([k, hex]) => [k, colorToken(hex)]));
 const palette = {
-  palette: {
+  color: {
     white: colorToken("#ffffff"),
     black: colorToken("#000000"),
     neutral: orderedGroup(neutral),
@@ -115,7 +118,9 @@ const palette = {
 
 const TEXT = 4.5; // WCAG 1.4.3
 const UI = 3; // WCAG 1.4.11
-const ROLES = { danger: "red", warning: "orange", success: "green", info: "blue", recommend: "purple" } as const;
+const ROLES = { danger: "red", warning: "orange", success: "green", info: "blue", discovery: "purple" } as const;
+// Intents whose emphasis fill is pressable (destructive buttons), so it gets hover/pressed (ADR 0018).
+const PRESSABLE = new Set(["danger"]);
 type Mode = "light" | "dark";
 
 /** Steps ordered by distance from `prefer`; ties go to the lighter step. */
@@ -149,57 +154,75 @@ const semantic = (mode: Mode) => {
   const dark = mode === "dark";
   const dir = dark ? -1 : 1; // light gets darker on interaction, dark gets lighter
   const bg: Record<string, string> = {};
-  const fg: Record<string, string> = {};
-  const bd: Record<string, string> = {};
+  const content: Record<string, string> = {};
+  const border: Record<string, string> = {};
 
-  // Surfaces and neutral states are fixed choices; check.ts verifies they stay distinct.
-  bg.default = dark ? "neutral.950" : "white";
-  bg["default-hover"] = dark ? "neutral.850" : "neutral.100";
-  bg["default-pressed"] = dark ? "neutral.800" : "neutral.200";
-  bg.subtle = dark ? "neutral.900" : "neutral.50";
-  bg.raised = dark ? "neutral.900" : "white";
-  bg.inverse = dark ? "white" : "neutral.950";
+  // Canvas, surfaces, and the transparent-element states are fixed choices; check.ts verifies they stay distinct.
+  bg.canvas = dark ? "neutral.950" : "white";
+  bg.hover = dark ? "neutral.850" : "neutral.100";
+  bg.pressed = dark ? "neutral.800" : "neutral.200";
+  bg.disabled = dark ? "neutral.900" : "neutral.50"; // exempt from contrast (inactive)
+  const surface = { subtle: dark ? "neutral.900" : "neutral.50", raised: dark ? "neutral.900" : "white" };
 
-  const pages = ["default", "default-hover", "default-pressed", "subtle", "raised"].map((k) => hexOf(bg[k]));
+  const pages = [bg.canvas, bg.hover, bg.pressed, ...Object.values(surface)].map(hexOf);
   const onPages = (min: number) => (hex: string) => pages.every((p) => contrast(hex, p) >= min);
 
-  const primary = pickSolid("neutral", NEUTRAL_STEPS, dark ? 50 : 950, dir, onPages(UI));
-  [bg.primary, bg["primary-hover"], bg["primary-pressed"]] = primary.states;
-  bg.disabled = dark ? "neutral.900" : "neutral.50"; // exempt from contrast (inactive)
+  // inverse: the flipped fill for primary buttons, tooltips, and snackbars
+  const inv = pickSolid("neutral", NEUTRAL_STEPS, dark ? 50 : 950, dir, onPages(UI));
+  const inverse = { base: inv.states[0], hover: inv.states[1], pressed: inv.states[2] };
+  const onInverse = (hex: string) => inv.states.every((s) => contrast(hex, hexOf(s)) >= TEXT);
 
-  fg["on-primary"] = primary.on;
-  fg.default = pick("neutral", NEUTRAL_STEPS, dark ? 50 : 950, onPages(TEXT));
-  fg.muted = pick("neutral", NEUTRAL_STEPS, dark ? 500 : 700, onPages(TEXT));
-  fg["on-inverse"] = dark ? "neutral.950" : "white";
-  fg.disabled = dark ? "neutral.600" : "neutral.400"; // exempt
+  content.base = pick("neutral", NEUTRAL_STEPS, dark ? 50 : 950, onPages(TEXT));
+  content.muted = pick("neutral", NEUTRAL_STEPS, dark ? 500 : 700, onPages(TEXT));
+  content.disabled = dark ? "neutral.600" : "neutral.400"; // exempt
+  const contentInverse = { base: inv.on, muted: pick("neutral", NEUTRAL_STEPS, dark ? 700 : 500, onInverse) };
 
-  bd.default = dark ? "neutral.800" : "neutral.200"; // decorative divider, exempt from 1.4.11
-  bd.strong = pick("neutral", NEUTRAL_STEPS, dark ? 600 : 500, onPages(UI));
-  bd.focus = pick("neutral", NEUTRAL_STEPS, dark ? 50 : 950, onPages(UI));
-  bd.disabled = dark ? "neutral.800" : "neutral.200"; // exempt
+  border.base = pick("neutral", NEUTRAL_STEPS, dark ? 600 : 500, onPages(UI));
+  border.subtle = dark ? "neutral.800" : "neutral.200"; // decorative divider, exempt from 1.4.11
+  border.focus = pick("neutral", NEUTRAL_STEPS, dark ? 50 : 950, onPages(UI));
+  border.disabled = dark ? "neutral.800" : "neutral.200"; // exempt
 
+  const intent: Record<string, { background: Record<string, string>; content: Record<string, string>; border: Record<string, string> }> = {};
   for (const [role, hue] of Object.entries(ROLES)) {
-    const solid = pickSolid(hue, HUE_STEPS, 500, dir, onPages(UI));
-    [bg[role], bg[`${role}-hover`], bg[`${role}-pressed`]] = solid.states;
-    bg[`${role}-subtle`] = dark ? `${hue}.900` : `${hue}.100`;
-    const subtle = hexOf(bg[`${role}-subtle`]);
-
-    fg[`on-${role}`] = solid.on;
-    fg[role] = pick(hue, HUE_STEPS, dark ? 300 : 700, onPages(TEXT));
-    fg[`on-${role}-subtle`] = pick(hue, HUE_STEPS, dark ? 200 : 800, (h) => contrast(h, subtle) >= TEXT);
-
-    bd[role] = pick(hue, HUE_STEPS, dark ? 400 : 600, onPages(UI));
+    // Picked as a hover/pressed trio even when only the base is emitted, so adding states later doesn't move it.
+    const emphasis = pickSolid(hue, HUE_STEPS, 500, dir, onPages(UI));
+    const subtle = dark ? `${hue}.900` : `${hue}.100`;
+    const states: Record<string, string> = PRESSABLE.has(role) ? { hover: emphasis.states[1], pressed: emphasis.states[2] } : {};
+    intent[role] = {
+      background: { emphasis: emphasis.states[0], subtle, ...states },
+      content: {
+        base: pick(hue, HUE_STEPS, dark ? 300 : 700, onPages(TEXT)),
+        emphasis: emphasis.on,
+        subtle: pick(hue, HUE_STEPS, dark ? 200 : 800, (h) => contrast(h, hexOf(subtle)) >= TEXT),
+      },
+      border: {
+        base: pick(hue, HUE_STEPS, dark ? 400 : 600, onPages(UI)),
+        subtle: dark ? `${hue}.700` : `${hue}.300`, // decorative, exempt
+      },
+    };
   }
-  bg.overlay = dark ? "black-alpha.70" : "black-alpha.50"; // translucent scrim, exempt
 
-  const alias = (ref: string) => ({ $type: "color", $value: `{palette.${ref}}` });
-  const group = (g: Record<string, string>) => Object.fromEntries(Object.entries(g).map(([k, v]) => [k, alias(v)]));
-  return { color: { background: group(bg), foreground: group(fg), border: group(bd) } };
+  // Refs become aliases; nested objects stay groups.
+  type Tree = { [key: string]: string | Tree };
+  const tokens = (tree: Tree): Record<string, unknown> =>
+    Object.fromEntries(Object.entries(tree).map(([k, v]) => [k, typeof v === "string" ? alias(v) : tokens(v)]));
+  return tokens({
+    background: { ...bg, surface, inverse },
+    content: { ...content, inverse: contentInverse },
+    border,
+    utility: { scrim: dark ? "black-alpha.70" : "black-alpha.50" }, // translucent, exempt
+    intent,
+  });
 };
+
+const alias = (ref: string) => ({ $type: "color", $value: `{color.${ref}}` });
+// Same in every theme, so they live in the base set (ADR 0017).
+const always = { always: { white: alias("white"), black: alias("black") } };
 
 // ---------- write ----------
 
 const write = (file: string, data: unknown) => writeFileSync(join(SRC, file), JSON.stringify(data, null, 2) + "\n");
-write("primitive/palette.tokens.json", palette);
+write("primitive/color.tokens.json", palette);
+write("semantic/color.tokens.json", always);
 for (const mode of ["light", "dark"] as const) write(`semantic/color.${mode}.tokens.json`, semantic(mode));
-console.log("✔ color tokens generated (palette, color.light, color.dark)");
+console.log("✔ color tokens generated (primitive color, semantic color, color.light, color.dark)");

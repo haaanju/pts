@@ -12,7 +12,7 @@
           "$ref": "primitive/typography.tokens.json"
         },
         {
-          "$ref": "primitive/palette.tokens.json"
+          "$ref": "primitive/color.tokens.json"
         },
         {
           "$ref": "primitive/motion.tokens.json"
@@ -37,6 +37,9 @@
         },
         {
           "$ref": "semantic/z-index.tokens.json"
+        },
+        {
+          "$ref": "semantic/color.tokens.json"
         }
       ]
     }

@@ -1,6 +1,6 @@
 # 0017. Color Names by Property and Intent
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-09-27
 
 ## What we learned
@@ -105,10 +105,11 @@ Old → new (60 → 58 tokens; `<r>` is each status role, `recommend` becomes `d
 | primitive `palette/*` | `color/*` |
 
 - Values are unchanged except: tooltips and snackbars move from the old inverse (`neutral.950` / `white`) to the primary values (`neutral.900` / `neutral.200`), and the new tokens above.
-- Code: `generate-color.ts` (names and output shape), `check.ts` (pairing, exemptions, state rules; the hierarchy words are a list, so a new one must be added there), Storybook `tokens.ts` / `components.tsx` / Color page, `.storybook/theme.ts`, and shadow tokens that alias `palette.black-alpha`.
+- Code: `generate-color.ts` writes the new names; the primitive file is now `primitive/color.tokens.json`, and `always/*` lives in `semantic/color.tokens.json` in the base set because it doesn't change with the theme. The pairing rules moved to `tokens/scripts/pairs.ts`, which both `check.ts` and the Storybook docs import, so the docs badges can't drift from the check. Shadow tokens alias `color.black-alpha`.
+- Verified: the generated tokens match the Figma test collection name for name and value; all 50 renamed CSS variables keep their values; `npm run check` passes 276 pairs (138 per theme) and fails as expected on deliberately broken pairs, invisible states, a content name with no background, and a translucent pair.
 - Figma: apply the new names and scopes to the real `Theme` collection; the `Primitive` collection already uses `color/*`.
-- When accepted, mark ADR 0005, 0006, 0010, and 0015 `(amended by 0017)`.
 
 ## Documented in
 
-- `CLAUDE.md` — Token Rules (Primitives, Color, Accessibility), Token Docs (on implementation)
+- `CLAUDE.md` — Structure, Commands, Token Rules (Primitives, Color, Accessibility), Token Docs
+- `README.md` — Tokens, Usage, Accessibility

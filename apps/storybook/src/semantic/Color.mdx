@@ -1,22 +1,30 @@
 import { Meta } from "@storybook/addon-docs/blocks";
-import { PageHeader, Section, BackgroundTable, ForegroundTable, BorderTable } from "../components";
+import { PageHeader, Section, ColorTable, COLOR_GROUPS } from "../components";
 
 <Meta title="Semantic/Color" />
 
-<PageHeader eyebrow="Semantic" title="Color" groups={["color"]}>
-  Named property → role → emphasis → state, e.g. color.background.danger-hover. Light and dark are shown side by side.
+<PageHeader eyebrow="Semantic" title="Color" groups={COLOR_GROUPS}>
+  Neutral colors are grouped by property (background, content, border); status colors by intent, then the same three
+  properties. Light and dark are shown side by side.
 </PageHeader>
 
 <Section title="Rules">
-  - `foreground.on-X` sits on `background.X` and its `-hover` / `-pressed` states.
-  - Other foregrounds sit on the page backgrounds: `default`, `default-hover`, `default-pressed`, `subtle`, `raised`.
-  - Text needs **4.5:1**; borders and solid fills need **3:1**. `disabled`, `border.default` and `background.overlay` are exempt.
+  - `canvas` is the page. `base` is the default of every other group; `subtle` is the weaker fill or line, `muted` the weaker text.
+  - A content name is either a level (`base`, `muted`) or the background it sits on: `content.inverse.*` on `background.inverse.*`, an intent's `content.emphasis` on its `background.emphasis`, `content.subtle` on `background.subtle`.
+  - Level content and borders sit on the page: `canvas`, `hover`, `pressed`, and `surface.*`.
+  - `hover` and `pressed` are states of the fill next to them: `canvas` (transparent elements), `inverse.base`, and `danger`'s `emphasis`.
+  - Text needs **4.5:1**; borders and solid fills need **3:1**. `disabled`, `border.subtle`, `utility`, and `always` are exempt. Each badge shows the lowest ratio among the pairs `npm run check` tests.
 </Section>
 
-<Section title="Background"><BackgroundTable /></Section>
+<Section title="Background"><ColorTable prefix="background" /></Section>
+<Section title="Content"><ColorTable prefix="content" /></Section>
+<Section title="Border"><ColorTable prefix="border" /></Section>
 
-<Section title="Foreground" lead="Each sample sits on its paired background. npm run check tests every pairing, including hover and pressed.">
-  <ForegroundTable />
-</Section>
+<Section title="Danger" lead="Errors and destructive actions. The only intent with hover and pressed: destructive buttons."><ColorTable prefix="intent.danger" /></Section>
+<Section title="Warning" lead="Caution that needs attention."><ColorTable prefix="intent.warning" /></Section>
+<Section title="Success" lead="Completed or positive states."><ColorTable prefix="intent.success" /></Section>
+<Section title="Info" lead="Neutral information."><ColorTable prefix="intent.info" /></Section>
+<Section title="Discovery" lead="New or explorable things: new-feature badges, onboarding, recommendations, AI features."><ColorTable prefix="intent.discovery" /></Section>
 
-<Section title="Border" lead="Ratios are against background.default."><BorderTable /></Section>
+<Section title="Utility" lead="Outside the pairing system. The scrim dims the page behind a modal."><ColorTable prefix="utility" /></Section>
+<Section title="Always" lead="The same in every theme, for icons and text on images. Pair always.white with a dark overlay."><ColorTable prefix="always" /></Section>

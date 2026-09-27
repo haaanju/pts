@@ -1,6 +1,6 @@
 # 0018. Interaction States in the Semantic Tier
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-09-27
 
 ## What we learned
@@ -32,4 +32,4 @@ The rename in ADR 0017 also showed that four intents carried `hover` / `pressed`
 
 ## Documented in
 
-- `CLAUDE.md` — Token Rules (Structure, Color) (on implementation)
+- `CLAUDE.md` — Token Rules (Color)

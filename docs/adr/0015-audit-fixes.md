@@ -1,6 +1,6 @@
 # 0015. Audit Fixes: Visible States, Reproducible Color, Bundled Fonts, Tooling
 
-- Status: accepted
+- Status: accepted (amended by 0017)
 - Date: 2026-09-26
 
 ## What we learned

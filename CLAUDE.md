@@ -29,13 +29,14 @@ pts/
 ├── docs/adr/                    # architecture decision records
 ├── tokens/                      # @pts/tokens — DTCG source, single source of truth (private)
 │   ├── scripts/check.ts         # token validation (npm run check)
-│   ├── scripts/generate-color.ts  # generates palette + semantic color (npm run generate:color)
+│   ├── scripts/generate-color.ts  # generates primitive + semantic color (npm run generate:color)
+│   ├── scripts/pairs.ts         # color pairing rules, shared by check.ts and the Storybook docs
 │   └── src/
 │       ├── pts.resolver.json         # combines token files + theme modifier (build entry point)
 │       ├── primitive/
 │       │   ├── dimension.tokens.json   # dimension
 │       │   ├── typography.tokens.json  # typeface, weight, ratio, tracking
-│       │   ├── palette.tokens.json     # palette (incl. black-alpha)
+│       │   ├── color.tokens.json       # color palette (incl. black-alpha)
 │       │   └── motion.tokens.json      # duration, easing
 │       └── semantic/
 │           ├── spacing.tokens.json     # space, layout
@@ -45,7 +46,8 @@ pts/
 │           ├── breakpoint.tokens.json
 │           ├── motion.tokens.json      # motion (duration, easing)
 │           ├── z-index.tokens.json
-│           ├── color.{light,dark}.tokens.json   # color, per theme
+│           ├── color.tokens.json            # always (theme-independent colors)
+│           ├── color.{light,dark}.tokens.json   # background, content, border, utility, intent, per theme
 │           └── shadow.{light,dark}.tokens.json  # shadow, per theme
 ├── packages/                    # shippable outputs, one package per platform
 │   └── web/                     # @pts/web — CSS custom properties and self-hosted fonts
@@ -76,7 +78,7 @@ pts/
 - `npm run typecheck`: TypeScript for the token scripts and Storybook.
 - The pre-commit hook runs check, lint, and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
 - CI (`.github/workflows/ci.yml`) runs the same checks plus both builds on pushes to `main` and on pull requests.
-- `npm run generate:color -w @pts/tokens`: regenerates `palette.tokens.json` and `color.{light,dark}.tokens.json` from the Figma anchors and the selection rules. **Color tokens are generated: change the script, not the JSON**, then run `npm run check`. On an unchanged script it produces no diff.
+- `npm run generate:color -w @pts/tokens`: regenerates `primitive/color.tokens.json` and `semantic/color{,.light,.dark}.tokens.json` from the Figma anchors and the selection rules. **Color tokens are generated: change the script, not the JSON**, then run `npm run check`. On an unchanged script it produces no diff.
 - `npm run build`: builds every workspace (`@pts/web` → `packages/web/dist/tokens.css`).
   - Light values go on `:root` and `[data-theme="light"]`; dark values under `@media (prefers-color-scheme: dark)` and `[data-theme="dark"]`. `data-theme` on `<html>` forces a theme; on any element it themes that subtree (e.g. a light region inside a dark page).
   - `terrazzo.config.ts` reads the dark context files in the resolver to decide which groups go in the dark blocks.
@@ -104,8 +106,8 @@ pts/
 - `weight/N`: numeric font weight (400, 500, 600, 700).
 - `ratio/N`: N = value × 100 (`ratio/150` = 1.5).
 - `tracking/N`: letter spacing in px, N = px × 100; negative values use `neg-` (`tracking/neg-50` = -0.5px).
-- `palette/<hue>/N`: higher is darker. Hues (red, orange, green, blue, purple) have 10 steps (50–900); `neutral` has 13 (50–1000, including 850). Plus `palette/white`, `palette/black`.
-- `palette/black-alpha/N`: black at N% opacity (5–90), for shadows and scrims only. There are no standalone opacity tokens.
+- `color/<hue>/N`: higher is darker. Hues (red, orange, green, blue, purple) have 10 steps (50–900); `neutral` has 13 (50–1000, including 850). Plus `color/white`, `color/black`.
+- `color/black-alpha/N`: black at N% opacity (5–90), for shadows and scrims only. There are no standalone opacity tokens.
 - `duration/N`: N ms. `easing/standard, decelerate, accelerate`: cubic Bézier.
 
 ### Semantic
@@ -114,7 +116,7 @@ pts/
 - `layout/N`: ordinal steps in hundreds (not px), for gaps of 40px+. 100 = 40, 200 = 48, 300 = 64. Insert in-between steps like 150.
 - `radius`: t-shirt sizes. none = 0, xs = 2, sm = 4, md = 8, lg = 12, xl = 16, `full` = max.
 - `stroke`: weight names. thin = 1, thick = 2, thicker = 4. No zero-width token; "no border" means removing the border.
-- `focus-ring/width`, `focus-ring/offset`: 2px each. Color is `color/border/focus`.
+- `focus-ring/width`, `focus-ring/offset`: 2px each. Color is `border/focus`.
 - `font-family`: sans (Aspekta), serif and mono (IBM Plex). Use `mono` wherever digits must line up: Aspekta has no tabular figures.
 - `font-weight`: regular, medium, semibold, bold.
 - `font-size/N`: ordinal steps, 400 = 16px (body default). 100 = 10 … 1000 = 48.
@@ -129,25 +131,36 @@ pts/
 
 ### Color
 
-`color/<property>/<role>[-<emphasis>][-<state>]` — property is background, foreground, or border.
+See ADR 0017 (names) and 0018 (states). Neutral colors are grouped by property; status colors by intent, then the same three properties:
 
-- **Page backgrounds**: `background/default`, `default-hover`, `default-pressed`, `subtle`, `raised`. Transparent elements (list items, ghost buttons) use `default-hover` / `default-pressed` for their states.
-- **Raised surfaces**: cards, popovers, and modals use `background/raised` with a `shadow/*`. Light: same as the page (the shadow separates it). Dark: one step lighter than the page, since shadows barely show on dark.
-- **Neutral**: `background/inverse`, `background/overlay` (modal scrim), `foreground/default, muted, on-inverse`, `border/default, strong, focus`.
-- **Primary**: monochrome (neutral). `background/primary[-hover|-pressed]`, `foreground/on-primary`.
-- **Status roles**: danger (red), warning (orange), success (green), info (blue), recommend (purple). Each has `background/<role>[-hover|-pressed]`, `background/<role>-subtle`, `foreground/<role>`, `foreground/on-<role>`, `foreground/on-<role>-subtle`, `border/<role>`.
-- **Disabled**: `background/disabled`, `foreground/disabled`, `border/disabled`.
-- **State direction**: from hover to pressed, light gets darker and dark gets lighter.
-- **Pairing**: `foreground/on-X` is used on `background/X` and its hover/pressed states. Foregrounds without `on-`, and borders, are used on the page backgrounds.
+```
+background/  canvas, hover, pressed, disabled, surface/{subtle, raised}, inverse/{base, hover, pressed}
+content/     base, muted, disabled, inverse/{base, muted}
+border/      base, subtle, focus, disabled
+utility/     scrim
+always/      white, black
+intent/<danger | warning | success | info | discovery>/
+             background/{emphasis, subtle}, content/{base, emphasis, subtle}, border/{base, subtle}
+             (danger also has background/hover, pressed)
+```
+
+- **Names**: `canvas` is the page. `base` is the default of every other group (and the resting fill inside a state folder). `subtle` is the weaker fill or line; `muted` is weaker text. Never `default`, never `on-`.
+- **Surfaces**: cards, popovers, and modals use `background/surface/raised` with a `shadow/*`. Light: same as the canvas (the shadow separates it). Dark: one step lighter, since shadows barely show on dark.
+- **Inverse**: the flipped fill for primary buttons, tooltips, and snackbars. Monochrome (neutral), so it never competes with intents.
+- **Intents**: danger (red), warning (orange), success (green), info (blue), discovery (purple: new features, onboarding, recommendations, AI). `emphasis` is the strong fill, `subtle` the soft one.
+- **States**: `hover` / `pressed` are states of the fill at the same level: `canvas` (transparent elements such as ghost buttons and list items), `inverse/base`, and `danger`'s `emphasis`. Add states only to fills a pressable component uses; component-specific states (selected, checked) go to a future component tier. From hover to pressed, light gets darker and dark gets lighter.
+- **Utility**: colors outside the pairing system (the modal scrim). **Always**: the same in every theme, for icons and text on images; theme-independent, so they live in `semantic/color.tokens.json` (base set).
+- **Pairing**: a content name is either a level (`base`, `muted`) or the background it sits on. `content/inverse/*` → `background/inverse/*`; an intent's `content/emphasis` → its `emphasis` and states, `content/subtle` → its `background/subtle`. Level content and all borders sit on the page: `canvas`, `hover`, `pressed`, `surface/*`.
+- **Figma**: variable scopes follow the property (background and utility → fills; content → text and shape fills plus strokes; border → strokes; always → all). Primitives are hidden from pickers.
 
 ### Accessibility (required in both themes)
 
-- Foreground text: 4.5:1 against every paired background (WCAG 1.4.3).
-- UI boundaries (`border/*`, solid `background/*` and their states, including the focus ring): 3:1 against the page backgrounds (WCAG 1.4.11).
-- Exempt: `border/default` (decorative divider), `*/disabled` (inactive), `background/overlay` (translucent scrim).
+- Content: 4.5:1 against every paired background (WCAG 1.4.3).
+- UI boundaries (`border/*`, `background/inverse/*`, intent `emphasis` and its states, including the focus ring): 3:1 against the page backgrounds (WCAG 1.4.11).
+- Exempt: `*/disabled` (inactive), `border/subtle` and intent `border/subtle` (decorative), `utility/*` (translucent scrim), `always/*` (sits on images; pair `always/white` with a dark overlay).
 - Translucent colors can't be contrast-checked; `npm run check` errors if one enters a contrast pair.
-- `npm run check` derives the pairs from these naming rules, so new color tokens must follow them to be checked.
-- States must be visible: `background/X`, `X-hover`, and `X-pressed` resolve to different colors, and `default-hover` / `default-pressed` differ from `subtle`, `raised`, and `disabled` (a hover inside a card must show). `npm run check` enforces this.
+- `npm run check` derives the pairs from these naming rules (`tokens/scripts/pairs.ts`), so new color tokens must follow them to be checked. A new content level word must be added to `HIERARCHY` there; a content name matching no background is reported.
+- States must be visible: each fill and its `hover` / `pressed` resolve to different colors, and `background/hover` / `pressed` differ from `surface/*` and `disabled` (a hover inside a card must show). `npm run check` enforces this.
 
 ## Fonts
 
@@ -164,7 +177,7 @@ pts/
 - Page layout: `<PageHeader eyebrow title groups>` (stacked, left-aligned: eyebrow · token count, title, lead), then `<Section title lead>…</Section>` blocks (heading and lead, full-width content). Sections are separated by space, not lines; only the Introduction uses `<Section divider>`. Table rows keep hairlines for scanning. No cards or boxes; `ThemeCell` is the only filled surface because its background is the information.
 - When adding a new **group**, wrap its block in a section on the matching `.mdx` page (e.g. `<Section title="New group"><TokenTable prefix="new-group" /></Section>`) and add the prefix to the page's `groups`.
 - Groups that differ by theme are shown with light and dark side by side. `ThemeCell` sets `data-theme` so CSS variables inside it resolve to that theme.
-- Contrast badges use the same pairing rules as `npm run check`.
+- Contrast badges use the same pairing rules as `npm run check` (both import `tokens/scripts/pairs.ts`); each badge shows the lowest ratio among a token's pairs.
 - Sample text in the docs is English only.
 - Docs styling dogfoods the tokens: color, type, spacing, radius, stroke, shadow, and motion come from `@pts/web` variables. Values that only describe the docs layout or sample geometry are `--docs-*` variables at the top of `docs.css`; never add product tokens just for the docs. Card preview illustrations may use raw geometry.
 - Light/dark: the sun/moon button at the top right toggles a `theme` global. The preview sets `data-theme` on `<html>` from it, so the whole docs page switches through token variables; the manager switches between the two UI themes. The choice is saved in localStorage; `?globals=theme:dark` in the URL also works.

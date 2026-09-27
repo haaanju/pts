@@ -18,12 +18,12 @@ The source lives in `tokens/`, shippable outputs in `packages/` (one package per
 
 Two tiers:
 
-- **Primitive** (`tokens/src/primitive/`): raw values such as `dimension.16`, `palette.red.600`, `duration.200`.
-- **Semantic** (`tokens/src/semantic/`): values with a role, such as `space.400`, `color.background.danger`, `text.body-md`. Semantic tokens alias primitives. Product code uses semantic tokens only.
+- **Primitive** (`tokens/src/primitive/`): raw values such as `dimension.16`, `color.red.600`, `duration.200`.
+- **Semantic** (`tokens/src/semantic/`): values with a role, such as `space.400`, `content.muted`, `intent.danger.background.emphasis`, `text.body-md`. Semantic tokens alias primitives. Product code uses semantic tokens only.
 
 Categories: color, typography, spacing, border, elevation, size, motion, and layout.
 
-Color and shadow have **light** and **dark** values, combined by a DTCG resolver (`pts.resolver.json`).
+Color names group neutral colors by property (`background`, `content`, `border`) and status colors by intent (`intent.danger.*`); see ADR 0017. Color and shadow have **light** and **dark** values, combined by a DTCG resolver (`pts.resolver.json`).
 
 ## Usage
 
@@ -35,15 +35,15 @@ Color and shadow have **light** and **dark** values, combined by a DTCG resolver
   height: var(--size-control-md);
   padding: 0 var(--space-400);
   border-radius: var(--radius-md);
-  background: var(--color-background-primary);
-  color: var(--color-foreground-on-primary);
+  background: var(--background-inverse-base);
+  color: var(--content-inverse-base);
   font: var(--text-label-md);
 }
 .button:hover {
-  background: var(--color-background-primary-hover);
+  background: var(--background-inverse-hover);
 }
 .button:focus-visible {
-  outline: var(--focus-ring-width) solid var(--color-border-focus);
+  outline: var(--focus-ring-width) solid var(--border-focus);
   outline-offset: var(--focus-ring-offset);
 }
 ```
@@ -61,7 +61,7 @@ Color and shadow have **light** and **dark** values, combined by a DTCG resolver
 
 Contrast is checked in both themes on every commit:
 
-- Every foreground meets **4.5:1** against each background it is paired with (`foreground.on-X` on `background.X` and its hover and pressed states; other foregrounds on the page surfaces).
+- Every content color meets **4.5:1** against each background it is paired with. A content name is a level (`content.base`, `content.muted`), used on the page surfaces, or the background it sits on (`content.inverse.base` on `background.inverse.*`, `intent.danger.content.emphasis` on the danger fill and its hover and pressed states).
 - Borders and solid fills meet **3:1** against the page surfaces.
 - Background states are visible: hover and pressed never resolve to the same color as the surface they sit on.
 
@@ -82,7 +82,7 @@ npm run build            # build @pts/web
 | `npm run typecheck` | TypeScript for the scripts and Storybook |
 | `npm run build` | Builds `@pts/web` |
 | `npm run build-storybook` | Builds the static docs |
-| `npm run generate:color -w @pts/tokens` | Regenerates the palette and semantic color tokens |
+| `npm run generate:color -w @pts/tokens` | Regenerates the primitive and semantic color tokens |
 
 **Working across machines.** Everything needed to continue lives in the repository. On a new machine: clone, `nvm use`, `npm install`. Pull before starting and push before switching. [`docs/progress.md`](docs/progress.md) records where work left off.
 

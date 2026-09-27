@@ -1,6 +1,6 @@
 # 0005. Color Tokens and Theme Resolver
 
-- Status: accepted (amended by 0006, 0010, 0015)
+- Status: accepted (amended by 0006, 0010, 0015, 0017)
 - Date: 2026-09-25
 
 ## What we learned

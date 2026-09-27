@@ -2,28 +2,22 @@
 //   1. every token declares $type
 //   2. every alias resolves
 //   3. all contexts of a modifier define the same token names
-//   4. color pairs meet WCAG contrast (pairs are derived from the naming rules in CLAUDE.md)
-//   5. interaction states are visible: every background state differs from its base, and the page
-//      hover/pressed states differ from every surface they can sit on and from disabled
+//   4. color pairs meet WCAG contrast (pairs are derived from the naming rules in CLAUDE.md, ADR 0017)
+//   5. interaction states are visible: every fill's hover/pressed differ from it and from each other,
+//      and background/hover and pressed differ from every surface they can sit on and from disabled
 // Exits with code 1 on any failure.
-// Disabled tokens, border/default (decorative), and background/overlay (scrim) are exempt from contrast.
+// Exempt from contrast: */disabled (inactive), border/subtle (decorative), utility/* (outside the
+// pairing system; the scrim is translucent), always/* (sits on images, whose colors are unknown).
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { contrastPairs, distinctBackgrounds } from "./pairs.ts";
 
 type Token = { $type?: string; $value: unknown };
 type Tokens = Record<string, Token>;
 type Ref = { $ref: string };
 
 const SRC = join(dirname(fileURLToPath(import.meta.url)), "../src");
-const TEXT = 4.5; // WCAG 1.4.3
-const UI = 3; // WCAG 1.4.11
-// backgrounds that plain (non on-) foregrounds and borders may sit on
-const PAGE = ["default", "default-hover", "default-pressed", "subtle", "raised"];
-const STATES = ["", "-hover", "-pressed"];
-// inactive components are exempt from WCAG contrast (1.4.3, 1.4.11)
-const EXEMPT = (name: string) => name === "disabled" || name === "default";
-
 const readJson = (file: string) => JSON.parse(readFileSync(join(SRC, file), "utf8"));
 
 const flatten = (node: Record<string, any>, prefix = "", out: Tokens = {}): Tokens => {
@@ -63,43 +57,6 @@ const luminance = (hex: string) => {
 const contrast = (a: string, b: string) => {
   const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
   return (hi + 0.05) / (lo + 0.05);
-};
-
-// [foreground token, background token, minimum ratio]
-const contrastPairs = (ids: string[]): [string, string, number][] => {
-  const names = (group: string) => ids.filter((id) => id.startsWith(`color.${group}.`)).map((id) => id.split(".")[2]);
-  const pairs: [string, string, number][] = [];
-  const backgrounds = new Set(names("background"));
-  for (const name of names("foreground").filter((n) => n !== "disabled")) {
-    // on-X sits on background/X and its interaction states
-    const base = name.slice(3);
-    const targets = name.startsWith("on-") ? [base, ...STATES.slice(1).map((s) => base + s).filter((b) => backgrounds.has(b))] : PAGE;
-    for (const bg of targets) pairs.push([`color.foreground.${name}`, `color.background.${bg}`, TEXT]);
-  }
-  for (const name of names("border").filter((n) => !EXEMPT(n))) {
-    for (const bg of PAGE) pairs.push([`color.border.${name}`, `color.background.${bg}`, UI]);
-  }
-  // overlay is a translucent scrim, not a UI boundary
-  const solid = names("background").filter((n) => ![...PAGE, "inverse", "disabled", "overlay"].includes(n) && !n.endsWith("-subtle"));
-  for (const name of solid) {
-    for (const bg of PAGE) pairs.push([`color.background.${name}`, `color.background.${bg}`, UI]);
-  }
-  return pairs;
-};
-
-// Backgrounds that must resolve to different colors, so a state change is actually visible.
-const distinctBackgrounds = (ids: string[]): [string, string][] => {
-  const names = new Set(ids.filter((id) => id.startsWith("color.background.")).map((id) => id.split(".")[2]));
-  const pairs: [string, string][] = [];
-  for (const base of names) {
-    const states = STATES.map((s) => base + s).filter((n) => names.has(n));
-    for (let i = 0; i < states.length; i++) for (let j = i + 1; j < states.length; j++) pairs.push([states[i], states[j]]);
-  }
-  // hover/pressed on transparent elements must show on every surface and differ from disabled
-  for (const state of ["default-hover", "default-pressed"].filter((n) => names.has(n))) {
-    for (const other of ["subtle", "raised", "disabled"].filter((n) => names.has(n))) pairs.push([state, other]);
-  }
-  return pairs.map(([a, b]) => [`color.background.${a}`, `color.background.${b}`]);
 };
 
 const resolver = readJson("pts.resolver.json");

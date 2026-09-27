@@ -1,12 +1,13 @@
 import { useState, type CSSProperties, type ReactNode } from "react";
-import { contrast, group, isThemed, leaf, pairedBackground, THEMES, token, tokenCount, type Theme, type TokenInfo } from "./tokens";
+import { contrast, group, isExempt, isThemed, leaf, pairsOf, THEMES, token, tokenCount, type Theme, type TokenInfo } from "./tokens";
 
-const TEXT = 4.5;
-const UI = 3;
 const SAMPLE = "The quick brown fox jumps over the lazy dog";
 
-const pageBg = (theme: Theme) => token("color.background.default", theme).css;
-const pageFg = (theme: Theme) => token("color.foreground.default", theme).css;
+const pageBg = (theme: Theme) => token("background.canvas", theme).css;
+const pageFg = (theme: Theme) => token("content.base", theme).css;
+
+/** Top-level groups of the semantic colors (ADR 0017) */
+export const COLOR_GROUPS = ["background", "content", "border", "utility", "always", "intent"];
 
 // Every block is wrapped in `sb-unstyled` so Storybook's markdown table/heading styles don't apply.
 const Block = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
@@ -15,7 +16,7 @@ const Block = ({ children, className = "" }: { children: ReactNode; className?: 
 
 // ---------- page chrome ----------
 
-/** Token count for one or more group prefixes, e.g. ["palette"] → "72 tokens" */
+/** Token count for one or more group prefixes, e.g. ["color"] → "76 tokens" */
 const countLabel = (prefixes: string[]) => {
   const n = prefixes.reduce((sum, p) => sum + group(p).length, 0);
   return `${n} token${n === 1 ? "" : "s"}`;
@@ -95,7 +96,7 @@ const PRIMITIVE_PAGES: Category[] = [
     preview: (
       <div className="pts-card-ramp">
         {["red", "orange", "green", "blue", "purple"].map((h) => (
-          <span key={h} style={{ background: token(`palette.${h}.500`).css }} />
+          <span key={h} style={{ background: token(`color.${h}.500`).css }} />
         ))}
       </div>
     ),
@@ -130,7 +131,7 @@ export const Stats = () => {
   const count = (prefix: string) => group(prefix).length;
   const stats = [
     { label: "Tokens", value: tokenCount() },
-    { label: "Semantic colors", value: count("color") },
+    { label: "Semantic colors", value: COLOR_GROUPS.reduce((sum, g) => sum + count(g), 0) },
     { label: "Text styles", value: count("text") },
     { label: "Themes", value: THEMES.length },
   ];
@@ -147,8 +148,8 @@ export const Stats = () => {
 };
 
 const TIERS = [
-  { tier: "Primitive", files: "primitive/*.tokens.json", role: "Raw values: dimension, palette, typeface, weight, ratio, duration, easing" },
-  { tier: "Semantic", files: "semantic/*.tokens.json", role: "Intent: space, color, text, shadow, size, motion, … Aliases primitives" },
+  { tier: "Primitive", files: "primitive/*.tokens.json", role: "Raw values: dimension, color, typeface, weight, ratio, duration, easing" },
+  { tier: "Semantic", files: "semantic/*.tokens.json", role: "Intent: space, background, content, border, text, shadow, size, motion, … Aliases primitives" },
 ];
 
 export const TierTable = () => (
@@ -269,7 +270,7 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
 // ---------- color ----------
 
 export const Palette = ({ hue }: { hue: string }) => {
-  const steps = group(`palette.${hue}`);
+  const steps = group(`color.${hue}`);
   return (
     <Block className="pts-palette">
       <div className="pts-ramp">
@@ -306,44 +307,41 @@ export const Palette = ({ hue }: { hue: string }) => {
   );
 };
 
-export const BackgroundTable = () => (
-  <TokenTable prefix="color.background" preview={(t) => <div className="pts-chip" style={{ background: t.css }} />} />
-);
+/** Which property a color token is, from its path: intent.danger.content.base → content */
+const property = (id: string) => id.split(".").find((s) => s === "background" || s === "content" || s === "border");
 
-/** Foregrounds shown on their paired background with the contrast ratio */
-export const ForegroundTable = () => (
-  <TokenTable
-    prefix="color.foreground"
-    preview={(t, theme) => {
-      const bg = token(pairedBackground(t.id), theme);
-      return (
-        <div className="pts-pair">
-          <span className="pts-pair-sample" style={{ background: bg.css, color: t.css }}>
-            Aa Text
-          </span>
-          {leaf(t.id) === "disabled" ? <Exempt /> : <Ratio value={contrast(t.resolved.hex, bg.resolved.hex)} min={TEXT} />}
-          <span className="pts-alias">on {leaf(bg.id)}</span>
-        </div>
-      );
-    }}
-  />
-);
+/** A background id without its group, as a short label: intent.danger.background.emphasis → emphasis */
+const bgLabel = (id: string) => id.replace(/^(intent\.[^.]+\.)?background\./, "");
 
-export const BorderTable = () => (
-  <TokenTable
-    prefix="color.border"
-    preview={(t, theme) => (
-      <div className="pts-pair">
-        <span className="pts-chip" style={{ border: `2px solid ${t.css}`, background: "transparent" }} />
-        {["default", "disabled"].includes(leaf(t.id)) ? (
-          <Exempt />
-        ) : (
-          <Ratio value={contrast(t.resolved.hex, token("color.background.default", theme).resolved.hex)} min={UI} />
-        )}
-      </div>
-    )}
-  />
-);
+/**
+ * A color token shown the way it is used, with the lowest contrast among the pairs npm run check tests:
+ * content on its first paired background, borders as an outline, fills as a chip.
+ */
+const colorPreview = (t: TokenInfo, theme: Theme) => {
+  const checks = pairsOf(t.id).map(({ bg, min }) => ({ bg: token(bg, theme), min, ratio: contrast(t.resolved.hex, token(bg, theme).resolved.hex) }));
+  const worst = [...checks].sort((a, b) => a.ratio / a.min - b.ratio / b.min)[0];
+  const kind = property(t.id);
+  const sample =
+    kind === "content" ? (
+      <span className="pts-pair-sample" style={{ background: checks[0]?.bg.css ?? pageBg(theme), color: t.css }}>
+        Aa Text
+      </span>
+    ) : kind === "border" ? (
+      <span className="pts-chip" style={{ border: `2px solid ${t.css}`, background: "transparent" }} />
+    ) : (
+      <span className="pts-chip" style={{ background: t.css }} />
+    );
+  return (
+    <div className="pts-pair">
+      {sample}
+      {isExempt(t.id) ? <Exempt /> : worst && <Ratio value={worst.ratio} min={worst.min} />}
+      {worst && <span className="pts-alias">lowest on {bgLabel(worst.bg.id)}</span>}
+    </div>
+  );
+};
+
+/** Color tokens under a prefix (e.g. "content", "intent.danger") with their paired contrast */
+export const ColorTable = ({ prefix }: { prefix: string }) => <TokenTable prefix={prefix} preview={colorPreview} />;
 
 // ---------- typography ----------
 
@@ -413,9 +411,9 @@ export const FocusRing = () => (
           type="button"
           className="pts-focus-demo"
           style={{
-            background: token("color.background.primary", th).css,
-            color: token("color.foreground.on-primary", th).css,
-            outline: `${token("focus-ring.width").css} solid ${token("color.border.focus", th).css}`,
+            background: token("background.inverse.base", th).css,
+            color: token("content.inverse.base", th).css,
+            outline: `${token("focus-ring.width").css} solid ${token("border.focus", th).css}`,
             outlineOffset: token("focus-ring.offset").css,
             height: token("size.control.md").css,
             borderRadius: token("radius.md").css,
@@ -458,10 +456,10 @@ export const Overlay = () => (
           <div className="pts-skeleton" style={{ width: "80%" }} />
           <div className="pts-skeleton" style={{ width: "40%" }} />
         </div>
-        <div style={{ position: "absolute", inset: 0, background: token("color.background.overlay", th).css }} />
+        <div style={{ position: "absolute", inset: 0, background: token("utility.scrim", th).css }} />
         <div className="pts-modal" style={{ boxShadow: token("shadow.xl", th).css }}>
           <strong>Modal</strong>
-          <span className="pts-alias">{th} · overlay {token("color.background.overlay", th).display}</span>
+          <span className="pts-alias">{th} · scrim {token("utility.scrim", th).display}</span>
         </div>
       </ThemeCell>
     ))}

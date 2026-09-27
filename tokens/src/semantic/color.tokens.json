@@ -1,0 +1,12 @@
+{
+  "always": {
+    "white": {
+      "$type": "color",
+      "$value": "{color.white}"
+    },
+    "black": {
+      "$type": "color",
+      "$value": "{color.black}"
+    }
+  }
+}

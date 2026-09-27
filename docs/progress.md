@@ -9,13 +9,11 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/color-naming`: new semantic color names (ADR 0017) and interaction-state scope (ADR 0018), both proposed. Only the ADRs are written; tokens, scripts, and docs are unchanged.
-  - The proposed structure lives in the Figma `pts` file as the `Theme (naming test)` collection (58 variables, with scopes). The real `Theme` collection still has the old names.
-  - The Figma `Primitive` collection already uses `color/*`; the repo still has `palette/*`.
+- `feature/color-naming`: new semantic color names (ADR 0017) and interaction-state scope (ADR 0018), implemented and accepted. Not merged or released yet.
+  - Remaining: apply the new names and scopes to the Figma `Theme` collection (the `Theme (naming test)` collection in the `pts` file has the final structure; delete it afterwards), merge to `main`, and release `0.3.0` (breaking: every semantic color name and the primitive group change).
 
 ## Next
 
-- Implement ADR 0017 and 0018 in one pass (generator, check, Storybook, CLAUDE.md, Figma `Theme` collection), accept both, and release `0.3.0`.
 - JS/TS and SCSS outputs in `@pts/web`: add Terrazzo plugins to `packages/web/terrazzo.config.ts` and subpath exports.
 - Deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android).
 

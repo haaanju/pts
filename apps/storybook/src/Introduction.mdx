@@ -37,15 +37,15 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
   height: var(--size-control-md);
   padding: 0 var(--space-400);
   border-radius: var(--radius-md);
-  background: var(--color-background-primary);
-  color: var(--color-foreground-on-primary);
+  background: var(--background-inverse-base);
+  color: var(--content-inverse-base);
   font: var(--text-label-md);
 }
 .button:hover {
-  background: var(--color-background-primary-hover);
+  background: var(--background-inverse-hover);
 }
 .button:focus-visible {
-  outline: var(--focus-ring-width) solid var(--color-border-focus);
+  outline: var(--focus-ring-width) solid var(--border-focus);
   outline-offset: var(--focus-ring-offset);
 }
 ```
@@ -53,6 +53,6 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
 </Section>
 
 <Section divider title="Accessibility">
-  Every foreground meets **4.5:1** on its paired background, and borders and solid fills meet **3:1** against the page,
+  Every content color meets **4.5:1** on its paired background, and borders and solid fills meet **3:1** against the page,
   in both themes. `npm run check` enforces this on every commit.
 </Section>

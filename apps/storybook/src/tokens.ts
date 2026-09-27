@@ -1,5 +1,8 @@
 // Reads the DTCG source through pts.resolver.json and resolves every token per theme,
 // so the docs always reflect the current token files.
+import { contrastPairs } from "../../../tokens/scripts/pairs.ts";
+
+export { isExempt, TEXT, UI } from "../../../tokens/scripts/pairs.ts";
 
 type Json = Record<string, any>;
 type Ref = { $ref: string };
@@ -116,7 +119,7 @@ export const token = (id: string, theme: Theme = "light") => {
   return t;
 };
 
-/** Tokens under a group prefix (e.g. "color.background"), in file order */
+/** Tokens under a group prefix (e.g. "intent.danger"), in file order */
 export const group = (prefix: string, theme: Theme = "light") =>
   Object.values(byTheme[theme]).filter((t) => t.id.startsWith(`${prefix}.`));
 
@@ -124,7 +127,7 @@ export const group = (prefix: string, theme: Theme = "light") =>
 export const isThemed = (prefix: string) =>
   group(prefix, "light").some((t) => t.css !== token(t.id, "dark").css);
 
-/** Last path segment, e.g. "color.background.default" → "default" */
+/** Last path segment, e.g. "background.surface.raised" → "raised" */
 export const leaf = (id: string) => id.slice(id.lastIndexOf(".") + 1);
 
 // ---- contrast (WCAG 2.x) — same rules as tokens/scripts/check.ts ----
@@ -141,11 +144,10 @@ export const contrast = (a: string, b: string) => {
   return (hi + 0.05) / (lo + 0.05);
 };
 
-/** The background a foreground token is designed to sit on */
-export const pairedBackground = (foregroundId: string) => {
-  const name = leaf(foregroundId);
-  return name.startsWith("on-") ? `color.background.${name.slice(3)}` : "color.background.default";
-};
+const pairs = contrastPairs(Object.keys(byTheme.light));
+
+/** The backgrounds a content, border, or fill token is checked against, with the minimum ratio (same pairs as npm run check) */
+export const pairsOf = (id: string) => pairs.filter(([fg]) => fg === id).map(([, bg, min]) => ({ bg, min }));
 
 /** Total number of tokens (identical across themes) */
 export const tokenCount = () => Object.keys(byTheme.light).length;
