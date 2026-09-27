@@ -73,7 +73,7 @@ pts/
 ## Commands
 
 - Node ≥ 22.18 (`engines`, `.nvmrc`): the `.ts` scripts run directly with Node's type stripping.
-- `npm run check`: validates tokens (`tokens/scripts/check.ts`) per theme — missing `$type`, broken aliases, token-name mismatches between themes, color contrast, and visible background states.
+- `npm run check`: validates tokens (`tokens/scripts/check.ts`) per theme — missing `$type`, broken aliases, token-name mismatches between themes, color contrast, visible background states, color `hex` matching `components`, a `$description` on every semantic color, and semantic tokens aliasing primitives (the tier rules below).
 - `npm run lint`: Terrazzo's own DTCG validation (`tz check`).
 - `npm run typecheck`: TypeScript for the token scripts and Storybook.
 - The pre-commit hook runs check, lint, and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.

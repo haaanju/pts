@@ -5,6 +5,10 @@
 //   4. color pairs meet WCAG contrast (pairs come from the names, see scripts/pairs.ts and ADR 0019)
 //   5. steps and states are visible: every step of a surface ladder differs from the others, and the
 //      hover/pressed fills for transparent elements differ from a disabled control
+//   6. every color's hex matches its components
+//   7. every semantic color has a $description
+//   8. semantic tokens alias primitives (exceptions: text/* composites alias semantic property tokens,
+//      and z-index holds raw values)
 // Exits with code 1 on any failure.
 // Exempt from contrast: disabled/* (inactive), border/subtle (decorative), utility/* (outside the
 // pairing system; the scrim is translucent), always/* (sits on images, whose colors are unknown).
@@ -13,7 +17,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { contrastPairs, distinctBackgrounds } from "./pairs.ts";
 
-type Token = { $type?: string; $value: unknown };
+type Token = { $type?: string; $value: unknown; $description?: string };
 type Tokens = Record<string, Token>;
 type Ref = { $ref: string };
 
@@ -37,6 +41,16 @@ const aliasesIn = (value: unknown): string[] => {
   if (value && typeof value === "object" && !Array.isArray(value)) return Object.values(value).flatMap(aliasesIn);
   return [];
 };
+
+/** leaves of a value that are not aliases (color and dimension objects count as one leaf) */
+const rawLeaves = (value: unknown): unknown[] => {
+  if (typeof value === "string") return /^\{[^}]+\}$/.test(value) ? [] : [value];
+  if (Array.isArray(value)) return value.flatMap(rawLeaves);
+  if (value && typeof value === "object" && !("colorSpace" in value) && !("unit" in value)) return Object.values(value).flatMap(rawLeaves);
+  return [value];
+};
+
+const toHex = (components: number[]) => "#" + components.map((v) => Math.round(v * 255).toString(16).padStart(2, "0")).join("");
 
 const resolveHex = (tokens: Tokens, id: string): string => {
   let token = tokens[id];
@@ -94,6 +108,41 @@ for (const [modifier, { contexts }] of Object.entries(resolver.modifiers as Reco
         if (ratio < min) errors.push(`${label}: ${fg} on ${bg} = ${ratio.toFixed(2)} (needs ${min})`);
       } catch (e) {
         errors.push(`${label}: ${(e as Error).message}`);
+      }
+    }
+  }
+}
+
+// Source rules, checked per file: tiers come from the folder (primitive/ or semantic/).
+const RAW_VALUES_ALLOWED = ["z-index"];
+const SEMANTIC_ALIASES_ALLOWED = ["text"];
+const refs = [
+  ...Object.values(resolver.sets as Record<string, { sources: Ref[] }>).flatMap((s) => s.sources),
+  ...Object.values(resolver.modifiers as Record<string, { contexts: Record<string, Ref[]> }>).flatMap((m) => Object.values(m.contexts).flat()),
+];
+const files = [...new Set(refs.map((r) => r.$ref))].map((file) => ({ file, tier: file.split("/")[0], tokens: flatten(readJson(file)) }));
+const tierOf: Record<string, string> = Object.fromEntries(files.flatMap(({ tier, tokens }) => Object.keys(tokens).map((id) => [id, tier])));
+
+for (const { file, tier, tokens } of files) {
+  if (tier !== "primitive" && tier !== "semantic") errors.push(`${file}: token files go in primitive/ or semantic/`);
+  for (const [id, token] of Object.entries(tokens)) {
+    const where = `${file}: ${id}`;
+    const value = token.$value as { colorSpace?: string; components?: number[]; hex?: string };
+    if (token.$type === "color" && value && typeof value === "object" && value.components) {
+      const expected = toHex(value.components);
+      if (value.hex?.toLowerCase() !== expected) errors.push(`${where} has hex ${value.hex}, but its components are ${expected}`);
+    }
+    if (tier !== "semantic") continue;
+
+    const group = id.split(".")[0];
+    if (token.$type === "color" && !token.$description?.trim()) errors.push(`${where} has no $description`);
+    if (!RAW_VALUES_ALLOWED.includes(group)) {
+      const raw = rawLeaves(token.$value);
+      if (raw.length) errors.push(`${where} holds a raw value (${JSON.stringify(raw[0])}); semantic tokens alias a primitive`);
+    }
+    if (!SEMANTIC_ALIASES_ALLOWED.includes(group)) {
+      for (const ref of aliasesIn(token.$value)) {
+        if (tierOf[ref] === "semantic") errors.push(`${where} → {${ref}} is a semantic token; semantic tokens alias a primitive`);
       }
     }
   }
