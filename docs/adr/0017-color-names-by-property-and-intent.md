@@ -28,14 +28,14 @@ content/     base, muted, disabled
              inverse/{base, muted}
 border/      base, subtle, focus, disabled
 utility/     scrim
-static/      white, black
+always/      white, black
 intent/<danger | warning | success | info | discovery>/
              background/{emphasis, subtle, hover, pressed}
              content/{base, emphasis, subtle}
              border/{base, subtle}
 ```
 
-Grammar: `[intent/<role>/]<background | content | border>/<name>`, plus `utility/*` and `static/*`.
+Grammar: `[intent/<role>/]<background | content | border>/<name>`, plus `utility/*` and `always/*`.
 
 ### Naming rules
 
@@ -49,7 +49,7 @@ Grammar: `[intent/<role>/]<background | content | border>/<name>`, plus `utility
 - **`emphasis` / `subtle`** are an intent's strong and soft fills.
 - **`discovery`** (purple) marks new or explorable things: new-feature badges, onboarding, recommended content, and AI features. It replaces `recommend`, whose meaning was unclear. Atlassian uses the same name for purple.
 - **`utility/`** holds colors outside the background/content/border pairing system (the modal scrim now).
-- **`static/`** holds colors that are the same in every theme: `static/white` and `static/black`. The first use is an icon or text on an image with a dark overlay. `content/inverse/base` would turn black in dark, because it follows the theme; the image doesn't.
+- **`always/`** holds colors that are the same in every theme: `always/white` and `always/black`. In CSS they read as `--always-white`, which says what they do; `static` was the other candidate but reads as jargon. The first use is an icon or text on an image with a dark overlay. `content/inverse/base` would turn black in dark, because it follows the theme; the image doesn't.
 
 ### Pairing and contrast
 
@@ -63,14 +63,14 @@ Content names are either a **hierarchy word** (`base`, `muted`, `disabled`) or *
 | intent `content/subtle` | that intent's `background/subtle` | 4.5:1 |
 
 - UI boundaries at 3:1 against canvas, `surface/*`, `hover`, `pressed`: `border/base`, `border/focus`, intent `border/base`, `background/inverse/*`, intent `emphasis` / `hover` / `pressed`. `inverse` is now checked because it is the primary button; before, it was a static surface and exempt.
-- Exempt: `*/disabled`, `border/subtle` and intent `border/subtle` (decorative), `utility/*` (outside the pairing system; the scrim is translucent), `static/*` (sits on images, whose colors are unknown; pair `static/white` with a dark overlay).
+- Exempt: `*/disabled`, `border/subtle` and intent `border/subtle` (decorative), `utility/*` (outside the pairing system; the scrim is translucent), `always/*` (sits on images, whose colors are unknown; pair `always/white` with a dark overlay).
 - States must be visible: each fill's `base`/`emphasis`, `hover`, and `pressed` differ, and `background/hover` / `pressed` differ from `canvas`, `surface/*`, and `disabled`.
 
 A prototype of these rules on the test collection passes all 186 pairs per theme with no invisible states. Lowest ratios: text 4.69 (light) / 4.58 (dark), UI 3.22.
 
 ### Figma
 
-- Variable scopes follow the property: `background/*` and `utility/*` → frame and shape fills; `static/*` → all fills and strokes; `content/*` → text and shape fills, plus strokes for outline icons; `border/*` → strokes. A picker then shows only the colors that fit.
+- Variable scopes follow the property: `background/*` and `utility/*` → frame and shape fills; `always/*` → all fills and strokes; `content/*` → text and shape fills, plus strokes for outline icons; `border/*` → strokes. A picker then shows only the colors that fit.
 - Primitive variables should be hidden from pickers (empty scopes); product work uses semantic colors only.
 - Scopes are not part of DTCG. A future sync derives them from the property segment.
 
@@ -92,7 +92,7 @@ Old → new (60 → 66 tokens; `<r>` is each status role, `recommend` becomes `d
 | `foreground/on-primary` | `content/inverse/base` |
 | — | `content/inverse/muted` (new: light `neutral.500`, dark `neutral.700`) |
 | `background/overlay` | `utility/scrim` |
-| — | `static/white`, `static/black` (new: `color.white` / `color.black` in both themes) |
+| — | `always/white`, `always/black` (new: `color.white` / `color.black` in both themes) |
 | `foreground/default`, `muted`, `disabled` | `content/base`, `muted`, `disabled` |
 | `border/strong`, `border/default` | `border/base`, `border/subtle` |
 | `border/focus`, `disabled` | unchanged |
