@@ -82,13 +82,12 @@ npm run build            # build @pts/web
 | `npm run typecheck` | TypeScript for the scripts and Storybook |
 | `npm run build` | Builds `@pts/web` |
 | `npm run build-storybook` | Builds the static docs |
-| `npm run generate:color -w @pts/tokens` | Regenerates the primitive and semantic color tokens |
 
 **Working across machines.** Everything needed to continue lives in the repository. On a new machine: clone, `nvm use`, `npm install`. Pull before starting and push before switching. [`docs/progress.md`](docs/progress.md) records where work left off.
 
 The pre-commit hook runs `check`, `lint`, and `typecheck`. CI runs the same checks plus both builds on every push to `main` and every pull request.
 
-**Color tokens are generated.** `tokens/scripts/generate-color.ts` holds the palette anchors and the rules that pick each semantic step. To change a color, edit the script and regenerate; don't edit the color JSON by hand.
+**Changing tokens.** Edit the JSON in `tokens/src/` directly, color included, then run `npm run check`. It enforces contrast, visible states, the tier rules, and a description on every semantic color.
 
 ## Decisions and conventions
 

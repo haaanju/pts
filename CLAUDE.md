@@ -29,7 +29,6 @@ pts/
 ├── docs/adr/                    # architecture decision records
 ├── tokens/                      # @pts/tokens — DTCG source, single source of truth (private)
 │   ├── scripts/check.ts         # token validation (npm run check)
-│   ├── scripts/generate-color.ts  # generates primitive + semantic color with descriptions (npm run generate:color)
 │   ├── scripts/pairs.ts         # color pairing rules, shared by check.ts and the Storybook docs
 │   └── src/
 │       ├── pts.resolver.json         # combines token files + theme modifier (build entry point)
@@ -69,6 +68,7 @@ pts/
 - A new format for an existing platform is a plugin in that platform's Terrazzo config plus a subpath export (e.g. JS/TS and SCSS go in `@pts/web`), not a new package.
 - Register every new token file in `pts.resolver.json`: theme-independent files go in `sets.base`, theme-specific files in the matching `modifiers.theme` context.
 - Files for different themes (`color.light` / `color.dark`) must define **the same set of token names**.
+- The token JSON is edited by hand, color included; nothing generates it (ADR 0020). `npm run check` enforces the rules a generator would.
 
 ## Commands
 
@@ -78,7 +78,6 @@ pts/
 - `npm run typecheck`: TypeScript for the token scripts and Storybook.
 - The pre-commit hook runs check, lint, and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
 - CI (`.github/workflows/ci.yml`) runs the same checks plus both builds on pushes to `main` and on pull requests.
-- `npm run generate:color -w @pts/tokens`: regenerates `primitive/color.tokens.json` and `semantic/color{,.light,.dark}.tokens.json` from the Figma anchors and the selection rules. **Color tokens are generated: change the script, not the JSON**, then run `npm run check`. On an unchanged script it produces no diff.
 - `npm run build`: builds every workspace (`@pts/web` → `packages/web/dist/tokens.css`).
   - Light values go on `:root` and `[data-theme="light"]`; dark values under `@media (prefers-color-scheme: dark)` and `[data-theme="dark"]`. `data-theme` on `<html>` forces a theme; on any element it themes that subtree (e.g. a light region inside a dark page).
   - `terrazzo.config.ts` reads the dark context files in the resolver to decide which groups go in the dark blocks.
@@ -152,7 +151,7 @@ always/        white, black
 - **Intents**: danger (red), warning (orange), success (green), info (blue), discovery (purple: new features, onboarding, recommendations, AI). Role first, then the same `surface` / `content` / `border` words as the neutral colors. `surface/subtle` is the soft fill (alerts, banners, soft badges), `surface/base` the strong fill (buttons, strong badges, tags). An intent's `content/base` also sits on its own `surface/subtle`.
 - **States**: interaction states are strength steps, and `$description` says hover or pressed. Every pressable fill has `strong` / `stronger`; component-specific states (selected, checked) go to a future component tier (ADR 0018). `disabled/*` is shared by every control. From hover to pressed, light gets darker and dark gets lighter.
 - **Utility**: colors outside the pairing system (the modal scrim). **Always**: the same in every theme, for icons and text on images; theme-independent, so they live in `semantic/color.tokens.json` (base set).
-- **Descriptions**: every semantic color has a `$description` (written in `generate-color.ts`) that says when to use it and which content goes on a fill. The Figma variable descriptions carry the same text.
+- **Descriptions**: every semantic color has a `$description` (required by `npm run check`) that says when to use it and which content goes on a fill. The Figma variable descriptions carry the same text.
 - **Figma**: variable scopes follow the name (`content/*` and `disabled/content` → text and shape fills plus strokes; a `border` segment → strokes; `always/*` → all; everything else → frame and shape fills). The `Theme` collection holds only values that change with the theme; shadow offsets, blurs, and spreads are in `Semantic`. Primitives are hidden from pickers.
 
 ### Accessibility (required in both themes)

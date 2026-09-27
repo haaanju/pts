@@ -9,8 +9,7 @@
   ],
   "scripts": {
     "check": "node scripts/check.ts",
-    "typecheck": "tsc -p .",
-    "generate:color": "node scripts/generate-color.ts"
+    "typecheck": "tsc -p ."
   },
   "devDependencies": {
     "@types/node": "^22.20.4",
