@@ -25,6 +25,7 @@ pts/
 ├── .claude/settings.json        # SessionStart hook: fetches, prints git state and docs/progress.md
 ├── .githooks/pre-commit         # runs check, lint, typecheck before every commit
 ├── .github/workflows/ci.yml     # CI: checks + both builds
+├── .github/pull_request_template.md  # change type (ADR 0014) and the Figma / resolver / docs checklist
 ├── docs/progress.md             # session handoff: current state, in flight, next
 ├── docs/adr/                    # architecture decision records
 ├── tokens/                      # @pts/tokens — DTCG source, single source of truth (private)

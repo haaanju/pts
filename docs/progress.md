@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/operating-flow`: ADR 0020 (proposed), the public contribution flow: hand-edited token JSON (the color generator is retired), CI as the merge gate, Storybook deployed from `main`. Implementation steps are listed in the ADR; steps 1–2 are done (the generator's guarantees moved to `check.ts`, the generator removed); next is step 3 (pull request template).
+- `feature/operating-flow`: ADR 0020 (proposed), the public contribution flow: hand-edited token JSON (the color generator is retired), CI as the merge gate, Storybook deployed from `main`. Implementation steps are listed in the ADR; steps 1–3 are done (the generator's guarantees moved to `check.ts`, the generator removed, a pull request template); next is step 4 (`CONTRIBUTING.md`).
 
 ## Next
 
