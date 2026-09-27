@@ -16,11 +16,10 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 Candidates, in the recommended order (not decided yet):
 
-1. Figma sync: renaming variables, setting scopes, and redrawing specimens were all manual in 0.3.0. Start with an ADR comparing approaches (Figma plugin, REST API, a script over the Figma MCP). Scopes can be derived from the property segment (ADR 0017); specimen generation could be part of it.
-2. First component (Button): validates `inverse` and its states, `danger` hover/pressed, the focus ring, disabled, and control height, and starts the component tier (ADR 0018).
-3. JS/TS and SCSS outputs in `@pts/web`: Terrazzo plugins in `packages/web/terrazzo.config.ts` plus subpath exports. Smallest, but nothing consumes them yet.
+1. First component (Button): validates `inverse` and its states, `danger` hover/pressed, the focus ring, disabled, and control height, and starts the component tier (ADR 0018).
+2. JS/TS and SCSS outputs in `@pts/web`: Terrazzo plugins in `packages/web/terrazzo.config.ts` plus subpath exports. Smallest, but nothing consumes them yet.
 
-Still deferred (see CLAUDE.md): native platforms (iOS, Android).
+Still deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android).
 
 ## Open questions
 
