@@ -136,12 +136,18 @@ body {
   color: var(--content-subtle);
 }
 
-/* A token's $description: when to use it. Caption is the docs' own helper-text style. */
-.pts-description {
-  font: var(--text-caption);
-  letter-spacing: var(--text-caption-letter-spacing);
+/*
+ * A token's $description: when to use it. It sits between the name and the variable, in sans body text
+ * against their mono, so it reads as prose rather than metadata. Space around it groups name, description,
+ * and variable (selectors doubled to win over the tight spacing of token cells).
+ */
+.pts .pts-description {
+  font: var(--text-body-sm);
+  letter-spacing: var(--text-body-sm-letter-spacing);
   color: var(--content-subtle);
   max-width: var(--docs-description-width);
+  margin-top: var(--space-100);
+  margin-bottom: var(--space-200);
 }
 
 .pts-var {

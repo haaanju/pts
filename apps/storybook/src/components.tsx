@@ -242,8 +242,8 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
             <tr key={t.id}>
               <td className="pts-token-cell">
                 <span className="pts-token-name">{t.id === prefix ? leaf(t.id) : t.id.slice(prefix.length + 1)}</span>
-                <CopyVar name={t.cssVar} />
                 {t.description && <span className="pts-description">{t.description}</span>}
+                <CopyVar name={t.cssVar} />
               </td>
               {themes.map((th) => {
                 const v = token(t.id, th);
@@ -355,9 +355,9 @@ export const TextStyles = () => (
       <div key={t.id} className="pts-specimen">
         <div className="pts-specimen-meta">
           <span className="pts-token-name">{leaf(t.id)}</span>
+          {t.description && <span className="pts-description">{t.description}</span>}
           <span className="pts-alias">{t.display}</span>
           <CopyVar name={t.cssVar} />
-          {t.description && <span className="pts-description">{t.description}</span>}
         </div>
         <div className="pts-specimen-text" style={{ font: `var(${t.cssVar})`, letterSpacing: `var(${t.cssVar}-letter-spacing)` }}>
           {SAMPLE}
@@ -442,8 +442,8 @@ export const Shadows = () => (
           {group("shadow", th).map((t) => (
             <div key={t.id} className="pts-shadow-card" style={{ boxShadow: t.css }}>
               <span className="pts-token-name">{leaf(t.id)}</span>
-              <span className="pts-alias">{t.display}</span>
               {t.description && <span className="pts-description">{t.description}</span>}
+              <span className="pts-alias">{t.display}</span>
             </div>
           ))}
         </div>
