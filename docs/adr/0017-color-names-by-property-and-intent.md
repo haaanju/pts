@@ -28,13 +28,14 @@ content/     base, muted, disabled
              inverse/{base, muted}
 border/      base, subtle, focus, disabled
 utility/     scrim
+static/      white, black
 intent/<danger | warning | success | info | discovery>/
              background/{emphasis, subtle, hover, pressed}
              content/{base, emphasis, subtle}
              border/{base, subtle}
 ```
 
-Grammar: `[intent/<role>/]<background | content | border>/<name>`, plus `utility/*`.
+Grammar: `[intent/<role>/]<background | content | border>/<name>`, plus `utility/*` and `static/*`.
 
 ### Naming rules
 
@@ -48,7 +49,7 @@ Grammar: `[intent/<role>/]<background | content | border>/<name>`, plus `utility
 - **`emphasis` / `subtle`** are an intent's strong and soft fills.
 - **`discovery`** (purple) marks new or explorable things: new-feature badges, onboarding, recommended content, and AI features. It replaces `recommend`, whose meaning was unclear. Atlassian uses the same name for purple.
 - **`utility/`** holds colors outside the background/content/border pairing system (the modal scrim now).
-- **`static/`** is reserved for colors that don't change with the theme (e.g. `static/white` for text on photos). No tokens yet; add them when a component needs one.
+- **`static/`** holds colors that are the same in every theme: `static/white` and `static/black`. The first use is an icon or text on an image with a dark overlay. `content/inverse/base` would turn black in dark, because it follows the theme; the image doesn't.
 
 ### Pairing and contrast
 
@@ -62,14 +63,14 @@ Content names are either a **hierarchy word** (`base`, `muted`, `disabled`) or *
 | intent `content/subtle` | that intent's `background/subtle` | 4.5:1 |
 
 - UI boundaries at 3:1 against canvas, `surface/*`, `hover`, `pressed`: `border/base`, `border/focus`, intent `border/base`, `background/inverse/*`, intent `emphasis` / `hover` / `pressed`. `inverse` is now checked because it is the primary button; before, it was a static surface and exempt.
-- Exempt: `*/disabled`, `border/subtle` and intent `border/subtle` (decorative), `utility/*` (outside the pairing system; the scrim is translucent).
+- Exempt: `*/disabled`, `border/subtle` and intent `border/subtle` (decorative), `utility/*` (outside the pairing system; the scrim is translucent), `static/*` (sits on images, whose colors are unknown; pair `static/white` with a dark overlay).
 - States must be visible: each fill's `base`/`emphasis`, `hover`, and `pressed` differ, and `background/hover` / `pressed` differ from `canvas`, `surface/*`, and `disabled`.
 
 A prototype of these rules on the test collection passes all 186 pairs per theme with no invisible states. Lowest ratios: text 4.69 (light) / 4.58 (dark), UI 3.22.
 
 ### Figma
 
-- Variable scopes follow the property: `background/*` and `utility/*` → frame and shape fills; `content/*` → text and shape fills, plus strokes for outline icons; `border/*` → strokes. A picker then shows only the colors that fit.
+- Variable scopes follow the property: `background/*` and `utility/*` → frame and shape fills; `static/*` → all fills and strokes; `content/*` → text and shape fills, plus strokes for outline icons; `border/*` → strokes. A picker then shows only the colors that fit.
 - Primitive variables should be hidden from pickers (empty scopes); product work uses semantic colors only.
 - Scopes are not part of DTCG. A future sync derives them from the property segment.
 
@@ -79,7 +80,7 @@ Every semantic color name changes and the primitive group is renamed, so the rel
 
 ## Implementation notes
 
-Old → new (60 → 64 tokens; `<r>` is each status role, `recommend` becomes `discovery`):
+Old → new (60 → 66 tokens; `<r>` is each status role, `recommend` becomes `discovery`):
 
 | Old | New |
 |---|---|
@@ -91,6 +92,7 @@ Old → new (60 → 64 tokens; `<r>` is each status role, `recommend` becomes `d
 | `foreground/on-primary` | `content/inverse/base` |
 | — | `content/inverse/muted` (new: light `neutral.500`, dark `neutral.700`) |
 | `background/overlay` | `utility/scrim` |
+| — | `static/white`, `static/black` (new: `color.white` / `color.black` in both themes) |
 | `foreground/default`, `muted`, `disabled` | `content/base`, `muted`, `disabled` |
 | `border/strong`, `border/default` | `border/base`, `border/subtle` |
 | `border/focus`, `disabled` | unchanged |
@@ -100,7 +102,7 @@ Old → new (60 → 64 tokens; `<r>` is each status role, `recommend` becomes `d
 | — | `intent/<r>/border/subtle` (new: light `<hue>.300`, dark `<hue>.700`) |
 | primitive `palette/*` | `color/*` |
 
-- Values are unchanged except: tooltips and snackbars move from the old inverse (`neutral.950` / `white`) to the primary values (`neutral.900` / `neutral.200`), and the two new tokens above.
+- Values are unchanged except: tooltips and snackbars move from the old inverse (`neutral.950` / `white`) to the primary values (`neutral.900` / `neutral.200`), and the new tokens above.
 - Code: `generate-color.ts` (names and output shape), `check.ts` (pairing, exemptions, state rules; the hierarchy words are a list, so a new one must be added there), Storybook `tokens.ts` / `components.tsx` / Color page, `.storybook/theme.ts`, and shadow tokens that alias `palette.black-alpha`.
 - Figma: apply the new names and scopes to the real `Theme` collection; the `Primitive` collection already uses `color/*`.
 - When accepted, mark ADR 0005, 0006, 0010, and 0015 `(amended by 0017)`.

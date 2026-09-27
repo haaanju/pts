@@ -10,7 +10,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 ## In flight
 
 - `feature/color-naming`: new semantic color names (ADR 0017, proposed). Only the ADR is written; tokens, scripts, and docs are unchanged.
-  - The proposed structure lives in the Figma `pts` file as the `Theme (naming test)` collection (64 variables, with scopes). The real `Theme` collection still has the old names.
+  - The proposed structure lives in the Figma `pts` file as the `Theme (naming test)` collection (66 variables, with scopes). The real `Theme` collection still has the old names.
   - The Figma `Primitive` collection already uses `color/*`; the repo still has `palette/*`.
 
 ## Next
