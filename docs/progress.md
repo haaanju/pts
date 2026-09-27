@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 ## In flight
 
 - `feature/color-surface-pairs`: ADR 0019 (proposed) renames semantic colors to fill / `on-` pairs (`surface`/`on-surface`, `inverse`/`on-inverse`), moves disabled to a `disabled/` group, and turns hover/pressed into `strong`/`stronger`. Committed as a draft; no token or code changes yet.
-  1. Figma: rename the `Theme` variables per the ADR's old → new table, set scopes by the name rule, and add descriptions. Variables only; specimens later.
+  1. Done: the Figma `Theme` variables use the new names, scopes follow the name rule, and every color has a description. The descriptions were written there first; copy the same text into `$description` in step 2. Specimen labels still show the 0.3.0 names.
   2. Code: `generate-color.ts` (names, `$description`), `pairs.ts` (pairs from `on-`), docs, then accept the ADR and update CLAUDE.md, README, and ADR 0017/0018 status.
   3. Redraw the Figma Color specimen, then release `0.4.0`.
 - The Figma MCP must be authenticated with the personal account that owns the `pts` file; a work account only has view access. To switch, clear the figma server's authentication in `/mcp` and reconnect.
