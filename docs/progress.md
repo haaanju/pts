@@ -12,14 +12,17 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/terrazzo-lint`: ADR 0021 implemented and accepted; ready to merge. After merging, update Figma: the 88 new semantic descriptions (Semantic and Theme collections) and `text/caption` at 12px (the text style and its specimen).
+- None.
 
 ## Next
 
-Candidates after Terrazzo lint, in the recommended order (not decided yet):
+First, catch Figma up with ADR 0021: the 88 new semantic descriptions (Semantic and Theme collections) and `text/caption` at 12px (the text style and its specimen).
+
+Candidates, in the recommended order (not decided yet):
 
 1. First component (Button): validates `inverse` and its `strong`/`stronger` steps, an intent's `surface/base`/`strong`/`stronger` (danger for destructive buttons), the focus ring, `disabled/*`, and control height, and starts the component tier (ADR 0018).
 2. JS/TS and SCSS outputs in `@pts/web`: Terrazzo plugins in `packages/web/terrazzo.config.ts` plus subpath exports. Smallest, but nothing consumes them yet.
+3. Show `$description` in the Storybook token tables: every semantic token has one now, but no docs page displays it.
 
 Still deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022).
 
