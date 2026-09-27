@@ -38,8 +38,8 @@ const shared = {
   inputBorderRadius: 8,
 };
 
-// light: background.canvas #FFFFFF, background.surface.subtle #F8F8F8, border.subtle #E8E8E8,
-//        content.base #181818, content.muted #666666
+// light: background #FFFFFF, surface.subtle #F8F8F8, border.subtle #E8E8E8,
+//        content.base #181818, content.subtle #666666
 export const light = create({
   ...shared,
   base: "light",
@@ -61,8 +61,8 @@ export const light = create({
   inputTextColor: "#181818",
 });
 
-// dark: background.canvas #181818, background.surface.subtle #242424, border.subtle #404040,
-//       content.base #F8F8F8, content.muted #BABABA
+// dark: background #181818, surface.subtle #242424, border.subtle #404040,
+//       content.base #F8F8F8, content.subtle #BABABA
 export const dark = create({
   ...shared,
   base: "dark",

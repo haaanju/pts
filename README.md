@@ -19,11 +19,11 @@ The source lives in `tokens/`, shippable outputs in `packages/` (one package per
 Two tiers:
 
 - **Primitive** (`tokens/src/primitive/`): raw values such as `dimension.16`, `color.red.600`, `duration.200`.
-- **Semantic** (`tokens/src/semantic/`): values with a role, such as `space.400`, `content.muted`, `intent.danger.background.emphasis`, `text.body-md`. Semantic tokens alias primitives. Product code uses semantic tokens only.
+- **Semantic** (`tokens/src/semantic/`): values with a role, such as `space.400`, `content.subtle`, `intent.danger.surface.base`, `text.body-md`. Semantic tokens alias primitives. Product code uses semantic tokens only.
 
 Categories: color, typography, spacing, border, elevation, size, motion, and layout.
 
-Color names group neutral colors by property (`background`, `content`, `border`) and status colors by intent (`intent.danger.*`); see ADR 0017. Color and shadow have **light** and **dark** values, combined by a DTCG resolver (`pts.resolver.json`).
+Colors are layers (`background`, `surface`, `inverse`) with the `content` and `border` on them, plus one group per intent (`intent.danger.*`) with the same shape; see ADR 0019. Color and shadow have **light** and **dark** values, combined by a DTCG resolver (`pts.resolver.json`).
 
 ## Usage
 
@@ -35,12 +35,12 @@ Color names group neutral colors by property (`background`, `content`, `border`)
   height: var(--size-control-md);
   padding: 0 var(--space-400);
   border-radius: var(--radius-md);
-  background: var(--background-inverse-base);
+  background: var(--inverse-base);
   color: var(--content-inverse-base);
   font: var(--text-label-md);
 }
 .button:hover {
-  background: var(--background-inverse-hover);
+  background: var(--inverse-strong);
 }
 .button:focus-visible {
   outline: var(--focus-ring-width) solid var(--border-focus);
@@ -61,7 +61,7 @@ Color names group neutral colors by property (`background`, `content`, `border`)
 
 Contrast is checked in both themes on every commit:
 
-- Every content color meets **4.5:1** against each background it is paired with. A content name is a level (`content.base`, `content.muted`), used on the page surfaces, or the background it sits on (`content.inverse.base` on `background.inverse.*`, `intent.danger.content.emphasis` on the danger fill and its hover and pressed states).
+- Every content color meets **4.5:1** against each background it is paired with. Level content (`content.base`, `content.subtle`) sits on the background and surfaces; `content.inverse` sits on a flipped fill (`inverse.*`, or an intent's `surface.base` and its hover and pressed steps).
 - Borders and solid fills meet **3:1** against the page surfaces.
 - Background states are visible: hover and pressed never resolve to the same color as the surface they sit on.
 

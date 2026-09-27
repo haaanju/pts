@@ -1,6 +1,6 @@
 # 0019. Color Layers and Strength Steps
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-09-27
 
 ## What we learned
@@ -149,8 +149,9 @@ Old (0.3.0) → new (58 → 60 tokens; `<r>` is each intent):
 - `generate-color.ts` writes the new names and `$description` (text copied from the Figma variables) and emits `strong` / `stronger` for every intent; `pairs.ts` derives the pairs above (level words `base` / `subtle`, and `inverse` meaning "on a flipped fill").
 - The Storybook docs (`components.tsx`, `Color.mdx`, `docs.css`), `.storybook/theme.ts` comments, CLAUDE.md, and README follow the renames. In `docs.css`, table-row hover uses `surface/strong` and inset code uses `background` inside surfaces.
 - Figma: the `Theme` variables already match (names, scopes, descriptions, shadow split). The Color specimen still shows 0.3.0 labels, and the Overview and Elevation specimens list the old collection counts; redraw them.
-- When accepted: ADR 0010, 0017, and 0018 get `(amended by 0019)`.
+- Verified: the generated tokens match the Figma variables name for name, value, and description; the 50 renamed tokens keep their values; `npm run check` passes 308 pairs (154 per theme) and fails as expected on a too-light intent text, a failing inverse text, collapsed surface steps, a hover equal to its base, and an unknown content name; the Storybook Color page renders 78 passing and 22 exempt badges.
 
 ## Documented in
 
-- `CLAUDE.md` — Token Rules (Color, Accessibility), once accepted
+- `CLAUDE.md` — Structure, Token Rules (Color, Accessibility)
+- `README.md` — Tokens, Usage, Accessibility

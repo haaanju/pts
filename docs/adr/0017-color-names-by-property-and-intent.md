@@ -1,6 +1,6 @@
 # 0017. Color Names by Property and Intent
 
-- Status: accepted
+- Status: accepted (amended by 0019)
 - Date: 2026-09-27
 
 ## What we learned

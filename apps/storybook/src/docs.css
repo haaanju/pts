@@ -30,7 +30,7 @@
 /* ---------- docs page ---------- */
 
 .sbdocs.sbdocs-wrapper {
-  background: var(--background-canvas);
+  background: var(--background);
   padding: var(--layout-300) var(--layout-200);
 }
 .sbdocs.sbdocs-content {
@@ -51,7 +51,7 @@
 .sbdocs-content p:not(.sb-unstyled *),
 .sbdocs-content li:not(.sb-unstyled *) {
   font: var(--text-body-md);
-  color: var(--content-muted);
+  color: var(--content-subtle);
 }
 .sbdocs-content :not(pre) > code:not(.sb-unstyled *) {
   font-family: var(--font-family-mono);
@@ -59,17 +59,17 @@
   padding: var(--space-50) var(--space-100);
   border: none;
   border-radius: var(--radius-sm);
-  background: var(--background-surface-subtle);
+  background: var(--surface-subtle);
   color: var(--content-base);
 }
 body {
-  background: var(--background-canvas);
+  background: var(--background);
 }
 
 /* Code blocks: Storybook's source block is styled for its own static theme, so surface and
    syntax colors are overridden with tokens to follow the light/dark toggle. */
 .sbdocs .docblock-source {
-  background: var(--background-surface-subtle) !important;
+  background: var(--surface-subtle) !important;
   border: var(--stroke-thin) solid var(--border-subtle) !important;
   border-radius: var(--radius-lg) !important;
   box-shadow: none !important;
@@ -82,7 +82,7 @@ body {
 }
 .sbdocs .docblock-source .token.punctuation,
 .sbdocs .docblock-source .token.comment {
-  color: var(--content-muted) !important;
+  color: var(--content-subtle) !important;
 }
 .sbdocs .docblock-source .token.selector,
 .sbdocs .docblock-source .token.class-name {
@@ -102,7 +102,7 @@ body {
   color: var(--intent-discovery-content-base) !important;
 }
 .sbdocs .docblock-source button {
-  background: var(--background-canvas) !important;
+  background: var(--background) !important;
   color: var(--content-base) !important;
   border-color: var(--border-subtle) !important;
 }
@@ -132,7 +132,7 @@ body {
 .pts-alias {
   font-family: var(--font-family-mono);
   font-size: var(--font-size-200);
-  color: var(--content-muted);
+  color: var(--content-subtle);
 }
 
 .pts-var {
@@ -140,14 +140,14 @@ body {
   cursor: pointer;
   font-family: var(--font-family-mono);
   font-size: var(--font-size-200);
-  color: var(--content-muted);
+  color: var(--content-subtle);
   padding: var(--space-50) var(--space-100);
   margin-left: calc(-1 * var(--space-100));
   border-radius: var(--radius-sm);
   transition: background var(--motion-duration-fast) var(--motion-easing-standard);
 }
 .pts-var:hover {
-  background: var(--background-hover);
+  background: var(--surface-strong);
   color: var(--content-base);
 }
 .pts-var:focus-visible {
@@ -167,16 +167,16 @@ body {
   white-space: nowrap;
 }
 .pts-pass {
-  background: var(--intent-success-background-subtle);
-  color: var(--intent-success-content-subtle);
+  background: var(--intent-success-surface-subtle);
+  color: var(--intent-success-content-base);
 }
 .pts-fail {
-  background: var(--intent-danger-background-subtle);
-  color: var(--intent-danger-content-subtle);
+  background: var(--intent-danger-surface-subtle);
+  color: var(--intent-danger-content-base);
 }
 .pts-exempt {
-  background: var(--background-surface-subtle);
-  color: var(--content-muted);
+  background: var(--surface-subtle);
+  color: var(--content-subtle);
 }
 
 .pts-theme-cell {
@@ -207,7 +207,7 @@ body {
   font: var(--text-label-sm);
   text-transform: uppercase;
   letter-spacing: var(--letter-spacing-wide);
-  color: var(--content-muted);
+  color: var(--content-subtle);
 }
 .pts .pts-title {
   font: var(--text-display-lg);
@@ -218,7 +218,7 @@ body {
 .pts .pts-lead,
 .pts .pts-lead p {
   font: var(--text-body-lg);
-  color: var(--content-muted);
+  color: var(--content-subtle);
   max-width: var(--docs-measure);
   margin: 0;
 }
@@ -247,7 +247,7 @@ body {
 .pts .pts-section-lead,
 .pts .pts-section-lead p {
   font: var(--text-body-md);
-  color: var(--content-muted);
+  color: var(--content-subtle);
   max-width: var(--docs-measure);
   margin: 0;
 }
@@ -264,7 +264,7 @@ body {
 .pts-section-body p,
 .pts-section-body li {
   font: var(--text-body-md);
-  color: var(--content-muted);
+  color: var(--content-subtle);
   max-width: var(--docs-measure);
 }
 .pts-section-body p {
@@ -285,7 +285,7 @@ body {
   font-size: var(--font-size-300);
   padding: var(--space-50) var(--space-100);
   border-radius: var(--radius-sm);
-  background: var(--background-surface-subtle);
+  background: var(--surface-subtle);
   color: var(--content-base);
 }
 
@@ -313,7 +313,7 @@ body {
 }
 .pts-stats span {
   font: var(--text-label-md);
-  color: var(--content-muted);
+  color: var(--content-subtle);
 }
 
 /* Categories: flat grid separated by hairlines, no cards */
@@ -350,7 +350,7 @@ body {
 }
 .pts-card-link > span {
   font: var(--text-body-sm);
-  color: var(--content-muted);
+  color: var(--content-subtle);
 }
 .pts-card-preview {
   display: flex;
@@ -380,7 +380,7 @@ body {
 .pts-card-steps span {
   width: 12px;
   border-radius: var(--radius-xs);
-  background: var(--background-inverse-base);
+  background: var(--inverse-base);
 }
 .pts-card-themes {
   display: flex;
@@ -409,7 +409,7 @@ body {
   height: 8px;
   max-width: 100%;
   border-radius: var(--radius-full);
-  background: var(--background-inverse-base);
+  background: var(--inverse-base);
 }
 .pts-card-radius {
   width: 56px;
@@ -421,26 +421,26 @@ body {
   width: 72px;
   height: 48px;
   border-radius: var(--radius-md);
-  background: var(--background-surface-raised);
+  background: var(--surface-subtle);
   box-shadow: var(--shadow-lg);
 }
 .pts-card-size {
   width: 24px;
   height: 24px;
   border-radius: var(--radius-sm);
-  background: var(--background-inverse-base);
+  background: var(--inverse-base);
   box-shadow:
-    40px 0 0 -4px var(--background-inverse-base),
-    72px 0 0 -8px var(--background-inverse-base);
+    40px 0 0 -4px var(--inverse-base),
+    72px 0 0 -8px var(--inverse-base);
 }
 .pts-card-motion {
   width: 20px;
   height: 20px;
   border-radius: var(--radius-full);
-  background: var(--background-inverse-base);
+  background: var(--inverse-base);
   box-shadow:
-    -28px 0 0 0 color-mix(in srgb, var(--background-inverse-base) 40%, transparent),
-    -56px 0 0 0 color-mix(in srgb, var(--background-inverse-base) 15%, transparent);
+    -28px 0 0 0 color-mix(in srgb, var(--inverse-base) 40%, transparent),
+    -56px 0 0 0 color-mix(in srgb, var(--inverse-base) 15%, transparent);
   margin-left: 56px; /* room for the trailing dots drawn to the left */
 }
 .pts-card-layers {
@@ -448,11 +448,11 @@ body {
   height: 36px;
   border-radius: var(--radius-sm);
   border: var(--stroke-thin) solid var(--border-base);
-  background: var(--background-canvas);
+  background: var(--background);
   box-shadow:
-    10px -10px 0 -1px var(--background-canvas),
+    10px -10px 0 -1px var(--background),
     10px -10px 0 0 var(--border-base),
-    20px -20px 0 -1px var(--background-canvas),
+    20px -20px 0 -1px var(--background),
     20px -20px 0 0 var(--border-base);
 }
 
@@ -471,7 +471,7 @@ body {
   font: var(--text-label-sm);
   text-transform: uppercase;
   letter-spacing: var(--letter-spacing-wide);
-  color: var(--content-muted);
+  color: var(--content-subtle);
   text-align: left;
   padding: var(--space-300) var(--space-300);
   border-bottom: var(--stroke-thin) solid var(--border-subtle);
@@ -485,7 +485,7 @@ body {
   transition: background var(--motion-duration-fast) var(--motion-easing-standard);
 }
 .pts-table tbody tr:hover {
-  background: var(--background-surface-subtle);
+  background: var(--surface-strong);
 }
 .pts-token-cell,
 .pts-value-cell {
@@ -550,7 +550,7 @@ body {
   outline: var(--stroke-thin) solid var(--border-subtle);
   outline-offset: calc(-1 * var(--stroke-thin));
   /* checkerboard behind translucent steps */
-  --checker: var(--background-pressed);
+  --checker: var(--surface-stronger);
   --half: calc(var(--docs-checker-size) / 2);
   background-image:
     linear-gradient(45deg, var(--checker) 25%, transparent 25%),
@@ -628,14 +628,14 @@ body {
   height: var(--docs-bar-height);
   min-width: var(--space-50);
   max-width: 100%;
-  background: var(--background-inverse-base);
+  background: var(--inverse-base);
   border-radius: var(--radius-full);
 }
 
 .pts-box {
   width: var(--docs-sample-width);
   height: var(--docs-sample-height);
-  background: var(--background-pressed);
+  background: var(--surface-stronger);
 }
 .pts-box-outline {
   background: transparent;
@@ -647,14 +647,14 @@ body {
 
 .pts-icon-sample {
   border-radius: var(--radius-sm);
-  background: var(--background-inverse-base);
+  background: var(--inverse-base);
 }
 .pts-control-sample {
   display: inline-flex;
   align-items: center;
   padding: 0 var(--space-400);
   border-radius: var(--radius-md);
-  background: var(--background-inverse-base);
+  background: var(--inverse-base);
   color: var(--content-inverse-base);
   font: var(--text-label-md);
 }
@@ -679,7 +679,7 @@ body {
   gap: var(--space-50);
   padding: var(--space-400);
   border-radius: var(--radius-lg);
-  background: var(--background-surface-raised);
+  background: var(--surface-subtle);
 }
 .pts-shadow-card .pts-alias {
   white-space: normal;
@@ -689,7 +689,7 @@ body {
   height: var(--docs-skeleton-height);
   margin-bottom: var(--space-300);
   border-radius: var(--radius-full);
-  background: var(--background-pressed);
+  background: var(--surface-stronger);
 }
 .pts-modal {
   position: absolute;
@@ -702,7 +702,7 @@ body {
   gap: var(--space-100);
   padding: var(--space-400);
   border-radius: var(--radius-lg);
-  background: var(--background-surface-raised);
+  background: var(--surface-subtle);
 }
 
 /* ---------- motion ---------- */
@@ -710,7 +710,7 @@ body {
 .pts-track {
   position: relative;
   height: var(--docs-track-height);
-  background: var(--background-surface-subtle);
+  background: var(--surface-subtle);
   border-radius: var(--radius-full);
   cursor: pointer;
 }
@@ -721,7 +721,7 @@ body {
   width: var(--docs-dot-size);
   height: var(--docs-dot-size);
   border-radius: var(--radius-full);
-  background: var(--background-inverse-base);
+  background: var(--inverse-base);
   transition-property: left;
 }
 .pts-track:hover .pts-dot {
@@ -743,7 +743,7 @@ body {
   align-items: center;
   width: var(--docs-layer-width);
   padding: var(--space-200) var(--space-300);
-  background: var(--background-surface-raised);
+  background: var(--surface-subtle);
   border: var(--stroke-thin) solid var(--border-subtle);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);

@@ -2,11 +2,13 @@
   "always": {
     "white": {
       "$type": "color",
-      "$value": "{color.white}"
+      "$value": "{color.white}",
+      "$description": "White in every theme, for icons and text on images. Pair with a dark overlay."
     },
     "black": {
       "$type": "color",
-      "$value": "{color.black}"
+      "$value": "{color.black}",
+      "$description": "Black in every theme, for icons and text on light images."
     }
   }
 }

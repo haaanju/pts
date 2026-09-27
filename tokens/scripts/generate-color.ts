@@ -3,7 +3,7 @@
 //   src/semantic/color.tokens.json           theme-independent colors (always/*)
 //   src/semantic/color.{light,dark}.tokens.json
 //
-// Names and pairing rules: ADR 0017. Which fills get hover/pressed: ADR 0018.
+// Names, pairing rules, and descriptions: ADR 0019.
 //
 // Palette: Figma anchor values (the original exploration file) plus in-between steps as OKLab
 // midpoints. Semantic: fixed choices for surfaces, plus steps picked as the nearest step to a
@@ -119,8 +119,14 @@ const palette = {
 const TEXT = 4.5; // WCAG 1.4.3
 const UI = 3; // WCAG 1.4.11
 const ROLES = { danger: "red", warning: "orange", success: "green", info: "blue", discovery: "purple" } as const;
-// Intents whose emphasis fill is pressable (destructive buttons), so it gets hover/pressed (ADR 0018).
-const PRESSABLE = new Set(["danger"]);
+// Per-intent wording for the descriptions: what its buttons are called and an example of its text.
+const ROLE_WORDS: Record<keyof typeof ROLES, { button: string; text: string; border: string }> = {
+  danger: { button: "destructive buttons", text: "error messages", border: ", such as an input with an error" },
+  warning: { button: "warning buttons", text: "caution messages", border: "" },
+  success: { button: "success buttons", text: "confirmation messages", border: "" },
+  info: { button: "info buttons", text: "help text", border: "" },
+  discovery: { button: "discovery buttons", text: "new-feature labels", border: "" },
+};
 type Mode = "light" | "dark";
 
 /** Steps ordered by distance from `prefer`; ties go to the lighter step. */
@@ -150,74 +156,96 @@ const pickSolid = (hue: string, steps: number[], prefer: number, dir: 1 | -1, pa
   throw new Error(`No ${hue} solid trio near ${prefer}`);
 };
 
+// A token is [palette ref, description]; nested objects are groups.
+type Token = [string, string];
+type Tree = { [key: string]: Token | Tree };
+const EXEMPT = "Exempt from contrast.";
+const PAGE_3 = "Meets 3:1 against the background and surfaces.";
+
 const semantic = (mode: Mode) => {
   const dark = mode === "dark";
-  const dir = dark ? -1 : 1; // light gets darker on interaction, dark gets lighter
-  const bg: Record<string, string> = {};
-  const content: Record<string, string> = {};
-  const border: Record<string, string> = {};
+  const dir = dark ? -1 : 1; // light gets darker away from the background, dark gets lighter
 
-  // Canvas, surfaces, and the transparent-element states are fixed choices; check.ts verifies they stay distinct.
-  bg.canvas = dark ? "neutral.950" : "white";
-  bg.hover = dark ? "neutral.850" : "neutral.100";
-  bg.pressed = dark ? "neutral.800" : "neutral.200";
-  bg.disabled = dark ? "neutral.900" : "neutral.50"; // exempt from contrast (inactive)
-  const surface = { subtle: dark ? "neutral.900" : "neutral.50", raised: dark ? "neutral.900" : "white" };
-
-  const pages = [bg.canvas, bg.hover, bg.pressed, ...Object.values(surface)].map(hexOf);
+  // The page and the neutral surface ladder are fixed choices; check.ts verifies every step differs.
+  const background = dark ? "neutral.950" : "white";
+  const surface = { subtle: dark ? "neutral.900" : "neutral.50", strong: dark ? "neutral.850" : "neutral.100", stronger: dark ? "neutral.800" : "neutral.200" };
+  const pages = [background, ...Object.values(surface)].map(hexOf);
   const onPages = (min: number) => (hex: string) => pages.every((p) => contrast(hex, p) >= min);
 
-  // inverse: the flipped fill for primary buttons, tooltips, and snackbars
+  // inverse: the flipped neutral fill (primary buttons, tooltips, snackbars) with its hover and pressed steps
   const inv = pickSolid("neutral", NEUTRAL_STEPS, dark ? 50 : 950, dir, onPages(UI));
-  const inverse = { base: inv.states[0], hover: inv.states[1], pressed: inv.states[2] };
   const onInverse = (hex: string) => inv.states.every((s) => contrast(hex, hexOf(s)) >= TEXT);
 
-  content.base = pick("neutral", NEUTRAL_STEPS, dark ? 50 : 950, onPages(TEXT));
-  content.muted = pick("neutral", NEUTRAL_STEPS, dark ? 500 : 700, onPages(TEXT));
-  content.disabled = dark ? "neutral.600" : "neutral.400"; // exempt
-  const contentInverse = { base: inv.on, muted: pick("neutral", NEUTRAL_STEPS, dark ? 700 : 500, onInverse) };
-
-  border.base = pick("neutral", NEUTRAL_STEPS, dark ? 600 : 500, onPages(UI));
-  border.subtle = dark ? "neutral.800" : "neutral.200"; // decorative divider, exempt from 1.4.11
-  border.focus = pick("neutral", NEUTRAL_STEPS, dark ? 50 : 950, onPages(UI));
-  border.disabled = dark ? "neutral.800" : "neutral.200"; // exempt
-
-  const intent: Record<string, { background: Record<string, string>; content: Record<string, string>; border: Record<string, string> }> = {};
-  for (const [role, hue] of Object.entries(ROLES)) {
-    // Picked as a hover/pressed trio even when only the base is emitted, so adding states later doesn't move it.
-    const emphasis = pickSolid(hue, HUE_STEPS, 500, dir, onPages(UI));
+  const intent: Tree = {};
+  for (const [role, hue] of Object.entries(ROLES) as [keyof typeof ROLES, string][]) {
+    const w = ROLE_WORDS[role];
+    // base, strong, stronger are picked as one trio that carries the same inverse text.
+    const fill = pickSolid(hue, HUE_STEPS, 500, dir, onPages(UI));
     const subtle = dark ? `${hue}.900` : `${hue}.100`;
-    const states: Record<string, string> = PRESSABLE.has(role) ? { hover: emphasis.states[1], pressed: emphasis.states[2] } : {};
+    const onSubtleAndPages = (h: string) => onPages(TEXT)(h) && contrast(h, hexOf(subtle)) >= TEXT;
     intent[role] = {
-      background: { emphasis: emphasis.states[0], subtle, ...states },
+      surface: {
+        subtle: [subtle, `Soft ${role} fill for alerts, banners, and badges. Use content/base on it.`],
+        base: [fill.states[0], `Strong ${role} fill for ${w.button}, badges, and tags. Use content/inverse on it.`],
+        strong: [fill.states[1], `Hover fill for ${w.button}. Use content/inverse on it.`],
+        stronger: [fill.states[2], `Pressed fill for ${w.button}. Use content/inverse on it.`],
+      },
       content: {
-        base: pick(hue, HUE_STEPS, dark ? 300 : 700, onPages(TEXT)),
-        emphasis: emphasis.on,
-        subtle: pick(hue, HUE_STEPS, dark ? 200 : 800, (h) => contrast(h, hexOf(subtle)) >= TEXT),
+        base: [pick(hue, HUE_STEPS, dark ? 300 : 700, onSubtleAndPages), `${role[0].toUpperCase()}${role.slice(1)} text and icons on the background, surfaces, and the ${role} surface/subtle, such as ${w.text}.`],
+        inverse: [fill.on, `Text and icons on the ${role} surface/base, strong, and stronger.`],
       },
       border: {
-        base: pick(hue, HUE_STEPS, dark ? 400 : 600, onPages(UI)),
-        subtle: dark ? `${hue}.700` : `${hue}.300`, // decorative, exempt
+        base: [pick(hue, HUE_STEPS, dark ? 400 : 600, onPages(UI)), `Boundary in the ${role} color${w.border}. ${PAGE_3}`],
+        subtle: [dark ? `${hue}.700` : `${hue}.300`, `Decorative outline around the ${role} surface/subtle. ${EXEMPT}`],
       },
     };
   }
 
-  // Refs become aliases; nested objects stay groups.
-  type Tree = { [key: string]: string | Tree };
-  const tokens = (tree: Tree): Record<string, unknown> =>
-    Object.fromEntries(Object.entries(tree).map(([k, v]) => [k, typeof v === "string" ? alias(v) : tokens(v)]));
   return tokens({
-    background: { ...bg, surface, inverse },
-    content: { ...content, inverse: contentInverse },
-    border,
-    utility: { scrim: dark ? "black-alpha.70" : "black-alpha.50" }, // translucent, exempt
+    background: [background, "Page background. The bottom layer that everything else sits on. Inside a surface, also the inset fill for code blocks and neutral badges."],
+    surface: {
+      subtle: [surface.subtle, "Cards, popovers, and modals, and tinted areas on the background: code blocks, neutral badges, progress tracks, sidebars. One step from the background in both themes."],
+      strong: [surface.strong, "Hover fill for list items, ghost buttons, and other transparent elements, on the background or a surface."],
+      stronger: [surface.stronger, "Pressed fill for list items, ghost buttons, and other transparent elements, on the background or a surface."],
+    },
+    inverse: {
+      base: [inv.states[0], "Flipped fill for primary buttons, tooltips, and snackbars. Use content/inverse/* on it."],
+      strong: [inv.states[1], "Hover fill for primary buttons. Use content/inverse/* on it."],
+      stronger: [inv.states[2], "Pressed fill for primary buttons. Use content/inverse/* on it."],
+    },
+    content: {
+      base: [pick("neutral", NEUTRAL_STEPS, dark ? 50 : 950, onPages(TEXT)), "Default text and icons on the background and surfaces."],
+      subtle: [pick("neutral", NEUTRAL_STEPS, dark ? 500 : 700, onPages(TEXT)), "Secondary text and icons on the background and surfaces: captions, placeholders, metadata."],
+      inverse: {
+        base: [inv.on, "Text and icons on inverse fills."],
+        subtle: [pick("neutral", NEUTRAL_STEPS, dark ? 700 : 500, onInverse), "Secondary text and icons on inverse fills."],
+      },
+    },
+    border: {
+      base: [pick("neutral", NEUTRAL_STEPS, dark ? 600 : 500, onPages(UI)), `Boundaries of controls such as inputs and checkboxes. ${PAGE_3}`],
+      subtle: [dark ? "neutral.800" : "neutral.200", `Decorative dividers and outlines. ${EXEMPT}`],
+      focus: [pick("neutral", NEUTRAL_STEPS, dark ? 50 : 950, onPages(UI)), `Keyboard focus ring. Use with focus-ring/width and focus-ring/offset. ${PAGE_3}`],
+    },
+    disabled: {
+      surface: [dark ? "neutral.900" : "neutral.50", `Fill of disabled controls. ${EXEMPT}`],
+      content: [dark ? "neutral.600" : "neutral.400", `Text and icons of disabled controls. ${EXEMPT}`],
+      border: [dark ? "neutral.800" : "neutral.200", `Border of disabled controls. ${EXEMPT}`],
+    },
+    utility: { scrim: [dark ? "black-alpha.70" : "black-alpha.50", "Translucent layer that dims the page behind a modal."] },
     intent,
   });
 };
 
-const alias = (ref: string) => ({ $type: "color", $value: `{color.${ref}}` });
+const alias = ([ref, description]: Token) => ({ $type: "color", $value: `{color.${ref}}`, $description: description });
+const tokens = (tree: Tree): Record<string, unknown> =>
+  Object.fromEntries(Object.entries(tree).map(([k, v]) => [k, Array.isArray(v) ? alias(v) : tokens(v)]));
 // Same in every theme, so they live in the base set (ADR 0017).
-const always = { always: { white: alias("white"), black: alias("black") } };
+const always = tokens({
+  always: {
+    white: ["white", "White in every theme, for icons and text on images. Pair with a dark overlay."],
+    black: ["black", "Black in every theme, for icons and text on light images."],
+  },
+});
 
 // ---------- write ----------
 

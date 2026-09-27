@@ -3,11 +3,11 @@ import { contrast, group, isExempt, isThemed, leaf, pairsOf, THEMES, token, toke
 
 const SAMPLE = "The quick brown fox jumps over the lazy dog";
 
-const pageBg = (theme: Theme) => token("background.canvas", theme).css;
+const pageBg = (theme: Theme) => token("background", theme).css;
 const pageFg = (theme: Theme) => token("content.base", theme).css;
 
 /** Top-level groups of the semantic colors (ADR 0017) */
-export const COLOR_GROUPS = ["background", "content", "border", "utility", "always", "intent"];
+export const COLOR_GROUPS = ["background", "surface", "inverse", "content", "border", "disabled", "utility", "always", "intent"];
 
 // Every block is wrapped in `sb-unstyled` so Storybook's markdown table/heading styles don't apply.
 const Block = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
@@ -241,7 +241,7 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
           {group(prefix).map((t) => (
             <tr key={t.id}>
               <td className="pts-token-cell">
-                <span className="pts-token-name">{t.id.slice(prefix.length + 1)}</span>
+                <span className="pts-token-name">{t.id === prefix ? leaf(t.id) : t.id.slice(prefix.length + 1)}</span>
                 <CopyVar name={t.cssVar} />
               </td>
               {themes.map((th) => {
@@ -307,11 +307,14 @@ export const Palette = ({ hue }: { hue: string }) => {
   );
 };
 
-/** Which property a color token is, from its path: intent.danger.content.base → content */
-const property = (id: string) => id.split(".").find((s) => s === "background" || s === "content" || s === "border");
+/** How a color token is drawn, from its path: content as text, border as an outline, anything else as a fill */
+const property = (id: string) => {
+  const path = id.split(".");
+  return path.includes("content") ? "content" : path.includes("border") ? "border" : "fill";
+};
 
-/** A background id without its group, as a short label: intent.danger.background.emphasis → emphasis */
-const bgLabel = (id: string) => id.replace(/^(intent\.[^.]+\.)?background\./, "");
+/** A background id without its intent, as a short label: intent.danger.surface.base → surface.base */
+const bgLabel = (id: string) => id.replace(/^intent\.[^.]+\./, "");
 
 /**
  * A color token shown the way it is used, with the lowest contrast among the pairs npm run check tests:
@@ -411,7 +414,7 @@ export const FocusRing = () => (
           type="button"
           className="pts-focus-demo"
           style={{
-            background: token("background.inverse.base", th).css,
+            background: token("inverse.base", th).css,
             color: token("content.inverse.base", th).css,
             outline: `${token("focus-ring.width").css} solid ${token("border.focus", th).css}`,
             outlineOffset: token("focus-ring.offset").css,

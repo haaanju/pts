@@ -119,15 +119,15 @@ export const token = (id: string, theme: Theme = "light") => {
   return t;
 };
 
-/** Tokens under a group prefix (e.g. "intent.danger"), in file order */
+/** Tokens under a group prefix (e.g. "intent.danger"), or the single token with that id (e.g. "background"), in file order */
 export const group = (prefix: string, theme: Theme = "light") =>
-  Object.values(byTheme[theme]).filter((t) => t.id.startsWith(`${prefix}.`));
+  Object.values(byTheme[theme]).filter((t) => t.id === prefix || t.id.startsWith(`${prefix}.`));
 
 /** True if any token under the prefix resolves differently between themes */
 export const isThemed = (prefix: string) =>
   group(prefix, "light").some((t) => t.css !== token(t.id, "dark").css);
 
-/** Last path segment, e.g. "background.surface.raised" → "raised" */
+/** Last path segment, e.g. "intent.danger.surface.strong" → "strong" */
 export const leaf = (id: string) => id.slice(id.lastIndexOf(".") + 1);
 
 // ---- contrast (WCAG 2.x) — same rules as tokens/scripts/check.ts ----

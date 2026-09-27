@@ -29,7 +29,7 @@ pts/
 ├── docs/adr/                    # architecture decision records
 ├── tokens/                      # @pts/tokens — DTCG source, single source of truth (private)
 │   ├── scripts/check.ts         # token validation (npm run check)
-│   ├── scripts/generate-color.ts  # generates primitive + semantic color (npm run generate:color)
+│   ├── scripts/generate-color.ts  # generates primitive + semantic color with descriptions (npm run generate:color)
 │   ├── scripts/pairs.ts         # color pairing rules, shared by check.ts and the Storybook docs
 │   └── src/
 │       ├── pts.resolver.json         # combines token files + theme modifier (build entry point)
@@ -47,7 +47,7 @@ pts/
 │           ├── motion.tokens.json      # motion (duration, easing)
 │           ├── z-index.tokens.json
 │           ├── color.tokens.json            # always (theme-independent colors)
-│           ├── color.{light,dark}.tokens.json   # background, content, border, utility, intent, per theme
+│           ├── color.{light,dark}.tokens.json   # background, surface, inverse, content, border, disabled, utility, intent, per theme
 │           └── shadow.{light,dark}.tokens.json  # shadow, per theme
 ├── packages/                    # shippable outputs, one package per platform
 │   └── web/                     # @pts/web — CSS custom properties and self-hosted fonts
@@ -59,7 +59,7 @@ pts/
         ├── .storybook/          # main, theme (light/dark UI themes), manager (theme toggle), preview (tokens.css, theme sync)
         └── src/
             ├── tokens.ts        # data layer: reads the resolver, resolves aliases per theme
-            ├── components.tsx   # doc blocks (TokenTable, Palette, ForegroundTable, …)
+            ├── components.tsx   # doc blocks (TokenTable, ColorTable, Palette, …)
             ├── Introduction.mdx # Overview
             ├── semantic/*.mdx   # Semantic group: Color, Typography, Spacing, Border, Elevation, Size, Motion, Layout
             └── primitive/*.mdx  # Primitive group: Palette, Scales
@@ -131,36 +131,38 @@ pts/
 
 ### Color
 
-See ADR 0017 (names) and 0018 (states). Neutral colors are grouped by property; status colors by intent, then the same three properties:
+See ADR 0019. Layers first, then what sits on them; each intent repeats the same shape:
 
 ```
-background/  canvas, hover, pressed, disabled, surface/{subtle, raised}, inverse/{base, hover, pressed}
-content/     base, muted, disabled, inverse/{base, muted}
-border/      base, subtle, focus, disabled
-utility/     scrim
-always/      white, black
+background                                 the page
+surface/       subtle, strong, stronger
+inverse/       base, strong, stronger
+content/       base, subtle, inverse/{base, subtle}
+border/        base, subtle, focus
+disabled/      surface, content, border
 intent/<danger | warning | success | info | discovery>/
-             background/{emphasis, subtle}, content/{base, emphasis, subtle}, border/{base, subtle}
-             (danger also has background/hover, pressed)
+               surface/{subtle, base, strong, stronger}, content/{base, inverse}, border/{base, subtle}
+utility/       scrim
+always/        white, black
 ```
 
-- **Names**: `canvas` is the page. `base` is the default of every other group (and the resting fill inside a state folder). `subtle` is the weaker fill or line; `muted` is weaker text. Never `default`, never `on-`.
-- **Surfaces**: cards, popovers, and modals use `background/surface/raised` with a `shadow/*`. Light: same as the canvas (the shadow separates it). Dark: one step lighter, since shadows barely show on dark.
-- **Inverse**: the flipped fill for primary buttons, tooltips, and snackbars. Monochrome (neutral), so it never competes with intents.
-- **Intents**: danger (red), warning (orange), success (green), info (blue), discovery (purple: new features, onboarding, recommendations, AI). `emphasis` is the strong fill, `subtle` the soft one.
-- **States**: `hover` / `pressed` are states of the fill at the same level: `canvas` (transparent elements such as ghost buttons and list items), `inverse/base`, and `danger`'s `emphasis`. Add states only to fills a pressable component uses; component-specific states (selected, checked) go to a future component tier. From hover to pressed, light gets darker and dark gets lighter.
+- **Layers**: `background` is the page (inside a surface, the inset fill for code blocks and neutral badges). `surface/subtle` sits on it: cards, popovers, modals, and tinted areas, one step from the background in both themes. `inverse` is the flipped fill for primary buttons, tooltips, and snackbars.
+- **Strength**: `subtle` < `base` < `strong` < `stronger`, as distance from the background (darker in light, lighter in dark). `subtle` is the soft fill everywhere; `base` is the resting default; `strong` / `stronger` are the hover and pressed fills in every group. The neutral surface has no `base`: its strong resting fill is the `inverse` layer. Never `default`, `canvas`, `raised`, `muted`, `emphasis`, or `on-`.
+- **Content**: `content/base` and `subtle` are text and icons on the background and surfaces. `content/inverse` is text on a flipped fill: on `inverse/*`, and on an intent's `surface/base`, `strong`, and `stronger`.
+- **Intents**: danger (red), warning (orange), success (green), info (blue), discovery (purple: new features, onboarding, recommendations, AI). Role first, then the same `surface` / `content` / `border` words as the neutral colors. `surface/subtle` is the soft fill (alerts, banners, soft badges), `surface/base` the strong fill (buttons, strong badges, tags). An intent's `content/base` also sits on its own `surface/subtle`.
+- **States**: interaction states are strength steps, and `$description` says hover or pressed. Every pressable fill has `strong` / `stronger`; component-specific states (selected, checked) go to a future component tier (ADR 0018). `disabled/*` is shared by every control. From hover to pressed, light gets darker and dark gets lighter.
 - **Utility**: colors outside the pairing system (the modal scrim). **Always**: the same in every theme, for icons and text on images; theme-independent, so they live in `semantic/color.tokens.json` (base set).
-- **Pairing**: a content name is either a level (`base`, `muted`) or the background it sits on. `content/inverse/*` → `background/inverse/*`; an intent's `content/emphasis` → its `emphasis` and states, `content/subtle` → its `background/subtle`. Level content and all borders sit on the page: `canvas`, `hover`, `pressed`, `surface/*`.
-- **Figma**: variable scopes follow the property (background and utility → fills; content → text and shape fills plus strokes; border → strokes; always → all). Primitives are hidden from pickers.
+- **Descriptions**: every semantic color has a `$description` (written in `generate-color.ts`) that says when to use it and which content goes on a fill. The Figma variable descriptions carry the same text.
+- **Figma**: variable scopes follow the name (`content/*` and `disabled/content` → text and shape fills plus strokes; a `border` segment → strokes; `always/*` → all; everything else → frame and shape fills). The `Theme` collection holds only values that change with the theme; shadow offsets, blurs, and spreads are in `Semantic`. Primitives are hidden from pickers.
 
 ### Accessibility (required in both themes)
 
-- Content: 4.5:1 against every paired background (WCAG 1.4.3).
-- UI boundaries (`border/*`, `background/inverse/*`, intent `emphasis` and its states, including the focus ring): 3:1 against the page backgrounds (WCAG 1.4.11).
-- Exempt: `*/disabled` (inactive), `border/subtle` and intent `border/subtle` (decorative), `utility/*` (translucent scrim), `always/*` (sits on images; pair `always/white` with a dark overlay).
+- Content: 4.5:1 against every paired background (WCAG 1.4.3): `content/base` and `subtle` on `background` and `surface/*`; `content/inverse/*` on `inverse/*`; an intent's `content/base` on the page and its own `surface/subtle`; an intent's `content/inverse` on its `surface/base`, `strong`, and `stronger`.
+- UI boundaries (`border/base`, `border/focus`, intent `border/base`, `inverse/*`, and an intent's `surface/base`, `strong`, `stronger`): 3:1 against `background` and `surface/*` (WCAG 1.4.11).
+- Exempt: `disabled/*` (inactive), `border/subtle` and intent `border/subtle` (decorative), `utility/*` (translucent scrim), `always/*` (sits on images; pair `always/white` with a dark overlay).
 - Translucent colors can't be contrast-checked; `npm run check` errors if one enters a contrast pair.
-- `npm run check` derives the pairs from these naming rules (`tokens/scripts/pairs.ts`), so new color tokens must follow them to be checked. A new content level word must be added to `HIERARCHY` there; a content name matching no background is reported.
-- States must be visible: each fill and its `hover` / `pressed` resolve to different colors, and `background/hover` / `pressed` differ from `surface/*` and `disabled` (a hover inside a card must show). `npm run check` enforces this.
+- `npm run check` derives the pairs from these names (`tokens/scripts/pairs.ts`), so new color tokens must follow them to be checked. A content name other than a level (`base`, `subtle`) or `inverse` is reported.
+- Steps must be visible: every step of a surface ladder (the neutral `background` / `surface/*`, `inverse/*`, each intent's `surface/*`) differs from the others, and `surface/strong` / `stronger` differ from `disabled/surface`. `npm run check` enforces this.
 
 ## Fonts
 

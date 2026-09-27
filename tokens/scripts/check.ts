@@ -2,11 +2,11 @@
 //   1. every token declares $type
 //   2. every alias resolves
 //   3. all contexts of a modifier define the same token names
-//   4. color pairs meet WCAG contrast (pairs are derived from the naming rules in CLAUDE.md, ADR 0017)
-//   5. interaction states are visible: every fill's hover/pressed differ from it and from each other,
-//      and background/hover and pressed differ from every surface they can sit on and from disabled
+//   4. color pairs meet WCAG contrast (pairs come from the names, see scripts/pairs.ts and ADR 0019)
+//   5. steps and states are visible: every step of a surface ladder differs from the others, and the
+//      hover/pressed fills for transparent elements differ from a disabled control
 // Exits with code 1 on any failure.
-// Exempt from contrast: */disabled (inactive), border/subtle (decorative), utility/* (outside the
+// Exempt from contrast: disabled/* (inactive), border/subtle (decorative), utility/* (outside the
 // pairing system; the scrim is translucent), always/* (sits on images, whose colors are unknown).
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";

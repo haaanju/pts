@@ -4,23 +4,25 @@ import { PageHeader, Section, ColorTable, COLOR_GROUPS } from "../components";
 <Meta title="Semantic/Color" />
 
 <PageHeader eyebrow="Semantic" title="Color" groups={COLOR_GROUPS}>
-  Neutral colors are grouped by property (background, content, border); status colors by intent, then the same three
-  properties. Light and dark are shown side by side.
+  Layers (background, surface, inverse), the content and borders on them, and one group per intent with the same
+  shape. Light and dark are shown side by side.
 </PageHeader>
 
 <Section title="Rules">
-  - `canvas` is the page. `base` is the default of every other group; `subtle` is the weaker fill or line, `muted` the weaker text.
-  - A content name is either a level (`base`, `muted`) or the background it sits on: `content.inverse.*` on `background.inverse.*`, an intent's `content.emphasis` on its `background.emphasis`, `content.subtle` on `background.subtle`.
-  - Level content and borders sit on the page: `canvas`, `hover`, `pressed`, and `surface.*`.
-  - `hover` and `pressed` are states of the fill next to them: `canvas` (transparent elements), `inverse.base`, and `danger`'s `emphasis`.
-  - Text needs **4.5:1**; borders and solid fills need **3:1**. `disabled`, `border.subtle`, `utility`, and `always` are exempt. Each badge shows the lowest ratio among the pairs `npm run check` tests.
+  - `background` is the page. `surface` sits on it; `inverse` is the flipped fill for primary buttons, tooltips, and snackbars.
+  - Strength goes `subtle` < `base` < `strong` < `stronger`, away from the background. `strong` and `stronger` are the hover and pressed fills in every group.
+  - `content/base` and `subtle` sit on the background and surfaces. `content/inverse` sits on a flipped fill: `inverse/*`, or an intent's `surface/base` and up.
+  - Text needs **4.5:1**; borders and strong fills need **3:1**. `disabled`, `border/subtle`, `utility`, and `always` are exempt. Each badge shows the lowest ratio among the pairs `npm run check` tests.
 </Section>
 
-<Section title="Background"><ColorTable prefix="background" /></Section>
+<Section title="Background" lead="The page. Inside a surface, the inset fill for code blocks and neutral badges."><ColorTable prefix="background" /></Section>
+<Section title="Surface" lead="Cards, popovers, modals, and tinted areas; strong and stronger are the hover and pressed fills of transparent elements."><ColorTable prefix="surface" /></Section>
+<Section title="Inverse" lead="The flipped fill for primary buttons, tooltips, and snackbars, with its hover and pressed steps."><ColorTable prefix="inverse" /></Section>
 <Section title="Content"><ColorTable prefix="content" /></Section>
 <Section title="Border"><ColorTable prefix="border" /></Section>
+<Section title="Disabled" lead="The same for every control, whatever its resting fill. Exempt from contrast."><ColorTable prefix="disabled" /></Section>
 
-<Section title="Danger" lead="Errors and destructive actions. The only intent with hover and pressed: destructive buttons."><ColorTable prefix="intent.danger" /></Section>
+<Section title="Danger" lead="Errors and destructive actions."><ColorTable prefix="intent.danger" /></Section>
 <Section title="Warning" lead="Caution that needs attention."><ColorTable prefix="intent.warning" /></Section>
 <Section title="Success" lead="Completed or positive states."><ColorTable prefix="intent.success" /></Section>
 <Section title="Info" lead="Neutral information."><ColorTable prefix="intent.info" /></Section>

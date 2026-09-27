@@ -10,10 +10,8 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/color-surface-pairs`: ADR 0019 (proposed, `docs/adr/0019-color-layers-and-strength-steps.md`): `background` / `surface` / `inverse` layers, one `content` group with `content/inverse` for text on flipped fills, `subtle` < `base` < `strong` < `stronger` steps instead of hover/pressed (on every intent), a `disabled/` group, and intents as `intent/<role>/{surface, content, border}`. 58 → 60 tokens. No token or code changes yet.
-  1. Done: the Figma `Theme` variables match the ADR (names, scopes, descriptions) and pass 154 pairs per theme; shadow offsets, blurs, and spreads moved to the `Semantic` collection. The descriptions were written in Figma first; copy the same text into `$description` in step 2.
-  2. Code: `generate-color.ts` (names, `$description`, strong/stronger on every intent), `pairs.ts` (the ADR's pairing table), docs, then accept the ADR and update CLAUDE.md, README, and ADR 0010/0017/0018 status.
-  3. Redraw the Figma Color specimen (0.3.0 labels) and fix the Overview and Elevation specimens (old collection counts), then release `0.4.0`.
+- `feature/color-surface-pairs`: ADR 0019 (accepted) is implemented in tokens, checks, and docs: `background` / `surface` / `inverse` layers, one `content` group with `content/inverse`, `subtle` < `base` < `strong` < `stronger` steps, a `disabled/` group, and intents as `intent/<role>/{surface, content, border}`. 58 → 60 tokens; the Figma `Theme` variables already match. Not merged or released yet.
+  - Remaining: redraw the Figma Color specimen (0.3.0 labels) and fix the Overview and Elevation specimens (old collection counts), then merge to `main` and release `0.4.0` (breaking: almost every semantic color name changes).
 - The Figma MCP must be authenticated with the personal account that owns the `pts` file; a work account only has view access. To switch, clear the figma server's authentication in `/mcp` and reconnect.
 
 ## Next

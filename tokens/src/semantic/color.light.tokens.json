@@ -1,280 +1,346 @@
 {
   "background": {
-    "canvas": {
+    "$type": "color",
+    "$value": "{color.white}",
+    "$description": "Page background. The bottom layer that everything else sits on. Inside a surface, also the inset fill for code blocks and neutral badges."
+  },
+  "surface": {
+    "subtle": {
       "$type": "color",
-      "$value": "{color.white}"
+      "$value": "{color.neutral.50}",
+      "$description": "Cards, popovers, and modals, and tinted areas on the background: code blocks, neutral badges, progress tracks, sidebars. One step from the background in both themes."
     },
-    "hover": {
+    "strong": {
       "$type": "color",
-      "$value": "{color.neutral.100}"
+      "$value": "{color.neutral.100}",
+      "$description": "Hover fill for list items, ghost buttons, and other transparent elements, on the background or a surface."
     },
-    "pressed": {
+    "stronger": {
       "$type": "color",
-      "$value": "{color.neutral.200}"
-    },
-    "disabled": {
+      "$value": "{color.neutral.200}",
+      "$description": "Pressed fill for list items, ghost buttons, and other transparent elements, on the background or a surface."
+    }
+  },
+  "inverse": {
+    "base": {
       "$type": "color",
-      "$value": "{color.neutral.50}"
+      "$value": "{color.neutral.900}",
+      "$description": "Flipped fill for primary buttons, tooltips, and snackbars. Use content/inverse/* on it."
     },
-    "surface": {
-      "subtle": {
-        "$type": "color",
-        "$value": "{color.neutral.50}"
-      },
-      "raised": {
-        "$type": "color",
-        "$value": "{color.white}"
-      }
+    "strong": {
+      "$type": "color",
+      "$value": "{color.neutral.950}",
+      "$description": "Hover fill for primary buttons. Use content/inverse/* on it."
     },
-    "inverse": {
-      "base": {
-        "$type": "color",
-        "$value": "{color.neutral.900}"
-      },
-      "hover": {
-        "$type": "color",
-        "$value": "{color.neutral.950}"
-      },
-      "pressed": {
-        "$type": "color",
-        "$value": "{color.neutral.1000}"
-      }
+    "stronger": {
+      "$type": "color",
+      "$value": "{color.neutral.1000}",
+      "$description": "Pressed fill for primary buttons. Use content/inverse/* on it."
     }
   },
   "content": {
     "base": {
       "$type": "color",
-      "$value": "{color.neutral.950}"
+      "$value": "{color.neutral.950}",
+      "$description": "Default text and icons on the background and surfaces."
     },
-    "muted": {
+    "subtle": {
       "$type": "color",
-      "$value": "{color.neutral.700}"
-    },
-    "disabled": {
-      "$type": "color",
-      "$value": "{color.neutral.400}"
+      "$value": "{color.neutral.700}",
+      "$description": "Secondary text and icons on the background and surfaces: captions, placeholders, metadata."
     },
     "inverse": {
       "base": {
         "$type": "color",
-        "$value": "{color.white}"
+        "$value": "{color.white}",
+        "$description": "Text and icons on inverse fills."
       },
-      "muted": {
+      "subtle": {
         "$type": "color",
-        "$value": "{color.neutral.500}"
+        "$value": "{color.neutral.500}",
+        "$description": "Secondary text and icons on inverse fills."
       }
     }
   },
   "border": {
     "base": {
       "$type": "color",
-      "$value": "{color.neutral.600}"
+      "$value": "{color.neutral.600}",
+      "$description": "Boundaries of controls such as inputs and checkboxes. Meets 3:1 against the background and surfaces."
     },
     "subtle": {
       "$type": "color",
-      "$value": "{color.neutral.200}"
+      "$value": "{color.neutral.200}",
+      "$description": "Decorative dividers and outlines. Exempt from contrast."
     },
     "focus": {
       "$type": "color",
-      "$value": "{color.neutral.950}"
-    },
-    "disabled": {
+      "$value": "{color.neutral.950}",
+      "$description": "Keyboard focus ring. Use with focus-ring/width and focus-ring/offset. Meets 3:1 against the background and surfaces."
+    }
+  },
+  "disabled": {
+    "surface": {
       "$type": "color",
-      "$value": "{color.neutral.200}"
+      "$value": "{color.neutral.50}",
+      "$description": "Fill of disabled controls. Exempt from contrast."
+    },
+    "content": {
+      "$type": "color",
+      "$value": "{color.neutral.400}",
+      "$description": "Text and icons of disabled controls. Exempt from contrast."
+    },
+    "border": {
+      "$type": "color",
+      "$value": "{color.neutral.200}",
+      "$description": "Border of disabled controls. Exempt from contrast."
     }
   },
   "utility": {
     "scrim": {
       "$type": "color",
-      "$value": "{color.black-alpha.50}"
+      "$value": "{color.black-alpha.50}",
+      "$description": "Translucent layer that dims the page behind a modal."
     }
   },
   "intent": {
     "danger": {
-      "background": {
-        "emphasis": {
-          "$type": "color",
-          "$value": "{color.red.600}"
-        },
+      "surface": {
         "subtle": {
           "$type": "color",
-          "$value": "{color.red.100}"
+          "$value": "{color.red.100}",
+          "$description": "Soft danger fill for alerts, banners, and badges. Use content/base on it."
         },
-        "hover": {
+        "base": {
           "$type": "color",
-          "$value": "{color.red.700}"
+          "$value": "{color.red.600}",
+          "$description": "Strong danger fill for destructive buttons, badges, and tags. Use content/inverse on it."
         },
-        "pressed": {
+        "strong": {
           "$type": "color",
-          "$value": "{color.red.800}"
+          "$value": "{color.red.700}",
+          "$description": "Hover fill for destructive buttons. Use content/inverse on it."
+        },
+        "stronger": {
+          "$type": "color",
+          "$value": "{color.red.800}",
+          "$description": "Pressed fill for destructive buttons. Use content/inverse on it."
         }
       },
       "content": {
         "base": {
           "$type": "color",
-          "$value": "{color.red.700}"
+          "$value": "{color.red.700}",
+          "$description": "Danger text and icons on the background, surfaces, and the danger surface/subtle, such as error messages."
         },
-        "emphasis": {
+        "inverse": {
           "$type": "color",
-          "$value": "{color.white}"
-        },
-        "subtle": {
-          "$type": "color",
-          "$value": "{color.red.800}"
+          "$value": "{color.white}",
+          "$description": "Text and icons on the danger surface/base, strong, and stronger."
         }
       },
       "border": {
         "base": {
           "$type": "color",
-          "$value": "{color.red.600}"
+          "$value": "{color.red.600}",
+          "$description": "Boundary in the danger color, such as an input with an error. Meets 3:1 against the background and surfaces."
         },
         "subtle": {
           "$type": "color",
-          "$value": "{color.red.300}"
+          "$value": "{color.red.300}",
+          "$description": "Decorative outline around the danger surface/subtle. Exempt from contrast."
         }
       }
     },
     "warning": {
-      "background": {
-        "emphasis": {
-          "$type": "color",
-          "$value": "{color.orange.700}"
-        },
+      "surface": {
         "subtle": {
           "$type": "color",
-          "$value": "{color.orange.100}"
+          "$value": "{color.orange.100}",
+          "$description": "Soft warning fill for alerts, banners, and badges. Use content/base on it."
+        },
+        "base": {
+          "$type": "color",
+          "$value": "{color.orange.700}",
+          "$description": "Strong warning fill for warning buttons, badges, and tags. Use content/inverse on it."
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.orange.800}",
+          "$description": "Hover fill for warning buttons. Use content/inverse on it."
+        },
+        "stronger": {
+          "$type": "color",
+          "$value": "{color.orange.900}",
+          "$description": "Pressed fill for warning buttons. Use content/inverse on it."
         }
       },
       "content": {
         "base": {
           "$type": "color",
-          "$value": "{color.orange.700}"
+          "$value": "{color.orange.700}",
+          "$description": "Warning text and icons on the background, surfaces, and the warning surface/subtle, such as caution messages."
         },
-        "emphasis": {
+        "inverse": {
           "$type": "color",
-          "$value": "{color.white}"
-        },
-        "subtle": {
-          "$type": "color",
-          "$value": "{color.orange.800}"
+          "$value": "{color.white}",
+          "$description": "Text and icons on the warning surface/base, strong, and stronger."
         }
       },
       "border": {
         "base": {
           "$type": "color",
-          "$value": "{color.orange.700}"
+          "$value": "{color.orange.700}",
+          "$description": "Boundary in the warning color. Meets 3:1 against the background and surfaces."
         },
         "subtle": {
           "$type": "color",
-          "$value": "{color.orange.300}"
+          "$value": "{color.orange.300}",
+          "$description": "Decorative outline around the warning surface/subtle. Exempt from contrast."
         }
       }
     },
     "success": {
-      "background": {
-        "emphasis": {
-          "$type": "color",
-          "$value": "{color.green.700}"
-        },
+      "surface": {
         "subtle": {
           "$type": "color",
-          "$value": "{color.green.100}"
+          "$value": "{color.green.100}",
+          "$description": "Soft success fill for alerts, banners, and badges. Use content/base on it."
+        },
+        "base": {
+          "$type": "color",
+          "$value": "{color.green.700}",
+          "$description": "Strong success fill for success buttons, badges, and tags. Use content/inverse on it."
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.green.800}",
+          "$description": "Hover fill for success buttons. Use content/inverse on it."
+        },
+        "stronger": {
+          "$type": "color",
+          "$value": "{color.green.900}",
+          "$description": "Pressed fill for success buttons. Use content/inverse on it."
         }
       },
       "content": {
         "base": {
           "$type": "color",
-          "$value": "{color.green.700}"
+          "$value": "{color.green.700}",
+          "$description": "Success text and icons on the background, surfaces, and the success surface/subtle, such as confirmation messages."
         },
-        "emphasis": {
+        "inverse": {
           "$type": "color",
-          "$value": "{color.white}"
-        },
-        "subtle": {
-          "$type": "color",
-          "$value": "{color.green.800}"
+          "$value": "{color.white}",
+          "$description": "Text and icons on the success surface/base, strong, and stronger."
         }
       },
       "border": {
         "base": {
           "$type": "color",
-          "$value": "{color.green.600}"
+          "$value": "{color.green.600}",
+          "$description": "Boundary in the success color. Meets 3:1 against the background and surfaces."
         },
         "subtle": {
           "$type": "color",
-          "$value": "{color.green.300}"
+          "$value": "{color.green.300}",
+          "$description": "Decorative outline around the success surface/subtle. Exempt from contrast."
         }
       }
     },
     "info": {
-      "background": {
-        "emphasis": {
-          "$type": "color",
-          "$value": "{color.blue.600}"
-        },
+      "surface": {
         "subtle": {
           "$type": "color",
-          "$value": "{color.blue.100}"
+          "$value": "{color.blue.100}",
+          "$description": "Soft info fill for alerts, banners, and badges. Use content/base on it."
+        },
+        "base": {
+          "$type": "color",
+          "$value": "{color.blue.600}",
+          "$description": "Strong info fill for info buttons, badges, and tags. Use content/inverse on it."
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.blue.700}",
+          "$description": "Hover fill for info buttons. Use content/inverse on it."
+        },
+        "stronger": {
+          "$type": "color",
+          "$value": "{color.blue.800}",
+          "$description": "Pressed fill for info buttons. Use content/inverse on it."
         }
       },
       "content": {
         "base": {
           "$type": "color",
-          "$value": "{color.blue.700}"
+          "$value": "{color.blue.700}",
+          "$description": "Info text and icons on the background, surfaces, and the info surface/subtle, such as help text."
         },
-        "emphasis": {
+        "inverse": {
           "$type": "color",
-          "$value": "{color.white}"
-        },
-        "subtle": {
-          "$type": "color",
-          "$value": "{color.blue.800}"
+          "$value": "{color.white}",
+          "$description": "Text and icons on the info surface/base, strong, and stronger."
         }
       },
       "border": {
         "base": {
           "$type": "color",
-          "$value": "{color.blue.600}"
+          "$value": "{color.blue.600}",
+          "$description": "Boundary in the info color. Meets 3:1 against the background and surfaces."
         },
         "subtle": {
           "$type": "color",
-          "$value": "{color.blue.300}"
+          "$value": "{color.blue.300}",
+          "$description": "Decorative outline around the info surface/subtle. Exempt from contrast."
         }
       }
     },
     "discovery": {
-      "background": {
-        "emphasis": {
-          "$type": "color",
-          "$value": "{color.purple.500}"
-        },
+      "surface": {
         "subtle": {
           "$type": "color",
-          "$value": "{color.purple.100}"
+          "$value": "{color.purple.100}",
+          "$description": "Soft discovery fill for alerts, banners, and badges. Use content/base on it."
+        },
+        "base": {
+          "$type": "color",
+          "$value": "{color.purple.500}",
+          "$description": "Strong discovery fill for discovery buttons, badges, and tags. Use content/inverse on it."
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.purple.600}",
+          "$description": "Hover fill for discovery buttons. Use content/inverse on it."
+        },
+        "stronger": {
+          "$type": "color",
+          "$value": "{color.purple.700}",
+          "$description": "Pressed fill for discovery buttons. Use content/inverse on it."
         }
       },
       "content": {
         "base": {
           "$type": "color",
-          "$value": "{color.purple.700}"
+          "$value": "{color.purple.700}",
+          "$description": "Discovery text and icons on the background, surfaces, and the discovery surface/subtle, such as new-feature labels."
         },
-        "emphasis": {
+        "inverse": {
           "$type": "color",
-          "$value": "{color.white}"
-        },
-        "subtle": {
-          "$type": "color",
-          "$value": "{color.purple.800}"
+          "$value": "{color.white}",
+          "$description": "Text and icons on the discovery surface/base, strong, and stronger."
         }
       },
       "border": {
         "base": {
           "$type": "color",
-          "$value": "{color.purple.600}"
+          "$value": "{color.purple.600}",
+          "$description": "Boundary in the discovery color. Meets 3:1 against the background and surfaces."
         },
         "subtle": {
           "$type": "color",
-          "$value": "{color.purple.300}"
+          "$value": "{color.purple.300}",
+          "$description": "Decorative outline around the discovery surface/subtle. Exempt from contrast."
         }
       }
     }

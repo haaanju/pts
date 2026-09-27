@@ -1,6 +1,6 @@
 # 0018. Interaction States in the Semantic Tier
 
-- Status: accepted
+- Status: accepted (amended by 0019)
 - Date: 2026-09-27
 
 ## What we learned
