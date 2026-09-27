@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- None.
+- `feature/operating-flow`: ADR 0020 (proposed), the public contribution flow: hand-edited token JSON (the color generator is retired), CI as the merge gate, Storybook deployed from `main`. Implementation steps are listed in the ADR; none started.
 
 ## Next
 
