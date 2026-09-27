@@ -134,7 +134,11 @@ for (const { file, tier, tokens } of files) {
     const value = token.$value as { colorSpace?: string; components?: number[]; hex?: string };
     if (token.$type === "color" && value && typeof value === "object" && value.components) {
       const expected = toHex(value.components);
-      if (value.hex?.toLowerCase() !== expected) errors.push(`${where} has hex ${value.hex}, but its components are ${expected}`);
+      if (value.hex?.toLowerCase() !== expected) {
+        // most edits change the hex (copied from Figma), so say which components match it
+        const fromHex = /^#[0-9a-f]{6}$/i.test(value.hex ?? "") ? [1, 3, 5].map((i) => Math.round((parseInt(value.hex!.slice(i, i + 2), 16) / 255) * 10000) / 10000) : undefined;
+        errors.push(`${where} has hex ${value.hex}, but its components are ${expected}` + (fromHex ? `; the components for ${value.hex} are [${fromHex.join(", ")}]` : ""));
+      }
     }
     if (tier !== "semantic") continue;
 

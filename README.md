@@ -87,7 +87,7 @@ npm run build            # build @pts/web
 
 The pre-commit hook runs `check`, `lint`, and `typecheck`. CI runs the same checks plus both builds on every push to `main` and every pull request.
 
-**Changing tokens.** Edit the JSON in `tokens/src/` directly, color included, then run `npm run check`. It enforces contrast, visible states, the tier rules, and a description on every semantic color.
+**Changing tokens.** Edit the JSON in `tokens/src/` directly, color included, then run `npm run check`. It enforces contrast, visible states, the tier rules, and a description on every semantic color. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full flow.
 
 ## Decisions and conventions
 

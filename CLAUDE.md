@@ -22,6 +22,7 @@ A personal study project: building my own design token pipeline while learning h
 ```
 pts/
 ├── README.md                    # human-facing overview (usage, commands, status)
+├── CONTRIBUTING.md              # how to change tokens: flow, format, common changes, what the checks catch
 ├── .claude/settings.json        # SessionStart hook: fetches, prints git state and docs/progress.md
 ├── .githooks/pre-commit         # runs check, lint, typecheck before every commit
 ├── .github/workflows/ci.yml     # CI: checks + both builds
