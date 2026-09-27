@@ -30,7 +30,7 @@ border/      base, subtle, focus, disabled
 utility/     scrim
 always/      white, black
 intent/<danger | warning | success | info | discovery>/
-             background/{emphasis, subtle, hover, pressed}
+             background/{emphasis, subtle}, plus hover, pressed (danger only)
              content/{base, emphasis, subtle}
              border/{base, subtle}
 ```
@@ -42,7 +42,7 @@ Grammar: `[intent/<role>/]<background | content | border>/<name>`, plus `utility
 - **`canvas`** is the page. It is the reference every pairing rule points to, so it has its own name instead of `base`.
 - **`base`** is the default of every content and border group, and the resting fill inside a state folder (`background/inverse/base`). No group is called `default`, and no token shares a name with a group, so no DTCG `$root` is needed.
 - **`subtle`** is the weaker variant of a fill or a line. **`muted`** is weaker text; content can't use `subtle` for that because content names also mean pairing (below).
-- **`hover` / `pressed`** are states of the fill at the same level: `canvas` (for transparent elements on it), `inverse/base`, and each intent's `emphasis`.
+- **`hover` / `pressed`** are states of the fill at the same level: `canvas` (for transparent elements on it), `inverse/base`, and `intent/danger/background/emphasis`. Which fills get states is decided in ADR 0018.
 - **`disabled`** sits at the same depth in all three properties.
 - **`surface/`** holds only surfaces placed on the canvas (`subtle`, `raised`).
 - **`inverse`** is the flipped fill. It replaces both the old `background/primary` (primary buttons) and `background/inverse` (tooltips, snackbars), which were one neutral step apart. It has two content levels, since snackbars and tooltips carry primary and secondary text.
@@ -59,14 +59,14 @@ Content names are either a **hierarchy word** (`base`, `muted`, `disabled`) or *
 |---|---|---|
 | `content/base`, `muted`; intent `content/base` | canvas, `surface/*`, `hover`, `pressed` | 4.5:1 |
 | `content/inverse/*` | `background/inverse/*` | 4.5:1 |
-| intent `content/emphasis` | that intent's `emphasis`, `hover`, `pressed` | 4.5:1 |
+| intent `content/emphasis` | that intent's `emphasis`, and its `hover`, `pressed` where they exist | 4.5:1 |
 | intent `content/subtle` | that intent's `background/subtle` | 4.5:1 |
 
-- UI boundaries at 3:1 against canvas, `surface/*`, `hover`, `pressed`: `border/base`, `border/focus`, intent `border/base`, `background/inverse/*`, intent `emphasis` / `hover` / `pressed`. `inverse` is now checked because it is the primary button; before, it was a static surface and exempt.
+- UI boundaries at 3:1 against canvas, `surface/*`, `hover`, `pressed`: `border/base`, `border/focus`, intent `border/base`, `background/inverse/*`, intent `emphasis` (and danger's `hover` / `pressed`). `inverse` is now checked because it is the primary button; before, it was a static surface and exempt.
 - Exempt: `*/disabled`, `border/subtle` and intent `border/subtle` (decorative), `utility/*` (outside the pairing system; the scrim is translucent), `always/*` (sits on images, whose colors are unknown; pair `always/white` with a dark overlay).
 - States must be visible: each fill's `base`/`emphasis`, `hover`, and `pressed` differ, and `background/hover` / `pressed` differ from `canvas`, `surface/*`, and `disabled`.
 
-A prototype of these rules on the test collection passes all 186 pairs per theme with no invisible states. Lowest ratios: text 4.69 (light) / 4.58 (dark), UI 3.22.
+A prototype of these rules on the test collection passes all 138 pairs per theme with no invisible states. Lowest ratios: text 4.69 (light) / 4.58 (dark), UI 3.22.
 
 ### Figma
 
@@ -80,7 +80,7 @@ Every semantic color name changes and the primitive group is renamed, so the rel
 
 ## Implementation notes
 
-Old → new (60 → 66 tokens; `<r>` is each status role, `recommend` becomes `discovery`):
+Old → new (60 → 58 tokens; `<r>` is each status role, `recommend` becomes `discovery`):
 
 | Old | New |
 |---|---|
@@ -96,7 +96,9 @@ Old → new (60 → 66 tokens; `<r>` is each status role, `recommend` becomes `d
 | `foreground/default`, `muted`, `disabled` | `content/base`, `muted`, `disabled` |
 | `border/strong`, `border/default` | `border/base`, `border/subtle` |
 | `border/focus`, `disabled` | unchanged |
-| `background/<r>`, `-hover`, `-pressed`, `-subtle` | `intent/<r>/background/emphasis`, `hover`, `pressed`, `subtle` |
+| `background/<r>`, `-subtle` | `intent/<r>/background/emphasis`, `subtle` |
+| `background/danger-hover`, `-pressed` | `intent/danger/background/hover`, `pressed` |
+| `background/<r>-hover`, `-pressed` for warning, success, info, recommend | removed (ADR 0018) |
 | `foreground/<r>`, `on-<r>`, `on-<r>-subtle` | `intent/<r>/content/base`, `emphasis`, `subtle` |
 | `border/<r>` | `intent/<r>/border/base` |
 | — | `intent/<r>/border/subtle` (new: light `<hue>.300`, dark `<hue>.700`) |
@@ -106,7 +108,6 @@ Old → new (60 → 66 tokens; `<r>` is each status role, `recommend` becomes `d
 - Code: `generate-color.ts` (names and output shape), `check.ts` (pairing, exemptions, state rules; the hierarchy words are a list, so a new one must be added there), Storybook `tokens.ts` / `components.tsx` / Color page, `.storybook/theme.ts`, and shadow tokens that alias `palette.black-alpha`.
 - Figma: apply the new names and scopes to the real `Theme` collection; the `Primitive` collection already uses `color/*`.
 - When accepted, mark ADR 0005, 0006, 0010, and 0015 `(amended by 0017)`.
-- Open: whether intents other than `danger` keep `hover` / `pressed` depends on the next decision about interaction states in the semantic tier.
 
 ## Documented in
 
