@@ -603,7 +603,7 @@ body {
 }
 .pts-ramp-meta .pts-value,
 .pts-ramp-meta .pts-alias {
-  font-size: var(--font-size-100);
+  font-size: var(--font-size-200);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

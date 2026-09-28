@@ -12,7 +12,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- None.
+- `feature/remove-font-size-100` (ADR 0023): `font-size/100` (10px) removed and `pts/min-font-size` keeps the scale at 12px or larger. Breaking, so the next release is `0.5.0`. Figma still has the `font-size/100` variable and its Typography specimen row: delete both.
 
 ## Next
 

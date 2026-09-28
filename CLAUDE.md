@@ -82,7 +82,7 @@ pts/
 - `npm run check`: `tz check` in `tokens/` (ADR 0021). Rules in `tokens/terrazzo.config.ts`, in three blocks:
   - Terrazzo's recommended rules: DTCG value shapes (`core/valid-*`), kebab-case names (as an error).
   - Terrazzo's built-in rules, turned on: `$type` required, a `$description` on every semantic token, srgb colors, text at least 12px.
-  - `pts/*` (`tokens/lint/`), for what built-in rules can't check. Terrazzo lints the default theme only, so these apply every theme themselves: every theme resolves with the same names and descriptions (`theme-parity`), contrast (`contrast`), visible steps (`visible-steps`); and they read the files for `hex` matching `components` (`color-hex`), the tier rules below (`tier-aliases`), and files missing from the resolver (`registered-files`).
+  - `pts/*` (`tokens/lint/`), for what built-in rules can't check. Terrazzo lints the default theme only, so these apply every theme themselves: every theme resolves with the same names and descriptions (`theme-parity`), contrast (`contrast`), visible steps (`visible-steps`); no `font-size` step below 12px (`min-font-size`); and they read the files for `hex` matching `components` (`color-hex`), the tier rules below (`tier-aliases`), and files missing from the resolver (`registered-files`).
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it.
 - `npm run typecheck`: TypeScript for the lint plugin and Storybook.
 - The pre-commit hook runs check and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
@@ -127,7 +127,7 @@ pts/
 - `focus-ring/width`, `focus-ring/offset`: 2px each. Color is `border/focus`.
 - `font-family`: sans (Aspekta), serif and mono (IBM Plex). Use `mono` wherever digits must line up: Aspekta has no tabular figures.
 - `font-weight`: regular, medium, semibold, bold.
-- `font-size/N`: ordinal steps, 400 = 16px (body default). 100 = 10 … 1000 = 48. Text styles use 200 (12px) or larger: 12px is the minimum for text (`a11y/min-font-size`), so no text style uses 100.
+- `font-size/N`: ordinal steps, 400 = 16px (body default). 200 = 12 … 1000 = 48. 12px is the minimum for text, so the scale has no smaller step (ADR 0023): `a11y/min-font-size` checks text styles, `pts/min-font-size` the scale.
 - `line-height`: unitless multipliers. tight = 1.2, normal = 1.5, loose = 1.75.
 - `letter-spacing`: tighter = -1px, tight = -0.5px, normal = 0, wide = 1px. px because DTCG dimensions only allow px/rem (no em). Display styles use tighter, heading-lg/md tight, the rest normal; wide is for uppercase labels.
 - `text/<role>-<size>`: `$type: typography` composites. Roles display, heading, body, label, caption, code × sizes lg, md, sm. All five properties (fontFamily, fontSize, fontWeight, letterSpacing, lineHeight) are required.

@@ -39,11 +39,6 @@
     }
   },
   "font-size": {
-    "100": {
-      "$type": "dimension",
-      "$value": "{dimension.10}",
-      "$description": "The smallest step, below the minimum size for readable text. No text style uses it; don't use it for text."
-    },
     "200": {
       "$type": "dimension",
       "$value": "{dimension.12}",

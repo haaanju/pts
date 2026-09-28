@@ -28,6 +28,7 @@ export default defineConfig({
       "pts/theme-parity": "error",
       "pts/contrast": "error",
       "pts/visible-steps": "error",
+      "pts/min-font-size": ["error", { minSizePx: 12 }],
       "pts/color-hex": "error",
       "pts/tier-aliases": ["error", { rawValues: ["z-index"], semanticAliases: ["text"] }],
       "pts/registered-files": "error",

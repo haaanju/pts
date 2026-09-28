@@ -3,6 +3,7 @@
 import type { Plugin } from "@terrazzo/parser";
 import colorHex from "./rules/color-hex.ts";
 import contrast from "./rules/contrast.ts";
+import minFontSize from "./rules/min-font-size.ts";
 import registeredFiles from "./rules/registered-files.ts";
 import themeParity from "./rules/theme-parity.ts";
 import tierAliases from "./rules/tier-aliases.ts";
@@ -15,6 +16,7 @@ export default function pts(): Plugin {
       "pts/theme-parity": themeParity,
       "pts/contrast": contrast,
       "pts/visible-steps": visibleSteps,
+      "pts/min-font-size": minFontSize,
       "pts/color-hex": colorHex,
       "pts/tier-aliases": tierAliases,
       "pts/registered-files": registeredFiles,
