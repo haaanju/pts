@@ -30,7 +30,7 @@ export default defineConfig({
       "pts/visible-steps": "error",
       "pts/min-font-size": ["error", { minSizePx: 12 }],
       "pts/color-hex": "error",
-      "pts/tier-aliases": ["error", { rawValues: ["z-index"], semanticAliases: ["text"] }],
+      "pts/tier-aliases": ["error", { rawValues: ["z-index", "breakpoint"], semanticAliases: ["text"] }],
       "pts/registered-files": "error",
     },
   },

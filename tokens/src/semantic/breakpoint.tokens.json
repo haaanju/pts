@@ -2,22 +2,34 @@
   "breakpoint": {
     "sm": {
       "$type": "dimension",
-      "$value": "{dimension.640}",
+      "$value": {
+        "value": 640,
+        "unit": "px"
+      },
       "$description": "Min-width for large phones in landscape and up. For reference: custom properties can't be used in media queries."
     },
     "md": {
       "$type": "dimension",
-      "$value": "{dimension.768}",
+      "$value": {
+        "value": 768,
+        "unit": "px"
+      },
       "$description": "Min-width for tablets and up. For reference: custom properties can't be used in media queries."
     },
     "lg": {
       "$type": "dimension",
-      "$value": "{dimension.1024}",
+      "$value": {
+        "value": 1024,
+        "unit": "px"
+      },
       "$description": "Min-width for laptops and up. For reference: custom properties can't be used in media queries."
     },
     "xl": {
       "$type": "dimension",
-      "$value": "{dimension.1280}",
+      "$value": {
+        "value": 1280,
+        "unit": "px"
+      },
       "$description": "Min-width for desktops and up. For reference: custom properties can't be used in media queries."
     }
   }

@@ -6,7 +6,7 @@ import type { LintRule } from "@terrazzo/parser";
 import { files } from "../source.ts";
 
 type Options = {
-  /** semantic groups that may hold raw values (z-index: stacking order has no meaning outside its role) */
+  /** semantic groups that may hold raw values (z-index, breakpoint: stacking order and viewport widths have no meaning outside their role) */
   rawValues: string[];
   /** semantic groups that may alias other semantic tokens (text/*: composites of semantic properties) */
   semanticAliases: string[];

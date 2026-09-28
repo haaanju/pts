@@ -97,7 +97,7 @@ pts/
 
 ### Structure
 
-- **Tiers**: primitive → semantic. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `z-index` holds values directly because stacking order has no meaning outside its role. Add a component tier when components exist.
+- **Tiers**: primitive → semantic. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `z-index` and `breakpoint` hold values directly because stacking order and viewport widths have no meaning outside their role (ADR 0024), so no primitive exists just to feed them. Add a component tier when components exist.
 - **Group names**: primitive and semantic top-level groups never share a name (Terrazzo merges all files into one namespace). Example: primitive `weight` ↔ semantic `font-weight`.
 - **Files**: both tiers are split by category: `primitive/<category>.tokens.json`, `semantic/<category>.tokens.json`.
 - **Format**: every token declares `$type`. No group-level `$type` inheritance. Every semantic token has a `$description` that says when to use it, the same in every theme file; the Figma variable descriptions carry the same text.
@@ -132,7 +132,7 @@ pts/
 - `letter-spacing`: tighter = -1px, tight = -0.5px, normal = 0, wide = 1px. px because DTCG dimensions only allow px/rem (no em). Display styles use tighter, heading-lg/md tight, the rest normal; wide is for uppercase labels.
 - `text/<role>-<size>`: `$type: typography` composites. Roles display, heading, body, label, caption, code × sizes lg, md, sm. All five properties (fontFamily, fontSize, fontWeight, letterSpacing, lineHeight) are required.
 - `size/icon/sm, md, lg` = 16, 24, 40. `size/control/sm, md, lg` = 32, 48, 56 (shared control height for buttons, inputs, selects; md and up meet the 44–48px touch target).
-- `breakpoint/sm, md, lg, xl` = 640, 768, 1024, 1280 (min-width). Emitted as CSS variables for reference only; custom properties can't be used inside media queries.
+- `breakpoint/sm, md, lg, xl` = 640, 768, 1024, 1280 (min-width), held directly, not through `dimension` (ADR 0024). Emitted as CSS variables for reference only; custom properties can't be used inside media queries.
 - `motion/duration/fast, normal, slow` = 150, 300, 500ms. `motion/easing/standard, enter, exit`.
 - `z-index/base, dropdown, sticky, overlay, modal, popover, toast, tooltip` = 0, 1000, 1100, 1300 … 1700.
 - `shadow/sm, md, lg, xl`: t-shirt sizes, per theme (dark uses higher opacity).
