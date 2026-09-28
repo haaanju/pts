@@ -15,18 +15,18 @@ import { PageHeader, Section, ColorTable, COLOR_GROUPS } from "../components";
   - Text needs **4.5:1**; borders and strong fills need **3:1**. `disabled`, `border/subtle`, `utility`, and `always` are exempt. Each badge shows the lowest ratio among the pairs `npm run check` tests.
 </Section>
 
-<Section title="Background" lead="The page. Inside a surface, the inset fill for code blocks and neutral badges."><ColorTable prefix="background" /></Section>
-<Section title="Surface" lead="Cards, popovers, modals, and tinted areas; strong and stronger are the hover and pressed fills of transparent elements."><ColorTable prefix="surface" /></Section>
-<Section title="Inverse" lead="The flipped fill for primary buttons, tooltips, and snackbars, with its hover and pressed steps."><ColorTable prefix="inverse" /></Section>
-<Section title="Content"><ColorTable prefix="content" /></Section>
-<Section title="Border"><ColorTable prefix="border" /></Section>
-<Section title="Disabled" lead="The same for every control, whatever its resting fill. Exempt from contrast."><ColorTable prefix="disabled" /></Section>
+<Section title="Background" path="background" lead="The page. Inside a surface, the inset fill for code blocks and neutral badges."><ColorTable prefix="background" /></Section>
+<Section title="Surface" path="surface/*" lead="Cards, popovers, modals, and tinted areas; strong and stronger are the hover and pressed fills of transparent elements."><ColorTable prefix="surface" /></Section>
+<Section title="Inverse" path="inverse/*" lead="The flipped fill for primary buttons, tooltips, and snackbars, with its hover and pressed steps."><ColorTable prefix="inverse" /></Section>
+<Section title="Content" path="content/*" lead="Text and icons. base and subtle sit on the background and surfaces; inverse/* sits on inverse/*."><ColorTable prefix="content" /></Section>
+<Section title="Border" path="border/*" lead="Strokes on the background and surfaces. base is the 3:1 boundary; subtle is a decorative divider."><ColorTable prefix="border" /></Section>
+<Section title="Disabled" path="disabled/*" lead="The same for every control, whatever its resting fill. Exempt from contrast."><ColorTable prefix="disabled" /></Section>
 
-<Section title="Danger" lead="Errors and destructive actions."><ColorTable prefix="intent.danger" /></Section>
-<Section title="Warning" lead="Caution that needs attention."><ColorTable prefix="intent.warning" /></Section>
-<Section title="Success" lead="Completed or positive states."><ColorTable prefix="intent.success" /></Section>
-<Section title="Info" lead="Neutral information."><ColorTable prefix="intent.info" /></Section>
-<Section title="Discovery" lead="New or explorable things: new-feature badges, onboarding, recommendations, AI features."><ColorTable prefix="intent.discovery" /></Section>
+<Section title="Danger" path="intent/danger/*" lead="Errors and destructive actions. content/base sits on the page and surface/subtle; content/inverse on surface/base and up."><ColorTable prefix="intent.danger" /></Section>
+<Section title="Warning" path="intent/warning/*" lead="Caution that needs attention. content/base sits on the page and surface/subtle; content/inverse on surface/base and up."><ColorTable prefix="intent.warning" /></Section>
+<Section title="Success" path="intent/success/*" lead="Completed or positive states. content/base sits on the page and surface/subtle; content/inverse on surface/base and up."><ColorTable prefix="intent.success" /></Section>
+<Section title="Info" path="intent/info/*" lead="Neutral information. content/base sits on the page and surface/subtle; content/inverse on surface/base and up."><ColorTable prefix="intent.info" /></Section>
+<Section title="Discovery" path="intent/discovery/*" lead="New or explorable things: new-feature badges, onboarding, recommendations, AI features. content/base sits on the page and surface/subtle; content/inverse on surface/base and up."><ColorTable prefix="intent.discovery" /></Section>
 
-<Section title="Utility" lead="Outside the pairing system. The scrim dims the page behind a modal."><ColorTable prefix="utility" /></Section>
-<Section title="Always" lead="The same in every theme, for icons and text on images. Pair always.white with a dark overlay."><ColorTable prefix="always" /></Section>
+<Section title="Utility" path="utility/*" lead="Outside the pairing system. The scrim dims the page behind a modal."><ColorTable prefix="utility" /></Section>
+<Section title="Always" path="always/*" lead="The same in every theme, for icons and text on images. Pair always/white with a dark overlay."><ColorTable prefix="always" /></Section>

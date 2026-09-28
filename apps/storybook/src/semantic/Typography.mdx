@@ -7,19 +7,19 @@ import { PageHeader, Section, TextStyles, FontPreview, TokenTable } from "../com
   Aspekta for sans, IBM Plex for serif and mono. Composite text styles bundle size, weight, line height and letter spacing.
 </PageHeader>
 
-<Section title="Text styles" lead="Apply with the font shorthand. Letter spacing is a separate variable: --text-*-letter-spacing.">
+<Section title="Text styles" path="text/*" lead="Apply with the font shorthand. Letter spacing is a separate variable: --text-*-letter-spacing.">
   <TextStyles />
 </Section>
 
-<Section title="Font family"><FontPreview kind="family" /></Section>
-<Section title="Font size"><FontPreview kind="size" /></Section>
-<Section title="Font weight"><FontPreview kind="weight" /></Section>
-<Section title="Line height"><TokenTable prefix="line-height" /></Section>
-<Section title="Letter spacing"><TokenTable prefix="letter-spacing" /></Section>
+<Section title="Font family" path="font-family/*" lead="Aspekta for UI, IBM Plex Serif and Mono. Use mono where digits must line up: Aspekta has no tabular figures."><FontPreview kind="family" /></Section>
+<Section title="Font size" path="font-size/*" lead="Ordinal steps. font-size/400 = 16px is the body default."><FontPreview kind="size" /></Section>
+<Section title="Font weight" path="font-weight/*"><FontPreview kind="weight" /></Section>
+<Section title="Line height" path="line-height/*" lead="Unitless multipliers."><TokenTable prefix="line-height" /></Section>
+<Section title="Letter spacing" path="letter-spacing/*" lead="px, since DTCG dimensions have no em. Display styles use tighter, heading-lg/md tight, the rest normal; wide is for uppercase labels."><TokenTable prefix="letter-spacing" /></Section>
 
 <Section
   title="Sans coverage"
-  lead="Aspekta is Latin only (weight 100–900). Missing characters such as ^ ~ ± • render in system-ui. It has no tabular figures, so use font-family.mono where digits must line up."
+  lead="Aspekta is Latin only (weight 100–900). Missing characters such as ^ ~ ± • render in system-ui. It has no tabular figures, so use font-family/mono where digits must line up."
 >
   <div style={{ font: "var(--text-body-lg)", display: "grid", gap: "var(--space-300)" }}>
     <div>Aspekta: The quick brown fox jumps over the lazy dog 0123456789</div>

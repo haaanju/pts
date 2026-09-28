@@ -8,30 +8,30 @@ import { PageHeader, Section, Bars, TokenTable } from "../components";
   semantic tokens (space, font-size, motion, …), never these directly.
 </PageHeader>
 
-<Section title="Dimension" lead="dimension.N is N px, plus dimension.max (9999px) for fully rounded corners. Used by space, layout, radius, stroke, size, font-size, breakpoint and shadow.">
+<Section title="Dimension" path="dimension/*" lead="dimension/N is N px, plus dimension/max (9999px) for fully rounded corners. Used by space, layout, radius, stroke, size, font-size, breakpoint and shadow.">
   <Bars prefix="dimension" />
 </Section>
 
-<Section title="Typeface" lead="Font stacks, including fallbacks. Aliased by font-family. Font sizes have no primitive of their own: font-size aliases dimension.* directly.">
+<Section title="Typeface" path="typeface/*" lead="Font stacks, including fallbacks. Aliased by font-family. Font sizes have no primitive of their own: font-size aliases dimension/* directly.">
   <TokenTable prefix="typeface" preview={(t) => <span style={{ fontFamily: t.css }}>Aa Bb Cc 0123</span>} />
 </Section>
 
-<Section title="Weight" lead="Numeric font weights. Aliased by font-weight.">
+<Section title="Weight" path="weight/*" lead="Numeric font weights. Aliased by font-weight.">
   <TokenTable prefix="weight" preview={(t) => <span style={{ fontWeight: t.css }}>Aa Bb Cc 0123</span>} />
 </Section>
 
-<Section title="Ratio" lead="ratio.N is N ÷ 100. Aliased by line-height.">
+<Section title="Ratio" path="ratio/*" lead="ratio/N is N ÷ 100. Aliased by line-height.">
   <TokenTable prefix="ratio" />
 </Section>
 
-<Section title="Tracking" lead="Letter spacing in px; neg- marks negative values. Aliased by letter-spacing.">
+<Section title="Tracking" path="tracking/*" lead="Letter spacing in px; neg- marks negative values. Aliased by letter-spacing.">
   <TokenTable prefix="tracking" />
 </Section>
 
-<Section title="Duration" lead="duration.N is N ms. Aliased by motion.duration.">
+<Section title="Duration" path="duration/*" lead="duration/N is N ms. Aliased by motion/duration.">
   <TokenTable prefix="duration" />
 </Section>
 
-<Section title="Easing" lead="Cubic Bézier curves. Aliased by motion.easing.">
+<Section title="Easing" path="easing/*" lead="Cubic Bézier curves. Aliased by motion/easing.">
   <TokenTable prefix="easing" />
 </Section>

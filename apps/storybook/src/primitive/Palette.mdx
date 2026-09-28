@@ -8,10 +8,11 @@ import { PageHeader, Section, Palette } from "../components";
   the semantic Color tokens, which switch with the theme and are contrast-checked.
 </PageHeader>
 
-<Section title="Neutral" lead="12 steps. W and B show contrast against white and black."><Palette hue="neutral" /></Section>
-<Section title="Red" lead="Danger."><Palette hue="red" /></Section>
-<Section title="Orange" lead="Warning."><Palette hue="orange" /></Section>
-<Section title="Green" lead="Success."><Palette hue="green" /></Section>
-<Section title="Blue" lead="Info."><Palette hue="blue" /></Section>
-<Section title="Purple" lead="Discovery."><Palette hue="purple" /></Section>
-<Section title="Black alpha" lead="For shadows and the modal scrim only."><Palette hue="black-alpha" /></Section>
+<Section title="Base" path="color/*" lead="Pure white and black."><Palette ids={["color.white", "color.black"]} /></Section>
+<Section title="Neutral" path="color/neutral/*" lead="13 steps. Higher is darker. W and B show contrast against white and black."><Palette hue="neutral" /></Section>
+<Section title="Red" path="color/red/*" lead="Danger."><Palette hue="red" /></Section>
+<Section title="Orange" path="color/orange/*" lead="Warning."><Palette hue="orange" /></Section>
+<Section title="Green" path="color/green/*" lead="Success."><Palette hue="green" /></Section>
+<Section title="Blue" path="color/blue/*" lead="Info."><Palette hue="blue" /></Section>
+<Section title="Purple" path="color/purple/*" lead="Discovery."><Palette hue="purple" /></Section>
+<Section title="Black alpha" path="color/black-alpha/*" lead="Black at N% opacity. For shadows and the modal scrim only."><Palette hue="black-alpha" /></Section>

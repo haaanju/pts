@@ -9,12 +9,13 @@ import { PageHeader, Section, Bars, TokenTable, ZIndexStack } from "../component
 
 <Section
   title="Breakpoint"
+  path="breakpoint/*"
   lead="Mobile first (min-width). Custom properties can't be used inside media queries, so write the value directly or use a preprocessor; the variables exist for reference and JS."
 >
   <Bars prefix="breakpoint" max={1280} />
 </Section>
 
-<Section title="Z-index">
+<Section title="Z-index" path="z-index/*" lead="Values held directly: stacking order has no meaning outside its role.">
   <ZIndexStack />
   <TokenTable prefix="z-index" />
 </Section>

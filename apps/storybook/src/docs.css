@@ -253,11 +253,22 @@ body {
   gap: var(--space-300);
   margin-bottom: var(--layout-100);
 }
+.pts-section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-100);
+}
 .pts .pts-section-title {
   font: var(--text-heading-md);
   letter-spacing: var(--text-heading-md-letter-spacing);
   margin: 0;
   color: var(--content-base);
+}
+/* The token path a section covers, as in the Figma specimens */
+.pts-section-path {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-300);
+  color: var(--content-subtle);
 }
 .pts .pts-section-lead,
 .pts .pts-section-lead p {

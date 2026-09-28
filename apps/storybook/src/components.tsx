@@ -3,6 +3,9 @@ import { contrast, group, isExempt, isThemed, leaf, pairsOf, THEMES, token, toke
 
 const SAMPLE = "The quick brown fox jumps over the lazy dog";
 
+/** A token path as the docs and Figma show it: "surface.subtle" → "surface/subtle" (CSS variables keep dashes) */
+const slash = (id: string) => id.replaceAll(".", "/");
+
 const pageBg = (theme: Theme) => token("background", theme).css;
 const pageFg = (theme: Theme) => token("content.base", theme).css;
 
@@ -38,13 +41,16 @@ export const PageHeader = ({ eyebrow, title, groups, children }: { eyebrow: stri
 );
 
 /**
- * Section: title and lead, then full-width content. Sections are separated by space;
- * `divider` adds a hairline above (used on the Introduction).
+ * Section: title, the token path it covers (e.g. "space/*", as in the Figma specimens), and lead,
+ * then full-width content. Sections are separated by space; `divider` adds a hairline above (used on the Introduction).
  */
-export const Section = ({ title, lead, divider, children }: { title: string; lead?: ReactNode; divider?: boolean; children?: ReactNode }) => (
+export const Section = ({ title, path, lead, divider, children }: { title: string; path?: string; lead?: ReactNode; divider?: boolean; children?: ReactNode }) => (
   <Block className={divider ? "pts-section pts-section-divider" : "pts-section"}>
     <div className="pts-section-head">
-      <h2 className="pts-section-title">{title}</h2>
+      <div className="pts-section-heading">
+        <h2 className="pts-section-title">{title}</h2>
+        {path && <span className="pts-section-path">{path}</span>}
+      </div>
       {lead && <div className="pts-section-lead">{lead}</div>}
     </div>
     <div className="pts-section-body">{children}</div>
@@ -241,7 +247,7 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
           {group(prefix).map((t) => (
             <tr key={t.id}>
               <td className="pts-token-cell">
-                <span className="pts-token-name">{t.id === prefix ? leaf(t.id) : t.id.slice(prefix.length + 1)}</span>
+                <span className="pts-token-name">{slash(t.id === prefix ? leaf(t.id) : t.id.slice(prefix.length + 1))}</span>
                 {t.description && <span className="pts-description">{t.description}</span>}
                 <CopyVar name={t.cssVar} />
               </td>
@@ -250,7 +256,7 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
                 return (
                   <td key={th} className="pts-value-cell">
                     <span className="pts-value">{v.display}</span>
-                    {v.alias && <span className="pts-alias">→ {v.alias}</span>}
+                    {v.alias && <span className="pts-alias">→ {slash(v.alias)}</span>}
                   </td>
                 );
               })}
@@ -270,8 +276,9 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
 
 // ---------- color ----------
 
-export const Palette = ({ hue }: { hue: string }) => {
-  const steps = group(`color.${hue}`);
+/** A hue's ramp (hue="red"), or listed colors that are not a group of their own (ids={["color.white", "color.black"]}) */
+export const Palette = ({ hue, ids }: { hue?: string; ids?: string[] }) => {
+  const steps = ids ? ids.map((id) => token(id)) : group(`color.${hue}`);
   return (
     <Block className="pts-palette">
       <div className="pts-ramp">
@@ -339,7 +346,7 @@ const colorPreview = (t: TokenInfo, theme: Theme) => {
     <div className="pts-pair">
       {sample}
       {isExempt(t.id) ? <Exempt /> : worst && <Ratio value={worst.ratio} min={worst.min} />}
-      {worst && <span className="pts-alias">lowest on {bgLabel(worst.bg.id)}</span>}
+      {worst && <span className="pts-alias">lowest on {slash(bgLabel(worst.bg.id))}</span>}
     </div>
   );
 };

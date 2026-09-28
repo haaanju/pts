@@ -7,11 +7,12 @@ import { PageHeader, Section, RadiusSamples, StrokeSamples, FocusRing, TokenTabl
   Corner radius, stroke widths, and the keyboard focus ring.
 </PageHeader>
 
-<Section title="Radius"><RadiusSamples /></Section>
-<Section title="Stroke"><StrokeSamples /></Section>
+<Section title="Radius" path="radius/*" lead="T-shirt sizes. full (9999px) makes pills and circles."><RadiusSamples /></Section>
+<Section title="Stroke" path="stroke/*" lead='Weight names. No zero-width token: "no border" means removing the border.'><StrokeSamples /></Section>
 
 <Section
   title="Focus ring"
+  path="focus-ring/*"
   lead="outline: var(--focus-ring-width) solid var(--border-focus); outline-offset: var(--focus-ring-offset). The offset keeps the ring distinct from the near-black inverse (primary) button."
 >
   <FocusRing />
