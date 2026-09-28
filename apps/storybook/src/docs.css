@@ -24,7 +24,7 @@
   --docs-overlay-height: 160px;
   --docs-track-height: 28px;
   --docs-dot-size: 20px;
-  --docs-stack-height: var(--docs-stack-height);
+  --docs-stack-height: 340px; /* fits the eight z-index layers, each offset 36px down */
   --docs-layer-width: 240px;
 }
 
