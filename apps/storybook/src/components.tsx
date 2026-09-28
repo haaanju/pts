@@ -515,13 +515,16 @@ export const MotionDemo = () => (
 
 // ---------- layers ----------
 
+/** The layers as one aligned column, highest on top: reading down goes from front to back */
 export const ZIndexStack = () => (
   <Block className="pts-stack">
-    {group("z-index").map((t, i) => (
-      <div key={t.id} className="pts-layer" style={{ zIndex: t.resolved, left: i * 32, top: i * 36 }}>
+    <span className="pts-alias">Front</span>
+    {[...group("z-index")].reverse().map((t) => (
+      <div key={t.id} className="pts-layer">
         <span className="pts-token-name">{leaf(t.id)}</span>
         <span className="pts-alias">{t.display}</span>
       </div>
     ))}
+    <span className="pts-alias">Back</span>
   </Block>
 );

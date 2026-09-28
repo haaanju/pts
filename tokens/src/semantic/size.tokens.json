@@ -8,12 +8,12 @@
       },
       "md": {
         "$type": "dimension",
-        "$value": "{dimension.20}",
+        "$value": "{dimension.24}",
         "$description": "Default icon size, next to body text and in medium controls."
       },
       "lg": {
         "$type": "dimension",
-        "$value": "{dimension.24}",
+        "$value": "{dimension.40}",
         "$description": "Icons in large controls, and standalone icons."
       }
     },
@@ -25,7 +25,7 @@
       },
       "md": {
         "$type": "dimension",
-        "$value": "{dimension.40}",
+        "$value": "{dimension.48}",
         "$description": "Default height of buttons, inputs, and selects."
       },
       "lg": {
