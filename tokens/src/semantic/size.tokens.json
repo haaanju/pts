@@ -26,12 +26,12 @@
       "md": {
         "$type": "dimension",
         "$value": "{dimension.48}",
-        "$description": "Default height of buttons, inputs, and selects."
+        "$description": "Default height of buttons, inputs, and selects. Meets the 44–48px touch target guidance."
       },
       "lg": {
         "$type": "dimension",
-        "$value": "{dimension.48}",
-        "$description": "Height of large buttons, inputs, and selects. Meets the 44–48px touch target guidance."
+        "$value": "{dimension.56}",
+        "$description": "Height of large buttons, inputs, and selects, for prominent actions and touch-first layouts."
       }
     }
   }
