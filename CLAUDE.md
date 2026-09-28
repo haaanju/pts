@@ -161,7 +161,7 @@ always/        white, black
 - **States**: interaction states are strength steps, and `$description` says hover or pressed. Every pressable fill has `strong` / `stronger`; component-specific states (selected, checked) go to a future component tier (ADR 0018). `disabled/*` is shared by every control. From hover to pressed, light gets darker and dark gets lighter.
 - **Utility**: colors outside the pairing system (the modal scrim). **Always**: the same in every theme, for icons and text on images; theme-independent, so they live in `semantic/color.tokens.json` (base set).
 - **Descriptions**: a color's `$description` also says which content goes on a fill.
-- **Figma**: variable scopes follow the name (`content/*` and `disabled/content` → text and shape fills plus strokes; a `border` segment → strokes; `always/*` → all; everything else → frame and shape fills). The `Theme` collection holds only values that change with the theme; shadow offsets, blurs, and spreads are in `Semantic`. Primitives are hidden from pickers.
+- **Figma**: variable scopes follow the name (`content/*` and `disabled/content` → text and shape fills plus strokes; a `border` segment → strokes; `always/*` → all; everything else → frame and shape fills). The `Theme` collection holds the values that change with the theme; shadow offsets, blurs, and spreads are in `Semantic`. One exception: `always/*` stays in `Theme` (the same value in both modes) so every semantic color is in one collection for designers, while the JSON keeps it in the base set (`semantic/color.tokens.json`). Primitives are hidden from pickers.
 
 ### Accessibility (required in both themes)
 
