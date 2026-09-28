@@ -133,7 +133,7 @@ pts/
 - `text/<role>-<size>`: `$type: typography` composites. Roles display, heading, body, label, caption, code × sizes lg, md, sm. All five properties (fontFamily, fontSize, fontWeight, letterSpacing, lineHeight) are required.
 - `size/icon/sm, md, lg` = 16, 24, 40. `size/control/sm, md, lg` = 32, 48, 48 (shared control height for buttons, inputs, selects).
 - `breakpoint/sm, md, lg, xl` = 640, 768, 1024, 1280 (min-width). Emitted as CSS variables for reference only; custom properties can't be used inside media queries.
-- `motion/duration/fast, normal, slow` = 100, 200, 300ms. `motion/easing/standard, enter, exit`.
+- `motion/duration/fast, normal, slow` = 150, 300, 500ms. `motion/easing/standard, enter, exit`.
 - `z-index/base, dropdown, sticky, overlay, modal, popover, toast, tooltip` = 0, 1000, 1100, 1300 … 1700.
 - `shadow/sm, md, lg, xl`: t-shirt sizes, per theme (dark uses higher opacity).
 
