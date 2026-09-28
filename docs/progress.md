@@ -12,7 +12,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/sizes-and-z-index-stack` (PR open): size/icon 16, 24, 40; size/control 32, 48, 56 (new primitive `dimension/56`); motion durations 150, 300, 500ms; the z-index stack as an aligned column. Waiting on Figma: add `dimension/56` to `Primitive`, point `Size/size/control/lg` at it, update the Size specimen (`lg` value, and the Control height lead now reads "md (48px) and up meet touch target guidance."), and copy the new `size/control/md` and `lg` descriptions. Then merge and release `v0.5.1` (values only, no renames).
+- None.
 
 ## Next
 
