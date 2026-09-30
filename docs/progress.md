@@ -16,19 +16,20 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## Next
 
-In this order (decided):
+First, in this order (decided 2026-09-30):
 
-1. JS/TS and SCSS outputs in `@pts/web`: official Terrazzo plugins (`@terrazzo/plugin-js`, `@terrazzo/plugin-sass`) in `packages/web/terrazzo.config.ts`, plus subpath exports next to `./tokens.css`. Both themes must survive: check how each plugin handles the resolver's `theme` modifier before choosing its options (Terrazzo lint only saw the default theme, ADR 0021; builds use `permutations`). Then decide with the user, one question at a time: the JS shape (one object per theme, or values keyed by theme), typed exports (`.d.ts`), SCSS as variables or maps, and the subpath names (`@pts/web/tokens.js`, `tokens.scss`).
-2. First component (Button): validates `inverse` and its `strong`/`stronger` steps, an intent's `surface/base`/`strong`/`stronger` (danger for destructive buttons), the focus ring, `disabled/*`, and control height, and starts the component tier (ADR 0018). Decide first, one question at a time: CSS classes or React, where the code lives (ADR 0016 roles), component tokens or semantic tokens directly, a Figma component too, and which variants and sizes.
+1. Spacing logic: implement the spacing rules and revise the current `space` / `layout` scales. The scope is still to be agreed with the user, one question at a time. It comes first because density steps down this scale.
+2. Density modes: implement ADR 0025 (proposed). Decided: two modes, `relaxed` (default, today's values) and `compact` (one step tighter); only `space/*` and `size/control/*` change; a `density` resolver modifier; `[data-theme="light"]` repeats only the theme groups so nested regions don't reset each other; a `Density` Figma collection; release `0.7.0`. Set the compact values after step 1.
 
-Also to do (added 2026-09-29; order not decided, and each needs its scope agreed with the user first):
+Then, order not decided yet:
 
-- Spacing logic: implement the spacing rules and revise the current `space` / `layout` scales. What changes is still to be discussed.
-- Density modes, relaxed and compact: most likely a second resolver modifier (`density`) next to `theme`. To decide: which groups change (space, `size/control`, line-height?), whether there is a default between the two, the CSS selector (`[data-density]`), Figma modes, and how `pts/*` rules check every theme × density permutation. Needs an ADR.
+- JS/TS and SCSS outputs in `@pts/web`: official Terrazzo plugins (`@terrazzo/plugin-js`, `@terrazzo/plugin-sass`) in `packages/web/terrazzo.config.ts`, plus subpath exports next to `./tokens.css`. Both themes must survive: check how each plugin handles the resolver's `theme` modifier before choosing its options (Terrazzo lint only saw the default theme, ADR 0021; builds use `permutations`). Then decide with the user, one question at a time: the JS shape (one object per theme, or values keyed by theme), typed exports (`.d.ts`), SCSS as variables or maps, and the subpath names (`@pts/web/tokens.js`, `tokens.scss`).
+- First component (Button): validates `inverse` and its `strong`/`stronger` steps, an intent's `surface/base`/`strong`/`stronger` (danger for destructive buttons), the focus ring, `disabled/*`, and control height, and starts the component tier (ADR 0018). Decide first, one question at a time: CSS classes or React, where the code lives (ADR 0016 roles), component tokens or semantic tokens directly, a Figma component too, and which variants and sizes.
+
 - Dark-mode letter spacing: light text on a dark page reads tighter, so fine-tune letter spacing in dark. That makes `letter-spacing` (and the `text/*` composites that use it) theme-dependent: it would move into the theme files, the dark CSS blocks, and the Figma `Theme` collection. Needs an ADR.
 
 Still deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022).
 
 ## Open questions
 
-- Where the three added items fall relative to the decided order above.
+- The order of the three items after density. Suggested: dark-mode letter spacing (another theme-dependent change, best designed alongside density), then the JS/TS and SCSS outputs (once the modifiers are final), then Button.
