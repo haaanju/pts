@@ -35,7 +35,7 @@ The ×1.5 display ratio (ADR 0028) limits what a small-screen scale can be: four
 - **CSS**: one more block, `@media (min-width: 768px) { :root { … } }`, with the display tokens only. No `data-viewport` attribute: the viewport is the window, not something a subtree picks.
 - **Checks**: `pts/min-font-size`, `pts/type-scale`, and `pts/line-height-grid` read the default permutation only, which would leave the wide values unchecked once `narrow` is the default. They now run on every permutation, like the other `pts/*` rules. `pts/type-scale` allows a step equal to its neighbour when another permutation sets them apart (a collapsed step), and still reports steps that are equal everywhere.
 - **Docs**: the display groups show `narrow` and `wide` side by side. Previews use the resolved value, not the variable, since a cell can't change the media query. The text style specimens follow the window.
-- **Figma**: a `Viewport` collection (modes `narrow`, `wide`) holding the display variables, the same principle as `Density`. The text styles keep their bindings; a frame pins its `Viewport` mode.
+- **Figma**: a `Viewport` collection (modes `narrow`, `wide`) holding the display variables, the same principle as `Density`. A frame pins its `Viewport` mode. Text styles set their line height in px (Figma binds line-height variables as px, and the tokens are ratios), which would leave a narrow frame drawing 64px text on a 104px line, so `Viewport` also holds Figma-only `Typography/line-height/display/{sm,md,lg,xl}-px` (narrow 28, 44, 44, 64; wide 28, 44, 64, 104) that the display and heading styles bind. Like the shadow parts, they have no code syntax. Separate narrow text styles were rejected: designers would switch styles by hand, the step this modifier removes.
 
 ### Breaking
 
@@ -48,6 +48,8 @@ The output gains a media-query block and the default display sizes at `:root` sh
 - Checked in headless Chrome on the Storybook Typography page: `text/display-lg` renders at 104px in a 1280px window and 64px in a 420px one; `display-md` and `heading-lg` are both 40px at 420px.
 - `letter-spacing/display/md`'s description now says about −0.0125em (−0.5px on 40px), the same figure the narrow `display/lg` uses; it said −0.015em.
 - Docs: `tokens.ts` builds every theme × density × viewport permutation and loads the viewport files last, so the display steps follow the text steps in every table (`letter-spacing` now lists `normal` and `wide` first). `TokenTable` adds narrow and wide columns; previews receive the column's viewport, and the font-size preview takes its line height resolved from the same column.
+
+- Figma: the twelve display variables were recreated in `Viewport` (same names, scopes, and code syntax), the four display and heading styles and the twelve unstyled specimen nodes on the Typography page rebound, and the `Semantic` originals deleted once nothing referenced them (`Semantic` 94 → 82 variables). The Typography page is two frames, `Typography — narrow` and `Typography — wide`, each pinning its mode, with the static value labels per mode.
 
 ## Documented in
 
