@@ -399,6 +399,34 @@ export const Bars = ({ prefix, max }: { prefix: string; max?: number }) => (
   />
 );
 
+/**
+ * Spacing roles drawn the way they're used, as on the Figma specimen: the blocks are content, the area around or
+ * between them is the token value.
+ * Padding is the frame around a content block; gap is the space between two blocks.
+ */
+export const PaddingSamples = () => (
+  <TokenTable
+    prefix="padding"
+    preview={(t) => (
+      <div className="pts-space-sample" style={{ padding: `var(${t.cssVar})` }}>
+        <span className="pts-space-block pts-space-block-wide" />
+      </div>
+    )}
+  />
+);
+
+export const GapSamples = () => (
+  <TokenTable
+    prefix="gap"
+    preview={(t) => (
+      <div className="pts-space-sample" style={{ gap: `var(${t.cssVar})` }}>
+        <span className="pts-space-block" />
+        <span className="pts-space-block" />
+      </div>
+    )}
+  />
+);
+
 export const RadiusSamples = () => (
   <TokenTable prefix="radius" preview={(t) => <div className="pts-box" style={{ borderRadius: t.css }} />} />
 );

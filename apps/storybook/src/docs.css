@@ -16,6 +16,7 @@
   --docs-description-width: 320px; /* wraps token descriptions so the token column stays narrow */
   --docs-bar-track-width: 240px;
   --docs-bar-height: 8px;
+  --docs-space-block: 16px; /* content blocks in the padding and gap samples */
   --docs-skeleton-height: 12px;
   --docs-sample-width: 72px;
   --docs-sample-height: 48px;
@@ -655,6 +656,21 @@ body {
   max-width: 100%;
   background: var(--inverse-base);
   border-radius: var(--radius-full);
+}
+/* Padding and gap samples: the blocks are content, the area around or between them is the token value
+   (the same colors as the Figma specimen; they swap lightness in dark, so describe the area, not its shade) */
+.pts-space-sample {
+  display: inline-flex;
+  vertical-align: middle;
+  background: var(--intent-info-border-subtle);
+}
+.pts-space-block {
+  width: var(--docs-space-block);
+  height: var(--docs-space-block);
+  background: var(--intent-info-surface-base);
+}
+.pts-space-block-wide {
+  width: calc(2 * var(--docs-space-block));
 }
 
 .pts-box {
