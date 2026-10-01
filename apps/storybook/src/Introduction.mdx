@@ -23,11 +23,19 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
 <Section divider title="How it's built" lead="Two tiers. Primitives hold raw values; semantic tokens express intent.">
   <TierTable />
 
-  Color and shadow change between **light** and **dark**. Light values live on `:root` and `[data-theme="light"]`;
-  dark values apply under `prefers-color-scheme: dark` or `[data-theme="dark"]`.
+  Three modes change values without renaming tokens. The defaults live on `:root`.
+
+  - **Theme**: color and shadow, **light** (default) and **dark**. Dark applies under `prefers-color-scheme: dark` or
+    `[data-theme="dark"]`; `[data-theme="light"]` forces light.
+  - **Density**: padding, the gaps within and between groups, and control heights, **relaxed** (default) and **compact**.
+    `[data-density="compact"]` tightens any element and its children.
+  - **Viewport**: display and heading sizes, **narrow** (default) and **wide**. From `breakpoint/md` (768px), a media
+    query switches to wide.
+
+  `data-theme` and `data-density` work on `<html>` or any element, and nest without resetting each other.
 </Section>
 
-<Section divider title="Usage" lead="Import the fonts, then the tokens.">
+<Section divider title="Usage" lead="Import the fonts, then the tokens. JS/TS and SCSS reach the same CSS variables by name.">
 
 ```css
 @import "@pts/web/fonts.css"; /* @font-face for Aspekta and IBM Plex */
@@ -47,6 +55,26 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
 .button:focus-visible {
   outline: var(--focus-ring-width) solid var(--border-focus);
   outline-offset: var(--focus-ring-offset);
+}
+```
+
+`@pts/web/tokens.js` and `@pts/web/tokens.scss` hold references to these variables, not values, so import `tokens.css`
+as well; theme, density, and viewport keep working through it. They add autocomplete and catch typos in token names.
+
+```ts
+import { padding, surface, text } from "@pts/web/tokens.js"; // typed by tokens.d.ts
+
+const card = { background: surface.subtle, padding: padding.md }; // "var(--surface-subtle)", "var(--padding-md)"
+const title = { ...text.headingMd }; // fontFamily, fontSize, fontWeight, letterSpacing, lineHeight
+```
+
+```scss
+@use "pkg:@pts/web/tokens.scss" as t; // Dart Sass with the Node package importer
+
+.card {
+  background: t.token("surface.subtle");
+  padding: t.token("padding.md");
+  @include t.typography("text.heading-md"); // font and letter-spacing
 }
 ```
 
