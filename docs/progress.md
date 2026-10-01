@@ -12,7 +12,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/spacing-logic`: ADR 0026 (spacing roles on one `space` scale; `padding/*`, `gap/*`, `gap/section/*`; `layout/*` removed; `space/700` and `dimension/28` new). Tokens, lint, docs, and CLAUDE.md are done. Left: Figma (new `space` steps, role variables, `layout/*` removed and rebound, Spacing specimen), then PR, merge, and release `0.7.0`.
+- None.
 
 ## Next
 
