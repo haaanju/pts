@@ -3,6 +3,8 @@
 import type { Plugin } from "@terrazzo/parser";
 import colorHex from "./rules/color-hex.ts";
 import contrast from "./rules/contrast.ts";
+import densityOrder from "./rules/density-order.ts";
+import gapOrder from "./rules/gap-order.ts";
 import lineHeightGrid from "./rules/line-height-grid.ts";
 import minFontSize from "./rules/min-font-size.ts";
 import registeredFiles from "./rules/registered-files.ts";
@@ -18,6 +20,8 @@ export default function pts(): Plugin {
       "pts/theme-parity": themeParity,
       "pts/contrast": contrast,
       "pts/visible-steps": visibleSteps,
+      "pts/density-order": densityOrder,
+      "pts/gap-order": gapOrder,
       "pts/min-font-size": minFontSize,
       "pts/type-scale": typeScale,
       "pts/line-height-grid": lineHeightGrid,

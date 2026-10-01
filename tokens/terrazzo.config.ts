@@ -28,6 +28,8 @@ export default defineConfig({
       "pts/theme-parity": "error",
       "pts/contrast": "error",
       "pts/visible-steps": "error",
+      "pts/density-order": ["error", { modifier: "density", tighter: "compact", looser: "relaxed" }],
+      "pts/gap-order": ["error", { order: ["gap.within", "gap.between", "gap.section"] }],
       "pts/min-font-size": ["error", { minSizePx: 12 }],
       "pts/type-scale": ["error", { order: ["xs", "sm", "md", "lg", "xl"], contrastZones: ["display"], minRatio: 1.5 }],
       "pts/line-height-grid": ["error", { gridPx: 4 }],

@@ -1,7 +1,7 @@
 {
   "name": "PTS",
   "version": "2025.10",
-  "description": "Base tokens plus a theme modifier (light | dark).",
+  "description": "Base tokens plus a theme modifier (light | dark) and a density modifier (relaxed | compact).",
   "sets": {
     "base": {
       "sources": [
@@ -65,6 +65,27 @@
         ]
       },
       "default": "light"
+    },
+    "density": {
+      "contexts": {
+        "relaxed": [
+          {
+            "$ref": "semantic/spacing.relaxed.tokens.json"
+          },
+          {
+            "$ref": "semantic/size.relaxed.tokens.json"
+          }
+        ],
+        "compact": [
+          {
+            "$ref": "semantic/spacing.compact.tokens.json"
+          },
+          {
+            "$ref": "semantic/size.compact.tokens.json"
+          }
+        ]
+      },
+      "default": "relaxed"
     }
   },
   "resolutionOrder": [
@@ -73,6 +94,9 @@
     },
     {
       "$ref": "#/modifiers/theme"
+    },
+    {
+      "$ref": "#/modifiers/density"
     }
   ]
 }

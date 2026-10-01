@@ -1,8 +1,10 @@
 // The token source as the pts rules need it (ADR 0021). Terrazzo hands every lint rule the tokens of the
-// default theme only, merged from all files, so this module adds the two views the built-in rules lack:
-//   themes()  every theme, applied by Terrazzo's own resolver
-//   files()   each registered .tokens.json with its tier (its folder), since a merged token no longer
-//             knows which file it came from
+// default theme only, merged from all files, so this module adds the views the built-in rules lack:
+//   themes()            every permutation of the resolver's modifiers (theme × density), applied by Terrazzo's
+//                       own resolver; the name predates density, each entry carries its full input
+//   files()             each registered .tokens.json with its tier (its folder), since a merged token no longer
+//                       knows which file it came from
+//   modifierTokens()    the token ids a modifier's contexts define (e.g. what density changes)
 import { readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { defineConfig, Logger, parse, type TokenNormalizedSet } from "@terrazzo/parser";
@@ -13,7 +15,7 @@ const RESOLVER = new URL("pts.resolver.json", SRC);
 type Ref = { $ref: string };
 export type RawToken = { $type?: string; $value: unknown; $description?: string };
 export type SourceFile = { path: string; tier: string; tokens: Record<string, RawToken> };
-export type Theme = { label: string; tokens?: TokenNormalizedSet; error?: string };
+export type Theme = { label: string; input: Record<string, string>; tokens?: TokenNormalizedSet; error?: string };
 
 const readJson = (path: string) => JSON.parse(readFileSync(new URL(path, SRC), "utf8"));
 
@@ -44,6 +46,13 @@ export const onDisk = (): string[] => readdirSync(SRC, { recursive: true, encodi
 export const files = (): SourceFile[] => registered().map((path) => ({ path, tier: path.split("/")[0], tokens: flatten(readJson(path)) }));
 
 /** Top-level groups of the primitive tier, e.g. ["dimension", "color", …] */
+/** Token ids defined by a modifier's contexts, e.g. modifierTokens("density") → ["padding.xs", …, "size.control.lg"] */
+export const modifierTokens = (modifier: string): string[] => {
+  const contexts = readJson("pts.resolver.json").modifiers?.[modifier]?.contexts as Record<string, Ref[]> | undefined;
+  if (!contexts) return [];
+  return [...new Set(Object.values(contexts).flat().flatMap((r) => Object.keys(flatten(readJson(r.$ref)))))];
+};
+
 export const primitiveGroups = (): string[] => [
   ...new Set(files().filter((f) => f.tier === "primitive").flatMap((f) => Object.keys(f.tokens).map((id) => id.split(".")[0]))),
 ];
@@ -59,9 +68,9 @@ export const themes = (): Promise<Theme[]> =>
     return (resolver.listPermutations?.() ?? [{}]).map((input) => {
       const label = Object.entries(input).map(([k, v]) => `${k}=${v}`).join(", ") || "default";
       try {
-        return { label, tokens: resolver.apply(input) };
+        return { label, input, tokens: resolver.apply(input) };
       } catch (e) {
-        return { label, error: (e as Error).message };
+        return { label, input, error: (e as Error).message };
       }
     });
   })());
