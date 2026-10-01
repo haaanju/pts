@@ -25,5 +25,4 @@ Still deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android; thro
 
 ## Open questions
 
-- The Storybook pages don't fit a phone width (the text style specimens overflow at 420px). Not a token issue; fix it if the docs need to be read on phones.
 - Raw values in JS (`@terrazzo/plugin-js`, one token set per permutation) are left out (ADR 0030); add them as another subpath when a consumer needs real numbers or colors (charts, canvas).

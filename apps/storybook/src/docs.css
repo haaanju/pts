@@ -11,6 +11,8 @@
   --docs-measure: 720px; /* max line length for lead text */
   --docs-card-preview-height: 96px;
   --docs-ramp-height: 96px;
+  --docs-ramp-width: 240px; /* a ramp stood upright on narrow pages */
+  --docs-ramp-step-height: 56px; /* one step of an upright ramp: fits its three meta lines */
   --docs-checker-size: 12px;
   --docs-specimen-label-width: 220px;
   --docs-description-width: 320px; /* wraps token descriptions so the token column stays narrow */
@@ -35,6 +37,7 @@
   padding: var(--gap-section-lg) var(--gap-section-md);
 }
 .sbdocs.sbdocs-content {
+  container: docs / inline-size; /* the narrow layouts below follow the content width */
   max-width: var(--docs-content-width);
   font-family: var(--font-family-sans);
   color: var(--content-base);
@@ -484,13 +487,17 @@ body {
 
 /* ---------- table ---------- */
 
+/* A table that still doesn't fit scrolls inside its block, never the page */
+.pts-table-wrap {
+  overflow-x: auto;
+}
 .pts-table {
   width: 100%;
   border-collapse: collapse;
   margin: 0;
 }
-.pts-table + .pts-table,
-.pts + .pts .pts-table {
+/* On the scroll wrapper, not the table: the wrapper's overflow would stop the table's margin from collapsing */
+.pts + .pts-table-wrap {
   margin-top: var(--gap-section-sm);
 }
 .pts-table th {
@@ -618,6 +625,41 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+/* "#000000 · 5%" wraps at its spaces instead of losing the alpha */
+.pts-ramp-meta .pts-value {
+  white-space: normal;
+}
+
+/*
+ * The neutral ramp's 13 steps need about 66px each for their hex values, so below about 880px of content a ramp
+ * stands upright: steps down the left, each step's values on the same row to the right.
+ */
+@container docs (max-width: 879px) {
+  .pts-palette {
+    display: grid;
+    grid-template-columns: minmax(0, var(--docs-ramp-width)) minmax(0, 1fr);
+    column-gap: var(--space-400);
+  }
+  .pts-ramp {
+    flex-direction: column;
+    height: auto;
+  }
+  .pts-ramp-step {
+    flex: none;
+    align-items: center;
+    height: var(--docs-ramp-step-height);
+  }
+  .pts-ramp-meta {
+    flex-direction: column;
+    margin-top: 0;
+  }
+  .pts-ramp-meta > div {
+    flex: none;
+    justify-content: center;
+    height: var(--docs-ramp-step-height);
+    padding: 0;
+  }
 }
 
 /* ---------- typography ---------- */
@@ -788,4 +830,144 @@ body {
   border: var(--stroke-thin) solid var(--border-subtle);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
+}
+
+/* ---------- stacked tables ---------- */
+
+/*
+ * When a table doesn't fit, each row becomes a block: the first cell spans the row, the other cells flow into
+ * --docs-stack-columns columns (one per mode, set by the table), each labeled by its column header (data-label).
+ * The grid properties here do nothing while rows are table rows; the queries below switch rows to grids.
+ */
+.pts-table tbody tr {
+  grid-template-columns: repeat(var(--docs-stack-columns, 1), minmax(0, 1fr));
+  column-gap: var(--space-400);
+  row-gap: var(--space-300);
+}
+.pts-table td:first-child {
+  grid-column: 1 / -1;
+}
+.pts-table td[data-label]::before {
+  display: block;
+  margin-bottom: var(--space-100);
+  font: var(--text-label-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--content-subtle);
+}
+
+/*
+ * Tables with a preview per mode (light and dark, relaxed and compact, narrow and wide) need the full content width
+ * (1080px, --docs-content-width; container queries can't read custom properties), so they stack below it. Other
+ * tables stack on phones, below 640px (breakpoint/sm).
+ */
+@container docs (max-width: 1079px) {
+  .pts-table-split thead {
+    display: none;
+  }
+  .pts-table-split tbody tr {
+    display: grid;
+    padding: var(--space-400) 0;
+    border-bottom: var(--stroke-thin) solid var(--border-subtle);
+  }
+  .pts-table-split td {
+    display: block;
+    width: auto;
+    min-width: 0;
+    padding: 0;
+    border-bottom: none;
+  }
+  .pts-table-split td[data-label]::before {
+    content: attr(data-label);
+  }
+}
+@container docs (max-width: 639px) {
+  .pts-table thead {
+    display: none;
+  }
+  .pts-table tbody tr {
+    display: grid;
+    padding: var(--space-400) 0;
+    border-bottom: var(--stroke-thin) solid var(--border-subtle);
+  }
+  .pts-table td {
+    display: block;
+    width: auto;
+    min-width: 0;
+    padding: 0;
+    border-bottom: none;
+  }
+  .pts-table td[data-label]::before {
+    content: attr(data-label);
+  }
+}
+
+/* ---------- narrow pages ---------- */
+
+/*
+ * Phones, down to 360px: below 640px (breakpoint/sm) the page gutter shrinks, side-by-side blocks stack, and long
+ * names wrap.
+ */
+@media (max-width: 639px) {
+  .sbdocs.sbdocs-wrapper {
+    padding: var(--gap-section-sm) var(--space-400);
+  }
+}
+
+@container docs (max-width: 639px) {
+  .pts-header {
+    padding: 0 0 var(--gap-section-md);
+  }
+  .pts .pts-title {
+    margin-bottom: var(--space-400);
+  }
+  .pts-section {
+    padding-bottom: var(--gap-section-md);
+  }
+  .pts-section-head {
+    margin-bottom: var(--space-600);
+  }
+
+  .pts-token-cell .pts-var,
+  .pts-value-cell .pts-alias {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .pts-pair {
+    min-width: 0;
+  }
+  .pts-bar-track {
+    max-width: 100%;
+  }
+
+  .pts-row,
+  .pts-shadow-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pts-specimen {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-400);
+    padding: var(--space-600) 0;
+  }
+
+  .pts-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--space-600);
+  }
+  .pts-stats > div {
+    padding: 0 var(--space-400);
+  }
+  .pts-stats > div:nth-child(odd) {
+    padding-left: 0;
+    border-left: none;
+  }
+  .pts-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-600);
+  }
+  .pts-card-link:nth-child(3) {
+    padding-top: var(--space-600);
+    border-top: var(--stroke-thin) solid var(--border-subtle);
+  }
 }

@@ -35,6 +35,13 @@ const Block = ({ children, className = "" }: { children: ReactNode; className?: 
   <div className={`sb-unstyled pts ${className}`}>{children}</div>
 );
 
+/**
+ * Columns of a table row when it stacks (see "stacked tables" in docs.css): the first cell spans the row, the others
+ * flow into this many columns, each labeled by its header (data-label). Token tables use one column per mode, or put
+ * the value and its preview side by side when there is one mode.
+ */
+const cols = (n: number) => ({ "--docs-stack-columns": n }) as CSSProperties;
+
 // ---------- page chrome ----------
 
 /** Token count for one or more group prefixes, e.g. ["color"] → "76 tokens" */
@@ -177,8 +184,8 @@ const TIERS = [
 ];
 
 export const TierTable = () => (
-  <Block>
-    <table className="pts-table">
+  <Block className="pts-table-wrap">
+    <table className="pts-table" style={cols(1)}>
       <thead>
         <tr>
           <th>Tier</th>
@@ -192,8 +199,10 @@ export const TierTable = () => (
             <td>
               <strong>{t.tier}</strong>
             </td>
-            <td className="pts-value">{t.files}</td>
-            <td>{t.role}</td>
+            <td className="pts-value" data-label="Files">
+              {t.files}
+            </td>
+            <td data-label="Role">{t.role}</td>
           </tr>
         ))}
       </tbody>
@@ -274,16 +283,17 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
         ? VIEWPORTS.map((viewport) => ({ key: viewport, label: viewport, theme: "light", density: "relaxed", viewport }))
         : [{ key: "value", label: "Value", theme: "light", density: "relaxed", viewport: "narrow" }];
   const split = columns.length > 1;
+  const previewLabel = (c: Column) => (split ? `Preview · ${c.label}` : "Preview");
   return (
-    <Block>
-      <table className="pts-table">
+    <Block className={split && preview ? "pts-table-wrap pts-table-split" : "pts-table-wrap"}>
+      <table className="pts-table" style={cols(split || !preview ? columns.length : 2)}>
         <thead>
           <tr>
             <th>Token</th>
             {columns.map((c) => (
               <th key={c.key}>{c.label}</th>
             ))}
-            {preview && columns.map((c) => <th key={`p-${c.key}`}>{split ? `Preview · ${c.label}` : "Preview"}</th>)}
+            {preview && columns.map((c) => <th key={`p-${c.key}`}>{previewLabel(c)}</th>)}
           </tr>
         </thead>
         <tbody>
@@ -297,7 +307,7 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
               {columns.map((c) => {
                 const v = token(t.id, c.theme, c.density, c.viewport);
                 return (
-                  <td key={c.key} className="pts-value-cell">
+                  <td key={c.key} className="pts-value-cell" data-label={c.label}>
                     <span className="pts-value">{v.display}</span>
                     {v.alias && <span className="pts-alias">→ {slash(v.alias)}</span>}
                   </td>
@@ -307,7 +317,7 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
                 columns.map((c) => {
                   const v = token(t.id, c.theme, c.density, c.viewport);
                   return (
-                    <td key={`p-${c.key}`} className="pts-preview-cell">
+                    <td key={`p-${c.key}`} className="pts-preview-cell" data-label={previewLabel(c)}>
                       {themed ? (
                         <ThemeCell theme={c.theme}>{preview(v, c.theme, c.viewport)}</ThemeCell>
                       ) : dense ? (
@@ -579,8 +589,8 @@ export const Overlay = () => (
 // ---------- motion ----------
 
 export const MotionDemo = () => (
-  <Block>
-    <table className="pts-table">
+  <Block className="pts-table-wrap">
+    <table className="pts-table" style={cols(group("motion.easing").length)}>
       <thead>
         <tr>
           <th>Duration</th>
@@ -597,7 +607,7 @@ export const MotionDemo = () => (
               <span className="pts-alias">{d.display}</span>
             </td>
             {group("motion.easing").map((e) => (
-              <td key={e.id}>
+              <td key={e.id} data-label={leaf(e.id)}>
                 <div className="pts-track" title="Hover to play">
                   <div className="pts-dot" style={{ transitionDuration: d.css, transitionTimingFunction: e.css }} />
                 </div>
