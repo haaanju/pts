@@ -1,5 +1,5 @@
 import { useState, type CSSProperties, type ReactNode } from "react";
-import { contrast, group, isExempt, isThemed, leaf, pairsOf, THEMES, token, tokenCount, type Theme, type TokenInfo } from "./tokens";
+import { contrast, DENSITIES, group, isDense, isExempt, isThemed, leaf, pairsOf, THEMES, token, tokenCount, type Density, type Theme, type TokenInfo } from "./tokens";
 
 const SAMPLE = "The quick brown fox jumps over the lazy dog";
 
@@ -223,24 +223,42 @@ const ThemeCell = ({ theme, children, style }: { theme: Theme; children: ReactNo
   </div>
 );
 
+/**
+ * A cell rendered at a given density. data-density="compact" makes every density variable inside resolve to its
+ * compact value (see the [data-density] blocks in @pts/web tokens.css), whatever the page's density toggle says.
+ */
+const DensityCell = ({ density, children }: { density: Density; children: ReactNode }) => (
+  <div data-density={density} className="pts-density-cell">
+    {children}
+  </div>
+);
+
 type Preview = (t: TokenInfo, theme: Theme) => ReactNode;
+type Column = { key: string; label: string; theme: Theme; density: Density };
 
 /**
- * Generic token table. Shows light and dark columns when the group differs by theme.
+ * Generic token table. Shows light and dark columns when the group differs by theme, and relaxed and compact
+ * columns when it differs by density.
  */
 export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Preview }) => {
   const themed = isThemed(prefix);
-  const themes = themed ? THEMES : (["light"] as Theme[]);
+  const dense = !themed && isDense(prefix);
+  const columns: Column[] = themed
+    ? THEMES.map((theme) => ({ key: theme, label: theme, theme, density: "relaxed" }))
+    : dense
+      ? DENSITIES.map((density) => ({ key: density, label: density, theme: "light", density }))
+      : [{ key: "value", label: "Value", theme: "light", density: "relaxed" }];
+  const split = columns.length > 1;
   return (
     <Block>
       <table className="pts-table">
         <thead>
           <tr>
             <th>Token</th>
-            {themes.map((th) => (
-              <th key={th}>{themed ? th : "Value"}</th>
+            {columns.map((c) => (
+              <th key={c.key}>{c.label}</th>
             ))}
-            {preview && themes.map((th) => <th key={`p-${th}`}>{themed ? `Preview · ${th}` : "Preview"}</th>)}
+            {preview && columns.map((c) => <th key={`p-${c.key}`}>{split ? `Preview · ${c.label}` : "Preview"}</th>)}
           </tr>
         </thead>
         <tbody>
@@ -251,21 +269,30 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
                 {t.description && <span className="pts-description">{t.description}</span>}
                 <CopyVar name={t.cssVar} />
               </td>
-              {themes.map((th) => {
-                const v = token(t.id, th);
+              {columns.map((c) => {
+                const v = token(t.id, c.theme, c.density);
                 return (
-                  <td key={th} className="pts-value-cell">
+                  <td key={c.key} className="pts-value-cell">
                     <span className="pts-value">{v.display}</span>
                     {v.alias && <span className="pts-alias">→ {slash(v.alias)}</span>}
                   </td>
                 );
               })}
               {preview &&
-                themes.map((th) => (
-                  <td key={`p-${th}`} className="pts-preview-cell">
-                    {themed ? <ThemeCell theme={th}>{preview(token(t.id, th), th)}</ThemeCell> : preview(t, th)}
-                  </td>
-                ))}
+                columns.map((c) => {
+                  const v = token(t.id, c.theme, c.density);
+                  return (
+                    <td key={`p-${c.key}`} className="pts-preview-cell">
+                      {themed ? (
+                        <ThemeCell theme={c.theme}>{preview(v, c.theme)}</ThemeCell>
+                      ) : dense ? (
+                        <DensityCell density={c.density}>{preview(v, c.theme)}</DensityCell>
+                      ) : (
+                        preview(v, c.theme)
+                      )}
+                    </td>
+                  );
+                })}
             </tr>
           ))}
         </tbody>
