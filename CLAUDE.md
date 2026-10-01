@@ -58,10 +58,10 @@ pts/
 │           ├── color.{light,dark}.tokens.json   # background, surface, inverse, content, border, disabled, utility, intent, per theme
 │           └── shadow.{light,dark}.tokens.json  # shadow, per theme
 ├── packages/                    # shippable outputs, one package per platform
-│   └── web/                     # @pts/web — CSS custom properties and self-hosted fonts
+│   └── web/                     # @pts/web — CSS custom properties, JS/TS and SCSS references to them, self-hosted fonts
 │       ├── terrazzo.config.ts   # one config; each web format is a plugin
 │       ├── fonts/               # fonts.css + <font>/ (woff2 + OFL license)
-│       └── dist/tokens.css      # build output (gitignored)
+│       └── dist/                # build output (gitignored): tokens.css, tokens.js + tokens.d.ts, tokens.scss
 └── apps/                        # things that run rather than get imported
     └── storybook/               # @pts/storybook — token documentation
         ├── .storybook/          # main, theme (light/dark UI themes), manager (theme toggle), preview (tokens.css, theme sync)
@@ -74,7 +74,7 @@ pts/
 ```
 
 - Three roles, see ADR 0016: `tokens/` is the source; `packages/<platform>` (named `@pts/<platform>`) holds shippable outputs and depends on `@pts/tokens`; `apps/<name>` holds tools and docs that run.
-- A new format for an existing platform is a plugin in that platform's Terrazzo config plus a subpath export (e.g. JS/TS and SCSS go in `@pts/web`), not a new package.
+- A new format for an existing platform is a plugin in that platform's Terrazzo config plus a subpath export (as JS/TS and SCSS in `@pts/web`, ADR 0030), not a new package.
 - Register every new token file in `pts.resolver.json`: mode-independent files go in `sets.base`, theme-specific files in the matching `modifiers.theme` context, density-specific files in the matching `modifiers.density` context, viewport-specific files in the matching `modifiers.viewport` context. `npm run check` reports a file that isn't registered.
 - Files for the contexts of one modifier (`color.light` / `color.dark`, `spacing.relaxed` / `spacing.compact`, `typography.narrow` / `typography.wide`) must define **the same set of token names** and descriptions.
 - The token JSON is edited by hand, color included; nothing generates it (ADR 0020). `npm run check` enforces the rules a generator would.
@@ -90,7 +90,8 @@ pts/
 - `npm run typecheck`: TypeScript for the lint plugin and Storybook.
 - The pre-commit hook runs check and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
 - CI (`.github/workflows/ci.yml`) runs the same checks plus both builds on pushes to `main` and on pull requests.
-- `npm run build`: builds every workspace (`@pts/web` → `packages/web/dist/tokens.css`).
+- `npm run build`: builds every workspace (`@pts/web` → `packages/web/dist/`: `tokens.css`, `tokens.js` + `tokens.d.ts`, `tokens.scss`).
+  - `tokens.js` (`@terrazzo/plugin-css-in-js`) and `tokens.scss` (`@terrazzo/plugin-sass`: a `token()` function and a `typography()` mixin) hold `var(--…)` references, not values, so every modifier works through `tokens.css` (ADR 0030). Primitives are included, as in `tokens.css`. `sass()` must come after `css()` in `plugins`, or its token map builds empty without an error.
   - `:root` holds every token at the defaults (light, relaxed, narrow). `[data-theme="light"]`, `@media (prefers-color-scheme: dark)`, and `[data-theme="dark"]` repeat only the theme groups; `[data-density="compact"]` and `[data-density="relaxed"]` repeat only the density tokens. So `data-theme` and `data-density` work on `<html>` or on any subtree and nest without resetting each other (a light region inside a compact page stays compact). `@media (min-width: 768px) { :root { … } }` repeats only the viewport tokens at their `wide` values; the width comes from `breakpoint/md`, and there is no attribute, since the viewport is the window (ADR 0029).
   - `terrazzo.config.ts` reads the dark, compact, and wide context files in the resolver to decide what goes in each block (theme by group; density and viewport by token id, since `gap`, `size`, `font-size`, `line-height`, and `letter-spacing` also hold base tokens).
   - A token that aliases a density token must be repeated in the density blocks, since CSS variables resolve where they are declared (ADR 0025). None exists yet; component tokens will.

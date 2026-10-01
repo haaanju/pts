@@ -1,6 +1,10 @@
 # Terrazzo JS and Sass plugins: research
 
-Research for the "JS/TS and SCSS outputs in `@pts/web`" item in `docs/progress.md`. Nothing here is decided; the questions at the end are for the user.
+Research for the "JS/TS and SCSS outputs in `@pts/web`" item in `docs/progress.md`.
+
+**Outcome (ADR 0030):** both formats are CSS variable references: `@terrazzo/plugin-css-in-js` for `@pts/web/tokens.js` and `@terrazzo/plugin-sass` for `@pts/web/tokens.scss`, primitives included. `@terrazzo/plugin-js` (raw values) is left out until a consumer needs it.
+
+**Since this research, a third modifier exists** (viewport, ADR 0029). `plugin-js` would emit 2 × 2 × 2 = 8 permutations, and its typed `apply()` would require all three inputs. The reference plugins need nothing: the viewport media query lives in `tokens.css`. The measurements below are from the two-modifier build.
 
 Setup: `@terrazzo/cli` 2.7.1 (package-lock). `@terrazzo/plugin-js`, `@terrazzo/plugin-sass`, and `@terrazzo/plugin-css-in-js` are all published at 2.7.1, with peer dependency `@terrazzo/cli ^2.7.1`. Read from the npm tarballs (`README.md`, `dist/*.js`), then tried on a scratch copy of `packages/web/terrazzo.config.ts` (installed with `--no-save`, then removed). The `tokens.css` built with the extra plugins was byte-identical to the current build.
 

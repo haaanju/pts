@@ -9,10 +9,10 @@ Plain is a personal study project: a small design token monorepo built end to en
 | Package | What it holds |
 |---------|---------------|
 | [`@pts/tokens`](tokens) | The token source (DTCG JSON), the resolver that combines files and themes, and the validation and generation scripts |
-| [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`) and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
+| [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
 | [`@pts/storybook`](apps/storybook) | Token documentation, generated from the token source |
 
-The source lives in `tokens/`, shippable outputs in `packages/` (one package per platform), and the docs in `apps/`. JS/TS and SCSS outputs are planned for `@pts/web`.
+The source lives in `tokens/`, shippable outputs in `packages/` (one package per platform), and the docs in `apps/`.
 
 ## Tokens
 
@@ -68,6 +68,27 @@ Colors are layers (`background`, `surface`, `inverse`) with the `content` and `b
 
 **Viewport.** Display and heading sizes are mobile first: `:root` holds the `narrow` sizes, and from `breakpoint/md` (768px) a media query switches to `wide`. Only the two largest display steps change (104 → 64px and 64 → 40px on narrow screens); the `text/*` styles follow on their own, so there is nothing to set. Since the viewport is the window, there is no attribute for it.
 
+**JS/TS and SCSS.** Both hold references to the CSS variables, not values, so `tokens.css` must still be imported; theme, density, and viewport keep working through it. They add names, autocomplete, and type errors on typos.
+
+```ts
+import { padding, surface, text } from "@pts/web/tokens.js"; // with types (tokens.d.ts)
+
+const card = { background: surface.subtle, padding: padding.md }; // "var(--surface-subtle)", "var(--padding-md)"
+const title = { ...text.headingMd }; // fontFamily, fontSize, fontWeight, letterSpacing, lineHeight, e.g. a React style
+```
+
+```scss
+@use "pkg:@pts/web/tokens.scss" as t; // Dart Sass with the Node package importer
+
+.card {
+  background: t.token("surface.subtle");
+  padding: t.token("padding.md");
+  @include t.typography("text.heading-md"); // font and letter-spacing
+}
+```
+
+Since the values are `var(…)`, Sass can't compute with them, and breakpoints can't be used in `@media` (the same limit as in CSS).
+
 ## Accessibility
 
 Contrast is checked in both themes on every commit:
@@ -106,10 +127,6 @@ The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus b
 - **Versioning**: one Semantic Version for every package, released as a git tag (`vX.Y.Z`); see [ADR 0014](docs/adr/0014-versioning-policy.md). While in `0.x`, breaking changes bump the minor version.
 
 ## Status
-
-Planned:
-
-- JS/TS and SCSS outputs in `@pts/web`
 
 Deferred for now:
 

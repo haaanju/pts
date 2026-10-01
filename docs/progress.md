@@ -12,16 +12,14 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- None.
+- `feature/web-js-scss` (ADR 0030, accepted), worked in the worktree `../pts-web-js-scss`: `@pts/web/tokens.js` (+ `tokens.d.ts`) and `@pts/web/tokens.scss`, CSS variable references from `@terrazzo/plugin-css-in-js` and `@terrazzo/plugin-sass`. Then release `0.9.1` (new outputs bump PATCH).
 
 ## Next
 
 Order not decided yet:
 
-- JS/TS and SCSS outputs in `@pts/web`: official Terrazzo plugins (`@terrazzo/plugin-js`, `@terrazzo/plugin-sass`) in `packages/web/terrazzo.config.ts`, plus subpath exports next to `./tokens.css`. Both themes must survive: check how each plugin handles the resolver's `theme` modifier before choosing its options (Terrazzo lint only saw the default theme, ADR 0021; builds use `permutations`). Then decide with the user, one question at a time: the JS shape (one object per theme, or values keyed by theme), typed exports (`.d.ts`), SCSS as variables or maps, and the subpath names (`@pts/web/tokens.js`, `tokens.scss`).
 - First component (Button): validates `inverse` and its `strong`/`stronger` steps, an intent's `surface/base`/`strong`/`stronger` (danger for destructive buttons), the focus ring, `disabled/*`, and control height, and starts the component tier (ADR 0018). Decide first, one question at a time: CSS classes or React, where the code lives (ADR 0016 roles), component tokens or semantic tokens directly, a Figma component too, and which variants and sizes.
 - Dark-mode letter spacing: light text on a dark page reads tighter, so fine-tune letter spacing in dark. That makes `letter-spacing` (and the `text/*` composites that use it) theme-dependent: it would move into the theme files, the dark CSS blocks, and the Figma `Theme` collection. Since ADR 0028, text sizes share `letter-spacing/normal` (0), so dark may need per-size text values too. Needs an ADR.
-
 - One frame per specimen page: Spacing, Size, and Typography each repeat the whole page in two frames, one per mode (relaxed/compact, narrow/wide), though only a few rows differ, so static labels and leads are edited twice. Figma pins modes on nested frames too, so a page could be one frame whose changing tables have a column per mode, each cell pinning its mode, as Storybook does with `DensityCell`. Redraws all three pages; do it before another modifier adds more frames.
 
 Still deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022).
@@ -30,4 +28,5 @@ Still deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android; thro
 
 - The Storybook pages don't fit a phone width (the text style specimens overflow at 420px). Not a token issue; fix it if the docs need to be read on phones.
 - Whether `padding/*` gets a similar split; for now only `gap/*` changed (ADR 0027).
-- The order of the items under Next. Suggested: the JS/TS and SCSS outputs (they must carry three modifiers now), then Button. Dark-mode letter spacing is low value for its cost (it makes typography theme-dependent); keep it until dark text visibly needs it.
+- Raw values in JS (`@terrazzo/plugin-js`, one token set per permutation) are left out (ADR 0030); add them as another subpath when a consumer needs real numbers or colors (charts, canvas).
+- The order of the items under Next. Suggested: one frame per specimen page (before another modifier), then Button. Dark-mode letter spacing is low value for its cost (it makes typography theme-dependent); keep it until dark text visibly needs it.
