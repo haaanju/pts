@@ -19,6 +19,7 @@ The modifiers already work in CSS: `[data-theme]`, `[data-density]`, and the vie
 - **Raw values are left out** until a consumer needs real numbers or colors (charts, canvas, email HTML). Adding `plugin-js` then is a new output, not a breaking change.
 - **Primitives are included**, as in `tokens.css`: `plugin-css-in-js` has no option to drop them, and both formats stay the same set. Product code still uses semantic tokens only.
 - **Limits, the same as CSS today**: a value is `var(…)`, so Sass can't compute with it (`math.div`, color functions), and breakpoints can't be used in `@media`.
+- **Every value is typed `string`** in `tokens.d.ts`, which is right for a reference and usual for CSS-variable outputs: the types check names (autocomplete, typos, removed tokens), not categories, so a spacing token passes where a color is meant. Literal types would need a custom `.d.ts`; left until a component needs props limited by category (see the Button item in `docs/progress.md`).
 - **Plugin order**: `sass()` comes after `css()` in `plugins`. Listed before it, the build succeeds but the token map is empty; the plugin asks to run last (`enforce: "post"`), but the parser's sort doesn't reliably honor it (see the research).
 - **`@pts/web` is an ES module package** (`"type": "module"`), like `@pts/tokens` and `@pts/storybook`, so Node loads `tokens.js` without reparsing it.
 
