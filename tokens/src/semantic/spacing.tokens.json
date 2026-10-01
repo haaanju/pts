@@ -94,30 +94,44 @@
     }
   },
   "gap": {
-    "xs": {
-      "$type": "dimension",
-      "$value": "{space.100}",
-      "$description": "Gap between tightly related items, such as an icon and its text in small controls."
+    "within": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "{space.100}",
+        "$description": "The tightest gap within a group, such as an icon and its text in small controls."
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "{space.200}",
+        "$description": "Default gap within a group: an icon and its label, or the items of a compact group."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{space.300}",
+        "$description": "Gap within a group of list items or a row of controls."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{space.400}",
+        "$description": "The widest gap within a group, between related elements of one component."
+      }
     },
-    "sm": {
-      "$type": "dimension",
-      "$value": "{space.200}",
-      "$description": "Default gap between an icon and its label, and between items in a compact group."
-    },
-    "md": {
-      "$type": "dimension",
-      "$value": "{space.300}",
-      "$description": "Gap between items in a list or a row of controls."
-    },
-    "lg": {
-      "$type": "dimension",
-      "$value": "{space.400}",
-      "$description": "Gap between related elements in a component."
-    },
-    "xl": {
-      "$type": "dimension",
-      "$value": "{space.600}",
-      "$description": "Gap between groups within a component, or between sections inside a card or modal."
+    "between": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{space.500}",
+        "$description": "The smallest gap between groups, such as fields and their group in a form."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{space.600}",
+        "$description": "Default gap between groups within a component, such as the header and body of a card."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{space.800}",
+        "$description": "The widest gap between groups inside a component, or between sections inside a card or modal."
+      }
     },
     "section": {
       "sm": {

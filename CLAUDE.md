@@ -121,10 +121,13 @@ pts/
 ### Semantic
 
 - Spacing is a scale plus role tokens on top of it (ADR 0026). Pick a role token first; use `space/*` directly only when no role fits.
-  - `space/N`: the scale. px = N ÷ 25 (`space/400` = 16px), the same in every mode. Steps 0, 50, 100 … 800, 1000, 1200, 1600 = 0, 2, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 64px: 4px apart up to 32, then 40, 48, 64.
+  - `space/N`: the scale. px = N ÷ 25 (`space/400` = 16px), the same in every mode. N ÷ 400 is the multiple of 16px: `space/100` = 0.25, `space/500` = 1.25, `space/800` = 2. Steps 0, 50, 100 … 800, 1000, 1200, 1600 = 0, 2, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 64px: 4px apart up to 32, then 40, 48, 64.
   - `padding/xs, sm, md, lg, xl` = space/100, 200, 300, 400, 600 (4, 8, 12, 16, 24px): inside an element.
-  - `gap/xs, sm, md, lg, xl` = the same steps: between elements (flex and grid gaps, margins between stacked items).
-  - `gap/section/sm, md, lg` = space/1000, 1200, 1600 (40, 48, 64px): between the regions of a page.
+  - `gap/*`: between elements (flex and grid gaps, margins between stacked items), in three families by what the gap does (ADR 0027):
+    - `gap/within/xs, sm, md, lg` = space/100, 200, 300, 400 (4, 8, 12, 16px; 0.25–1 × 16): spaces the items of one group.
+    - `gap/between/sm, md, lg` = space/500, 600, 800 (20, 24, 32px; 1.25–2 × 16): separates groups.
+    - `gap/section/sm, md, lg` = space/1000, 1200, 1600 (40, 48, 64px): separates the regions of a page.
+    - Any `within` gap is smaller than any `between` gap, so grouping reads at a glance.
   - A role token aliases a `space/*` step, never a `dimension` directly, so the scale stays the one place values come from.
 - `radius`: t-shirt sizes. none = 0, xs = 2, sm = 4, md = 8, lg = 12, xl = 16, `full` = max.
 - `stroke`: weight names. thin = 1, thick = 2, thicker = 4. No zero-width token; "no border" means removing the border.

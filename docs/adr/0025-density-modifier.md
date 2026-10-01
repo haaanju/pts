@@ -17,7 +17,7 @@ Two findings shape the design:
 - **Two modes, `relaxed` (default) and `compact`.** Today's values become `relaxed`, so nothing changes until a page opts in; `compact` is one step tighter.
 - **Scope: `padding/*`, `gap/*` (not `gap/section/*`), and `size/control/*`** (amended by ADR 0026: the role tokens change, not the `space` scale, so `space/400` stays 16px in every mode). Page-region gaps, line height, font sizes, and icon sizes don't change with density.
 - **A resolver modifier, like `theme`**: `modifiers.density` with contexts `relaxed` and `compact`, default `relaxed`. The density groups move out of the base set into `semantic/spacing.{relaxed,compact}.tokens.json` (padding and component gaps) and `semantic/size.{relaxed,compact}.tokens.json` (control); `space/*`, `gap/section/*`, and `size/icon/*` stay in the base files. Both files define the same names and descriptions.
-- **Compact values step down the `space` scale**: each role token aliases the next smaller step (for example `gap/lg` `space/400` 16 → `space/300` 12px, `size/control/md` 48 → 40px).
+- **Compact values step down the `space` scale**: each role token aliases the next smaller step (for example `gap/within/lg` `space/400` 16 → `space/300` 12px, `size/control/md` 48 → 40px). Every `gap/within/*` must stay smaller than every `gap/between/*` in both modes (ADR 0027); `pts/density-order` can check that too.
 - **CSS blocks**:
   - `:root`: every token, light and relaxed
   - `[data-theme="light"]`: the theme groups only

@@ -18,7 +18,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 First (decided 2026-09-30):
 
-1. Density modes: implement ADR 0025 (proposed, amended by ADR 0026). Decided: two modes, `relaxed` (default, today's values) and `compact` (one `space` step tighter); only `padding/*`, `gap/*` (not `gap/section/*`), and `size/control/*` change, never the `space` scale; a `density` resolver modifier; `[data-theme="light"]` repeats only the theme groups so nested regions don't reset each other; a `Density` Figma collection; release `0.8.0`.
+1. Density modes: implement ADR 0025 (proposed, amended by ADR 0026 and 0027). Decided: two modes, `relaxed` (default, today's values) and `compact` (one `space` step tighter); only `padding/*`, `gap/within/*`, `gap/between/*` (not `gap/section/*`), and `size/control/*` change, every `within` gap stays below every `between` gap in both modes, never the `space` scale; a `density` resolver modifier; `[data-theme="light"]` repeats only the theme groups so nested regions don't reset each other; a `Density` Figma collection; release `0.8.0`.
 
 Then, order not decided yet:
 
@@ -30,4 +30,6 @@ Still deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android; thro
 
 ## Open questions
 
+- Release of the gap rename (ADR 0027, merged after `v0.7.0`; MINOR): ship it alone as `0.8.0`, or with density.
+- Whether `padding/*` gets a similar split; for now only `gap/*` changed (ADR 0027).
 - The order of the three items after density. Suggested: dark-mode letter spacing (another theme-dependent change, best designed alongside density), then the JS/TS and SCSS outputs (once the modifiers are final), then Button.
