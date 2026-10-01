@@ -42,7 +42,7 @@ All tokens are in `tokens/src/`. There are two tiers:
 
 Product code only uses semantic tokens. Most changes are to semantic tokens: pointing a role at a different primitive.
 
-Colors and shadows differ per theme, so they have one file per theme: `color.light.tokens.json` and `color.dark.tokens.json`. Padding, the within and between gaps, and control heights differ per density, so they have one file per density: `spacing.relaxed.tokens.json` and `spacing.compact.tokens.json`, `size.relaxed.tokens.json` and `size.compact.tokens.json`. **The files of one pair must define the same token names**; only the values differ.
+Colors and shadows differ per theme, so they have one file per theme: `color.light.tokens.json` and `color.dark.tokens.json`. Padding, the within and between gaps, and control heights differ per density, so they have one file per density: `spacing.relaxed.tokens.json` and `spacing.compact.tokens.json`, `size.relaxed.tokens.json` and `size.compact.tokens.json`. The display font sizes, line heights, and letter spacing differ per viewport, so they have one file per viewport: `typography.narrow.tokens.json` and `typography.wide.tokens.json`. **The files of one pair must define the same token names**; only the values differ.
 
 ## Token format
 
@@ -86,8 +86,8 @@ The full naming and structure rules are in [`CLAUDE.md`](CLAUDE.md) (Token Rules
 | Use a different color for a role | In `semantic/color.light.tokens.json` or `color.dark.tokens.json`, change the alias (`{color.red.600}` → `{color.red.700}`) |
 | Change a palette color | In `primitive/color.tokens.json`, change `hex` and `components`. Every semantic token that points at it changes too |
 | Change any other value | Edit it in its file. Semantic tokens point at primitives, so you usually change the alias |
-| Add a token to an existing group | Add it to the file. For a themed file, add it to both `light` and `dark`; for a density file, to both `relaxed` and `compact` (compact one `space` step smaller). It appears in the docs by itself |
-| Add a new file | Create it in `primitive/` or `semantic/` and add it to `tokens/src/pts.resolver.json`: mode-independent files in `sets.base`, per-theme files under `modifiers.theme`, per-density files under `modifiers.density` |
+| Add a token to an existing group | Add it to the file. For a themed file, add it to both `light` and `dark`; for a density file, to both `relaxed` and `compact` (compact one `space` step smaller); for a viewport file, to both `narrow` and `wide`. It appears in the docs by itself |
+| Add a new file | Create it in `primitive/` or `semantic/` and add it to `tokens/src/pts.resolver.json`: mode-independent files in `sets.base`, per-theme files under `modifiers.theme`, per-density files under `modifiers.density`, per-viewport files under `modifiers.viewport` |
 | Add a new top-level group | As above, then add a section to the matching docs page in `apps/storybook/src/` (e.g. `<Section title="Opacity"><TokenTable prefix="opacity" /></Section>`) and add the prefix to the page's `groups` |
 | Rename or remove a token | This is a breaking change. Say so in the pull request |
 
@@ -97,7 +97,7 @@ CI runs these on every pull request. A red check blocks the merge; open the fail
 
 | Check | Catches |
 |---|---|
-| `npm run check` | Values that aren't valid DTCG (wrong shape, unit, or type); a name that isn't kebab-case; a missing `$type`; an alias pointing at nothing, in any theme or density; light and dark (or relaxed and compact) files with different names or descriptions; a compact value larger than its relaxed one; a `within` gap not smaller than every `between` gap, or a `between` gap not smaller than every `section` gap; text below 4.5:1 or UI below 3:1 contrast in either theme; hover or pressed states that look the same as the resting fill; a `hex` that doesn't match its `components`; a color outside srgb; a semantic token without a `$description`; a text style or `font-size` step below 12px; font sizes out of order, or display steps less than ×1.5 apart; a font size without its line height, a line that isn't a whole 4px step, or a text style using another size's line height; a semantic token with a raw value or pointing at another semantic token; a token file missing from the resolver |
+| `npm run check` | Values that aren't valid DTCG (wrong shape, unit, or type); a name that isn't kebab-case; a missing `$type`; an alias pointing at nothing, in any theme, density, or viewport; light and dark (or relaxed and compact, or narrow and wide) files with different names or descriptions; a compact value larger than its relaxed one; a `within` gap not smaller than every `between` gap, or a `between` gap not smaller than every `section` gap; text below 4.5:1 or UI below 3:1 contrast in either theme; hover or pressed states that look the same as the resting fill; a `hex` that doesn't match its `components`; a color outside srgb; a semantic token without a `$description`; a text style or `font-size` step below 12px, in any viewport; font sizes out of order, display steps less than ×1.5 apart, or two steps the same size in every viewport; a font size without its line height, a line that isn't a whole 4px step, or a text style using another size's line height; a semantic token with a raw value or pointing at another semantic token; a token file missing from the resolver |
 | `npm run typecheck`, `npm run build`, `npm run build-storybook` | Changes that break the CSS output or the docs |
 
 Messages start with the rule that failed, then name the theme or file and the token:

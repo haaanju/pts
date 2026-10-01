@@ -66,6 +66,8 @@ Colors are layers (`background`, `surface`, `inverse`) with the `content` and `b
 </main>
 ```
 
+**Viewport.** Display and heading sizes are mobile first: `:root` holds the `narrow` sizes, and from `breakpoint/md` (768px) a media query switches to `wide`. Only the two largest display steps change (104 → 64px and 64 → 40px on narrow screens); the `text/*` styles follow on their own, so there is nothing to set. Since the viewport is the window, there is no attribute for it.
+
 ## Accessibility
 
 Contrast is checked in both themes on every commit:

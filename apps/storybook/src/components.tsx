@@ -1,5 +1,23 @@
 import { useState, type CSSProperties, type ReactNode } from "react";
-import { contrast, DENSITIES, group, isDense, isExempt, isThemed, leaf, pairsOf, THEMES, token, tokenCount, type Density, type Theme, type TokenInfo } from "./tokens";
+import {
+  contrast,
+  DENSITIES,
+  group,
+  isDense,
+  isExempt,
+  isResponsive,
+  isThemed,
+  leaf,
+  pairsOf,
+  THEMES,
+  token,
+  tokenCount,
+  VIEWPORTS,
+  type Density,
+  type Theme,
+  type TokenInfo,
+  type Viewport,
+} from "./tokens";
 
 const SAMPLE = "The quick brown fox jumps over the lazy dog";
 
@@ -233,21 +251,28 @@ const DensityCell = ({ density, children }: { density: Density; children: ReactN
   </div>
 );
 
-type Preview = (t: TokenInfo, theme: Theme) => ReactNode;
-type Column = { key: string; label: string; theme: Theme; density: Density };
+/**
+ * A preview gets the token at its column's permutation. Viewport columns can't switch the media query, so a preview
+ * that depends on the viewport uses resolved values (t.css), not variables.
+ */
+type Preview = (t: TokenInfo, theme: Theme, viewport: Viewport) => ReactNode;
+type Column = { key: string; label: string; theme: Theme; density: Density; viewport: Viewport };
 
 /**
- * Generic token table. Shows light and dark columns when the group differs by theme, and relaxed and compact
- * columns when it differs by density.
+ * Generic token table. Shows light and dark columns when the group differs by theme, relaxed and compact columns
+ * when it differs by density, and narrow and wide columns when it differs by viewport.
  */
 export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Preview }) => {
   const themed = isThemed(prefix);
   const dense = !themed && isDense(prefix);
+  const responsive = !themed && !dense && isResponsive(prefix);
   const columns: Column[] = themed
-    ? THEMES.map((theme) => ({ key: theme, label: theme, theme, density: "relaxed" }))
+    ? THEMES.map((theme) => ({ key: theme, label: theme, theme, density: "relaxed", viewport: "narrow" }))
     : dense
-      ? DENSITIES.map((density) => ({ key: density, label: density, theme: "light", density }))
-      : [{ key: "value", label: "Value", theme: "light", density: "relaxed" }];
+      ? DENSITIES.map((density) => ({ key: density, label: density, theme: "light", density, viewport: "narrow" }))
+      : responsive
+        ? VIEWPORTS.map((viewport) => ({ key: viewport, label: viewport, theme: "light", density: "relaxed", viewport }))
+        : [{ key: "value", label: "Value", theme: "light", density: "relaxed", viewport: "narrow" }];
   const split = columns.length > 1;
   return (
     <Block>
@@ -270,7 +295,7 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
                 <CopyVar name={t.cssVar} />
               </td>
               {columns.map((c) => {
-                const v = token(t.id, c.theme, c.density);
+                const v = token(t.id, c.theme, c.density, c.viewport);
                 return (
                   <td key={c.key} className="pts-value-cell">
                     <span className="pts-value">{v.display}</span>
@@ -280,15 +305,15 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
               })}
               {preview &&
                 columns.map((c) => {
-                  const v = token(t.id, c.theme, c.density);
+                  const v = token(t.id, c.theme, c.density, c.viewport);
                   return (
                     <td key={`p-${c.key}`} className="pts-preview-cell">
                       {themed ? (
-                        <ThemeCell theme={c.theme}>{preview(v, c.theme)}</ThemeCell>
+                        <ThemeCell theme={c.theme}>{preview(v, c.theme, c.viewport)}</ThemeCell>
                       ) : dense ? (
-                        <DensityCell density={c.density}>{preview(v, c.theme)}</DensityCell>
+                        <DensityCell density={c.density}>{preview(v, c.theme, c.viewport)}</DensityCell>
                       ) : (
-                        preview(v, c.theme)
+                        preview(v, c.theme, c.viewport)
                       )}
                     </td>
                   );
@@ -383,29 +408,46 @@ export const ColorTable = ({ prefix }: { prefix: string }) => <TokenTable prefix
 
 // ---------- typography ----------
 
+/** Text style specimens. They use the variables, so they follow this window's viewport; the meta line names both. */
 export const TextStyles = () => (
   <Block className="pts-specimens">
-    {group("text").map((t) => (
-      <div key={t.id} className="pts-specimen">
-        <div className="pts-specimen-meta">
-          <span className="pts-token-name">{leaf(t.id)}</span>
-          {t.description && <span className="pts-description">{t.description}</span>}
-          <span className="pts-alias">{t.display}</span>
-          <CopyVar name={t.cssVar} />
+    {group("text").map((t) => {
+      const wide = token(t.id, "light", "relaxed", "wide");
+      return (
+        <div key={t.id} className="pts-specimen">
+          <div className="pts-specimen-meta">
+            <span className="pts-token-name">{leaf(t.id)}</span>
+            {t.description && <span className="pts-description">{t.description}</span>}
+            {wide.display === t.display ? (
+              <span className="pts-alias">{t.display}</span>
+            ) : (
+              VIEWPORTS.map((vp) => (
+                <span key={vp} className="pts-alias">
+                  {vp} {(vp === "wide" ? wide : t).display}
+                </span>
+              ))
+            )}
+            <CopyVar name={t.cssVar} />
+          </div>
+          <div className="pts-specimen-text" style={{ font: `var(${t.cssVar})`, letterSpacing: `var(${t.cssVar}-letter-spacing)` }}>
+            {SAMPLE}
+          </div>
         </div>
-        <div className="pts-specimen-text" style={{ font: `var(${t.cssVar})`, letterSpacing: `var(${t.cssVar}-letter-spacing)` }}>
-          {SAMPLE}
-        </div>
-      </div>
-    ))}
+      );
+    })}
   </Block>
 );
 
 export const FontPreview = ({ kind }: { kind: "family" | "weight" | "size" }) => {
   const prefix = `font-${kind}`;
-  const style = (t: TokenInfo): CSSProperties =>
-    kind === "family" ? { fontFamily: t.css } : kind === "weight" ? { fontWeight: t.css } : { fontSize: t.css, lineHeight: `var(${t.cssVar.replace("--font-size-", "--line-height-")})` };
-  return <TokenTable prefix={prefix} preview={(t) => <span style={style(t)}>{kind === "size" ? "Aa" : "Aa Bb Cc 0123"}</span>} />;
+  // size: the line height paired with the size in the same column (resolved, since the viewport columns can't use variables)
+  const style = (t: TokenInfo, viewport: Viewport): CSSProperties =>
+    kind === "family"
+      ? { fontFamily: t.css }
+      : kind === "weight"
+        ? { fontWeight: t.css }
+        : { fontSize: t.css, lineHeight: token(t.id.replace("font-size.", "line-height."), "light", "relaxed", viewport).css };
+  return <TokenTable prefix={prefix} preview={(t, _theme, viewport) => <span style={style(t, viewport)}>{kind === "size" ? "Aa" : "Aa Bb Cc 0123"}</span>} />;
 };
 
 // ---------- scales ----------

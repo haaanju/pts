@@ -1,5 +1,5 @@
-// Reads the DTCG source through pts.resolver.json and resolves every token per theme,
-// so the docs always reflect the current token files.
+// Reads the DTCG source through pts.resolver.json and resolves every token per permutation (theme × density ×
+// viewport), so the docs always reflect the current token files.
 import { contrastPairs } from "../../../tokens/lint/pairs.ts";
 
 export { isExempt, TEXT, UI } from "../../../tokens/lint/pairs.ts";
@@ -11,6 +11,8 @@ export type Theme = "light" | "dark";
 export const THEMES: Theme[] = ["light", "dark"];
 export type Density = "relaxed" | "compact";
 export const DENSITIES: Density[] = ["relaxed", "compact"];
+export type Viewport = "narrow" | "wide";
+export const VIEWPORTS: Viewport[] = ["narrow", "wide"];
 
 export interface TokenInfo {
   id: string;
@@ -51,6 +53,7 @@ const load = (refs: Ref[]): Record<string, Json> => Object.assign({}, ...refs.ma
 const baseRefs: Ref[] = Object.values(resolver.sets as Record<string, { sources: Ref[] }>).flatMap((s) => s.sources);
 const themeRefs = resolver.modifiers.theme.contexts as Record<Theme, Ref[]>;
 const densityRefs = resolver.modifiers.density.contexts as Record<Density, Ref[]>;
+const viewportRefs = resolver.modifiers.viewport.contexts as Record<Viewport, Ref[]>;
 
 const ALIAS = /^\{([^}]+)\}$/;
 
@@ -102,9 +105,10 @@ const format = (type: string, v: any, forCss: boolean): string => {
   }
 };
 
-const build = (theme: Theme, density: Density): Record<string, TokenInfo> => {
-  // density files first, so gap/within and gap/between come before the base gap/section in file order
-  const raw = { ...load(densityRefs[density]), ...load(baseRefs), ...load(themeRefs[theme]) };
+const build = (theme: Theme, density: Density, viewport: Viewport): Record<string, TokenInfo> => {
+  // density files first, so gap/within and gap/between come before the base gap/section in file order;
+  // viewport files last, so the display steps follow the base text steps
+  const raw = { ...load(densityRefs[density]), ...load(baseRefs), ...load(themeRefs[theme]), ...load(viewportRefs[viewport]) };
   return Object.fromEntries(
     Object.entries(raw).map(([id, t]) => {
       const resolved = resolveValue(raw, t.$value);
@@ -127,21 +131,23 @@ const build = (theme: Theme, density: Density): Record<string, TokenInfo> => {
   );
 };
 
-/** Every theme × density permutation, as the resolver applies them */
+/** Every theme × density × viewport permutation, as the resolver applies them */
 const byMode = Object.fromEntries(
-  THEMES.flatMap((theme) => DENSITIES.map((density) => [`${theme}/${density}`, build(theme, density)])),
-) as Record<`${Theme}/${Density}`, Record<string, TokenInfo>>;
-const at = (theme: Theme, density: Density) => byMode[`${theme}/${density}`];
+  THEMES.flatMap((theme) =>
+    DENSITIES.flatMap((density) => VIEWPORTS.map((viewport) => [`${theme}/${density}/${viewport}`, build(theme, density, viewport)])),
+  ),
+) as Record<`${Theme}/${Density}/${Viewport}`, Record<string, TokenInfo>>;
+const at = (theme: Theme, density: Density, viewport: Viewport) => byMode[`${theme}/${density}/${viewport}`];
 
-export const token = (id: string, theme: Theme = "light", density: Density = "relaxed") => {
-  const t = at(theme, density)[id];
+export const token = (id: string, theme: Theme = "light", density: Density = "relaxed", viewport: Viewport = "narrow") => {
+  const t = at(theme, density, viewport)[id];
   if (!t) throw new Error(`Unknown token: ${id}`);
   return t;
 };
 
 /** Tokens under a group prefix (e.g. "intent.danger"), or the single token with that id (e.g. "background"), in file order */
-export const group = (prefix: string, theme: Theme = "light", density: Density = "relaxed") =>
-  Object.values(at(theme, density)).filter((t) => t.id === prefix || t.id.startsWith(`${prefix}.`));
+export const group = (prefix: string, theme: Theme = "light", density: Density = "relaxed", viewport: Viewport = "narrow") =>
+  Object.values(at(theme, density, viewport)).filter((t) => t.id === prefix || t.id.startsWith(`${prefix}.`));
 
 /** True if any token under the prefix resolves differently between themes */
 export const isThemed = (prefix: string) =>
@@ -150,6 +156,10 @@ export const isThemed = (prefix: string) =>
 /** True if any token under the prefix resolves differently between densities */
 export const isDense = (prefix: string) =>
   group(prefix).some((t) => t.css !== token(t.id, "light", "compact").css);
+
+/** True if any token under the prefix resolves differently between viewports */
+export const isResponsive = (prefix: string) =>
+  group(prefix).some((t) => t.css !== token(t.id, "light", "relaxed", "wide").css);
 
 /** Last path segment, e.g. "intent.danger.surface.strong" → "strong" */
 export const leaf = (id: string) => id.slice(id.lastIndexOf(".") + 1);
@@ -168,10 +178,10 @@ export const contrast = (a: string, b: string) => {
   return (hi + 0.05) / (lo + 0.05);
 };
 
-const pairs = contrastPairs(Object.keys(at("light", "relaxed")));
+const pairs = contrastPairs(Object.keys(at("light", "relaxed", "narrow")));
 
 /** The backgrounds a content, border, or fill token is checked against, with the minimum ratio (same pairs as npm run check) */
 export const pairsOf = (id: string) => pairs.filter(([fg]) => fg === id).map(([, bg, min]) => ({ bg, min }));
 
-/** Total number of tokens (identical across themes and densities) */
-export const tokenCount = () => Object.keys(at("light", "relaxed")).length;
+/** Total number of tokens (identical across every permutation) */
+export const tokenCount = () => Object.keys(at("light", "relaxed", "narrow")).length;

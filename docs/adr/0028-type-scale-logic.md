@@ -1,6 +1,6 @@
 # 0028. Type Scale Logic
 
-- Status: accepted
+- Status: accepted (amended by 0029)
 - Date: 2026-10-01
 
 ## What we learned
@@ -20,7 +20,7 @@ The direction is bold and high-contrast: levels stacked together differ clearly 
 - **Line height pairs with font size, on the 4px grid.** `line-height/<zone>/<step>` matches `font-size/<zone>/<step>`: 12/16, 14/20, 16/24, 20/28, 24/28, 40/44, 64/64, 104/104. Large text gets tighter leading (down to 1.0), whole-pixel lines make component heights predictable (a 14/20 label plus 14px padding is the 48px `size/control/md`), and Figma text styles use the same px. This is what Material 3, Carbon, and Tailwind do.
 - **Line heights hold their values; `ratio/*` is removed.** DTCG line heights are unitless, so 20px on 14px text is 1.428571…, which `ratio/N` (N = value × 100) can't name. The ratio only means something paired with its font size, the reason ADR 0024 gives for `z-index` and `breakpoint`. Each `$description` states the px line.
 - **Letter spacing pairs with the display steps.** About −0.01em to −0.025em, growing with size, stored as px since DTCG dimensions have no em: −0.25, −0.5, −1.25, −2.5px. Text sizes use `letter-spacing/normal` (0); `wide` stays for uppercase labels.
-- **No responsive sizes yet.** On small screens, consumers use the next smaller display or heading style. A viewport modifier (like density) or fluid `clamp()` sizes (a custom output plugin) were considered and deferred.
+- **No responsive sizes yet.** On small screens, consumers use the next smaller display or heading style. A viewport modifier (like density) or fluid `clamp()` sizes (a custom output plugin) were considered and deferred. *Amended by ADR 0029: a `viewport` modifier steps the two largest display sizes down on narrow screens.*
 
 ### Breaking
 
