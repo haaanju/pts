@@ -31,6 +31,7 @@ The earlier Style Dictionary setup was hard to maintain: themes, transforms, and
 ## Implementation notes
 
 - Nothing changes in the code. `packages/web/terrazzo.config.ts` stays as is.
+- Checked on 2026-10-01: `@terrazzo/plugin-swift` 0.3.3 ("still experimental" in its docs) transforms `color` only (`// TODO: other types`) into an `.xcassets` catalog, and takes the dark appearance from `token.mode` (`$extensions.mode`), which this repository doesn't use, so with the resolver it would likely emit light colors only. Terrazzo's integrations list has no Android, Kotlin, Compose, or Flutter plugin. A custom plugin remains the plan; the Swift plugin is a short reference for the plugin structure.
 - Revisit if an official Terrazzo Android plugin ships, or if a custom plugin turns out to cost more than a Style Dictionary build for that platform.
 
 ## Documented in
