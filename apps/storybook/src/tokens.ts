@@ -73,6 +73,10 @@ const fmtColor = (c: { hex: string; alpha?: number; components: number[] }, forC
   return `${c.hex.toUpperCase()} · ${Math.round(alpha * 100)}%`;
 };
 const fmtDim = (d: { value: number; unit: string }) => `${d.value}${d.unit}`;
+/** Display only: ratios like 20/14 are stored at full precision so size × ratio stays exact; CSS keeps that precision */
+const fmtNum = (n: number) => String(+n.toFixed(3));
+/** The px line a line-height ratio produces on its font size, rounded away from float noise */
+const linePx = (size: number, ratio: number) => +(size * ratio).toFixed(2);
 
 const format = (type: string, v: any, forCss: boolean): string => {
   switch (type) {
@@ -90,7 +94,9 @@ const format = (type: string, v: any, forCss: boolean): string => {
     case "typography":
       return forCss
         ? `${v.fontWeight} ${fmtDim(v.fontSize)}/${v.lineHeight} ${format("fontFamily", v.fontFamily, true)}`
-        : `${fmtDim(v.fontSize)} / ${v.lineHeight} · ${v.fontWeight} · ${v.fontFamily[0]}`;
+        : `${v.fontSize.value}/${linePx(v.fontSize.value, v.lineHeight)}${v.fontSize.unit} · ${v.fontWeight} · ${v.fontFamily[0]}`;
+    case "number":
+      return forCss ? String(v) : fmtNum(v);
     default:
       return String(v);
   }
@@ -103,13 +109,16 @@ const build = (theme: Theme, density: Density): Record<string, TokenInfo> => {
     Object.entries(raw).map(([id, t]) => {
       const resolved = resolveValue(raw, t.$value);
       const alias = typeof t.$value === "string" ? t.$value.match(ALIAS)?.[1] : undefined;
+      // A line height pairs with the font size of the same name (ADR 0028): show the line it produces
+      const size = id.startsWith("line-height.") ? raw[id.replace("line-height.", "font-size.")] : undefined;
+      const sizePx = size && (resolveValue(raw, size.$value) as { value: number }).value;
       const info: TokenInfo = {
         id,
         type: t.$type,
         cssVar: `--${id.replaceAll(".", "-")}`,
         alias,
         resolved,
-        display: format(t.$type, resolved, false),
+        display: sizePx ? `${fmtNum(resolved as number)} · ${linePx(sizePx, resolved as number)}px line` : format(t.$type, resolved, false),
         css: format(t.$type, resolved, true),
         description: t.$description,
       };
