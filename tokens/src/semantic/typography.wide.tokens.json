@@ -1,0 +1,74 @@
+{
+  "font-size": {
+    "display": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{dimension.24}",
+        "$description": "Section headings (text/heading-md). 24px."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{dimension.40}",
+        "$description": "Page titles (text/heading-lg). 40px."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{dimension.64}",
+        "$description": "Page-level headlines (text/display-md). 40px on narrow screens, 64px on wide."
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": "{dimension.104}",
+        "$description": "The largest size, for hero headlines (text/display-lg). 64px on narrow screens, 104px on wide."
+      }
+    }
+  },
+  "line-height": {
+    "display": {
+      "sm": {
+        "$type": "number",
+        "$value": 1.1666666666666667,
+        "$description": "Pairs with font-size/display/sm: a 28px line on 24px text."
+      },
+      "md": {
+        "$type": "number",
+        "$value": 1.1,
+        "$description": "Pairs with font-size/display/md: a 44px line on 40px text."
+      },
+      "lg": {
+        "$type": "number",
+        "$value": 1.0,
+        "$description": "Pairs with font-size/display/lg: a 44px line on 40px text on narrow screens, a 64px line on 64px text on wide."
+      },
+      "xl": {
+        "$type": "number",
+        "$value": 1.0,
+        "$description": "Pairs with font-size/display/xl: a 64px line on 64px text on narrow screens, a 104px line on 104px text on wide."
+      }
+    }
+  },
+  "letter-spacing": {
+    "display": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{tracking.neg-25}",
+        "$description": "Pairs with font-size/display/sm: about -0.01em, since larger text needs tighter tracking to hold together."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{tracking.neg-50}",
+        "$description": "Pairs with font-size/display/md: about -0.0125em, since larger text needs tighter tracking to hold together."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{tracking.neg-125}",
+        "$description": "Pairs with font-size/display/lg: about -0.0125em on narrow screens and -0.02em on wide, since larger text needs tighter tracking to hold together."
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": "{tracking.neg-250}",
+        "$description": "Pairs with font-size/display/xl: about -0.02em on narrow screens and -0.025em on wide, since larger text needs tighter tracking to hold together."
+      }
+    }
+  }
+}
