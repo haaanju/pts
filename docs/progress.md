@@ -12,14 +12,13 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- None.
+- `feature/spacing-logic`: ADR 0026 (spacing roles on one `space` scale; `padding/*`, `gap/*`, `gap/section/*`; `layout/*` removed; `space/700` and `dimension/28` new). Tokens, lint, docs, and CLAUDE.md are done. Left: Figma (new `space` steps, role variables, `layout/*` removed and rebound, Spacing specimen), then PR, merge, and release `0.7.0`.
 
 ## Next
 
-First, in this order (decided 2026-09-30):
+First (decided 2026-09-30):
 
-1. Spacing logic: implement the spacing rules and revise the current `space` / `layout` scales. The scope is still to be agreed with the user, one question at a time. It comes first because density steps down this scale.
-2. Density modes: implement ADR 0025 (proposed). Decided: two modes, `relaxed` (default, today's values) and `compact` (one step tighter); only `space/*` and `size/control/*` change; a `density` resolver modifier; `[data-theme="light"]` repeats only the theme groups so nested regions don't reset each other; a `Density` Figma collection; release `0.7.0`. Set the compact values after step 1.
+1. Density modes: implement ADR 0025 (proposed, amended by ADR 0026). Decided: two modes, `relaxed` (default, today's values) and `compact` (one `space` step tighter); only `padding/*`, `gap/*` (not `gap/section/*`), and `size/control/*` change, never the `space` scale; a `density` resolver modifier; `[data-theme="light"]` repeats only the theme groups so nested regions don't reset each other; a `Density` Figma collection; release `0.8.0`.
 
 Then, order not decided yet:
 

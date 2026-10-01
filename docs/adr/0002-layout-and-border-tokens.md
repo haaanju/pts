@@ -1,6 +1,6 @@
 # 0002. Layout and Border Tokens
 
-- Status: accepted
+- Status: accepted (amended by 0026)
 - Date: 2026-09-25
 
 ## What we learned

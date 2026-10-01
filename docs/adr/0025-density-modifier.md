@@ -15,9 +15,9 @@ Two findings shape the design:
 ## Why it matters
 
 - **Two modes, `relaxed` (default) and `compact`.** Today's values become `relaxed`, so nothing changes until a page opts in; `compact` is one step tighter.
-- **Scope: `space/*` and `size/control/*`.** Layout gaps, line height, font sizes, and icon sizes don't change with density.
-- **A resolver modifier, like `theme`**: `modifiers.density` with contexts `relaxed` and `compact`, default `relaxed`. The density groups move out of the base set into `semantic/spacing.{relaxed,compact}.tokens.json` and `semantic/size.{relaxed,compact}.tokens.json`; `layout/*` and `size/icon/*` stay in the base files. Both files define the same names and descriptions.
-- **Compact values step down the existing scale**: each token aliases the next smaller step (for example `space/400` 16 → 12px, `size/control/md` 48 → 40px). The exact values are set after the spacing logic is revised.
+- **Scope: `padding/*`, `gap/*` (not `gap/section/*`), and `size/control/*`** (amended by ADR 0026: the role tokens change, not the `space` scale, so `space/400` stays 16px in every mode). Page-region gaps, line height, font sizes, and icon sizes don't change with density.
+- **A resolver modifier, like `theme`**: `modifiers.density` with contexts `relaxed` and `compact`, default `relaxed`. The density groups move out of the base set into `semantic/spacing.{relaxed,compact}.tokens.json` (padding and component gaps) and `semantic/size.{relaxed,compact}.tokens.json` (control); `space/*`, `gap/section/*`, and `size/icon/*` stay in the base files. Both files define the same names and descriptions.
+- **Compact values step down the `space` scale**: each role token aliases the next smaller step (for example `gap/lg` `space/400` 16 → `space/300` 12px, `size/control/md` 48 → 40px).
 - **CSS blocks**:
   - `:root`: every token, light and relaxed
   - `[data-theme="light"]`: the theme groups only
@@ -29,11 +29,11 @@ Two findings shape the design:
 
 ### Order
 
-The spacing logic is revised first, so the compact values are chosen once, on the final scale.
+The spacing logic is revised first (ADR 0026, released as `0.7.0`), so the compact values are chosen once, on the final scale. Since density then changes role tokens that alias an unchanging `space` variable, the "resolves at `:root`" concern above applies only to tokens added later that alias the role tokens.
 
 ### Breaking
 
-The `[data-theme="light"]` block changes content, a selector change, so the release that ships density is `0.7.0` (ADR 0014).
+The `[data-theme="light"]` block changes content, a selector change, so the release that ships density is `0.8.0` (ADR 0014).
 
 ## Implementation notes
 

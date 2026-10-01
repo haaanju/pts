@@ -44,7 +44,7 @@ pts/
 │       │   ├── color.tokens.json       # color palette (incl. black-alpha)
 │       │   └── motion.tokens.json      # duration, easing
 │       └── semantic/
-│           ├── spacing.tokens.json     # space, layout
+│           ├── spacing.tokens.json     # space (scale), padding, gap
 │           ├── border.tokens.json      # radius, stroke, focus-ring
 │           ├── typography.tokens.json  # font-*, line-height, letter-spacing, text
 │           ├── size.tokens.json        # size (icon, control)
@@ -97,7 +97,7 @@ pts/
 
 ### Structure
 
-- **Tiers**: primitive → semantic. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `z-index` and `breakpoint` hold values directly because stacking order and viewport widths have no meaning outside their role (ADR 0024), so no primitive exists just to feed them. Add a component tier when components exist.
+- **Tiers**: primitive → semantic. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `padding/*` and `gap/*` reference the `space` scale (ADR 0026); `z-index` and `breakpoint` hold values directly because stacking order and viewport widths have no meaning outside their role (ADR 0024), so no primitive exists just to feed them. Add a component tier when components exist.
 - **Group names**: primitive and semantic top-level groups never share a name (Terrazzo merges all files into one namespace). Example: primitive `weight` ↔ semantic `font-weight`.
 - **Files**: both tiers are split by category: `primitive/<category>.tokens.json`, `semantic/<category>.tokens.json`.
 - **Format**: every token declares `$type`. No group-level `$type` inheritance. Every semantic token has a `$description` that says when to use it, the same in every theme file; the Figma variable descriptions carry the same text.
@@ -120,8 +120,12 @@ pts/
 
 ### Semantic
 
-- `space/N`: px = N ÷ 25 (`space/400` = 16px). Range `space/0`–`space/800` (0–32px), for component-level spacing.
-- `layout/N`: ordinal steps in hundreds (not px), for gaps of 40px+. 100 = 40, 200 = 48, 300 = 64. Insert in-between steps like 150.
+- Spacing is a scale plus role tokens on top of it (ADR 0026). Pick a role token first; use `space/*` directly only when no role fits.
+  - `space/N`: the scale. px = N ÷ 25 (`space/400` = 16px), the same in every mode. Steps 0, 50, 100 … 800, 1000, 1200, 1600 = 0, 2, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 64px: 4px apart up to 32, then 40, 48, 64.
+  - `padding/xs, sm, md, lg, xl` = space/100, 200, 300, 400, 600 (4, 8, 12, 16, 24px): inside an element.
+  - `gap/xs, sm, md, lg, xl` = the same steps: between elements (flex and grid gaps, margins between stacked items).
+  - `gap/section/sm, md, lg` = space/1000, 1200, 1600 (40, 48, 64px): between the regions of a page.
+  - A role token aliases a `space/*` step, never a `dimension` directly, so the scale stays the one place values come from.
 - `radius`: t-shirt sizes. none = 0, xs = 2, sm = 4, md = 8, lg = 12, xl = 16, `full` = max.
 - `stroke`: weight names. thin = 1, thick = 2, thicker = 4. No zero-width token; "no border" means removing the border.
 - `focus-ring/width`, `focus-ring/offset`: 2px each. Color is `border/focus`.
@@ -162,7 +166,7 @@ always/        white, black
 - **Utility**: colors outside the pairing system (the modal scrim). **Always**: the same in every theme, for icons and text on images; theme-independent, so they live in `semantic/color.tokens.json` (base set).
 - **Descriptions**: a color's `$description` also says which content goes on a fill.
 - **Figma**: variable scopes follow the name (`content/*` and `disabled/content` → text and shape fills plus strokes; a `border` segment → strokes; `always/*` → all; everything else → frame and shape fills). The `Theme` collection holds the values that change with the theme; shadow offsets, blurs, and spreads are in `Semantic`. One exception: `always/*` stays in `Theme` (the same value in both modes) so every semantic color is in one collection for designers, while the JSON keeps it in the base set (`semantic/color.tokens.json`). Primitives are hidden from pickers.
-- **Figma names and code syntax**: `Primitive` and `Theme` variables are named by their token path (`color/neutral/50`, `intent/danger/surface/base`). `Semantic` variables sit in one folder per docs page, then the token path: `Spacing/` (space, layout), `Typography/` (font-*, line-height, letter-spacing), `Border/` (radius, stroke, focus-ring), `Size/`, `Motion/`, `Layout/` (breakpoint, z-index), `Elevation/` (the shadow offsets, blurs, and spreads). A new semantic group goes in the folder of the docs page that shows it. Every variable's WEB code syntax is its CSS custom property, `var(--<token path with dashes>)`, so Dev Mode shows the real name whatever the folder; the shadow parts have none, since the CSS emits only the composite (`--shadow-sm`, named in the effect style description).
+- **Figma names and code syntax**: `Primitive` and `Theme` variables are named by their token path (`color/neutral/50`, `intent/danger/surface/base`). `Semantic` variables sit in one folder per docs page, then the token path: `Spacing/` (space, padding, gap), `Typography/` (font-*, line-height, letter-spacing), `Border/` (radius, stroke, focus-ring), `Size/`, `Motion/`, `Layout/` (breakpoint, z-index), `Elevation/` (the shadow offsets, blurs, and spreads). A new semantic group goes in the folder of the docs page that shows it. Every variable's WEB code syntax is its CSS custom property, `var(--<token path with dashes>)`, so Dev Mode shows the real name whatever the folder; the shadow parts have none, since the CSS emits only the composite (`--shadow-sm`, named in the effect style description).
 
 ### Accessibility (required in both themes)
 

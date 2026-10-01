@@ -33,7 +33,7 @@ Colors are layers (`background`, `surface`, `inverse`) with the `content` and `b
 
 .button {
   height: var(--size-control-md);
-  padding: 0 var(--space-400);
+  padding: 0 var(--padding-lg);
   border-radius: var(--radius-md);
   background: var(--inverse-base);
   color: var(--content-inverse-base);

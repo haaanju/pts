@@ -3,9 +3,18 @@ import { PageHeader, Section, Bars } from "../components";
 
 <Meta title="Semantic/Spacing" />
 
-<PageHeader eyebrow="Semantic" title="Spacing" groups={["space", "layout"]}>
-  Space for component-level gaps and padding; layout for larger gaps between regions.
+<PageHeader eyebrow="Semantic" title="Spacing" groups={["padding", "gap", "space"]}>
+  Padding and gap name the role; space is the scale they draw from.
 </PageHeader>
 
-<Section title="Space" path="space/*" lead="space/N = N ÷ 25 px. Component-level spacing, 0–32px."><Bars prefix="space" /></Section>
-<Section title="Layout" path="layout/*" lead="Gaps of 40px and more."><Bars prefix="layout" /></Section>
+<Section title="Padding" path="padding/*" lead="Inside an element, on every side or one side at a time.">
+  <Bars prefix="padding" />
+</Section>
+
+<Section title="Gap" path="gap/*" lead="Between elements: flex and grid gaps, and the margin between stacked items. gap/section/* separates the regions of a page.">
+  <Bars prefix="gap" />
+</Section>
+
+<Section title="Space" path="space/*" lead="space/N = N ÷ 25 px, 0–64px. The scale padding and gap alias; use it directly only when no role fits.">
+  <Bars prefix="space" />
+</Section>

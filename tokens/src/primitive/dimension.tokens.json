@@ -84,6 +84,13 @@
         "unit": "px"
       }
     },
+    "28": {
+      "$type": "dimension",
+      "$value": {
+        "value": 28,
+        "unit": "px"
+      }
+    },
     "32": {
       "$type": "dimension",
       "$value": {

@@ -3,64 +3,138 @@
     "0": {
       "$type": "dimension",
       "$value": "{dimension.0}",
-      "$description": "No gap. For removing padding or a gap explicitly."
+      "$description": "No space. For removing padding or a gap explicitly."
     },
     "50": {
       "$type": "dimension",
       "$value": "{dimension.2}",
-      "$description": "The tightest gap, between parts of one element, such as a badge and its dot."
+      "$description": "2px on the spacing scale. Prefer a padding/* or gap/* token; use the scale directly only when no role fits."
     },
     "100": {
       "$type": "dimension",
       "$value": "{dimension.4}",
-      "$description": "Gap between closely related items, such as an icon and its text in small controls."
+      "$description": "4px on the spacing scale. Prefer a padding/* or gap/* token; use the scale directly only when no role fits."
     },
     "200": {
       "$type": "dimension",
       "$value": "{dimension.8}",
-      "$description": "Default gap between an icon and its label, and between items in a compact group."
+      "$description": "8px on the spacing scale. Prefer a padding/* or gap/* token; use the scale directly only when no role fits."
     },
     "300": {
       "$type": "dimension",
       "$value": "{dimension.12}",
-      "$description": "Padding inside small controls and badges; gap between items in a list."
+      "$description": "12px on the spacing scale. Prefer a padding/* or gap/* token; use the scale directly only when no role fits."
     },
     "400": {
       "$type": "dimension",
       "$value": "{dimension.16}",
-      "$description": "Default padding inside components, and the gap between related elements."
+      "$description": "16px on the spacing scale. Prefer a padding/* or gap/* token; use the scale directly only when no role fits."
     },
     "500": {
       "$type": "dimension",
       "$value": "{dimension.20}",
-      "$description": "Padding inside medium containers such as alerts, menus, and popovers."
+      "$description": "20px on the spacing scale. Prefer a padding/* or gap/* token; use the scale directly only when no role fits."
     },
     "600": {
       "$type": "dimension",
       "$value": "{dimension.24}",
-      "$description": "Padding inside cards and modals; gap between groups within a component."
+      "$description": "24px on the spacing scale. Prefer a padding/* or gap/* token; use the scale directly only when no role fits."
+    },
+    "700": {
+      "$type": "dimension",
+      "$value": "{dimension.28}",
+      "$description": "28px on the spacing scale. Prefer a padding/* or gap/* token; use the scale directly only when no role fits."
     },
     "800": {
       "$type": "dimension",
       "$value": "{dimension.32}",
-      "$description": "The largest component-level gap, between sections inside a card or modal. For larger gaps, use layout/*."
-    }
-  },
-  "layout": {
-    "100": {
+      "$description": "32px on the spacing scale. Prefer a padding/* or gap/* token; use the scale directly only when no role fits."
+    },
+    "1000": {
       "$type": "dimension",
       "$value": "{dimension.40}",
-      "$description": "Gap between sections of a page. The smallest layout step; below it, use space/*."
+      "$description": "40px on the spacing scale. Prefer a padding/* or gap/* token; use the scale directly only when no role fits."
     },
-    "200": {
+    "1200": {
       "$type": "dimension",
       "$value": "{dimension.48}",
-      "$description": "Gap between major page regions, such as the header and the content."
+      "$description": "48px on the spacing scale. Prefer a padding/* or gap/* token; use the scale directly only when no role fits."
     },
-    "300": {
+    "1600": {
       "$type": "dimension",
       "$value": "{dimension.64}",
-      "$description": "The largest page gap, around page sections and hero areas."
+      "$description": "64px on the spacing scale. Prefer a padding/* or gap/* token; use the scale directly only when no role fits."
+    }
+  },
+  "padding": {
+    "xs": {
+      "$type": "dimension",
+      "$value": "{space.100}",
+      "$description": "Padding inside the smallest elements: badges, tags, and chips."
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": "{space.200}",
+      "$description": "Padding inside small controls and compact list items."
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "{space.300}",
+      "$description": "Padding inside controls and list items."
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "{space.400}",
+      "$description": "Default padding inside components such as alerts, menus, and popovers."
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "{space.600}",
+      "$description": "Padding inside cards, modals, and other large containers."
+    }
+  },
+  "gap": {
+    "xs": {
+      "$type": "dimension",
+      "$value": "{space.100}",
+      "$description": "Gap between tightly related items, such as an icon and its text in small controls."
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": "{space.200}",
+      "$description": "Default gap between an icon and its label, and between items in a compact group."
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "{space.300}",
+      "$description": "Gap between items in a list or a row of controls."
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "{space.400}",
+      "$description": "Gap between related elements in a component."
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "{space.600}",
+      "$description": "Gap between groups within a component, or between sections inside a card or modal."
+    },
+    "section": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{space.1000}",
+        "$description": "Gap between sections of a page."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{space.1200}",
+        "$description": "Gap between major page regions, such as the header and the content."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{space.1600}",
+        "$description": "The largest page gap, around page sections and hero areas."
+      }
     }
   }
 }
