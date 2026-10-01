@@ -23,7 +23,7 @@ Two tiers:
 
 Categories: color, typography, spacing, border, elevation, size, motion, and layout.
 
-Colors are layers (`background`, `surface`, `inverse`) with the `content` and `border` on them, plus one group per intent (`intent.danger.*`) with the same shape; see ADR 0019. Color and shadow have **light** and **dark** values, combined by a DTCG resolver (`pts.resolver.json`).
+Colors are layers (`background`, `surface`, `inverse`) with the `content` and `border` on them, plus one group per intent (`intent.danger.*`) with the same shape; see ADR 0019. Color and shadow have **light** and **dark** values; padding, component gaps, and control heights have **relaxed** and **compact** values. A DTCG resolver (`pts.resolver.json`) combines them.
 
 ## Usage
 
@@ -55,6 +55,15 @@ Colors are layers (`background`, `surface`, `inverse`) with the `content` and `b
   <!-- … -->
   <div data-theme="light">A light region inside a dark page</div>
 </html>
+```
+
+**Density.** Spacing and control heights are `relaxed` by default. `data-density="compact"` makes padding, the gaps within and between groups, and control heights one step tighter, for tables and other data-heavy views; page section gaps and the `space` scale don't change. Like `data-theme`, it works on any element, and the two nest without resetting each other:
+
+```html
+<main data-density="compact">
+  <!-- a dense table -->
+  <aside data-density="relaxed">A relaxed panel inside a compact page</aside>
+</main>
 ```
 
 ## Accessibility

@@ -44,10 +44,12 @@ pts/
 │       │   ├── color.tokens.json       # color palette (incl. black-alpha)
 │       │   └── motion.tokens.json      # duration, easing
 │       └── semantic/
-│           ├── spacing.tokens.json     # space (scale), padding, gap
+│           ├── spacing.tokens.json     # space (scale), gap/section
+│           ├── spacing.{relaxed,compact}.tokens.json  # padding, gap/within, gap/between, per density
 │           ├── border.tokens.json      # radius, stroke, focus-ring
 │           ├── typography.tokens.json  # font-*, line-height, letter-spacing, text
-│           ├── size.tokens.json        # size (icon, control)
+│           ├── size.tokens.json        # size/icon
+│           ├── size.{relaxed,compact}.tokens.json     # size/control, per density
 │           ├── breakpoint.tokens.json
 │           ├── motion.tokens.json      # motion (duration, easing)
 │           ├── z-index.tokens.json
@@ -72,8 +74,8 @@ pts/
 
 - Three roles, see ADR 0016: `tokens/` is the source; `packages/<platform>` (named `@pts/<platform>`) holds shippable outputs and depends on `@pts/tokens`; `apps/<name>` holds tools and docs that run.
 - A new format for an existing platform is a plugin in that platform's Terrazzo config plus a subpath export (e.g. JS/TS and SCSS go in `@pts/web`), not a new package.
-- Register every new token file in `pts.resolver.json`: theme-independent files go in `sets.base`, theme-specific files in the matching `modifiers.theme` context. `npm run check` reports a file that isn't registered.
-- Files for different themes (`color.light` / `color.dark`) must define **the same set of token names**.
+- Register every new token file in `pts.resolver.json`: mode-independent files go in `sets.base`, theme-specific files in the matching `modifiers.theme` context, density-specific files in the matching `modifiers.density` context. `npm run check` reports a file that isn't registered.
+- Files for the contexts of one modifier (`color.light` / `color.dark`, `spacing.relaxed` / `spacing.compact`) must define **the same set of token names** and descriptions.
 - The token JSON is edited by hand, color included; nothing generates it (ADR 0020). `npm run check` enforces the rules a generator would.
 
 ## Commands
@@ -82,14 +84,15 @@ pts/
 - `npm run check`: `tz check` in `tokens/` (ADR 0021). Rules in `tokens/terrazzo.config.ts`, in three blocks:
   - Terrazzo's recommended rules: DTCG value shapes (`core/valid-*`), kebab-case names (as an error).
   - Terrazzo's built-in rules, turned on: `$type` required, a `$description` on every semantic token, srgb colors, text at least 12px.
-  - `pts/*` (`tokens/lint/`), for what built-in rules can't check. Terrazzo lints the default theme only, so these apply every theme themselves: every theme resolves with the same names and descriptions (`theme-parity`), contrast (`contrast`), visible steps (`visible-steps`); no `font-size` step below 12px (`min-font-size`); font sizes grow in step order and display steps are at least ×1.5 apart (`type-scale`); every font size has its line height, on the 4px grid, and text styles use the paired one (`line-height-grid`); and they read the files for `hex` matching `components` (`color-hex`), the tier rules below (`tier-aliases`), and files missing from the resolver (`registered-files`).
+  - `pts/*` (`tokens/lint/`), for what built-in rules can't check. Terrazzo lints the default theme only, so these apply every permutation (theme × density) themselves: every permutation resolves with the same names and descriptions (`theme-parity`), contrast (`contrast`), visible steps (`visible-steps`), compact no larger than relaxed (`density-order`), every `within` gap below every `between` gap below every `section` gap (`gap-order`); no `font-size` step below 12px (`min-font-size`); font sizes grow in step order and display steps are at least ×1.5 apart (`type-scale`); every font size has its line height, on the 4px grid, and text styles use the paired one (`line-height-grid`); and they read the files for `hex` matching `components` (`color-hex`), the tier rules below (`tier-aliases`), and files missing from the resolver (`registered-files`).
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it.
 - `npm run typecheck`: TypeScript for the lint plugin and Storybook.
 - The pre-commit hook runs check and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
 - CI (`.github/workflows/ci.yml`) runs the same checks plus both builds on pushes to `main` and on pull requests.
 - `npm run build`: builds every workspace (`@pts/web` → `packages/web/dist/tokens.css`).
-  - Light values go on `:root` and `[data-theme="light"]`; dark values under `@media (prefers-color-scheme: dark)` and `[data-theme="dark"]`. `data-theme` on `<html>` forces a theme; on any element it themes that subtree (e.g. a light region inside a dark page).
-  - `terrazzo.config.ts` reads the dark context files in the resolver to decide which groups go in the dark blocks.
+  - `:root` holds every token at the defaults (light, relaxed). `[data-theme="light"]`, `@media (prefers-color-scheme: dark)`, and `[data-theme="dark"]` repeat only the theme groups; `[data-density="compact"]` and `[data-density="relaxed"]` repeat only the density tokens. So `data-theme` and `data-density` work on `<html>` or on any subtree and nest without resetting each other (a light region inside a compact page stays compact).
+  - `terrazzo.config.ts` reads the dark and compact context files in the resolver to decide what goes in each block (theme by group, density by token id, since `gap` and `size` also hold base tokens).
+  - A token that aliases a density token must be repeated in the density blocks, since CSS variables resolve where they are declared (ADR 0025). None exists yet; component tokens will.
 - `npm run storybook`: token docs dev server (http://localhost:6006). Builds `@pts/web` first.
 - `npm run build-storybook`: static docs build (`apps/storybook/dist`).
 
@@ -104,6 +107,7 @@ pts/
 - **Dimension**: `px`, object form: `{ "value": 16, "unit": "px" }`.
 - **Color**: DTCG 2025.10 object form: `{ "colorSpace": "srgb", "components": [r, g, b], "hex": "#rrggbb" }` (components 0–1, optional `alpha`).
 - **Themes**: the DTCG resolver's `theme` modifier (`light` | `dark`, default `light`). Do not use `$extensions.mode`.
+- **Density**: the resolver's `density` modifier (`relaxed` | `compact`, default `relaxed`; ADR 0025). Only `padding/*`, `gap/within/*`, `gap/between/*`, and `size/control/*` change: compact aliases the next smaller `space` (or `dimension`) step. `space/*`, `gap/section/*`, and everything else are the same in both.
 - **Aliases**: always the full path from the top-level group, regardless of file: `"{dimension.16}"`.
 - **Naming**: kebab-case.
 
@@ -121,12 +125,12 @@ pts/
 
 - Spacing is a scale plus role tokens on top of it (ADR 0026). Pick a role token first; use `space/*` directly only when no role fits.
   - `space/N`: the scale. px = N ÷ 25 (`space/400` = 16px), the same in every mode. N ÷ 400 is the multiple of 16px: `space/100` = 0.25, `space/500` = 1.25, `space/800` = 2. Steps 0, 50, 100 … 800, 1000, 1200, 1600 = 0, 2, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 64px: 4px apart up to 32, then 40, 48, 64.
-  - `padding/xs, sm, md, lg, xl` = space/100, 200, 300, 400, 600 (4, 8, 12, 16, 24px): inside an element.
+  - `padding/xs, sm, md, lg, xl` = space/100, 200, 300, 400, 600 (4, 8, 12, 16, 24px; compact 2, 4, 8, 12, 20): inside an element.
   - `gap/*`: between elements (flex and grid gaps, margins between stacked items), in three families by what the gap does (ADR 0027):
-    - `gap/within/xs, sm, md, lg` = space/100, 200, 300, 400 (4, 8, 12, 16px; 0.25–1 × 16): spaces the items of one group.
-    - `gap/between/sm, md, lg` = space/500, 600, 800 (20, 24, 32px; 1.25–2 × 16): separates groups.
+    - `gap/within/xs, sm, md, lg` = space/100, 200, 300, 400 (4, 8, 12, 16px; 0.25–1 × 16; compact 2, 4, 8, 12): spaces the items of one group.
+    - `gap/between/sm, md, lg` = space/500, 600, 800 (20, 24, 32px; 1.25–2 × 16; compact 16, 20, 28): separates groups.
     - `gap/section/sm, md, lg` = space/1000, 1200, 1600 (40, 48, 64px): separates the regions of a page.
-    - Any `within` gap is smaller than any `between` gap, so grouping reads at a glance.
+    - Any `within` gap is smaller than any `between` gap, in both densities, so grouping reads at a glance (`pts/gap-order`).
   - A role token aliases a `space/*` step, never a `dimension` directly, so the scale stays the one place values come from.
 - `radius`: t-shirt sizes. none = 0, xs = 2, sm = 4, md = 8, lg = 12, xl = 16, `full` = max.
 - `stroke`: weight names. thin = 1, thick = 2, thicker = 4. No zero-width token; "no border" means removing the border.
@@ -138,7 +142,7 @@ pts/
 - `line-height/<zone>/<step>`: one per font-size step, same name, a unitless ratio held directly (DTCG line heights have no px) so that size × ratio is a whole 4px step: 12/16, 14/20, 16/24, 20/28, 24/28, 40/44, 64/64, 104/104. A text style uses the line height of its size; `pts/line-height-grid` checks both.
 - `letter-spacing/display/sm, md, lg, xl` = -0.25, -0.5, -1.25, -2.5px (about -0.01em to -0.025em: larger text is tracked tighter). `normal` = 0 for every text size, `wide` = 1px for uppercase labels. px because DTCG dimensions only allow px/rem (no em).
 - `text/<role>-<size>`: `$type: typography` composites. Roles display, heading, body, label, caption, code × sizes lg, md, sm. All five properties (fontFamily, fontSize, fontWeight, letterSpacing, lineHeight) are required. display-lg, display-md, heading-lg, heading-md = display/xl, lg, md, sm; heading-sm (bold) and body-lg (regular) share text/lg as a title and subtitle pair. No responsive sizes yet: on small screens, use the next smaller display or heading style.
-- `size/icon/sm, md, lg` = 16, 24, 40. `size/control/sm, md, lg` = 32, 48, 56 (shared control height for buttons, inputs, selects; md and up meet the 44–48px touch target).
+- `size/icon/sm, md, lg` = 16, 24, 40. `size/control/sm, md, lg` = 32, 48, 56, compact 28, 40, 48 (shared control height for buttons, inputs, selects; in relaxed, md and up meet the 44–48px touch target).
 - `breakpoint/sm, md, lg, xl` = 640, 768, 1024, 1280 (min-width), held directly, not through `dimension` (ADR 0024). Emitted as CSS variables for reference only; custom properties can't be used inside media queries.
 - `motion/duration/fast, normal, slow` = 150, 300, 500ms. `motion/easing/standard, enter, exit`.
 - `z-index/base, dropdown, sticky, overlay, modal, popover, toast, tooltip` = 0, 1000, 1100, 1300 … 1700.
@@ -168,8 +172,8 @@ always/        white, black
 - **States**: interaction states are strength steps, and `$description` says hover or pressed. Every pressable fill has `strong` / `stronger`; component-specific states (selected, checked) go to a future component tier (ADR 0018). `disabled/*` is shared by every control. From hover to pressed, light gets darker and dark gets lighter.
 - **Utility**: colors outside the pairing system (the modal scrim). **Always**: the same in every theme, for icons and text on images; theme-independent, so they live in `semantic/color.tokens.json` (base set).
 - **Descriptions**: a color's `$description` also says which content goes on a fill.
-- **Figma**: variable scopes follow the name (`content/*` and `disabled/content` → text and shape fills plus strokes; a `border` segment → strokes; `always/*` → all; everything else → frame and shape fills). The `Theme` collection holds the values that change with the theme; shadow offsets, blurs, and spreads are in `Semantic`. One exception: `always/*` stays in `Theme` (the same value in both modes) so every semantic color is in one collection for designers, while the JSON keeps it in the base set (`semantic/color.tokens.json`). Primitives are hidden from pickers.
-- **Figma names and code syntax**: `Primitive` and `Theme` variables are named by their token path (`color/neutral/50`, `intent/danger/surface/base`). `Semantic` variables sit in one folder per docs page, then the token path: `Spacing/` (space, padding, gap), `Typography/` (font-*, line-height, letter-spacing), `Border/` (radius, stroke, focus-ring), `Size/`, `Motion/`, `Layout/` (breakpoint, z-index), `Elevation/` (the shadow offsets, blurs, and spreads). A new semantic group goes in the folder of the docs page that shows it. Every variable's WEB code syntax is its CSS custom property, `var(--<token path with dashes>)`, so Dev Mode shows the real name whatever the folder; the shadow parts have none, since the CSS emits only the composite (`--shadow-sm`, named in the effect style description).
+- **Figma**: variable scopes follow the name (`content/*` and `disabled/content` → text and shape fills plus strokes; a `border` segment → strokes; `always/*` → all; everything else → frame and shape fills). The `Theme` collection holds the values that change with the theme; shadow offsets, blurs, and spreads are in `Semantic`. One exception: `always/*` stays in `Theme` (the same value in both modes) so every semantic color is in one collection for designers, while the JSON keeps it in the base set (`semantic/color.tokens.json`). The `Density` collection (modes `relaxed`, `compact`) holds only the density tokens, the same principle as `Theme`. Primitives are hidden from pickers.
+- **Figma names and code syntax**: `Primitive` and `Theme` variables are named by their token path (`color/neutral/50`, `intent/danger/surface/base`). `Semantic` and `Density` variables sit in one folder per docs page, then the token path: `Spacing/` (space, padding, gap), `Typography/` (font-*, line-height, letter-spacing), `Border/` (radius, stroke, focus-ring), `Size/`, `Motion/`, `Layout/` (breakpoint, z-index), `Elevation/` (the shadow offsets, blurs, and spreads). A new semantic group goes in the folder of the docs page that shows it. Every variable's WEB code syntax is its CSS custom property, `var(--<token path with dashes>)`, so Dev Mode shows the real name whatever the folder; the shadow parts have none, since the CSS emits only the composite (`--shadow-sm`, named in the effect style description).
 
 ### Accessibility (required in both themes)
 
@@ -196,13 +200,13 @@ always/        white, black
 - Page layout: `<PageHeader eyebrow title groups>` (stacked, left-aligned: eyebrow · token count, title, lead), then `<Section title path lead>…</Section>` blocks (heading, the token path it covers such as `space/*`, lead, full-width content). Sections are separated by space, not lines; only the Introduction uses `<Section divider>`. Table rows keep hairlines for scanning. No cards or boxes; `ThemeCell` is the only filled surface because its background is the information.
 - When adding a new **group**, wrap its block in a section on the matching `.mdx` page (e.g. `<Section title="New group" path="new-group/*"><TokenTable prefix="new-group" /></Section>`) and add the prefix to the page's `groups`.
 - **Aligned with the Figma specimens**: the same pages in the same order, the same token sections with the same titles and paths, and the same section leads. Each side may add explanatory sections of its own (the docs' Rules, Preview, Raised surface, Sans coverage; Figma's Shadow variables). A lead differs only by a platform-specific sentence (CSS usage in the docs; bound variables or Figma limits in Figma). Token paths read with slashes on both sides (`surface/subtle`, `→ color/neutral/50`); only CSS variables use dashes and the code props (`prefix`) keep the JSON's dots. When a section or lead changes on one side, change the other.
-- Groups that differ by theme are shown with light and dark side by side. `ThemeCell` sets `data-theme` so CSS variables inside it resolve to that theme.
+- Groups that differ by theme are shown with light and dark side by side. `ThemeCell` sets `data-theme` so CSS variables inside it resolve to that theme. Groups that differ by density are shown with relaxed and compact side by side the same way (`DensityCell` sets `data-density`).
 - Contrast badges use the same pairing rules as `npm run check` (both import `tokens/lint/pairs.ts`); each badge shows the lowest ratio among a token's pairs.
 - Sample text in the docs is English only.
 - Docs styling dogfoods the tokens: color, type, spacing, radius, stroke, shadow, and motion come from `@pts/web` variables. Values that only describe the docs layout or sample geometry are `--docs-*` variables at the top of `docs.css`; never add product tokens just for the docs. Card preview illustrations may use raw geometry.
-- Light/dark: the sun/moon button at the top right toggles a `theme` global. The preview sets `data-theme` on `<html>` from it, so the whole docs page switches through token variables; the manager switches between the two UI themes. The choice is saved in localStorage; `?globals=theme:dark` in the URL also works.
+- Light/dark: the sun/moon button at the top right toggles a `theme` global. The preview sets `data-theme` on `<html>` from it, so the whole docs page switches through token variables; the manager switches between the two UI themes. The choice is saved in localStorage; `?globals=theme:dark` in the URL also works. The density button next to it does the same for `data-density` (`.storybook/density.ts`, `?globals=density:compact`).
 - The Storybook UI themes (`.storybook/theme.ts`) use hex copies of token values, since the manager can't read CSS variables. Update them if those tokens change.
-- Manager files (`.storybook/manager.tsx`, `theme.ts`, `main.ts`) are only compiled at startup: restart `npm run storybook` after editing them. The manager uses the classic JSX runtime, so `manager.tsx` imports React.
+- Manager files (`.storybook/manager.tsx`, `theme.ts`, `density.ts`, `main.ts`) are only compiled at startup: restart `npm run storybook` after editing them. The manager uses the classic JSX runtime, so `manager.tsx` imports React.
 
 ## Decisions
 
