@@ -4,19 +4,28 @@ import css from "@terrazzo/plugin-css";
 
 const RESOLVER = "../../tokens/src/pts.resolver.json";
 
-// Groups whose values differ by theme, read from the theme contexts in the resolver
-// (e.g. ["color.**", "shadow.**"]). Only these are repeated in the dark blocks.
 const readJson = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
-const themeGroups = [
-  ...new Set(
-    (readJson(RESOLVER).modifiers.theme.contexts.dark as { $ref: string }[]).flatMap(({ $ref }) =>
-      Object.keys(readJson(`../../tokens/src/${$ref}`)).map((group) => `${group}.**`),
-    ),
-  ),
-];
+const resolver = readJson(RESOLVER);
+type Ref = { $ref: string };
+const contextFiles = (modifier: string, context: string) =>
+  (resolver.modifiers[modifier].contexts[context] as Ref[]).map(({ $ref }) => readJson(`../../tokens/src/${$ref}`));
 
-// Dark theme applies when the OS prefers dark (unless data-theme="light" forces light),
-// or when data-theme="dark" is set explicitly.
+// Groups whose values differ by theme, read from the dark context files (e.g. ["color.**", "shadow.**"]).
+const themeGroups = [...new Set(contextFiles("theme", "dark").flatMap((file) => Object.keys(file).map((group) => `${group}.**`)))];
+
+// Tokens whose values differ by density, read from the compact context files. Listed by id, since their groups
+// (gap, size) also hold base tokens (gap.section, size.icon) that don't change.
+const ids = (node: Record<string, any>, prefix = ""): string[] =>
+  Object.entries(node).flatMap(([key, value]) => {
+    if (key.startsWith("$")) return [];
+    const id = prefix ? `${prefix}.${key}` : key;
+    return value && typeof value === "object" && "$value" in value ? [id] : ids(value, id);
+  });
+const densityTokens = [...new Set(contextFiles("density", "compact").flatMap((file) => ids(file)))];
+
+// :root holds every token at the defaults (light, relaxed). Each modifier's selectors repeat only that modifier's
+// tokens, so they nest without resetting each other: a light region inside a compact page stays compact.
+// Dark applies when the OS prefers dark (unless data-theme="light" forces light), or with data-theme="dark".
 export default defineConfig({
   tokens: [RESOLVER],
   outDir: "./dist/",
@@ -26,9 +35,13 @@ export default defineConfig({
       legacyHex: true,
       permutations: [
         {
+          input: { theme: "light", density: "relaxed" },
+          prepare: (contents) => `:root {\n  ${contents}\n}`,
+        },
+        {
           input: { theme: "light" },
-          // [data-theme="light"] also lets a light region sit inside a dark page.
-          prepare: (contents) => `:root,\n[data-theme="light"] {\n  ${contents}\n}`,
+          include: themeGroups,
+          prepare: (contents) => `[data-theme="light"] {\n  ${contents}\n}`,
         },
         {
           input: { theme: "dark" },
@@ -40,6 +53,17 @@ export default defineConfig({
           input: { theme: "dark" },
           include: themeGroups,
           prepare: (contents) => `[data-theme="dark"] {\n  ${contents}\n}`,
+        },
+        {
+          input: { density: "compact" },
+          include: densityTokens,
+          prepare: (contents) => `[data-density="compact"] {\n  ${contents}\n}`,
+        },
+        {
+          input: { density: "relaxed" },
+          include: densityTokens,
+          // a relaxed region inside a compact page
+          prepare: (contents) => `[data-density="relaxed"] {\n  ${contents}\n}`,
         },
       ],
     }),
