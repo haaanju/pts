@@ -7,15 +7,15 @@ import { PageHeader, Section, TextStyles, FontPreview, TokenTable } from "../com
   Aspekta for sans, IBM Plex for serif and mono. Composite text styles bundle size, weight, line height and letter spacing.
 </PageHeader>
 
-<Section title="Text styles" path="text/*" lead="Apply with the font shorthand. Letter spacing is a separate variable: --text-*-letter-spacing.">
+<Section title="Text styles" path="text/*" lead="Apply with the font shorthand. Letter spacing is a separate variable: --text-*-letter-spacing. There are no responsive sizes yet: on small screens, use the next smaller display or heading style.">
   <TextStyles />
 </Section>
 
 <Section title="Font family" path="font-family/*" lead="Aspekta for UI, IBM Plex Serif and Mono. Use mono where digits must line up: Aspekta has no tabular figures."><FontPreview kind="family" /></Section>
-<Section title="Font size" path="font-size/*" lead="Ordinal steps. font-size/400 = 16px is the body default."><FontPreview kind="size" /></Section>
+<Section title="Font size" path="font-size/*" lead="Two zones. Text steps (12–20px) sit close together for reading and UI; display steps (24–104px) are about ×1.6 apart. Levels stacked together are either the same size, told apart by weight or color, or clearly apart. font-size/text/md = 16px is the body default."><FontPreview kind="size" /></Section>
 <Section title="Font weight" path="font-weight/*"><FontPreview kind="weight" /></Section>
-<Section title="Line height" path="line-height/*" lead="Unitless multipliers."><TokenTable prefix="line-height" /></Section>
-<Section title="Letter spacing" path="letter-spacing/*" lead="px, since DTCG dimensions have no em. Display styles use tighter, heading-lg/md tight, the rest normal; wide is for uppercase labels."><TokenTable prefix="letter-spacing" /></Section>
+<Section title="Line height" path="line-height/*" lead="One per font-size step, with the same name, so every line is a whole 4px step (16px text → 24px line). Unitless ratios, since DTCG line heights have no px."><TokenTable prefix="line-height" /></Section>
+<Section title="Letter spacing" path="letter-spacing/*" lead="One per display step: larger text is tracked tighter, about −0.01em to −0.025em, in px since DTCG dimensions have no em. Text sizes use normal; wide is for uppercase labels."><TokenTable prefix="letter-spacing" /></Section>
 
 <Section
   title="Sans coverage"

@@ -3,7 +3,7 @@ import { PageHeader, Section, Bars, TokenTable } from "../components";
 
 <Meta title="Primitive/Scales" />
 
-<PageHeader eyebrow="Primitive" title="Scales" groups={["dimension", "typeface", "weight", "ratio", "tracking", "duration", "easing"]}>
+<PageHeader eyebrow="Primitive" title="Scales" groups={["dimension", "typeface", "weight", "tracking", "duration", "easing"]}>
   The raw values behind the semantic tokens. This is reference for defining semantic tokens: product code uses the
   semantic tokens (space, font-size, motion, …), never these directly.
 </PageHeader>
@@ -18,10 +18,6 @@ import { PageHeader, Section, Bars, TokenTable } from "../components";
 
 <Section title="Weight" path="weight/*" lead="Numeric font weights. Aliased by font-weight.">
   <TokenTable prefix="weight" preview={(t) => <span style={{ fontWeight: t.css }}>Aa Bb Cc 0123</span>} />
-</Section>
-
-<Section title="Ratio" path="ratio/*" lead="ratio/N is N ÷ 100. Aliased by line-height.">
-  <TokenTable prefix="ratio" />
 </Section>
 
 <Section title="Tracking" path="tracking/*" lead="Letter spacing in px; neg- marks negative values. Aliased by letter-spacing.">

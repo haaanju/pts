@@ -1,6 +1,6 @@
 # 0023. Font Size Minimum
 
-- Status: accepted
+- Status: accepted (amended by 0028)
 - Date: 2026-09-28
 
 ## What we learned

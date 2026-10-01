@@ -56,7 +56,7 @@
 }
 .sbdocs-content :not(pre) > code:not(.sb-unstyled *) {
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-300);
+  font-size: var(--font-size-text-sm);
   padding: var(--space-50) var(--space-100);
   border: none;
   border-radius: var(--radius-sm);
@@ -113,7 +113,7 @@ body {
 .pts {
   font-family: var(--font-family-sans);
   color: var(--content-base);
-  font-size: var(--font-size-300);
+  font-size: var(--font-size-text-sm);
 }
 .pts * {
   box-sizing: border-box;
@@ -121,18 +121,18 @@ body {
 
 .pts-token-name {
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-300);
+  font-size: var(--font-size-text-sm);
   font-weight: var(--font-weight-medium);
   color: var(--content-base);
 }
 .pts-value {
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-200);
+  font-size: var(--font-size-text-xs);
   color: var(--content-base);
 }
 .pts-alias {
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-200);
+  font-size: var(--font-size-text-xs);
   color: var(--content-subtle);
 }
 
@@ -154,7 +154,7 @@ body {
   all: unset;
   cursor: pointer;
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-200);
+  font-size: var(--font-size-text-xs);
   color: var(--content-subtle);
   padding: var(--space-50) var(--space-100);
   margin-left: calc(-1 * var(--space-100));
@@ -175,7 +175,7 @@ body {
   align-items: center;
   gap: var(--space-100);
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-200);
+  font-size: var(--font-size-text-xs);
   font-weight: var(--font-weight-medium);
   padding: var(--space-50) var(--space-200);
   border-radius: var(--radius-full);
@@ -225,8 +225,8 @@ body {
   color: var(--content-subtle);
 }
 .pts .pts-title {
-  font: var(--text-display-lg);
-  letter-spacing: var(--text-display-lg-letter-spacing);
+  font: var(--text-heading-lg);
+  letter-spacing: var(--text-heading-lg-letter-spacing);
   margin: 0 0 var(--space-600);
   color: var(--content-base);
 }
@@ -267,7 +267,7 @@ body {
 /* The token path a section covers, as in the Figma specimens */
 .pts-section-path {
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-300);
+  font-size: var(--font-size-text-sm);
   color: var(--content-subtle);
 }
 .pts .pts-section-lead,
@@ -308,7 +308,7 @@ body {
 }
 .pts-section-body :not(pre) > code {
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-300);
+  font-size: var(--font-size-text-sm);
   padding: var(--space-50) var(--space-100);
   border-radius: var(--radius-sm);
   background: var(--surface-subtle);
@@ -334,8 +334,8 @@ body {
   border-left: none;
 }
 .pts-stats strong {
-  font: var(--text-display-md);
-  letter-spacing: var(--text-display-md-letter-spacing);
+  font: var(--text-heading-lg);
+  letter-spacing: var(--text-heading-lg-letter-spacing);
 }
 .pts-stats span {
   font: var(--text-label-md);
@@ -422,8 +422,8 @@ body {
   font: var(--text-heading-sm);
 }
 .pts-card-type {
-  font: var(--text-display-md);
-  letter-spacing: var(--text-display-md-letter-spacing);
+  font: var(--text-heading-lg);
+  letter-spacing: var(--text-heading-lg-letter-spacing);
 }
 .pts-card-bars {
   display: flex;
@@ -614,7 +614,7 @@ body {
 }
 .pts-ramp-meta .pts-value,
 .pts-ramp-meta .pts-alias {
-  font-size: var(--font-size-200);
+  font-size: var(--font-size-text-xs);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

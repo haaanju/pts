@@ -126,6 +126,13 @@
         "unit": "px"
       }
     },
+    "104": {
+      "$type": "dimension",
+      "$value": {
+        "value": 104,
+        "unit": "px"
+      }
+    },
     "max": {
       "$type": "dimension",
       "$value": {

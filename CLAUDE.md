@@ -40,7 +40,7 @@ pts/
 │       ├── pts.resolver.json         # combines token files + theme modifier (build entry point)
 │       ├── primitive/
 │       │   ├── dimension.tokens.json   # dimension
-│       │   ├── typography.tokens.json  # typeface, weight, ratio, tracking
+│       │   ├── typography.tokens.json  # typeface, weight, tracking
 │       │   ├── color.tokens.json       # color palette (incl. black-alpha)
 │       │   └── motion.tokens.json      # duration, easing
 │       └── semantic/
@@ -82,7 +82,7 @@ pts/
 - `npm run check`: `tz check` in `tokens/` (ADR 0021). Rules in `tokens/terrazzo.config.ts`, in three blocks:
   - Terrazzo's recommended rules: DTCG value shapes (`core/valid-*`), kebab-case names (as an error).
   - Terrazzo's built-in rules, turned on: `$type` required, a `$description` on every semantic token, srgb colors, text at least 12px.
-  - `pts/*` (`tokens/lint/`), for what built-in rules can't check. Terrazzo lints the default theme only, so these apply every theme themselves: every theme resolves with the same names and descriptions (`theme-parity`), contrast (`contrast`), visible steps (`visible-steps`); no `font-size` step below 12px (`min-font-size`); and they read the files for `hex` matching `components` (`color-hex`), the tier rules below (`tier-aliases`), and files missing from the resolver (`registered-files`).
+  - `pts/*` (`tokens/lint/`), for what built-in rules can't check. Terrazzo lints the default theme only, so these apply every theme themselves: every theme resolves with the same names and descriptions (`theme-parity`), contrast (`contrast`), visible steps (`visible-steps`); no `font-size` step below 12px (`min-font-size`); font sizes grow in step order and display steps are at least ×1.5 apart (`type-scale`); every font size has its line height, on the 4px grid, and text styles use the paired one (`line-height-grid`); and they read the files for `hex` matching `components` (`color-hex`), the tier rules below (`tier-aliases`), and files missing from the resolver (`registered-files`).
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it.
 - `npm run typecheck`: TypeScript for the lint plugin and Storybook.
 - The pre-commit hook runs check and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
@@ -97,7 +97,7 @@ pts/
 
 ### Structure
 
-- **Tiers**: primitive → semantic. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `padding/*` and `gap/*` reference the `space` scale (ADR 0026); `z-index` and `breakpoint` hold values directly because stacking order and viewport widths have no meaning outside their role (ADR 0024), so no primitive exists just to feed them. Add a component tier when components exist.
+- **Tiers**: primitive → semantic. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `padding/*` and `gap/*` reference the `space` scale (ADR 0026); `z-index`, `breakpoint`, and `line-height` hold values directly because stacking order, viewport widths, and a line-height ratio paired with its font size have no meaning outside their role (ADR 0024, 0028), so no primitive exists just to feed them. Add a component tier when components exist.
 - **Group names**: primitive and semantic top-level groups never share a name (Terrazzo merges all files into one namespace). Example: primitive `weight` ↔ semantic `font-weight`.
 - **Files**: both tiers are split by category: `primitive/<category>.tokens.json`, `semantic/<category>.tokens.json`.
 - **Format**: every token declares `$type`. No group-level `$type` inheritance. Every semantic token has a `$description` that says when to use it, the same in every theme file; the Figma variable descriptions carry the same text.
@@ -112,7 +112,6 @@ pts/
 - `dimension/N`: N is the px value. Exception: `dimension/max` = 9999px.
 - `typeface/<font-name>`: font stack array, including fallbacks. `aspekta` (sans), `ibm-plex-serif`, `ibm-plex-mono`.
 - `weight/N`: numeric font weight (400, 500, 600, 700).
-- `ratio/N`: N = value × 100 (`ratio/150` = 1.5).
 - `tracking/N`: letter spacing in px, N = px × 100; negative values use `neg-` (`tracking/neg-50` = -0.5px).
 - `color/<hue>/N`: higher is darker. Hues (red, orange, green, blue, purple) have 10 steps (50–900); `neutral` has 13 (50–1000, including 850). Plus `color/white`, `color/black`.
 - `color/black-alpha/N`: black at N% opacity (5–90), for shadows and scrims only. There are no standalone opacity tokens.
@@ -133,11 +132,12 @@ pts/
 - `stroke`: weight names. thin = 1, thick = 2, thicker = 4. No zero-width token; "no border" means removing the border.
 - `focus-ring/width`, `focus-ring/offset`: 2px each. Color is `border/focus`.
 - `font-family`: sans (Aspekta), serif and mono (IBM Plex). Use `mono` wherever digits must line up: Aspekta has no tabular figures.
-- `font-weight`: regular, medium, semibold, bold.
-- `font-size/N`: ordinal steps, 400 = 16px (body default). 200 = 12 … 1000 = 48. 12px is the minimum for text, so the scale has no smaller step (ADR 0023): `a11y/min-font-size` checks text styles, `pts/min-font-size` the scale.
-- `line-height`: unitless multipliers. tight = 1.2, normal = 1.5, loose = 1.75.
-- `letter-spacing`: tighter = -1px, tight = -0.5px, normal = 0, wide = 1px. px because DTCG dimensions only allow px/rem (no em). Display styles use tighter, heading-lg/md tight, the rest normal; wide is for uppercase labels.
-- `text/<role>-<size>`: `$type: typography` composites. Roles display, heading, body, label, caption, code × sizes lg, md, sm. All five properties (fontFamily, fontSize, fontWeight, letterSpacing, lineHeight) are required.
+- Type scale (ADR 0028): levels stacked together are either the same size, told apart by weight or color, or clearly apart (×1.5 or more). Never an in-between difference.
+- `font-weight`: regular, medium, semibold, bold. Every heading and display style is bold; size carries the hierarchy. No text style uses semibold.
+- `font-size`: two zones. `text/xs, sm, md, lg` = 12, 14, 16, 20 (reading and UI; `text/md` is the body default). `display/sm, md, lg, xl` = 24, 40, 64, 104 (headings and display, about ×1.6 apart, rounded to the 4px grid). 12px is the minimum for text, so the scale has no smaller step (ADR 0023): `a11y/min-font-size` checks text styles, `pts/min-font-size` the scale. `pts/type-scale` checks the order and the display ratio.
+- `line-height/<zone>/<step>`: one per font-size step, same name, a unitless ratio held directly (DTCG line heights have no px) so that size × ratio is a whole 4px step: 12/16, 14/20, 16/24, 20/28, 24/28, 40/44, 64/64, 104/104. A text style uses the line height of its size; `pts/line-height-grid` checks both.
+- `letter-spacing/display/sm, md, lg, xl` = -0.25, -0.5, -1.25, -2.5px (about -0.01em to -0.025em: larger text is tracked tighter). `normal` = 0 for every text size, `wide` = 1px for uppercase labels. px because DTCG dimensions only allow px/rem (no em).
+- `text/<role>-<size>`: `$type: typography` composites. Roles display, heading, body, label, caption, code × sizes lg, md, sm. All five properties (fontFamily, fontSize, fontWeight, letterSpacing, lineHeight) are required. display-lg, display-md, heading-lg, heading-md = display/xl, lg, md, sm; heading-sm (bold) and body-lg (regular) share text/lg as a title and subtitle pair. No responsive sizes yet: on small screens, use the next smaller display or heading style.
 - `size/icon/sm, md, lg` = 16, 24, 40. `size/control/sm, md, lg` = 32, 48, 56 (shared control height for buttons, inputs, selects; md and up meet the 44–48px touch target).
 - `breakpoint/sm, md, lg, xl` = 640, 768, 1024, 1280 (min-width), held directly, not through `dimension` (ADR 0024). Emitted as CSS variables for reference only; custom properties can't be used inside media queries.
 - `motion/duration/fast, normal, slow` = 150, 300, 500ms. `motion/easing/standard, enter, exit`.

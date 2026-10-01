@@ -1,6 +1,6 @@
 # 0011. Letter Spacing Tokens and Docs Dogfooding
 
-- Status: accepted
+- Status: accepted (amended by 0028)
 - Date: 2026-09-26
 
 ## What we learned

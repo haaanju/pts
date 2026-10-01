@@ -30,93 +30,133 @@
     "semibold": {
       "$type": "fontWeight",
       "$value": "{weight.600}",
-      "$description": "Small and medium headings, and emphasis inside body text."
+      "$description": "Emphasis inside body text, and controls that need more weight than medium. No text style uses it."
     },
     "bold": {
       "$type": "fontWeight",
       "$value": "{weight.700}",
-      "$description": "Display text and large headings."
+      "$description": "Display text and every heading."
     }
   },
   "font-size": {
-    "200": {
-      "$type": "dimension",
-      "$value": "{dimension.12}",
-      "$description": "Captions and small labels (text/caption, text/label-sm). The smallest size for text."
+    "text": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "{dimension.12}",
+        "$description": "The smallest text size: captions and small labels (text/label-sm, text/caption). 12px."
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "{dimension.14}",
+        "$description": "Small body text, control labels, and code (text/body-sm, text/label-md, text/code-md). 14px."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{dimension.16}",
+        "$description": "The default body size (text/body-md). 16px."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{dimension.20}",
+        "$description": "Lead paragraphs and small headings; heading-sm and body-lg share it, told apart by weight (text/heading-sm, text/body-lg). 20px."
+      }
     },
-    "300": {
-      "$type": "dimension",
-      "$value": "{dimension.14}",
-      "$description": "Small body text, labels, and code (text/body-sm, text/label-md, text/code-md)."
-    },
-    "400": {
-      "$type": "dimension",
-      "$value": "{dimension.16}",
-      "$description": "Default body size (text/body-md)."
-    },
-    "500": {
-      "$type": "dimension",
-      "$value": "{dimension.18}",
-      "$description": "Large body text (text/body-lg)."
-    },
-    "600": {
-      "$type": "dimension",
-      "$value": "{dimension.20}",
-      "$description": "Small headings (text/heading-sm)."
-    },
-    "700": {
-      "$type": "dimension",
-      "$value": "{dimension.24}",
-      "$description": "Medium headings (text/heading-md)."
-    },
-    "800": {
-      "$type": "dimension",
-      "$value": "{dimension.32}",
-      "$description": "Large headings (text/heading-lg)."
-    },
-    "900": {
-      "$type": "dimension",
-      "$value": "{dimension.40}",
-      "$description": "Display text (text/display-md)."
-    },
-    "1000": {
-      "$type": "dimension",
-      "$value": "{dimension.48}",
-      "$description": "The largest display text (text/display-lg)."
+    "display": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{dimension.24}",
+        "$description": "Section headings (text/heading-md). 24px."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{dimension.40}",
+        "$description": "Page titles (text/heading-lg). 40px."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{dimension.64}",
+        "$description": "Page-level headlines (text/display-md). 64px."
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": "{dimension.104}",
+        "$description": "The largest size, for hero headlines (text/display-lg). 104px."
+      }
     }
   },
   "line-height": {
-    "tight": {
-      "$type": "number",
-      "$value": "{ratio.120}",
-      "$description": "Headings, display text, and single-line labels."
+    "text": {
+      "xs": {
+        "$type": "number",
+        "$value": 1.3333333333333333,
+        "$description": "Pairs with font-size/text/xs: a 16px line on 12px text."
+      },
+      "sm": {
+        "$type": "number",
+        "$value": 1.4285714285714286,
+        "$description": "Pairs with font-size/text/sm: a 20px line on 14px text."
+      },
+      "md": {
+        "$type": "number",
+        "$value": 1.5,
+        "$description": "Pairs with font-size/text/md: a 24px line on 16px text."
+      },
+      "lg": {
+        "$type": "number",
+        "$value": 1.4,
+        "$description": "Pairs with font-size/text/lg: a 28px line on 20px text."
+      }
     },
-    "normal": {
-      "$type": "number",
-      "$value": "{ratio.150}",
-      "$description": "Default for body text."
-    },
-    "loose": {
-      "$type": "number",
-      "$value": "{ratio.175}",
-      "$description": "Long-form reading text, where extra leading helps."
+    "display": {
+      "sm": {
+        "$type": "number",
+        "$value": 1.1666666666666667,
+        "$description": "Pairs with font-size/display/sm: a 28px line on 24px text."
+      },
+      "md": {
+        "$type": "number",
+        "$value": 1.1,
+        "$description": "Pairs with font-size/display/md: a 44px line on 40px text."
+      },
+      "lg": {
+        "$type": "number",
+        "$value": 1.0,
+        "$description": "Pairs with font-size/display/lg: a 64px line on 64px text."
+      },
+      "xl": {
+        "$type": "number",
+        "$value": 1.0,
+        "$description": "Pairs with font-size/display/xl: a 104px line on 104px text."
+      }
     }
   },
   "letter-spacing": {
-    "tighter": {
-      "$type": "dimension",
-      "$value": "{tracking.neg-100}",
-      "$description": "Display text: large sizes look loose at normal tracking."
-    },
-    "tight": {
-      "$type": "dimension",
-      "$value": "{tracking.neg-50}",
-      "$description": "Large and medium headings."
+    "display": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{tracking.neg-25}",
+        "$description": "Pairs with font-size/display/sm: about -0.01em, since larger text needs tighter tracking to hold together."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{tracking.neg-50}",
+        "$description": "Pairs with font-size/display/md: about -0.015em, since larger text needs tighter tracking to hold together."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{tracking.neg-125}",
+        "$description": "Pairs with font-size/display/lg: about -0.02em, since larger text needs tighter tracking to hold together."
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": "{tracking.neg-250}",
+        "$description": "Pairs with font-size/display/xl: about -0.025em, since larger text needs tighter tracking to hold together."
+      }
     },
     "normal": {
       "$type": "dimension",
       "$value": "{tracking.0}",
-      "$description": "All other text."
+      "$description": "Every text size (font-size/text/*): Aspekta's default spacing already suits it."
     },
     "wide": {
       "$type": "dimension",
@@ -129,10 +169,10 @@
       "$type": "typography",
       "$value": {
         "fontFamily": "{font-family.sans}",
-        "fontSize": "{font-size.1000}",
+        "fontSize": "{font-size.display.xl}",
         "fontWeight": "{font-weight.bold}",
-        "letterSpacing": "{letter-spacing.tighter}",
-        "lineHeight": "{line-height.tight}"
+        "letterSpacing": "{letter-spacing.display.xl}",
+        "lineHeight": "{line-height.display.xl}"
       },
       "$description": "The largest display style, for hero headlines."
     },
@@ -140,10 +180,10 @@
       "$type": "typography",
       "$value": {
         "fontFamily": "{font-family.sans}",
-        "fontSize": "{font-size.900}",
+        "fontSize": "{font-size.display.lg}",
         "fontWeight": "{font-weight.bold}",
-        "letterSpacing": "{letter-spacing.tighter}",
-        "lineHeight": "{line-height.tight}"
+        "letterSpacing": "{letter-spacing.display.lg}",
+        "lineHeight": "{line-height.display.lg}"
       },
       "$description": "Display style for page-level headlines."
     },
@@ -151,10 +191,10 @@
       "$type": "typography",
       "$value": {
         "fontFamily": "{font-family.sans}",
-        "fontSize": "{font-size.800}",
+        "fontSize": "{font-size.display.md}",
         "fontWeight": "{font-weight.bold}",
-        "letterSpacing": "{letter-spacing.tight}",
-        "lineHeight": "{line-height.tight}"
+        "letterSpacing": "{letter-spacing.display.md}",
+        "lineHeight": "{line-height.display.md}"
       },
       "$description": "Page titles."
     },
@@ -162,10 +202,10 @@
       "$type": "typography",
       "$value": {
         "fontFamily": "{font-family.sans}",
-        "fontSize": "{font-size.700}",
-        "fontWeight": "{font-weight.semibold}",
-        "letterSpacing": "{letter-spacing.tight}",
-        "lineHeight": "{line-height.tight}"
+        "fontSize": "{font-size.display.sm}",
+        "fontWeight": "{font-weight.bold}",
+        "letterSpacing": "{letter-spacing.display.sm}",
+        "lineHeight": "{line-height.display.sm}"
       },
       "$description": "Section headings."
     },
@@ -173,32 +213,32 @@
       "$type": "typography",
       "$value": {
         "fontFamily": "{font-family.sans}",
-        "fontSize": "{font-size.600}",
-        "fontWeight": "{font-weight.semibold}",
+        "fontSize": "{font-size.text.lg}",
+        "fontWeight": "{font-weight.bold}",
         "letterSpacing": "{letter-spacing.normal}",
-        "lineHeight": "{line-height.tight}"
+        "lineHeight": "{line-height.text.lg}"
       },
-      "$description": "Subsection headings and card titles."
+      "$description": "Subsection headings and card titles. The same size as body-lg, set apart by weight, so the two pair as title and subtitle."
     },
     "body-lg": {
       "$type": "typography",
       "$value": {
         "fontFamily": "{font-family.sans}",
-        "fontSize": "{font-size.500}",
+        "fontSize": "{font-size.text.lg}",
         "fontWeight": "{font-weight.regular}",
         "letterSpacing": "{letter-spacing.normal}",
-        "lineHeight": "{line-height.normal}"
+        "lineHeight": "{line-height.text.lg}"
       },
-      "$description": "Lead paragraphs and introductory text."
+      "$description": "Lead paragraphs, introductory text, and subtitles under heading-sm."
     },
     "body-md": {
       "$type": "typography",
       "$value": {
         "fontFamily": "{font-family.sans}",
-        "fontSize": "{font-size.400}",
+        "fontSize": "{font-size.text.md}",
         "fontWeight": "{font-weight.regular}",
         "letterSpacing": "{letter-spacing.normal}",
-        "lineHeight": "{line-height.normal}"
+        "lineHeight": "{line-height.text.md}"
       },
       "$description": "Default body text."
     },
@@ -206,10 +246,10 @@
       "$type": "typography",
       "$value": {
         "fontFamily": "{font-family.sans}",
-        "fontSize": "{font-size.300}",
+        "fontSize": "{font-size.text.sm}",
         "fontWeight": "{font-weight.regular}",
         "letterSpacing": "{letter-spacing.normal}",
-        "lineHeight": "{line-height.normal}"
+        "lineHeight": "{line-height.text.sm}"
       },
       "$description": "Secondary body text: supporting descriptions, table cells, and dense UI."
     },
@@ -217,10 +257,10 @@
       "$type": "typography",
       "$value": {
         "fontFamily": "{font-family.sans}",
-        "fontSize": "{font-size.300}",
+        "fontSize": "{font-size.text.sm}",
         "fontWeight": "{font-weight.medium}",
         "letterSpacing": "{letter-spacing.normal}",
-        "lineHeight": "{line-height.tight}"
+        "lineHeight": "{line-height.text.sm}"
       },
       "$description": "Labels on controls: buttons, inputs, tabs, and menu items."
     },
@@ -228,10 +268,10 @@
       "$type": "typography",
       "$value": {
         "fontFamily": "{font-family.sans}",
-        "fontSize": "{font-size.200}",
+        "fontSize": "{font-size.text.xs}",
         "fontWeight": "{font-weight.medium}",
         "letterSpacing": "{letter-spacing.normal}",
-        "lineHeight": "{line-height.tight}"
+        "lineHeight": "{line-height.text.xs}"
       },
       "$description": "Labels on small controls, badges, and tags."
     },
@@ -239,10 +279,10 @@
       "$type": "typography",
       "$value": {
         "fontFamily": "{font-family.sans}",
-        "fontSize": "{font-size.200}",
+        "fontSize": "{font-size.text.xs}",
         "fontWeight": "{font-weight.regular}",
         "letterSpacing": "{letter-spacing.normal}",
-        "lineHeight": "{line-height.normal}"
+        "lineHeight": "{line-height.text.xs}"
       },
       "$description": "Helper text, timestamps, and footnotes."
     },
@@ -250,10 +290,10 @@
       "$type": "typography",
       "$value": {
         "fontFamily": "{font-family.mono}",
-        "fontSize": "{font-size.300}",
+        "fontSize": "{font-size.text.sm}",
         "fontWeight": "{font-weight.regular}",
         "letterSpacing": "{letter-spacing.normal}",
-        "lineHeight": "{line-height.normal}"
+        "lineHeight": "{line-height.text.sm}"
       },
       "$description": "Inline code and code blocks."
     }

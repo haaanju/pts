@@ -154,7 +154,7 @@ export const Stats = () => {
 };
 
 const TIERS = [
-  { tier: "Primitive", files: "primitive/*.tokens.json", role: "Raw values: dimension, color, typeface, weight, ratio, duration, easing" },
+  { tier: "Primitive", files: "primitive/*.tokens.json", role: "Raw values: dimension, color, typeface, weight, tracking, duration, easing" },
   { tier: "Semantic", files: "semantic/*.tokens.json", role: "Intent: space, background, content, border, text, shadow, size, motion, … Aliases primitives" },
 ];
 
@@ -377,7 +377,7 @@ export const TextStyles = () => (
 export const FontPreview = ({ kind }: { kind: "family" | "weight" | "size" }) => {
   const prefix = `font-${kind}`;
   const style = (t: TokenInfo): CSSProperties =>
-    kind === "family" ? { fontFamily: t.css } : kind === "weight" ? { fontWeight: t.css } : { fontSize: t.css, lineHeight: "var(--line-height-tight)" };
+    kind === "family" ? { fontFamily: t.css } : kind === "weight" ? { fontWeight: t.css } : { fontSize: t.css, lineHeight: `var(${t.cssVar.replace("--font-size-", "--line-height-")})` };
   return <TokenTable prefix={prefix} preview={(t) => <span style={style(t)}>{kind === "size" ? "Aa" : "Aa Bb Cc 0123"}</span>} />;
 };
 
