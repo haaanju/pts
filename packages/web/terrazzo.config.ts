@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs";
 import { defineConfig } from "@terrazzo/cli";
 import css from "@terrazzo/plugin-css";
+import cssInJs from "@terrazzo/plugin-css-in-js";
+import sass from "@terrazzo/plugin-sass";
 
 const RESOLVER = "../../tokens/src/pts.resolver.json";
 
@@ -35,6 +37,8 @@ const wideFrom = `${breakpoints.md.$value.value}${breakpoints.md.$value.unit}`;
 // modifier's tokens, so they nest without resetting each other: a light region inside a compact page stays compact.
 // Dark applies when the OS prefers dark (unless data-theme="light" forces light), or with data-theme="dark".
 // The viewport is the window, not a choice a subtree makes, so it is a media query on :root with no attribute.
+// tokens.js and tokens.scss hold references to these CSS variables, not values (ADR 0030), so every modifier keeps
+// working through tokens.css.
 export default defineConfig({
   tokens: [RESOLVER],
   outDir: "./dist/",
@@ -81,5 +85,9 @@ export default defineConfig({
         },
       ],
     }),
+    cssInJs({ filename: "tokens.js" }),
+    // After css(): sass reads the CSS variable names css() assigns. Listed before it, the build succeeds with an
+    // empty token map.
+    sass({ filename: "tokens.scss" }),
   ],
 });

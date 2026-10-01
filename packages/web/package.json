@@ -2,13 +2,19 @@
   "name": "@pts/web",
   "version": "0.9.0",
   "private": true,
-  "description": "Web output of @pts/tokens: CSS custom properties and self-hosted fonts",
+  "type": "module",
+  "description": "Web output of @pts/tokens: CSS custom properties, JS/TS and SCSS references to them, and self-hosted fonts",
   "files": [
     "dist",
     "fonts"
   ],
   "exports": {
     "./tokens.css": "./dist/tokens.css",
+    "./tokens.js": {
+      "types": "./dist/tokens.d.ts",
+      "default": "./dist/tokens.js"
+    },
+    "./tokens.scss": "./dist/tokens.scss",
     "./fonts.css": "./fonts/fonts.css"
   },
   "scripts": {
@@ -19,6 +25,8 @@
   },
   "devDependencies": {
     "@terrazzo/cli": "^2.7.1",
-    "@terrazzo/plugin-css": "^2.7.1"
+    "@terrazzo/plugin-css": "^2.7.1",
+    "@terrazzo/plugin-css-in-js": "^2.7.1",
+    "@terrazzo/plugin-sass": "^2.7.1"
   }
 }
