@@ -221,7 +221,14 @@ Tokens (done):
 - Storybook: a `Component/Button` page above Semantic (a section per variant, per size, and Shape); a component color's contrast badge uses the pairs of the semantic token it aliases (`pairsOf` in `tokens.ts`). The Overview lists the Component tier, and its CSS example uses `button/*`.
 - `CLAUDE.md` (Tiers, Component tier, the rule list), `.claude/rules/storybook.md`, `.claude/rules/web.md`, `README.md`, and `CONTRIBUTING.md` describe the third tier.
 
-Not yet: the Figma `text/label-lg` text style and a `Component` collection holding `button/*`, done with the Figma component.
+Figma (done):
+
+- `text/label-lg` text style (family, size, weight, and letter spacing bound; line height 24px), and `text/label-sm`'s description; a `label-lg` row on the Typography page (42 tokens).
+- A `Component` collection (one mode) with 36 `button/*` variables aliasing `Theme`, `Density`, and `Semantic` variables, with the token descriptions, scopes by property, and `var(--button-…)` code syntax. The three `label` tokens are the `label-md` / `label-lg` text styles.
+- A `Button` page after Overview: a `Button` component set (Variant × Size × State × Icon = 240; `Focus` boolean, `Label` text, `Start icon` / `End icon` instance swaps), an `Icon button` set (60), four placeholder icons, and a specimen frame mirroring the Storybook page plus a Preview of instances in light and dark × relaxed and compact. `Icon` is a variant property rather than a boolean, since the icon side pads one step less and a boolean can't change padding.
+- Checked by screenshot: the sizes, paddings (md 24px, 16px on the icon side), gaps, and the focus ring 2px outside the box; Secondary's outline on a surface; every variant switching with the cell's Theme and Density mode.
+- The Overview page lists the `Component` collection (331 variables in all), 13 text styles, and the Button page.
+
 
 ## Documented in
 

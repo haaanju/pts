@@ -20,6 +20,7 @@ The Figma MCP must be authenticated with the personal account that owns the `pts
 | `Semantic` | one | the semantic tokens that don't change with any modifier, including shadow offsets, blurs, and spreads |
 | `Density` | `relaxed`, `compact` | the density tokens only: `Spacing/padding/*`, `Spacing/gap/within\|between/*`, `Size/size/control/*` |
 | `Viewport` | `narrow`, `wide` | the viewport tokens only: `Typography/font-size\|line-height\|letter-spacing/display/*`, plus the Figma-only `Typography/line-height/display/*-px` |
+| `Component` | one | the component tokens (`button/*`), each an alias of a `Theme`, `Density`, or `Semantic` variable, so a component follows the frame's modes. Typography composites (`button/<size>/label`) are text styles instead |
 
 - `always/*` is the same in both `Theme` modes; it stays in `Theme` so every semantic color is in one collection for designers, while the JSON keeps it in the base set.
 - A new modifier is a new collection holding only its tokens, the same principle.
@@ -27,10 +28,17 @@ The Figma MCP must be authenticated with the personal account that owns the `pts
 
 ## Variables
 
-- **Names**: `Primitive` and `Theme` variables are named by their token path (`color/neutral/50`, `intent/danger/surface/base`). `Semantic`, `Density`, and `Viewport` variables sit in one folder per docs page, then the token path: `Spacing/` (space, padding, gap), `Typography/` (font-*, line-height, letter-spacing), `Border/` (radius, stroke, focus-ring), `Size/`, `Motion/`, `Layout/` (breakpoint, z-index), `Elevation/` (the shadow parts). A new semantic group goes in the folder of the docs page that shows it.
+- **Names**: `Primitive`, `Theme`, and `Component` variables are named by their token path (`color/neutral/50`, `intent/danger/surface/base`). `Semantic`, `Density`, and `Viewport` variables sit in one folder per docs page, then the token path: `Spacing/` (space, padding, gap), `Typography/` (font-*, line-height, letter-spacing), `Border/` (radius, stroke, focus-ring), `Size/`, `Motion/`, `Layout/` (breakpoint, z-index), `Elevation/` (the shadow parts). A new semantic group goes in the folder of the docs page that shows it.
 - **Code syntax**: every variable's WEB code syntax is its CSS custom property, `var(--<token path with dashes>)`, so Dev Mode shows the real name whatever the folder. The shadow parts and the `*-px` line heights have none, since the CSS emits only the composite and the ratio (`--shadow-sm`, named in the effect style description).
 - **Descriptions**: the same text as the token's `$description`. Every semantic variable has one.
 - **Scopes** follow the name: `content/*` and `disabled/content` → text and shape fills plus strokes; a `border` segment → strokes; `always/*` → all; every other color → frame and shape fills.
+
+## Components
+
+- A component set per component, on its own page (`Button`, first after Overview, as in the Storybook sidebar), with its section of placeholder parts (`Icons`) beside it. The page's specimen frame mirrors the Storybook page and adds a Preview section: instances in every theme × density, each cell pinning both modes.
+- Every fill, stroke, size, padding, gap, and radius of a component binds a `Component` variable; the focus ring binds `border/focus` and `focus-ring/width` directly, as the code does.
+- Variant properties follow the spec (ADR 0032): `Variant`, `Size`, `State` (Rest, Hover, Pressed, Disabled, Loading), and `Icon` (None, Start, End, Both), since the icon side pads one step less and a boolean can't change padding. `Focus` is a boolean (the ring layer), `Label` a text property, icons instance-swap properties. Icon-only buttons are a separate set (`Icon button`).
+- Build sets with a script, one variant per call (the bridge times out around 30 s), then combine.
 
 ## Styles
 
