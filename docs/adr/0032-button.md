@@ -3,7 +3,7 @@
 - Status: proposed
 - Date: 2026-10-02
 
-The spec for the first component, written before the Figma component and the code, one question at a time. This draft settles the variants, sizes, anatomy, states, and tokens; the rest of the spec is listed under Open and is added here as it is decided. The ADR becomes `accepted` once the code ships.
+The spec for the first component, written before the Figma component and the code, one question at a time. The spec is complete; the Figma component is the next check of it, listed under Open. The ADR becomes `accepted` once the code ships.
 
 ## What we learned
 
@@ -31,6 +31,8 @@ For the anatomy, an icon reads heavier than text, so with the same padding on bo
 For states, two loading shapes were compared: a spinner replacing the content at the same width, and a spinner in the leading icon slot with the label kept. The second shows what is happening but widens a button that had no icon, more so if the label changes to "Saving…". For disabled, the HTML `disabled` attribute is simplest but takes the button out of the tab order, so keyboard and screen-reader users can't find it or learn why it is off.
 
 For tokens, every value in this spec is already a semantic token (only `text/label-lg` is new), so component tokens add names, not values. Using semantic tokens directly, with the variant and state switching done by private CSS variables on the button element, needs no change to the build, lint, or Figma collections; Atlassian works that way, with no component tokens. The component tier was chosen anyway, as ADR 0018 planned: it gives code and Figma one place that says what a button uses, lets a later product change Button without touching the semantic tier, and this project exists to learn the full primitive → semantic → component pipeline. Its costs are below.
+
+For the code, a CSS class with a thin React wrapper and a React-only component were considered first. A web component was chosen so Button works the same in React, Vue, Svelte, or plain HTML, as the tokens already do through CSS variables. Custom properties inherit into a shadow root, so `tokens.css` and the `data-theme` / `data-density` attributes reach inside it unchanged. The cost is that a custom element is not a native `<button>`: form submission, keyboard behavior, and focus have to be provided. Two structures were compared: a shadow root wrapping a real `<button>` (Shoelace / Web Awesome, Spectrum Web Components), and a global stylesheet on a native `<button>` in the light DOM, which avoids those costs but is not a component and leaves loading and `aria-disabled` to every consumer.
 
 ## Why it matters
 
@@ -73,7 +75,7 @@ Three sizes, one per `size/control/*` step, so a button sits in a row with an in
 ```
 
 - **Icon slots**: leading (what the action does: `+ Add`), trailing (direction or a menu: `Next →`, `Options ▾`), both at once, or icon-only. Icon size and gap are in Sizes.
-- **Icon-only** is a square of `size/control/*` with the icon centered, and must have an accessible name (`aria-label` in code, the layer name in Figma), since nothing visible names it.
+- **Icon-only** is a square of `size/control/*` with the icon centered, and must have an accessible name (the `label` attribute in code, the layer name in Figma), since nothing visible names it.
 - **The icon side pads one `padding/*` step less**: `sm` `padding/sm` (8 / 4) instead of `padding/md`; `md` and `lg` `padding/lg` (16 / 12) instead of `padding/xl`. The side without an icon keeps the size's padding. No new token.
 - **Radius**: `radius/md` (8px) at every size, the radius inputs and selects are meant to share, so a row of controls has the same corners.
 - **Width**: the content's width by default. A full-width option fills the container and keeps the content centered (a bottom call to action on a phone).
@@ -143,6 +145,48 @@ button/
 - **Contrast.** The semantic pairs are checked by value; what is new is that a button's content and fills must point to a pair that is checked. A lint rule verifies, for each variant, that `content` aliases a semantic content token whose paired backgrounds (`tokens/lint/pairs.ts`) include every `surface/*` the variant aliases (for Ghost, the hover and pressed fills, which sit on the page or a surface).
 - **Docs and Figma**: a Component group in Storybook, above Semantic; a `Component` collection in Figma whose variables alias the `Theme`, `Density`, and `Semantic` variables, which the Figma component binds.
 
+### Code
+
+A web component, `<pts-button>`, written with Lit, in a new package `@pts/components` (`packages/components`).
+
+```html
+<pts-button variant="primary" size="md">
+  <svg slot="start" aria-hidden="true">…</svg>
+  Save
+</pts-button>
+
+<!-- shadow root -->
+<button>
+  <slot name="start"></slot>
+  <slot></slot>
+  <slot name="end"></slot>
+</button>
+```
+
+| Attribute | Values | Default |
+|---|---|---|
+| `variant` | `primary`, `secondary`, `ghost`, `danger` | `secondary` |
+| `size` | `sm`, `md`, `lg` | `md` |
+| `type` | `button`, `submit`, `reset` | `button` |
+| `disabled`, `loading`, `full-width` | boolean | off |
+| `label` | the accessible name, required when there is no text | — |
+
+- **A real `<button>` inside a shadow root.** Keyboard activation, the button role, and screen-reader behavior come from the native element. The shadow root uses `delegatesFocus`, so focusing the host focuses the inner button, and the focus ring is drawn on its `:focus-visible`.
+- **Form-associated.** The element is `formAssociated` and uses `ElementInternals`, so `type="submit"` and `reset` act on the surrounding form, which a button inside a shadow root can't reach on its own. `type` defaults to `button`, not the native `submit`, so a button never submits a form by accident.
+- **Default variant is Secondary**: Primary is at most one per group (Variants), so it is chosen on purpose.
+- **Slots are the anatomy**: `start` and `end` for the icons, the default slot for the label. A button with icons and no label is icon-only: square, and the inner button takes its accessible name from `label`.
+- **`disabled` and `loading`** set `aria-disabled` or `aria-busy` on the inner button and stop click events at the host, so a listener on `<pts-button>` never fires while either is on (States). While loading, the content is transparent rather than hidden, so it keeps its width and stays the accessible name.
+- **Styles are encapsulated** and read only `button/*`, `border/focus`, `focus-ring/*`, and `motion/*` variables. Variant and state attributes on the host set private variables (`--_surface`, `--_content`, …) that the inner button reads. No `::part()` is exposed for now: page CSS can't change a button outside the spec; a part is added when a real need appears.
+- **Attributes take named values, not tokens.** Color and size come from `variant` and `size`; no attribute takes an arbitrary token. A literal-typed `tokens.d.ts` (ADR 0030) waits for a component whose properties take tokens (a Box or Stack).
+- **Package**: `@pts/components` depends on `lit` and expects `@pts/web/tokens.css` and `fonts.css` on the page. `@pts/components/button.js` defines `pts-button`; its types extend `HTMLElementTagNameMap`. `@pts/web` stays generated output only.
+- **Docs**: the Storybook stays React-Vite; React 19 renders custom elements and passes properties and events, so stories use `<pts-button>` directly.
+
+#### Trade-offs of a web component
+
+- **Unstyled before JavaScript runs.** A custom element renders its light-DOM text until it is defined, and server-side rendering would need Declarative Shadow DOM (`@lit-labs/ssr`). Neither is needed for this project now; `pts-button:not(:defined)` can be hidden by the page meanwhile.
+- **Typing in frameworks.** React 19 needs a JSX declaration for `pts-button` to type-check its attributes; other frameworks have their own. They are added when a consumer needs them.
+- **`packages/` now holds a component library**, not only per-platform token outputs (ADR 0016). It is still something shipped and imported, so it belongs there.
+
 ### Contrast
 
 Every pair a variant uses is one `npm run check` already derives (`tokens/lint/pairs.ts`), in both themes:
@@ -159,15 +203,14 @@ Every pair a variant uses is one `npm run check` already derives (`tokens/lint/p
 
 ## Open
 
-Decided next, in this order, and added above:
+Left before the ADR is accepted:
 
-- **Code**: CSS classes or React, where it lives (ADR 0016 roles), and whether props take tokens by category (`tokens.d.ts` types every value as `string`, ADR 0030).
 - **Figma**: the component, checked in both themes and densities before the code.
 
 ## Implementation notes
 
 - No token, code, or Figma change yet.
-- Order: the tokens first (`text/label-lg`, `button/*`, the build and lint changes under What the tier needs, the Storybook page, `CLAUDE.md` Tiers), then the Figma component bound to them, then the code. Adding tokens is not breaking (ADR 0014).
+- Order: the tokens first (`text/label-lg`, `button/*`, the build and lint changes under What the tier needs, the Storybook page, `CLAUDE.md` Tiers), then the Figma component bound to them, then `@pts/components` with `pts-button` and its stories. When accepted, ADR 0016 is marked `amended by 0032` and `CLAUDE.md` Structure lists `packages/components`. Adding tokens is not breaking (ADR 0014).
 - With the tokens: add `text/label-lg` to `semantic/typography.tokens.json`, and narrow `text/label-sm`'s description from "Labels on small controls, badges, and tags" to badges, tags, and elements smaller than a control, since `sm` buttons use `label-md`.
 
 ## Documented in

@@ -10,16 +10,16 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/button`: the Button spec, ADR 0032 (proposed). Decided: variants, sizes, anatomy, states, and component tokens (`button/*`, 39 aliases of semantic tokens). Left: the code question.
+- `feature/button`: the Button spec, ADR 0032 (proposed). The spec is complete: variants, sizes, anatomy, states, component tokens (`button/*`, 39 aliases of semantic tokens), and code (`<pts-button>`, a Lit web component in a new `@pts/components`). Next: the tokens.
 
 ## Next
 
 Button first; the rest in no set order:
 
 - First component (Button): validates `inverse` and its `strong`/`stronger` steps, an intent's `surface/base`/`strong`/`stronger` (danger for destructive buttons), the focus ring, `disabled/*`, and control height, and starts the component tier (ADR 0018).
-  - Order: finish the spec (left: CSS classes or React, where the code lives (ADR 0016 roles), whether props take tokens by category), then the tokens (`text/label-lg`, `button/*` and what the tier needs: build, lint, docs; ADR 0032 Implementation notes), then the Figma component bound to them, checked in both themes and densities, then the code.
+  - Order: the tokens (`text/label-lg`, `button/*` and what the tier needs: build, lint, docs; ADR 0032 Implementation notes), then the Figma component bound to them, checked in both themes and densities, then the code (`@pts/components`).
   - Large containers may need more than `padding/xl` (24px); buttons don't (ADR 0032).
-  - `tokens.d.ts` types every value as `string` (ADR 0030): `background: padding.md` type-checks, and a prop can't be limited to, say, colors. If Button needs that, generate the `.d.ts` with literal types (`"subtle": "var(--surface-subtle)"`, so `(typeof surface)[keyof typeof surface]` is the set of surface colors) through a small custom plugin or post-build step; `@terrazzo/plugin-css-in-js` has no option for it.
+  - A literal-typed `tokens.d.ts` (ADR 0030) waits for a component whose properties take tokens (a Box or Stack); Button's don't (ADR 0032).
 - Dark-mode letter spacing: light text on a dark page reads tighter, so fine-tune letter spacing in dark. That makes `letter-spacing` (and the `text/*` composites that use it) theme-dependent: it would move into the theme files, the dark CSS blocks, and the Figma `Theme` collection. Since ADR 0028, text sizes share `letter-spacing/normal` (0), so dark may need per-size text values too. Needs an ADR. Low value for its cost: keep it until dark text visibly needs it.
 
 Still deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
