@@ -9,7 +9,9 @@
     "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    // Type-check against the component source, so typecheck needs no build of @pts/components first
+    "paths": { "@pts/components/*": ["../../packages/components/src/*"] }
   },
   "include": ["src", ".storybook", "vite.config.ts"]
 }

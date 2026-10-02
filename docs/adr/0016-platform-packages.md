@@ -1,6 +1,6 @@
 # 0016. Source at the Root, One Package per Platform
 
-- Status: accepted
+- Status: accepted (amended by 0032)
 - Date: 2026-09-27
 
 ## What we learned

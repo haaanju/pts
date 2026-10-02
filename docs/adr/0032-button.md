@@ -1,9 +1,9 @@
 # 0032. Button
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-10-02
 
-The spec for the first component, written before the Figma component and the code, one question at a time. The spec is complete; the Figma component is the next check of it, listed under Open. The ADR becomes `accepted` once the code ships.
+The spec for the first component, written before the Figma component and the code, one question at a time, then implemented in that order: the tokens, the Figma component, the code.
 
 ## What we learned
 
@@ -201,15 +201,9 @@ Every pair a variant uses is one `npm run check` already derives (`tokens/lint/p
 - **A disabled Secondary differs from a resting one by its text only**, since `disabled/surface` = `surface/subtle` and `disabled/border` = `border/subtle` in both themes. Disabled controls are exempt from contrast, and the dimmed label carries the state.
 - **Secondary and Ghost share their hover and pressed fills.** Both are neutral; they differ at rest.
 
-## Open
-
-Left before the ADR is accepted:
-
-- **Figma**: the component, checked in both themes and densities before the code.
-
 ## Implementation notes
 
-Order: the tokens (done), then the Figma component bound to them, then `@pts/components` with `pts-button` and its stories. Adding tokens is not breaking (ADR 0014). When accepted, ADR 0016 is marked `amended by 0032` and `CLAUDE.md` Structure lists `packages/components`.
+Adding tokens and a package is not breaking (ADR 0014); the release is `0.9.2`.
 
 Tokens (done):
 
@@ -230,8 +224,17 @@ Figma (done):
 - The Overview page lists the `Component` collection (331 variables in all), 13 text styles, and the Button page.
 
 
+Code (done):
+
+- `packages/components` (`@pts/components`): `src/button.ts` defines `<pts-button>` with Lit, built by `tsc` to `dist/` and exported as `@pts/components/button.js`; `lit` is its one runtime dependency. Reactive properties use `static properties` with `declare`d fields, so there are no decorators.
+- The spinner turns once a second, a value in the component's CSS: motion tokens time transitions, not loops.
+- Storybook: `Button.stories.tsx` (Preview, the only sidebar story Playground) attached to `Component/Button`, which adds Preview (every theme × density, as in Figma), Usage, and Playground sections above the token tables. React JSX types for `<pts-button>` live in `apps/storybook/src/component/elements.d.ts`; Storybook type-checks against the component source through a `paths` mapping, so `npm run typecheck` needs no build. The Controls table scrolls inside the page on phones.
+- Checked in Chrome: the defaults reflect (`variant="secondary"`, `size="md"`, `type="button"`); md is 48px high with 24px sides, 16px on an icon side, sm 32, lg 56 with a 16px label; icon-only is 48 × 48; a dark, compact region gives 40px and the dark fill; disabled and loading never reach a click listener, inner or programmatic, and stay focusable (`aria-disabled`, `tabIndex` 0); loading keeps the width (139px either way) with the content transparent and `aria-busy`; `type="submit"` submits the form, the default `button` doesn't, a disabled submit doesn't, and `reset` resets it; an icon-only button without `label` warns once. The Storybook page has no horizontal scroll at 360px.
+- `.claude/rules/components.md` holds the rules for component code; `CLAUDE.md` Structure lists `packages/components`; ADR 0016 is marked `amended by 0032`, since `packages/` now holds a component library next to the per-platform token outputs.
+
 ## Documented in
 
 - `CLAUDE.md` — Structure, Commands, Token Rules (Tiers, Component tier)
 - `.claude/rules/storybook.md`, `.claude/rules/web.md`
-- `README.md` — Tokens, Usage; `CONTRIBUTING.md` — Where tokens live
+- `README.md` — Packages, Tokens, Usage, Development; `CONTRIBUTING.md` — Where tokens live
+- `.claude/rules/components.md`

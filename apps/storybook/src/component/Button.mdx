@@ -1,12 +1,52 @@
-import { Meta } from "@storybook/addon-docs/blocks";
+import { Controls, Meta, Source, Story } from "@storybook/addon-docs/blocks";
 import { PageHeader, Section, ColorTable, TokenTable } from "../components";
+import * as ButtonStories from "./Button.stories";
 
-<Meta title="Component/Button" />
+<Meta of={ButtonStories} />
 
 <PageHeader eyebrow="Component" title="Button" groups={["button"]}>
   What a button uses, per variant, size, and state. Every token aliases a semantic token, so the button follows the
-  theme and density with the rest of the page.
+  theme and density with the rest of the page. The component is `<pts-button>` from `@pts/components`.
 </PageHeader>
+
+<Section title="Preview" lead="Button in each theme and density. Each cell sets data-theme and data-density; the button follows through its button/* variables. On the surface row, Secondary is set apart by its outline.">
+  <Story of={ButtonStories.Preview} />
+</Section>
+
+<Section title="Usage" lead="A web component, so it works in any framework. Load the fonts and tokens once, then import the element to define it.">
+  <Source
+    language="js"
+    dark
+    code={`// app entry (with a bundler)
+import "@pts/web/fonts.css";
+import "@pts/web/tokens.css";
+import "@pts/components/button.js"; // defines <pts-button>`}
+  />
+  <Source
+    language="html"
+    dark
+    code={`<pts-button variant="primary" type="submit">Save</pts-button>
+<pts-button>
+  <svg slot="start" aria-hidden="true">…</svg>
+  Add
+</pts-button>
+<pts-button label="Close"><svg slot="start" aria-hidden="true">…</svg></pts-button>
+<pts-button variant="danger" loading>Delete</pts-button>`}
+  />
+
+  - `variant`: `primary` (the main action, at most one per group), `secondary` (default), `ghost`, `danger`.
+  - `size`: `sm`, `md` (default), `lg`. `full-width` fills the container.
+  - `type`: `button` (default), `submit`, `reset`. The element is form-associated, so `submit` and `reset` act on the surrounding form.
+  - `disabled` and `loading` ignore clicks but stay focusable (`aria-disabled`, `aria-busy`); loading keeps the width.
+  - Icons go in the `start` and `end` slots. A button with no text is icon-only and needs `label`, its accessible name.
+</Section>
+
+<Section title="Playground" lead="Every attribute as a control.">
+  <Story of={ButtonStories.Playground} />
+  <div className="pts-scroll">
+    <Controls of={ButtonStories.Playground} />
+  </div>
+</Section>
 
 <Section title="Primary" path="button/primary/*" lead="The main action of a view, at most one per group. The inverse fill.">
   <ColorTable prefix="button.primary" />

@@ -18,6 +18,7 @@ Each fact has one home; elsewhere, link to it (ADR 0031).
 | Rules for every task | this file | always |
 | Storybook docs rules | `.claude/rules/storybook.md` | with files in `apps/storybook/` |
 | Web build and font rules | `.claude/rules/web.md` | with files in `packages/web/` |
+| Component code rules | `.claude/rules/components.md` | with files in `packages/components/` or `apps/storybook/src/component/` |
 | Figma rules and procedures | `.claude/skills/figma/` | the `figma` skill, before any Figma work |
 | Session handoff: state, in flight, next | `docs/progress.md` | printed at session start |
 | Why a decision was made | `docs/adr/` | on demand |
@@ -33,7 +34,7 @@ Each fact has one home; elsewhere, link to it (ADR 0031).
 
 ## Structure
 
-Three roles (ADR 0016): `tokens/` is the source; `packages/<platform>` (`@pts/<platform>`) holds shippable outputs and depends on `@pts/tokens`; `apps/<name>` holds tools and docs that run.
+Three roles (ADR 0016): `tokens/` is the source; `packages/` holds what ships, one package per platform for the token outputs (`@pts/<platform>`, depending on `@pts/tokens`) plus the web components (`@pts/components`, ADR 0032); `apps/<name>` holds tools and docs that run.
 
 ```
 tokens/                     @pts/tokens (private)
@@ -44,6 +45,7 @@ tokens/                     @pts/tokens (private)
   src/semantic/<category>[.<context>].tokens.json
   src/component/<component>.tokens.json
 packages/web/               @pts/web: dist/ tokens.css, tokens.js + .d.ts, tokens.scss; fonts/
+packages/components/        @pts/components: Lit web components, src/ → dist/ (<pts-button>)
 apps/storybook/             @pts/storybook: token docs
 docs/progress.md, docs/adr/
 .claude/                    settings.json (SessionStart hooks), rules/, skills/
@@ -60,9 +62,9 @@ docs/progress.md, docs/adr/
   - Built-in rules turned on beyond the recommended ones: `$type` required, a `$description` on every semantic token, srgb colors, text styles at least 12px.
   - `pts/*`: `theme-parity`, `contrast`, `component-pairs`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`.
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it.
-- `npm run typecheck`: TypeScript for the lint plugin and Storybook.
-- `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`).
-- `npm run storybook`: docs dev server (http://localhost:6006), builds `@pts/web` first. `npm run build-storybook`: static build.
+- `npm run typecheck`: TypeScript for the lint plugin, the components, and Storybook.
+- `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/components` → `packages/components/dist/`).
+- `npm run storybook`: docs dev server (http://localhost:6006), builds `@pts/web` and `@pts/components` first. `npm run build-storybook`: static build.
 - The pre-commit hook runs check and typecheck and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus both builds on pushes to `main` and on pull requests.
 
 ## Output (`@pts/web`)

@@ -5,13 +5,14 @@
   "type": "module",
   "description": "Token documentation (Storybook)",
   "scripts": {
-    "prestorybook": "npm run build -w @pts/web",
+    "prestorybook": "npm run build -w @pts/web -w @pts/components",
     "storybook": "storybook dev -p 6006",
-    "prebuild-storybook": "npm run build -w @pts/web",
+    "prebuild-storybook": "npm run build -w @pts/web -w @pts/components",
     "build-storybook": "storybook build -o dist",
     "typecheck": "tsc -p ."
   },
   "dependencies": {
+    "@pts/components": "*",
     "@pts/tokens": "*",
     "@pts/web": "*"
   },

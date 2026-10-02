@@ -1,0 +1,27 @@
+{
+  "name": "@pts/components",
+  "version": "0.9.1",
+  "private": true,
+  "type": "module",
+  "description": "Web components built on the @pts/web tokens: <pts-button>",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./button.js": {
+      "types": "./dist/button.d.ts",
+      "default": "./dist/button.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@pts/web": "*",
+    "lit": "^3.3.3"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
+}

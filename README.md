@@ -10,7 +10,8 @@ Plain is a personal study project: a small design token monorepo built end to en
 |---------|---------------|
 | [`@pts/tokens`](tokens) | The token source (DTCG JSON), the resolver that combines the files and modes, and the lint rules that check them |
 | [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
-| [`@pts/storybook`](apps/storybook) | Token documentation, generated from the token source |
+| [`@pts/components`](packages/components) | Web components on the tokens, framework-agnostic (Lit): `<pts-button>` (`@pts/components/button.js`) |
+| [`@pts/storybook`](apps/storybook) | Token and component documentation, generated from the token source |
 
 The source lives in `tokens/`, shippable outputs in `packages/` (one package per platform), and the docs in `apps/`.
 
@@ -91,6 +92,21 @@ const title = { ...text.headingMd }; // fontFamily, fontSize, fontWeight, letter
 
 Since the values are `var(…)`, Sass can't compute with them, and breakpoints can't be used in `@media` (the same limit as in CSS).
 
+**Components.** `@pts/components` holds web components built on these tokens, so they work in any framework. Load the fonts and tokens once, then import an element to define it:
+
+```js
+import "@pts/web/fonts.css";
+import "@pts/web/tokens.css";
+import "@pts/components/button.js"; // defines <pts-button>
+```
+
+```html
+<pts-button variant="primary" type="submit">Save</pts-button>
+<pts-button label="Close"><svg slot="start" aria-hidden="true">…</svg></pts-button>
+```
+
+`variant` (`primary`, `secondary`, `ghost`, `danger`), `size` (`sm`, `md`, `lg`), `type`, `disabled`, `loading`, `full-width`, and `label` (the accessible name of an icon-only button). It follows `data-theme` and `data-density` like everything else. See the Button page in the docs and ADR 0032.
+
 ## Accessibility
 
 Contrast is checked in both themes on every commit:
@@ -105,15 +121,15 @@ Requires Node 22.18 or later (see `.nvmrc`).
 
 ```sh
 npm install              # also installs the pre-commit hook
-npm run storybook        # token docs at http://localhost:6006
-npm run build            # build @pts/web
+npm run storybook        # docs at http://localhost:6006
+npm run build            # build @pts/web and @pts/components
 ```
 
 | Command | What it does |
 |---------|--------------|
 | `npm run check` | Validates the tokens with Terrazzo (`tz check` in `tokens/`): its built-in rules plus the project's `pts/*` rules in every theme, density, and viewport: contrast, visible states, parity between modes, spacing and type scale order, line heights on the 4px grid, hex values, descriptions, tier rules, unregistered files |
-| `npm run typecheck` | TypeScript for the lint plugin and Storybook |
-| `npm run build` | Builds `@pts/web` |
+| `npm run typecheck` | TypeScript for the lint plugin, the components, and Storybook |
+| `npm run build` | Builds `@pts/web` and `@pts/components` |
 | `npm run build-storybook` | Builds the static docs |
 
 **Working across machines.** Everything needed to continue lives in the repository. On a new machine: clone, `nvm use`, `npm install`. Pull before starting and push before switching. [`docs/progress.md`](docs/progress.md) records where work left off.
