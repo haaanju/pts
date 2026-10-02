@@ -1,6 +1,6 @@
 {
   "name": "@pts/components",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "private": true,
   "type": "module",
   "description": "Web components built on the @pts/web tokens: <pts-button>",
