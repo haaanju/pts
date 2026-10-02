@@ -187,6 +187,17 @@
       },
       "$description": "Secondary body text: supporting descriptions, table cells, and dense UI."
     },
+    "label-lg": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font-family.sans}",
+        "fontSize": "{font-size.text.md}",
+        "fontWeight": "{font-weight.medium}",
+        "letterSpacing": "{letter-spacing.normal}",
+        "lineHeight": "{line-height.text.md}"
+      },
+      "$description": "Labels on large controls, such as large buttons."
+    },
     "label-md": {
       "$type": "typography",
       "$value": {
@@ -207,7 +218,7 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.xs}"
       },
-      "$description": "Labels on small controls, badges, and tags."
+      "$description": "Labels on badges, tags, and other elements smaller than a control."
     },
     "caption": {
       "$type": "typography",

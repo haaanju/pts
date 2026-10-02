@@ -1,0 +1,40 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { PageHeader, Section, ColorTable, TokenTable } from "../components";
+
+<Meta title="Component/Button" />
+
+<PageHeader eyebrow="Component" title="Button" groups={["button"]}>
+  What a button uses, per variant, size, and state. Every token aliases a semantic token, so the button follows the
+  theme and density with the rest of the page.
+</PageHeader>
+
+<Section title="Primary" path="button/primary/*" lead="The main action of a view, at most one per group. The inverse fill.">
+  <ColorTable prefix="button.primary" />
+</Section>
+<Section title="Secondary" path="button/secondary/*" lead="Every other action next to the primary one. Filled on the page, outlined on a surface of the same fill.">
+  <ColorTable prefix="button.secondary" />
+</Section>
+<Section title="Ghost" path="button/ghost/*" lead="Low-emphasis and repeated actions: toolbars, table rows, a dismiss button. Transparent at rest.">
+  <ColorTable prefix="button.ghost" />
+</Section>
+<Section title="Danger" path="button/danger/*" lead="Destructive actions such as delete or remove, usually confirmed.">
+  <ColorTable prefix="button.danger" />
+</Section>
+<Section title="Disabled" path="button/disabled/*" lead="Shared by every variant. Ghost keeps no fill, and only Secondary draws the outline.">
+  <ColorTable prefix="button.disabled" />
+</Section>
+
+<Section title="Small" path="button/sm/*" lead="For dense layouts. The height matches small inputs and selects; the label is centered in it, with no vertical padding.">
+  <TokenTable prefix="button.sm" />
+</Section>
+<Section title="Medium" path="button/md/*" lead="The default size. In relaxed density it meets the 44–48px touch target.">
+  <TokenTable prefix="button.md" />
+</Section>
+<Section title="Large" path="button/lg/*" lead="Prominent actions and touch-first layouts.">
+  <TokenTable prefix="button.lg" />
+</Section>
+
+<Section title="Shape" path="button/radius, button/border-width" lead="Every variant reserves the border width, transparent unless it has an outline, so all variants have the same box.">
+  <TokenTable prefix="button.radius" />
+  <TokenTable prefix="button.border-width" />
+</Section>

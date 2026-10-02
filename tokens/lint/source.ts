@@ -42,7 +42,7 @@ export const registered = (): string[] => {
 /** Every .tokens.json under src/, registered or not */
 export const onDisk = (): string[] => readdirSync(SRC, { recursive: true, encoding: "utf8" }).filter((f) => f.endsWith(".tokens.json"));
 
-/** Registered files with their tier: the first folder, primitive/ or semantic/ */
+/** Registered files with their tier: the first folder, primitive/, semantic/, or component/ */
 export const files = (): SourceFile[] => registered().map((path) => ({ path, tier: path.split("/")[0], tokens: flatten(readJson(path)) }));
 
 /** Top-level groups of the primitive tier, e.g. ["dimension", "color", …] */

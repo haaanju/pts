@@ -2,6 +2,7 @@
 // The rules are configured next to the built-in ones in tokens/terrazzo.config.ts.
 import type { Plugin } from "@terrazzo/parser";
 import colorHex from "./rules/color-hex.ts";
+import componentPairs from "./rules/component-pairs.ts";
 import contrast from "./rules/contrast.ts";
 import densityOrder from "./rules/density-order.ts";
 import gapOrder from "./rules/gap-order.ts";
@@ -19,6 +20,7 @@ export default function pts(): Plugin {
     lint: () => ({
       "pts/theme-parity": themeParity,
       "pts/contrast": contrast,
+      "pts/component-pairs": componentPairs,
       "pts/visible-steps": visibleSteps,
       "pts/density-order": densityOrder,
       "pts/gap-order": gapOrder,

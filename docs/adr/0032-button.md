@@ -209,10 +209,22 @@ Left before the ADR is accepted:
 
 ## Implementation notes
 
-- No token, code, or Figma change yet.
-- Order: the tokens first (`text/label-lg`, `button/*`, the build and lint changes under What the tier needs, the Storybook page, `CLAUDE.md` Tiers), then the Figma component bound to them, then `@pts/components` with `pts-button` and its stories. When accepted, ADR 0016 is marked `amended by 0032` and `CLAUDE.md` Structure lists `packages/components`. Adding tokens is not breaking (ADR 0014).
-- With the tokens: add `text/label-lg` to `semantic/typography.tokens.json`, and narrow `text/label-sm`'s description from "Labels on small controls, badges, and tags" to badges, tags, and elements smaller than a control, since `sm` buttons use `label-md`.
+Order: the tokens (done), then the Figma component bound to them, then `@pts/components` with `pts-button` and its stories. Adding tokens is not breaking (ADR 0014). When accepted, ADR 0016 is marked `amended by 0032` and `CLAUDE.md` Structure lists `packages/components`.
+
+Tokens (done):
+
+- `semantic/typography.tokens.json`: `text/label-lg` added (16px medium, `line-height/text/md`); `text/label-sm` now describes badges, tags, and elements smaller than a control.
+- `component/button.tokens.json`: the 39 tokens above, each with a `$description`, registered in `sets.base` (they alias, so they need no context files).
+- `pts/tier-aliases`: allows `component/`; a component token must alias a semantic token (raw values, primitives, and other component tokens are reported, with no exceptions), and a semantic token that aliases a component token is reported.
+- `pts/component-pairs` (new): in every group with `content` and `surface` tokens, the content's semantic token must be checked by `pts/contrast` against each surface's semantic token; exempt content (`disabled/*`) is skipped. Verified to fail on `button/primary/content` → `content/base` (three unpaired fills), and `pts/tier-aliases` on a primitive alias, a raw value, and a component-to-component alias.
+- `packages/web/terrazzo.config.ts`: follows each component token's aliases and adds it to the theme blocks when they reach a dark-context token (19 colors) and to the density blocks when they reach a compact-context token (12 heights, paddings, and gaps). Checked in Chrome: on a light page, `--button-primary-surface-rest` is `#242424`, and `#e8e8e8` in a `[data-theme="dark"]` region; `--button-md-height` is 48px, and 40px in a `[data-density="compact"]` region, also with a dark region nested inside it.
+- Storybook: a `Component/Button` page above Semantic (a section per variant, per size, and Shape); a component color's contrast badge uses the pairs of the semantic token it aliases (`pairsOf` in `tokens.ts`). The Overview lists the Component tier, and its CSS example uses `button/*`.
+- `CLAUDE.md` (Tiers, Component tier, the rule list), `.claude/rules/storybook.md`, `.claude/rules/web.md`, `README.md`, and `CONTRIBUTING.md` describe the third tier.
+
+Not yet: the Figma `text/label-lg` text style and a `Component` collection holding `button/*`, done with the Figma component.
 
 ## Documented in
 
-- `docs/progress.md` — In flight
+- `CLAUDE.md` — Structure, Commands, Token Rules (Tiers, Component tier)
+- `.claude/rules/storybook.md`, `.claude/rules/web.md`
+- `README.md` — Tokens, Usage; `CONTRIBUTING.md` — Where tokens live

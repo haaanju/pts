@@ -453,6 +453,17 @@ body {
   background: var(--surface-subtle);
   box-shadow: var(--shadow-lg);
 }
+.pts-card-button {
+  display: inline-flex;
+  align-items: center;
+  height: var(--button-md-height);
+  padding: 0 var(--button-md-padding-base);
+  border: var(--button-border-width) solid transparent;
+  border-radius: var(--button-radius);
+  background: var(--button-primary-surface-rest);
+  color: var(--button-primary-content);
+  font: var(--button-md-label);
+}
 .pts-card-size {
   width: 24px;
   height: 24px;

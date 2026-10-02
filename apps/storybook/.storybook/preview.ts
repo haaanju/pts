@@ -39,7 +39,7 @@ const preview: Preview = {
     docs: { theme: light },
     options: {
       storySort: {
-        order: ["Overview", "Semantic", ["Color", "Typography", "Spacing", "Border", "Elevation", "Size", "Motion", "Layout"], "Primitive", ["Palette", "Scales"]],
+        order: ["Overview", "Component", ["Button"], "Semantic", ["Color", "Typography", "Spacing", "Border", "Elevation", "Size", "Motion", "Layout"], "Primitive", ["Palette", "Scales"]],
       },
     },
   },

@@ -27,6 +27,7 @@ export default defineConfig({
       // 3. Ours (tokens/lint/): what the built-in rules can't check. Each rule file says why.
       "pts/theme-parity": "error",
       "pts/contrast": "error",
+      "pts/component-pairs": "error",
       "pts/visible-steps": "error",
       "pts/density-order": ["error", { modifier: "density", tighter: "compact", looser: "relaxed" }],
       "pts/gap-order": ["error", { order: ["gap.within", "gap.between", "gap.section"] }],

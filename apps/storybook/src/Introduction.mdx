@@ -12,6 +12,10 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
   <Stats />
 </Section>
 
+<Section divider title="Component" lead="What one component uses, per variant, size, and state. Every value aliases a semantic token.">
+  <CategoryCards tier="component" />
+</Section>
+
 <Section divider title="Semantic" lead="What products use. Every value here has a role, switches with the theme where needed, and is contrast-checked.">
   <CategoryCards tier="semantic" />
 </Section>
@@ -20,7 +24,7 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
   <CategoryCards tier="primitive" />
 </Section>
 
-<Section divider title="How it's built" lead="Two tiers. Primitives hold raw values; semantic tokens express intent.">
+<Section divider title="How it's built" lead="Three tiers. Primitives hold raw values, semantic tokens express intent, and component tokens say what one component uses.">
   <TierTable />
 
   Three modes change values without renaming tokens. The defaults live on `:root`.
@@ -42,15 +46,16 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
 @import "@pts/web/tokens.css"; /* token custom properties */
 
 .button {
-  height: var(--size-control-md);
-  padding: 0 var(--padding-lg);
-  border-radius: var(--radius-md);
-  background: var(--inverse-base);
-  color: var(--content-inverse-base);
-  font: var(--text-label-md);
+  height: var(--button-md-height);
+  padding: 0 var(--button-md-padding-base);
+  border: var(--button-border-width) solid transparent;
+  border-radius: var(--button-radius);
+  background: var(--button-primary-surface-rest);
+  color: var(--button-primary-content);
+  font: var(--button-md-label);
 }
 .button:hover {
-  background: var(--inverse-strong);
+  background: var(--button-primary-surface-hover);
 }
 .button:focus-visible {
   outline: var(--focus-ring-width) solid var(--border-focus);

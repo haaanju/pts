@@ -40,6 +40,9 @@
         },
         {
           "$ref": "semantic/color.tokens.json"
+        },
+        {
+          "$ref": "component/button.tokens.json"
         }
       ]
     }

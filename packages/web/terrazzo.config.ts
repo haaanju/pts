@@ -28,6 +28,40 @@ const contextTokens = (modifier: string, context: string) => [...new Set(context
 const densityTokens = contextTokens("density", "compact");
 const viewportTokens = contextTokens("viewport", "wide");
 
+// Component tokens that reach a theme or density token through their aliases (ADR 0032). A custom property resolves
+// where it is declared, so --button-primary-surface-rest: var(--inverse-base) declared on :root keeps the light value
+// inside a [data-theme="dark"] subtree; it has to be declared again in that block. (Viewport tokens only change on
+// :root, where every alias resolves again, so they need nothing.)
+const sources = (resolver.sets.base.sources as Ref[]).map(({ $ref }) => $ref);
+const allRefs = [
+  ...sources,
+  ...Object.values(resolver.modifiers as Record<string, { contexts: Record<string, Ref[]> }>).flatMap((m) =>
+    Object.values(m.contexts).flatMap((refs) => refs.map(({ $ref }) => $ref)),
+  ),
+];
+const values = new Map<string, unknown>();
+const collect = (node: Record<string, any>, prefix = "") => {
+  for (const [key, value] of Object.entries(node)) {
+    if (key.startsWith("$")) continue;
+    const id = prefix ? `${prefix}.${key}` : key;
+    if (value && typeof value === "object" && "$value" in value) values.set(id, value.$value);
+    else if (value && typeof value === "object") collect(value, id);
+  }
+};
+for (const ref of allRefs) collect(readJson(`../../tokens/src/${ref}`));
+const aliasesIn = (value: unknown): string[] =>
+  typeof value === "string"
+    ? [...value.matchAll(/\{([^}]+)\}/g)].map((m) => m[1])
+    : value && typeof value === "object"
+      ? Object.values(value).flatMap(aliasesIn)
+      : [];
+const reaches = (id: string, targets: Set<string>): boolean =>
+  targets.has(id) || aliasesIn(values.get(id)).some((ref) => reaches(ref, targets));
+const componentTokens = sources.filter((ref) => ref.startsWith("component/")).flatMap((ref) => ids(readJson(`../../tokens/src/${ref}`)));
+const themeTokens = new Set(contextTokens("theme", "dark"));
+const themedComponentTokens = componentTokens.filter((id) => reaches(id, themeTokens));
+const denseComponentTokens = componentTokens.filter((id) => reaches(id, new Set(densityTokens)));
+
 // The width where the wide display sizes start (ADR 0029). Custom properties can't be used in media queries, so the
 // query takes the value of breakpoint/md.
 const breakpoints = readJson("../../tokens/src/semantic/breakpoint.tokens.json").breakpoint;
@@ -53,28 +87,28 @@ export default defineConfig({
         },
         {
           input: { theme: "light" },
-          include: themeGroups,
+          include: [...themeGroups, ...themedComponentTokens],
           prepare: (contents) => `[data-theme="light"] {\n  ${contents}\n}`,
         },
         {
           input: { theme: "dark" },
-          include: themeGroups,
+          include: [...themeGroups, ...themedComponentTokens],
           prepare: (contents) =>
             `@media (prefers-color-scheme: dark) {\n  :root:not([data-theme="light"]) {\n    ${contents}\n  }\n}`,
         },
         {
           input: { theme: "dark" },
-          include: themeGroups,
+          include: [...themeGroups, ...themedComponentTokens],
           prepare: (contents) => `[data-theme="dark"] {\n  ${contents}\n}`,
         },
         {
           input: { density: "compact" },
-          include: densityTokens,
+          include: [...densityTokens, ...denseComponentTokens],
           prepare: (contents) => `[data-density="compact"] {\n  ${contents}\n}`,
         },
         {
           input: { density: "relaxed" },
-          include: densityTokens,
+          include: [...densityTokens, ...denseComponentTokens],
           // a relaxed region inside a compact page
           prepare: (contents) => `[data-density="relaxed"] {\n  ${contents}\n}`,
         },

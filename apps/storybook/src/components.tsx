@@ -84,6 +84,10 @@ export const Section = ({ title, path, lead, divider, children }: { title: strin
 
 type Category = { title: string; path: string; description: string; preview: ReactNode };
 
+const COMPONENT_PAGES: Category[] = [
+  { title: "Button", path: "component-button", description: "Variants, sizes, and states", preview: <span className="pts-card-button">Button</span> },
+];
+
 const SEMANTIC_PAGES: Category[] = [
   {
     title: "Color",
@@ -146,9 +150,11 @@ const PRIMITIVE_PAGES: Category[] = [
   },
 ];
 
-export const CategoryCards = ({ tier }: { tier: "semantic" | "primitive" }) => (
+const PAGES = { component: COMPONENT_PAGES, semantic: SEMANTIC_PAGES, primitive: PRIMITIVE_PAGES };
+
+export const CategoryCards = ({ tier }: { tier: keyof typeof PAGES }) => (
   <Block className="pts-cards">
-    {(tier === "semantic" ? SEMANTIC_PAGES : PRIMITIVE_PAGES).map((c) => (
+    {PAGES[tier].map((c) => (
       <a key={c.path} className="pts-card-link" href={`./?path=/docs/${c.path}--docs`} target="_top">
         <div className="pts-card-preview">{c.preview}</div>
         <strong>{c.title}</strong>
@@ -181,6 +187,7 @@ export const Stats = () => {
 const TIERS = [
   { tier: "Primitive", files: "primitive/*.tokens.json", role: "Raw values: dimension, color, typeface, weight, tracking, duration, easing" },
   { tier: "Semantic", files: "semantic/*.tokens.json", role: "Intent: space, background, content, border, text, shadow, size, motion, … Aliases primitives" },
+  { tier: "Component", files: "component/*.tokens.json", role: "What one component uses, per variant, size, and state: button/primary/surface/hover, … Aliases semantic tokens" },
 ];
 
 export const TierTable = () => (

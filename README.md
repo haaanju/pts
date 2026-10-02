@@ -16,10 +16,11 @@ The source lives in `tokens/`, shippable outputs in `packages/` (one package per
 
 ## Tokens
 
-Two tiers:
+Three tiers:
 
 - **Primitive** (`tokens/src/primitive/`): raw values such as `dimension.16`, `color.red.600`, `duration.200`.
-- **Semantic** (`tokens/src/semantic/`): values with a role, such as `space.400`, `content.subtle`, `intent.danger.surface.base`, `text.body-md`. Semantic tokens alias primitives. Product code uses semantic tokens only.
+- **Semantic** (`tokens/src/semantic/`): values with a role, such as `space.400`, `content.subtle`, `intent.danger.surface.base`, `text.body-md`. Semantic tokens alias primitives. Product code uses semantic tokens.
+- **Component** (`tokens/src/component/`): what one component uses, per variant, size, and state, such as `button.primary.surface.hover` or `button.md.height`. Component tokens alias semantic tokens; a component's own code uses them (ADR 0032).
 
 Categories: color, typography, spacing, border, elevation, size, motion, and layout.
 
@@ -32,15 +33,16 @@ Colors are layers (`background`, `surface`, `inverse`) with the `content` and `b
 @import "@pts/web/tokens.css"; /* token custom properties */
 
 .button {
-  height: var(--size-control-md);
-  padding: 0 var(--padding-lg);
-  border-radius: var(--radius-md);
-  background: var(--inverse-base);
-  color: var(--content-inverse-base);
-  font: var(--text-label-md);
+  height: var(--button-md-height);
+  padding: 0 var(--button-md-padding-base);
+  border: var(--button-border-width) solid transparent;
+  border-radius: var(--button-radius);
+  background: var(--button-primary-surface-rest);
+  color: var(--button-primary-content);
+  font: var(--button-md-label);
 }
 .button:hover {
-  background: var(--inverse-strong);
+  background: var(--button-primary-surface-hover);
 }
 .button:focus-visible {
   outline: var(--focus-ring-width) solid var(--border-focus);

@@ -42,6 +42,7 @@ tokens/                     @pts/tokens (private)
   src/pts.resolver.json     combines the token files and the modifiers (build entry point)
   src/primitive/<category>.tokens.json
   src/semantic/<category>[.<context>].tokens.json
+  src/component/<component>.tokens.json
 packages/web/               @pts/web: dist/ tokens.css, tokens.js + .d.ts, tokens.scss; fonts/
 apps/storybook/             @pts/storybook: token docs
 docs/progress.md, docs/adr/
@@ -57,7 +58,7 @@ docs/progress.md, docs/adr/
 
 - `npm run check`: `tz check` in `tokens/` (ADR 0021). Terrazzo's built-in rules plus the `pts/*` rules, which check every theme × density × viewport permutation (Terrazzo alone lints the default one). Errors start with the rule name; the rule file's header says what it enforces.
   - Built-in rules turned on beyond the recommended ones: `$type` required, a `$description` on every semantic token, srgb colors, text styles at least 12px.
-  - `pts/*`: `theme-parity`, `contrast`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`.
+  - `pts/*`: `theme-parity`, `contrast`, `component-pairs`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`.
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it.
 - `npm run typecheck`: TypeScript for the lint plugin and Storybook.
 - `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`).
@@ -74,7 +75,8 @@ docs/progress.md, docs/adr/
 
 ### Structure
 
-- **Tiers**: primitive → semantic. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `padding/*` and `gap/*` reference the `space` scale (ADR 0026); `z-index`, `breakpoint`, and `line-height` hold values directly, since they have no meaning outside their role (ADR 0024, 0028). Add a component tier when components exist (ADR 0018).
+- **Tiers**: primitive → semantic → component. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `padding/*` and `gap/*` reference the `space` scale (ADR 0026); `z-index`, `breakpoint`, and `line-height` hold values directly, since they have no meaning outside their role (ADR 0024, 0028).
+- **Component tier** (ADR 0032): `component/<component>.tokens.json`, in `sets.base`. Component tokens reference semantic tokens only, with no exceptions; a value no semantic token holds is a missing semantic token. Names: `<component>/<variant>/<surface | content | border>/<state>` for colors (a property that changes with state names every state, `rest` included; one that doesn't is a single token), `<component>/<size>/<part>` for sizes. State words (`rest`, `hover`, `pressed`) appear only in this tier. A variant's `content` and `surface/*` must alias a pair `pts/contrast` checks (`pts/component-pairs`). The build repeats a component token in the theme and density blocks when its aliases reach a theme or density token.
 - **Group names**: primitive and semantic top-level groups never share a name (Terrazzo merges all files into one namespace): primitive `weight` ↔ semantic `font-weight`.
 - **Format**: every token declares `$type`; no group-level `$type` inheritance. Every semantic token has a `$description` that says when to use it, the same in every context file and in Figma.
 - **Values**: dimensions in `px` object form, `{ "value": 16, "unit": "px" }`. Colors in DTCG 2025.10 object form, `{ "colorSpace": "srgb", "components": [r, g, b], "hex": "#rrggbb" }` (components 0–1, optional `alpha`).
@@ -139,7 +141,7 @@ always/        white, black
 - **Strength**: `subtle` < `base` < `strong` < `stronger`, as distance from the background (darker in light, lighter in dark). `subtle` is the soft fill, `base` the resting default, `strong` / `stronger` the hover and pressed fills. The neutral surface has no `base`: its strong resting fill is `inverse`. Never `default`, `canvas`, `raised`, `muted`, `emphasis`, or `on-`.
 - **Content**: `content/base` and `subtle` go on the background and surfaces. `content/inverse` goes on a flipped fill: `inverse/*`, and an intent's `surface/base`, `strong`, `stronger`. An intent's `content/base` also sits on its own `surface/subtle`.
 - **Intents**: danger (red), warning (orange), success (green), info (blue), discovery (purple: new features, onboarding, recommendations, AI). `surface/subtle` is the soft fill (alerts, banners, soft badges), `surface/base` the strong fill (buttons, strong badges, tags).
-- **States**: interaction states are strength steps, and `$description` says hover or pressed. From hover to pressed, light gets darker and dark gets lighter. Component-specific states (selected, checked) go to a future component tier (ADR 0018). `disabled/*` is shared by every control.
+- **States**: interaction states are strength steps, and `$description` says hover or pressed. From hover to pressed, light gets darker and dark gets lighter. Component-specific states (selected, checked) go to the component tier (ADR 0018). `disabled/*` is shared by every control.
 - **Utility**: colors outside the pairing system (the modal scrim). **Always**: the same in every theme, for icons and text on images; in `semantic/color.tokens.json` (base set).
 - **Descriptions**: a color's `$description` also says which content goes on a fill.
 

@@ -33,14 +33,15 @@ A release (a version tag) is cut separately, when the owner decides; see [ADR 00
 
 ## Where tokens live
 
-All tokens are in `tokens/src/`. There are two tiers:
+All tokens are in `tokens/src/`. There are three tiers:
 
 | Tier | Folder | What it holds | Example |
 |---|---|---|---|
 | Primitive | `primitive/` | Raw values with no role | `color.red.600`, `dimension.16` |
 | Semantic | `semantic/` | Values with a role, pointing at a primitive | `intent.danger.surface.base` → `{color.red.600}` |
+| Component | `component/` | What one component uses, pointing at a semantic token | `button.danger.surface.rest` → `{intent.danger.surface.base}` |
 
-Product code only uses semantic tokens. Most changes are to semantic tokens: pointing a role at a different primitive.
+Product code uses semantic tokens, and a component's own code uses its component tokens. Most changes are to semantic tokens: pointing a role at a different primitive.
 
 Colors and shadows differ per theme, so they have one file per theme: `color.light.tokens.json` and `color.dark.tokens.json`. Padding, the within and between gaps, and control heights differ per density, so they have one file per density: `spacing.relaxed.tokens.json` and `spacing.compact.tokens.json`, `size.relaxed.tokens.json` and `size.compact.tokens.json`. The display font sizes, line heights, and letter spacing differ per viewport, so they have one file per viewport: `typography.narrow.tokens.json` and `typography.wide.tokens.json`. **The files of one pair must define the same token names**; only the values differ.
 

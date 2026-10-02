@@ -1,0 +1,229 @@
+{
+  "button": {
+    "primary": {
+      "surface": {
+        "rest": {
+          "$type": "color",
+          "$value": "{inverse.base}",
+          "$description": "Fill of a primary button: the main action of a view, at most one per group."
+        },
+        "hover": {
+          "$type": "color",
+          "$value": "{inverse.strong}",
+          "$description": "Fill of a primary button on hover."
+        },
+        "pressed": {
+          "$type": "color",
+          "$value": "{inverse.stronger}",
+          "$description": "Fill of a primary button while pressed."
+        }
+      },
+      "content": {
+        "$type": "color",
+        "$value": "{content.inverse.base}",
+        "$description": "Label, icons, and spinner of a primary button, in every state but disabled."
+      }
+    },
+    "secondary": {
+      "surface": {
+        "rest": {
+          "$type": "color",
+          "$value": "{surface.subtle}",
+          "$description": "Fill of a secondary button: every other action next to the primary one."
+        },
+        "hover": {
+          "$type": "color",
+          "$value": "{surface.strong}",
+          "$description": "Fill of a secondary button on hover."
+        },
+        "pressed": {
+          "$type": "color",
+          "$value": "{surface.stronger}",
+          "$description": "Fill of a secondary button while pressed."
+        }
+      },
+      "content": {
+        "$type": "color",
+        "$value": "{content.base}",
+        "$description": "Label, icons, and spinner of a secondary button, in every state but disabled."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{border.subtle}",
+        "$description": "Outline of a secondary button, which sets it apart on a surface of the same fill. Decorative: the label identifies the button."
+      }
+    },
+    "ghost": {
+      "surface": {
+        "hover": {
+          "$type": "color",
+          "$value": "{surface.strong}",
+          "$description": "Fill of a ghost button on hover. At rest a ghost button is transparent."
+        },
+        "pressed": {
+          "$type": "color",
+          "$value": "{surface.stronger}",
+          "$description": "Fill of a ghost button while pressed."
+        }
+      },
+      "content": {
+        "$type": "color",
+        "$value": "{content.base}",
+        "$description": "Label, icons, and spinner of a ghost button: low-emphasis and repeated actions, in every state but disabled."
+      }
+    },
+    "danger": {
+      "surface": {
+        "rest": {
+          "$type": "color",
+          "$value": "{intent.danger.surface.base}",
+          "$description": "Fill of a danger button: destructive actions such as delete or remove."
+        },
+        "hover": {
+          "$type": "color",
+          "$value": "{intent.danger.surface.strong}",
+          "$description": "Fill of a danger button on hover."
+        },
+        "pressed": {
+          "$type": "color",
+          "$value": "{intent.danger.surface.stronger}",
+          "$description": "Fill of a danger button while pressed."
+        }
+      },
+      "content": {
+        "$type": "color",
+        "$value": "{intent.danger.content.inverse}",
+        "$description": "Label, icons, and spinner of a danger button, in every state but disabled."
+      }
+    },
+    "disabled": {
+      "surface": {
+        "$type": "color",
+        "$value": "{disabled.surface}",
+        "$description": "Fill of a disabled button of any variant but ghost, which stays transparent."
+      },
+      "content": {
+        "$type": "color",
+        "$value": "{disabled.content}",
+        "$description": "Label and icons of a disabled button of any variant."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{disabled.border}",
+        "$description": "Outline of a disabled secondary button."
+      }
+    },
+    "sm": {
+      "height": {
+        "$type": "dimension",
+        "$value": "{size.control.sm}",
+        "$description": "Height of small buttons, and the width of an icon-only one."
+      },
+      "padding": {
+        "base": {
+          "$type": "dimension",
+          "$value": "{padding.md}",
+          "$description": "Horizontal padding of small buttons on a side without an icon."
+        },
+        "icon-side": {
+          "$type": "dimension",
+          "$value": "{padding.sm}",
+          "$description": "Horizontal padding of small buttons on a side with an icon: one padding step less, since an icon reads heavier than text."
+        }
+      },
+      "gap": {
+        "$type": "dimension",
+        "$value": "{gap.within.sm}",
+        "$description": "Space between the icon and the label of small buttons."
+      },
+      "icon": {
+        "$type": "dimension",
+        "$value": "{size.icon.sm}",
+        "$description": "Icon and spinner size of small buttons."
+      },
+      "label": {
+        "$type": "typography",
+        "$value": "{text.label-md}",
+        "$description": "Label text style of small buttons."
+      }
+    },
+    "md": {
+      "height": {
+        "$type": "dimension",
+        "$value": "{size.control.md}",
+        "$description": "Height of default (md) buttons, and the width of an icon-only one."
+      },
+      "padding": {
+        "base": {
+          "$type": "dimension",
+          "$value": "{padding.xl}",
+          "$description": "Horizontal padding of default (md) buttons on a side without an icon."
+        },
+        "icon-side": {
+          "$type": "dimension",
+          "$value": "{padding.lg}",
+          "$description": "Horizontal padding of default (md) buttons on a side with an icon: one padding step less, since an icon reads heavier than text."
+        }
+      },
+      "gap": {
+        "$type": "dimension",
+        "$value": "{gap.within.sm}",
+        "$description": "Space between the icon and the label of default (md) buttons."
+      },
+      "icon": {
+        "$type": "dimension",
+        "$value": "{size.icon.sm}",
+        "$description": "Icon and spinner size of default (md) buttons."
+      },
+      "label": {
+        "$type": "typography",
+        "$value": "{text.label-md}",
+        "$description": "Label text style of default (md) buttons."
+      }
+    },
+    "lg": {
+      "height": {
+        "$type": "dimension",
+        "$value": "{size.control.lg}",
+        "$description": "Height of large buttons, and the width of an icon-only one."
+      },
+      "padding": {
+        "base": {
+          "$type": "dimension",
+          "$value": "{padding.xl}",
+          "$description": "Horizontal padding of large buttons on a side without an icon."
+        },
+        "icon-side": {
+          "$type": "dimension",
+          "$value": "{padding.lg}",
+          "$description": "Horizontal padding of large buttons on a side with an icon: one padding step less, since an icon reads heavier than text."
+        }
+      },
+      "gap": {
+        "$type": "dimension",
+        "$value": "{gap.within.sm}",
+        "$description": "Space between the icon and the label of large buttons."
+      },
+      "icon": {
+        "$type": "dimension",
+        "$value": "{size.icon.md}",
+        "$description": "Icon and spinner size of large buttons."
+      },
+      "label": {
+        "$type": "typography",
+        "$value": "{text.label-lg}",
+        "$description": "Label text style of large buttons."
+      }
+    },
+    "radius": {
+      "$type": "dimension",
+      "$value": "{radius.md}",
+      "$description": "Corner radius of every button, the same as inputs and selects so a row of controls has the same corners."
+    },
+    "border-width": {
+      "$type": "dimension",
+      "$value": "{stroke.thin}",
+      "$description": "Border width every button reserves, so all variants have the same box. Transparent unless the variant has an outline."
+    }
+  }
+}

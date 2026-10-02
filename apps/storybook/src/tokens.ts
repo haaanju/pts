@@ -1,8 +1,8 @@
 // Reads the DTCG source through pts.resolver.json and resolves every token per permutation (theme × density ×
 // viewport), so the docs always reflect the current token files.
-import { contrastPairs } from "../../../tokens/lint/pairs.ts";
+import { contrastPairs, isExempt as isExemptSemantic } from "../../../tokens/lint/pairs.ts";
 
-export { isExempt, TEXT, UI } from "../../../tokens/lint/pairs.ts";
+export { TEXT, UI } from "../../../tokens/lint/pairs.ts";
 
 type Json = Record<string, any>;
 type Ref = { $ref: string };
@@ -180,8 +180,23 @@ export const contrast = (a: string, b: string) => {
 
 const pairs = contrastPairs(Object.keys(at("light", "relaxed", "narrow")));
 
-/** The backgrounds a content, border, or fill token is checked against, with the minimum ratio (same pairs as npm run check) */
-export const pairsOf = (id: string) => pairs.filter(([fg]) => fg === id).map(([, bg, min]) => ({ bg, min }));
+/** Ids of the component tier (component/*.tokens.json), which alias semantic tokens (ADR 0032) */
+const componentIds = new Set(baseRefs.filter((r) => r.$ref.startsWith("component/")).flatMap((r) => Object.keys(flatten(read(r.$ref)))));
+
+/** The semantic token a component token aliases (button.primary.content → content.inverse.base); other ids unchanged */
+const semanticOf = (id: string): string => (componentIds.has(id) ? semanticOf(token(id).alias ?? id) : id);
+
+/**
+ * The backgrounds a content, border, or fill token is checked against, with the minimum ratio (same pairs as npm run
+ * check). A component token has the pairs of the semantic token it aliases, which pts/component-pairs ties to it.
+ */
+export const pairsOf = (id: string) => {
+  const target = semanticOf(id);
+  return pairs.filter(([fg]) => fg === target).map(([, bg, min]) => ({ bg, min }));
+};
+
+/** True for colors exempt from contrast (pairs.ts); a component token is exempt if the semantic token it aliases is */
+export const isExempt = (id: string) => isExemptSemantic(semanticOf(id));
 
 /** Total number of tokens (identical across every permutation) */
 export const tokenCount = () => Object.keys(at("light", "relaxed", "narrow")).length;
