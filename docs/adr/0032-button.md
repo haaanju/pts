@@ -3,7 +3,7 @@
 - Status: proposed
 - Date: 2026-10-02
 
-The spec for the first component, written before the Figma component and the code, one question at a time. This draft settles the variants, sizes, anatomy, and states; the rest of the spec is listed under Open and is added here as it is decided. The ADR becomes `accepted` once the code ships.
+The spec for the first component, written before the Figma component and the code, one question at a time. This draft settles the variants, sizes, anatomy, states, and tokens; the rest of the spec is listed under Open and is added here as it is decided. The ADR becomes `accepted` once the code ships.
 
 ## What we learned
 
@@ -29,6 +29,8 @@ For sizes, `size/control/*` already sets a shared height for buttons, inputs, an
 For the anatomy, an icon reads heavier than text, so with the same padding on both sides the icon side looks wider; Material 3 pads the icon side less. A pill radius was set aside because buttons share their row with inputs and selects, which read better with the same corners. Truncating a long label with an ellipsis hides what the button does, so a label is never cut.
 
 For states, two loading shapes were compared: a spinner replacing the content at the same width, and a spinner in the leading icon slot with the label kept. The second shows what is happening but widens a button that had no icon, more so if the label changes to "Saving…". For disabled, the HTML `disabled` attribute is simplest but takes the button out of the tab order, so keyboard and screen-reader users can't find it or learn why it is off.
+
+For tokens, every value in this spec is already a semantic token (only `text/label-lg` is new), so component tokens add names, not values. Using semantic tokens directly, with the variant and state switching done by private CSS variables on the button element, needs no change to the build, lint, or Figma collections; Atlassian works that way, with no component tokens. The component tier was chosen anyway, as ADR 0018 planned: it gives code and Figma one place that says what a button uses, lets a later product change Button without touching the semantic tier, and this project exists to learn the full primitive → semantic → component pipeline. Its costs are below.
 
 ## Why it matters
 
@@ -93,6 +95,54 @@ Rest, hover, and pressed are in the variant table. The others:
 - **State changes animate** fill, border, and content colors over `motion/duration/fast` with `motion/easing/standard`, and switch instantly under `prefers-reduced-motion`.
 - **No selected or toggle state.** A button that stays on (Bold in a toolbar, a favorite) is a different component, a toggle button or a segmented control, decided with its own component tokens (ADR 0018). Button only triggers an action.
 
+### Component tokens
+
+Button starts the component tier: `tokens/src/component/button.tokens.json`, 39 tokens that alias semantic tokens only. Code and Figma use `button/*`; the semantic names above say what each one points to.
+
+```
+button/
+  primary/     surface/{rest, hover, pressed}, content
+  secondary/   surface/{rest, hover, pressed}, content, border
+  ghost/       surface/{hover, pressed}, content
+  danger/      surface/{rest, hover, pressed}, content
+  disabled/    surface, content, border
+  sm|md|lg/    height, padding/{base, icon-side}, gap, icon, label
+  radius, border-width
+```
+
+| Token | Aliases |
+|---|---|
+| `button/primary/surface/rest`, `hover`, `pressed` | `inverse/base`, `strong`, `stronger` |
+| `button/primary/content` | `content/inverse/base` |
+| `button/secondary/surface/rest`, `hover`, `pressed` | `surface/subtle`, `strong`, `stronger` |
+| `button/secondary/content` | `content/base` |
+| `button/secondary/border` | `border/subtle` |
+| `button/ghost/surface/hover`, `pressed` | `surface/strong`, `stronger` |
+| `button/ghost/content` | `content/base` |
+| `button/danger/surface/rest`, `hover`, `pressed` | `intent/danger/surface/base`, `strong`, `stronger` |
+| `button/danger/content` | `intent/danger/content/inverse` |
+| `button/disabled/surface`, `content`, `border` | `disabled/surface`, `content`, `border` |
+| `button/<size>/height` | `size/control/<size>` |
+| `button/sm/padding/base`, `icon-side` | `padding/md`, `padding/sm` |
+| `button/md/padding/base`, `icon-side` and `button/lg/…` | `padding/xl`, `padding/lg` |
+| `button/<size>/gap` | `gap/within/sm` |
+| `button/sm/icon`, `md/icon`, `lg/icon` | `size/icon/sm`, `sm`, `md` |
+| `button/sm/label`, `md/label`, `lg/label` | `text/label-md`, `label-md`, `label-lg` |
+| `button/radius` | `radius/md` |
+| `button/border-width` | `stroke/thin` |
+
+- **Grammar**: `button/<variant>/<property>/<state>`, with the semantic property words `surface`, `content`, `border`. A property that changes with state names every state, `rest` included, since a DTCG token can't also be a group; one that doesn't is a single token (`content`). State words (`rest`, `hover`, `pressed`) appear only in this tier (ADR 0019).
+- **Ghost has no `surface/rest`**: it is transparent at rest, and there is no transparent token to alias. The button's fill is transparent unless a token sets it.
+- **Disabled is one shared group.** Every variant uses the same disabled colors; the spec above says which parts each variant draws (Ghost no fill, Secondary keeps its outline).
+- **Not in the tier**: the focus ring (`border/focus`, `focus-ring/*`) and motion (`motion/*`) are the same for every focusable or animated element, so Button uses them directly.
+- **Tier rule**: a component token aliases a semantic token, never a primitive or a raw value, as semantic tokens alias primitives (`pts/tier-aliases`).
+
+#### What the tier needs
+
+- **CSS resolution.** A custom property resolves where it is declared, so a `button/*` token declared on `:root` keeps the light, relaxed value inside a `[data-theme="dark"]` or `[data-density="compact"]` subtree (ADR 0025). The build repeats every component token that aliases a theme or density token in those blocks.
+- **Contrast.** The semantic pairs are checked by value; what is new is that a button's content and fills must point to a pair that is checked. A lint rule verifies, for each variant, that `content` aliases a semantic content token whose paired backgrounds (`tokens/lint/pairs.ts`) include every `surface/*` the variant aliases (for Ghost, the hover and pressed fills, which sit on the page or a surface).
+- **Docs and Figma**: a Component group in Storybook, above Semantic; a `Component` collection in Figma whose variables alias the `Theme`, `Density`, and `Semantic` variables, which the Figma component binds.
+
 ### Contrast
 
 Every pair a variant uses is one `npm run check` already derives (`tokens/lint/pairs.ts`), in both themes:
@@ -111,14 +161,14 @@ Every pair a variant uses is one `npm run check` already derives (`tokens/lint/p
 
 Decided next, in this order, and added above:
 
-- **Component tokens or semantic tokens directly**, and whether a component token that aliases a density token is repeated in the density blocks (ADR 0025).
 - **Code**: CSS classes or React, where it lives (ADR 0016 roles), and whether props take tokens by category (`tokens.d.ts` types every value as `string`, ADR 0030).
 - **Figma**: the component, checked in both themes and densities before the code.
 
 ## Implementation notes
 
 - No token, code, or Figma change yet.
-- With the Figma component, so the token and its Figma text style land together: add `text/label-lg` to `semantic/typography.tokens.json`, and narrow `text/label-sm`'s description from "Labels on small controls, badges, and tags" to badges, tags, and elements smaller than a control, since `sm` buttons use `label-md`.
+- Order: the tokens first (`text/label-lg`, `button/*`, the build and lint changes under What the tier needs, the Storybook page, `CLAUDE.md` Tiers), then the Figma component bound to them, then the code. Adding tokens is not breaking (ADR 0014).
+- With the tokens: add `text/label-lg` to `semantic/typography.tokens.json`, and narrow `text/label-sm`'s description from "Labels on small controls, badges, and tags" to badges, tags, and elements smaller than a control, since `sm` buttons use `label-md`.
 
 ## Documented in
 
