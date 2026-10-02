@@ -3,7 +3,7 @@
 - Status: proposed
 - Date: 2026-10-02
 
-The spec for the first component, written before the Figma component and the code, one question at a time. This draft settles the variants; the rest of the spec is listed under Open and is added here as it is decided. The ADR becomes `accepted` once the code ships.
+The spec for the first component, written before the Figma component and the code, one question at a time. This draft settles the variants and sizes; the rest of the spec is listed under Open and is added here as it is decided. The ADR becomes `accepted` once the code ships.
 
 ## What we learned
 
@@ -19,6 +19,12 @@ Three other shapes were weighed:
 - **A fill one step stronger** (`surface/strong` at rest): visible everywhere, but pressed would need a fourth step below `stronger`, and Secondary at rest would be the same color as Ghost on hover.
 
 For intents, every role already has `surface/base`, `strong`, and `stronger` (ADR 0019), so any of them could have a button with no new token. Only destructive actions need one now.
+
+For sizes, `size/control/*` already sets a shared height for buttons, inputs, and selects (32, 48, 56; compact 28, 40, 48), and `progress.md` asked whether `padding/*` needs a split because buttons pad asymmetrically. They don't need vertical padding at all: the height comes from `size/control/*` and the label is centered in it, as ADR 0028 already assumed (a 14/20 label in the 48px control). Only the horizontal padding is left, and the existing `padding/*` steps fit it, shrinking with density like every other padding. The labels were the gap: `text/label-sm` (12px) and `label-md` (14px) exist, but nothing larger. Three spreads of horizontal padding were compared by the width of a "Cancel" button:
+
+- **12 · 16 · 24** (one `padding/*` step per size): the rule is simplest, but a 48px md button is about 77px wide and reads squat.
+- **12 · 24 · 24**: md becomes about 93 × 48, the proportion of Material 3's default button (24px sides); lg is set apart by its height and its larger label.
+- **16 · 24 · 32**: lg's 32px is past `padding/xl` and would need a new token.
 
 ## Why it matters
 
@@ -37,6 +43,23 @@ Four variants, all from existing semantic tokens:
 - **Secondary is filled and outlined.** On the page the fill sets it apart; on a surface the outline does.
 - **Danger is the only intent button.** A pressable warning, success, info, or discovery button is added when a control needs one; it needs no new token, and adding a variant is not breaking (ADR 0014). This is ADR 0018's rule that a fill gets pressable states only when a component uses it, applied to the component.
 - **Every variant has the same box.** Variants without a border reserve `stroke/thin` as a transparent border, so heights and widths match side by side.
+
+### Sizes
+
+Three sizes, one per `size/control/*` step, so a button sits in a row with an input or select of the same size. `md` is the default.
+
+| Size | Height (relaxed / compact) | Horizontal padding | Label | Icon | Icon–label gap |
+|---|---|---|---|---|---|
+| `sm` | `size/control/sm` (32 / 28) | `padding/md` (12 / 8) | `text/label-md` (14px) | `size/icon/sm` (16) | `gap/within/sm` (8 / 4) |
+| `md` | `size/control/md` (48 / 40) | `padding/xl` (24 / 20) | `text/label-md` (14px) | `size/icon/sm` (16) | `gap/within/sm` (8 / 4) |
+| `lg` | `size/control/lg` (56 / 48) | `padding/xl` (24 / 20) | `text/label-lg` (16px, new) | `size/icon/md` (24) | `gap/within/sm` (8 / 4) |
+
+- **Height is fixed, not padded.** The button's height is the control height and the content is centered in it; there is no vertical padding. Text that wraps is not supported: a label stays on one line.
+- **Horizontal padding uses `padding/*` unchanged**, so `padding/*` needs no split. md and lg share `padding/xl`; lg is larger by height and label.
+- **`sm` keeps a 14px label.** 12px is the minimum for text (ADR 0023) and looks cramped in a button; `text/label-sm` stays for badges, tags, and other elements smaller than a control.
+- **`text/label-lg` is a new text style**: `font-size/text/md` (16px), `font-weight/medium`, `line-height/text/md`, `letter-spacing/normal`, the same shape as `label-md` one step up. Adding it is not breaking (ADR 0014).
+- **Icon-only buttons are square**: `size/control/*` wide and high, with the same icon size as the labeled button.
+- **Density shrinks height, padding, and gap together**, since all three are density tokens (ADR 0025); label and icon sizes stay.
 
 ### Focus and disabled
 
@@ -61,8 +84,7 @@ Every pair a variant uses is one `npm run check` already derives (`tokens/lint/p
 
 Decided next, in this order, and added above:
 
-- **Sizes**: which `size/control/*` steps, and whether `padding/*` needs a split (buttons pad asymmetrically, likely a component token).
-- **Anatomy**: label type style, icon slots and `size/icon/*`, radius, gap between icon and label, full width.
+- **Anatomy**: icon slots (leading, trailing, icon-only), radius, full width, and how a long label truncates.
 - **States beyond these**: loading, and anything component-specific (ADR 0018).
 - **Component tokens or semantic tokens directly**, and whether a component token that aliases a density token is repeated in the density blocks (ADR 0025).
 - **Code**: CSS classes or React, where it lives (ADR 0016 roles), and whether props take tokens by category (`tokens.d.ts` types every value as `string`, ADR 0030).
@@ -71,6 +93,7 @@ Decided next, in this order, and added above:
 ## Implementation notes
 
 - No token, code, or Figma change yet.
+- With the Figma component, so the token and its Figma text style land together: add `text/label-lg` to `semantic/typography.tokens.json`, and narrow `text/label-sm`'s description from "Labels on small controls, badges, and tags" to badges, tags, and elements smaller than a control, since `sm` buttons use `label-md`.
 
 ## Documented in
 
