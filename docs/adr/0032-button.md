@@ -3,7 +3,7 @@
 - Status: proposed
 - Date: 2026-10-02
 
-The spec for the first component, written before the Figma component and the code, one question at a time. This draft settles the variants and sizes; the rest of the spec is listed under Open and is added here as it is decided. The ADR becomes `accepted` once the code ships.
+The spec for the first component, written before the Figma component and the code, one question at a time. This draft settles the variants, sizes, and anatomy; the rest of the spec is listed under Open and is added here as it is decided. The ADR becomes `accepted` once the code ships.
 
 ## What we learned
 
@@ -25,6 +25,8 @@ For sizes, `size/control/*` already sets a shared height for buttons, inputs, an
 - **12 · 16 · 24** (one `padding/*` step per size): the rule is simplest, but a 48px md button is about 77px wide and reads squat.
 - **12 · 24 · 24**: md becomes about 93 × 48, the proportion of Material 3's default button (24px sides); lg is set apart by its height and its larger label.
 - **16 · 24 · 32**: lg's 32px is past `padding/xl` and would need a new token.
+
+For the anatomy, an icon reads heavier than text, so with the same padding on both sides the icon side looks wider; Material 3 pads the icon side less. A pill radius was set aside because buttons share their row with inputs and selects, which read better with the same corners. Truncating a long label with an ellipsis hides what the button does, so a label is never cut.
 
 ## Why it matters
 
@@ -58,8 +60,20 @@ Three sizes, one per `size/control/*` step, so a button sits in a row with an in
 - **Horizontal padding uses `padding/*` unchanged**, so `padding/*` needs no split. md and lg share `padding/xl`; lg is larger by height and label.
 - **`sm` keeps a 14px label.** 12px is the minimum for text (ADR 0023) and looks cramped in a button; `text/label-sm` stays for badges, tags, and other elements smaller than a control.
 - **`text/label-lg` is a new text style**: `font-size/text/md` (16px), `font-weight/medium`, `line-height/text/md`, `letter-spacing/normal`, the same shape as `label-md` one step up. Adding it is not breaking (ADR 0014).
-- **Icon-only buttons are square**: `size/control/*` wide and high, with the same icon size as the labeled button.
 - **Density shrinks height, padding, and gap together**, since all three are density tokens (ADR 0025); label and icon sizes stay.
+
+### Anatomy
+
+```
+[padding] [leading icon] [gap] [label] [gap] [trailing icon] [padding]
+```
+
+- **Icon slots**: leading (what the action does: `+ Add`), trailing (direction or a menu: `Next →`, `Options ▾`), both at once, or icon-only. Icon size and gap are in Sizes.
+- **Icon-only** is a square of `size/control/*` with the icon centered, and must have an accessible name (`aria-label` in code, the layer name in Figma), since nothing visible names it.
+- **The icon side pads one `padding/*` step less**: `sm` `padding/sm` (8 / 4) instead of `padding/md`; `md` and `lg` `padding/lg` (16 / 12) instead of `padding/xl`. The side without an icon keeps the size's padding. No new token.
+- **Radius**: `radius/md` (8px) at every size, the radius inputs and selects are meant to share, so a row of controls has the same corners.
+- **Width**: the content's width by default. A full-width option fills the container and keeps the content centered (a bottom call to action on a phone).
+- **Long labels are never cut.** The label stays on one line, with no wrapping and no ellipsis; the button grows to fit, and a layout that can't fit it changes the layout or the label. Icons never shrink.
 
 ### Focus and disabled
 
@@ -84,7 +98,6 @@ Every pair a variant uses is one `npm run check` already derives (`tokens/lint/p
 
 Decided next, in this order, and added above:
 
-- **Anatomy**: icon slots (leading, trailing, icon-only), radius, full width, and how a long label truncates.
 - **States beyond these**: loading, and anything component-specific (ADR 0018).
 - **Component tokens or semantic tokens directly**, and whether a component token that aliases a density token is repeated in the density blocks (ADR 0025).
 - **Code**: CSS classes or React, where it lives (ADR 0016 roles), and whether props take tokens by category (`tokens.d.ts` types every value as `string`, ADR 0030).
