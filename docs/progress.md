@@ -10,7 +10,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/agent-docs`: the agent docs split (ADR 0031): CLAUDE.md halved, Storybook and web rules in `.claude/rules/`, Figma in the `figma` skill, stale README and CONTRIBUTING lines fixed. Ready to merge.
+- None.
 
 ## Next
 
