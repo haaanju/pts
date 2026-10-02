@@ -10,7 +10,7 @@ This guide is for anyone changing the tokens, designers first. You edit JSON fil
 3. Open a PR   fill in the template
 4. Checks      CI validates the tokens and builds everything; it must pass
 5. Review      the owner reviews and merges
-6. Published   the docs rebuild from main automatically
+6. Merged      the change is on main and ships with the next release
 ```
 
 A release (a version tag) is cut separately, when the owner decides; see [ADR 0014](docs/adr/0014-versioning-policy.md).
@@ -77,7 +77,7 @@ You don't need to work out `components` by hand: change the `hex`, run the check
 
 Dimensions are px objects: `{ "value": 16, "unit": "px" }`.
 
-The full naming and structure rules are in [`CLAUDE.md`](CLAUDE.md) (Token Rules) and the ADRs in [`docs/adr/`](docs/adr).
+The full naming and structure rules are in [`CLAUDE.md`](CLAUDE.md) (Token Rules), the Figma conventions in [`.claude/skills/figma/`](.claude/skills/figma/SKILL.md), and the reasons in the ADRs in [`docs/adr/`](docs/adr).
 
 ## Common changes
 
@@ -88,7 +88,7 @@ The full naming and structure rules are in [`CLAUDE.md`](CLAUDE.md) (Token Rules
 | Change any other value | Edit it in its file. Semantic tokens point at primitives, so you usually change the alias |
 | Add a token to an existing group | Add it to the file. For a themed file, add it to both `light` and `dark`; for a density file, to both `relaxed` and `compact` (compact one `space` step smaller); for a viewport file, to both `narrow` and `wide`. It appears in the docs by itself |
 | Add a new file | Create it in `primitive/` or `semantic/` and add it to `tokens/src/pts.resolver.json`: mode-independent files in `sets.base`, per-theme files under `modifiers.theme`, per-density files under `modifiers.density`, per-viewport files under `modifiers.viewport` |
-| Add a new top-level group | As above, then add a section to the matching docs page in `apps/storybook/src/` (e.g. `<Section title="Opacity"><TokenTable prefix="opacity" /></Section>`) and add the prefix to the page's `groups` |
+| Add a new top-level group | As above, then add a section to the matching docs page in `apps/storybook/src/` (e.g. `<Section title="Opacity" path="opacity/*"><TokenTable prefix="opacity" /></Section>`) and add the prefix to the page's `groups` |
 | Rename or remove a token | This is a breaking change. Say so in the pull request |
 
 ## What the checks catch

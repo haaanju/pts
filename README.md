@@ -1,6 +1,6 @@
 # Plain
 
-Design tokens in the [DTCG](https://www.designtokens.org/) format, built with [Terrazzo](https://terrazzo.app) into CSS custom properties, with light and dark themes, bundled fonts, and generated documentation.
+Design tokens in the [DTCG](https://www.designtokens.org/) format, built with [Terrazzo](https://terrazzo.app) into CSS custom properties (with JS/TS and SCSS references to them), with light and dark themes, two densities, responsive display sizes, bundled fonts, and generated documentation.
 
 Plain is a personal study project: a small design token monorepo built end to end, from token source to published output, to learn how token pipelines work.
 
@@ -8,7 +8,7 @@ Plain is a personal study project: a small design token monorepo built end to en
 
 | Package | What it holds |
 |---------|---------------|
-| [`@pts/tokens`](tokens) | The token source (DTCG JSON), the resolver that combines files and themes, and the validation and generation scripts |
+| [`@pts/tokens`](tokens) | The token source (DTCG JSON), the resolver that combines the files and modes, and the lint rules that check them |
 | [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
 | [`@pts/storybook`](apps/storybook) | Token documentation, generated from the token source |
 
@@ -23,7 +23,7 @@ Two tiers:
 
 Categories: color, typography, spacing, border, elevation, size, motion, and layout.
 
-Colors are layers (`background`, `surface`, `inverse`) with the `content` and `border` on them, plus one group per intent (`intent.danger.*`) with the same shape; see ADR 0019. Color and shadow have **light** and **dark** values; padding, component gaps, and control heights have **relaxed** and **compact** values. A DTCG resolver (`pts.resolver.json`) combines them.
+Colors are layers (`background`, `surface`, `inverse`) with the `content` and `border` on them, plus one group per intent (`intent.danger.*`) with the same shape; see ADR 0019. Color and shadow have **light** and **dark** values; padding, the gaps within and between groups, and control heights have **relaxed** and **compact** values; display font sizes, line heights, and letter spacing have **narrow** and **wide** values. A DTCG resolver (`pts.resolver.json`) combines them.
 
 ## Usage
 
@@ -109,7 +109,7 @@ npm run build            # build @pts/web
 
 | Command | What it does |
 |---------|--------------|
-| `npm run check` | Validates the tokens with Terrazzo (`tz check` in `tokens/`): its built-in rules plus the project's `pts/*` rules for both themes: contrast, visible states, theme parity, hex values, descriptions, tier rules, unregistered files |
+| `npm run check` | Validates the tokens with Terrazzo (`tz check` in `tokens/`): its built-in rules plus the project's `pts/*` rules in every theme, density, and viewport: contrast, visible states, parity between modes, spacing and type scale order, line heights on the 4px grid, hex values, descriptions, tier rules, unregistered files |
 | `npm run typecheck` | TypeScript for the lint plugin and Storybook |
 | `npm run build` | Builds `@pts/web` |
 | `npm run build-storybook` | Builds the static docs |
@@ -123,7 +123,7 @@ The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus b
 ## Decisions and conventions
 
 - **Architecture decisions** are recorded in [`docs/adr/`](docs/adr).
-- **Token naming and authoring rules** live in [`CLAUDE.md`](CLAUDE.md), which also guides the AI assistant used on this project.
+- **Token naming and authoring rules** live in [`CLAUDE.md`](CLAUDE.md), which also guides the AI assistant used on this project. Rules for one area are in [`.claude/rules/`](.claude/rules) (Storybook docs, the web build) and [`.claude/skills/figma/`](.claude/skills/figma) (the Figma file); see [ADR 0031](docs/adr/0031-agent-docs-by-scope.md).
 - **Versioning**: one Semantic Version for every package, released as a git tag (`vX.Y.Z`); see [ADR 0014](docs/adr/0014-versioning-policy.md). While in `0.x`, breaking changes bump the minor version.
 
 ## Status

@@ -9,147 +9,114 @@ A personal study project: building my own design token pipeline while learning h
 - **Every deliverable is in English**: code, comments, token names and descriptions, docs, ADRs, Storybook content, commit messages, and PR text. No Korean in the repository.
 - Conversation with the user is in Korean.
 
+## Where things are written
+
+Each fact has one home; elsewhere, link to it (ADR 0031).
+
+| What | Where | Loaded |
+|---|---|---|
+| Rules for every task | this file | always |
+| Storybook docs rules | `.claude/rules/storybook.md` | with files in `apps/storybook/` |
+| Web build and font rules | `.claude/rules/web.md` | with files in `packages/web/` |
+| Figma rules and procedures | `.claude/skills/figma/` | the `figma` skill, before any Figma work |
+| Session handoff: state, in flight, next | `docs/progress.md` | printed at session start |
+| Why a decision was made | `docs/adr/` | on demand |
+| Token values | `tokens/src/**/*.tokens.json` | on demand; this file gives representative values only |
+| What each check enforces, and why | the header of each `tokens/lint/rules/*.ts` | on demand |
+| Human guides | `README.md` (usage), `CONTRIBUTING.md` (changing tokens) | on demand |
+
 ## Tech Stack
 
-- Package manager: npm (workspaces)
-- Token format: DTCG (W3C Design Tokens Community Group, 2025.10)
-- Build tool: Terrazzo (`@terrazzo/cli` + per-platform plugins)
-- Docs: Storybook 10 (React + Vite)
-- Language: TypeScript
+- npm workspaces, Node ≥ 22.18 (`engines`, `.nvmrc`), TypeScript.
+- Tokens: DTCG 2025.10, built with Terrazzo (`@terrazzo/cli` + per-platform plugins).
+- Docs: Storybook 10 (React + Vite).
 
 ## Structure
 
+Three roles (ADR 0016): `tokens/` is the source; `packages/<platform>` (`@pts/<platform>`) holds shippable outputs and depends on `@pts/tokens`; `apps/<name>` holds tools and docs that run.
+
 ```
-pts/
-├── README.md                    # human-facing overview (usage, commands, status)
-├── CONTRIBUTING.md              # how to change tokens: flow, format, common changes, what the checks catch
-├── .claude/settings.json        # SessionStart hooks: fetches, prints git state and docs/progress.md; in cloud sessions, npm ci
-├── .githooks/pre-commit         # runs check and typecheck before every commit
-├── .github/workflows/ci.yml     # CI: checks + both builds
-├── .github/pull_request_template.md  # change type (ADR 0014) and the Figma / docs / ADR checklist
-├── docs/progress.md             # session handoff: current state, in flight, next
-├── docs/adr/                    # architecture decision records
-├── tokens/                      # @pts/tokens — DTCG source, single source of truth (private)
-│   ├── terrazzo.config.ts       # lint only: Terrazzo's built-in rules + the pts/* rules (npm run check)
-│   ├── lint/                    # the pts lint plugin (ADR 0021)
-│   │   ├── index.ts             # registers the pts/* rules
-│   │   ├── source.ts            # every theme (via Terrazzo's resolver) and every file with its tier
-│   │   ├── pairs.ts             # color pairing rules, shared by pts/contrast and the Storybook docs
-│   │   └── rules/               # one file per rule, each saying why a built-in rule can't do it
-│   └── src/
-│       ├── pts.resolver.json         # combines token files + theme modifier (build entry point)
-│       ├── primitive/
-│       │   ├── dimension.tokens.json   # dimension
-│       │   ├── typography.tokens.json  # typeface, weight, tracking
-│       │   ├── color.tokens.json       # color palette (incl. black-alpha)
-│       │   └── motion.tokens.json      # duration, easing
-│       └── semantic/
-│           ├── spacing.tokens.json     # space (scale), gap/section
-│           ├── spacing.{relaxed,compact}.tokens.json  # padding, gap/within, gap/between, per density
-│           ├── border.tokens.json      # radius, stroke, focus-ring
-│           ├── typography.tokens.json  # font-*, line-height, letter-spacing, text (display steps excluded)
-│           ├── typography.{narrow,wide}.tokens.json   # font-size, line-height, letter-spacing display steps, per viewport
-│           ├── size.tokens.json        # size/icon
-│           ├── size.{relaxed,compact}.tokens.json     # size/control, per density
-│           ├── breakpoint.tokens.json
-│           ├── motion.tokens.json      # motion (duration, easing)
-│           ├── z-index.tokens.json
-│           ├── color.tokens.json            # always (theme-independent colors)
-│           ├── color.{light,dark}.tokens.json   # background, surface, inverse, content, border, disabled, utility, intent, per theme
-│           └── shadow.{light,dark}.tokens.json  # shadow, per theme
-├── packages/                    # shippable outputs, one package per platform
-│   └── web/                     # @pts/web — CSS custom properties, JS/TS and SCSS references to them, self-hosted fonts
-│       ├── terrazzo.config.ts   # one config; each web format is a plugin
-│       ├── fonts/               # fonts.css + <font>/ (woff2 + OFL license)
-│       └── dist/                # build output (gitignored): tokens.css, tokens.js + tokens.d.ts, tokens.scss
-└── apps/                        # things that run rather than get imported
-    └── storybook/               # @pts/storybook — token documentation
-        ├── .storybook/          # main, theme (light/dark UI themes), manager (theme toggle), preview (tokens.css, theme sync)
-        └── src/
-            ├── tokens.ts        # data layer: reads the resolver, resolves aliases per theme
-            ├── components.tsx   # doc blocks (TokenTable, ColorTable, Palette, …)
-            ├── Introduction.mdx # Overview
-            ├── semantic/*.mdx   # Semantic group: Color, Typography, Spacing, Border, Elevation, Size, Motion, Layout
-            └── primitive/*.mdx  # Primitive group: Palette, Scales
+tokens/                     @pts/tokens (private)
+  terrazzo.config.ts        lint only (npm run check)
+  lint/                     the pts/* lint plugin (ADR 0021); pairs.ts holds the color pairing rules
+  src/pts.resolver.json     combines the token files and the modifiers (build entry point)
+  src/primitive/<category>.tokens.json
+  src/semantic/<category>[.<context>].tokens.json
+packages/web/               @pts/web: dist/ tokens.css, tokens.js + .d.ts, tokens.scss; fonts/
+apps/storybook/             @pts/storybook: token docs
+docs/progress.md, docs/adr/
+.claude/                    settings.json (SessionStart hooks), rules/, skills/
+.githooks/pre-commit, .github/ (CI, PR template)
 ```
 
-- Three roles, see ADR 0016: `tokens/` is the source; `packages/<platform>` (named `@pts/<platform>`) holds shippable outputs and depends on `@pts/tokens`; `apps/<name>` holds tools and docs that run.
-- A new format for an existing platform is a plugin in that platform's Terrazzo config plus a subpath export (as JS/TS and SCSS in `@pts/web`, ADR 0030), not a new package.
-- Register every new token file in `pts.resolver.json`: mode-independent files go in `sets.base`, theme-specific files in the matching `modifiers.theme` context, density-specific files in the matching `modifiers.density` context, viewport-specific files in the matching `modifiers.viewport` context. `npm run check` reports a file that isn't registered.
-- Files for the contexts of one modifier (`color.light` / `color.dark`, `spacing.relaxed` / `spacing.compact`, `typography.narrow` / `typography.wide`) must define **the same set of token names** and descriptions.
+- Register every new token file in `pts.resolver.json`: mode-independent files in `sets.base`, modifier-specific files in the matching `modifiers.<theme|density|viewport>` context. `npm run check` reports a file that isn't registered.
+- The files of one modifier's contexts (`color.light` / `color.dark`, `spacing.relaxed` / `spacing.compact`, `typography.narrow` / `typography.wide`) define **the same token names and descriptions**.
 - The token JSON is edited by hand, color included; nothing generates it (ADR 0020). `npm run check` enforces the rules a generator would.
 
 ## Commands
 
-- Node ≥ 22.18 (`engines`, `.nvmrc`).
-- `npm run check`: `tz check` in `tokens/` (ADR 0021). Rules in `tokens/terrazzo.config.ts`, in three blocks:
-  - Terrazzo's recommended rules: DTCG value shapes (`core/valid-*`), kebab-case names (as an error).
-  - Terrazzo's built-in rules, turned on: `$type` required, a `$description` on every semantic token, srgb colors, text at least 12px.
-  - `pts/*` (`tokens/lint/`), for what built-in rules can't check. Terrazzo lints the default theme only, so these apply every permutation (theme × density × viewport) themselves: every permutation resolves with the same names and descriptions (`theme-parity`), contrast (`contrast`), visible steps (`visible-steps`), compact no larger than relaxed (`density-order`), every `within` gap below every `between` gap below every `section` gap (`gap-order`); no `font-size` step below 12px (`min-font-size`); font sizes grow in step order, display steps are at least ×1.5 apart, and two steps may be equal only if another permutation sets them apart (`type-scale`); every font size has its line height, on the 4px grid, and text styles use the paired one (`line-height-grid`); and they read the files for `hex` matching `components` (`color-hex`), the tier rules below (`tier-aliases`), and files missing from the resolver (`registered-files`).
+- `npm run check`: `tz check` in `tokens/` (ADR 0021). Terrazzo's built-in rules plus the `pts/*` rules, which check every theme × density × viewport permutation (Terrazzo alone lints the default one). Errors start with the rule name; the rule file's header says what it enforces.
+  - Built-in rules turned on beyond the recommended ones: `$type` required, a `$description` on every semantic token, srgb colors, text styles at least 12px.
+  - `pts/*`: `theme-parity`, `contrast`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`.
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it.
 - `npm run typecheck`: TypeScript for the lint plugin and Storybook.
-- The pre-commit hook runs check and typecheck, and blocks the commit on failure. It is wired by the `prepare` script (`git config core.hooksPath .githooks`) on `npm install`. Skip once with `git commit --no-verify`.
-- CI (`.github/workflows/ci.yml`) runs the same checks plus both builds on pushes to `main` and on pull requests.
-- `npm run build`: builds every workspace (`@pts/web` → `packages/web/dist/`: `tokens.css`, `tokens.js` + `tokens.d.ts`, `tokens.scss`).
-  - `tokens.js` (`@terrazzo/plugin-css-in-js`) and `tokens.scss` (`@terrazzo/plugin-sass`: a `token()` function and a `typography()` mixin) hold `var(--…)` references, not values, so every modifier works through `tokens.css` (ADR 0030). Primitives are included, as in `tokens.css`. `sass()` must come after `css()` in `plugins`, or its token map builds empty without an error.
-  - `:root` holds every token at the defaults (light, relaxed, narrow). `[data-theme="light"]`, `@media (prefers-color-scheme: dark)`, and `[data-theme="dark"]` repeat only the theme groups; `[data-density="compact"]` and `[data-density="relaxed"]` repeat only the density tokens. So `data-theme` and `data-density` work on `<html>` or on any subtree and nest without resetting each other (a light region inside a compact page stays compact). `@media (min-width: 768px) { :root { … } }` repeats only the viewport tokens at their `wide` values; the width comes from `breakpoint/md`, and there is no attribute, since the viewport is the window (ADR 0029).
-  - `terrazzo.config.ts` reads the dark, compact, and wide context files in the resolver to decide what goes in each block (theme by group; density and viewport by token id, since `gap`, `size`, `font-size`, `line-height`, and `letter-spacing` also hold base tokens).
-  - A token that aliases a density token must be repeated in the density blocks, since CSS variables resolve where they are declared (ADR 0025). None exists yet; component tokens will.
-- `npm run storybook`: token docs dev server (http://localhost:6006). Builds `@pts/web` first.
-- `npm run build-storybook`: static docs build (`apps/storybook/dist`).
+- `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`).
+- `npm run storybook`: docs dev server (http://localhost:6006), builds `@pts/web` first. `npm run build-storybook`: static build.
+- The pre-commit hook runs check and typecheck and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus both builds on pushes to `main` and on pull requests.
+
+## Output (`@pts/web`)
+
+- `tokens.css`: `:root` holds every token at the defaults (light, relaxed, narrow). `[data-theme="light"|"dark"]` (plus `prefers-color-scheme: dark`) repeat only the theme groups; `[data-density="compact"|"relaxed"]` only the density tokens. They work on any subtree and nest without resetting each other. `@media (min-width: 768px)` (from `breakpoint/md`) repeats only the viewport tokens; there is no viewport attribute, since the viewport is the window (ADR 0029).
+- `tokens.js` (+ `tokens.d.ts`) and `tokens.scss` hold `var(--…)` references, not values, so every modifier works through `tokens.css` (ADR 0030).
+- A token that aliases a density token must be repeated in the density blocks, since CSS variables resolve where they are declared (ADR 0025). None exists yet; component tokens will.
 
 ## Token Rules
 
 ### Structure
 
-- **Tiers**: primitive → semantic. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `padding/*` and `gap/*` reference the `space` scale (ADR 0026); `z-index`, `breakpoint`, and `line-height` hold values directly because stacking order, viewport widths, and a line-height ratio paired with its font size have no meaning outside their role (ADR 0024, 0028), so no primitive exists just to feed them. Add a component tier when components exist.
-- **Group names**: primitive and semantic top-level groups never share a name (Terrazzo merges all files into one namespace). Example: primitive `weight` ↔ semantic `font-weight`.
-- **Files**: both tiers are split by category: `primitive/<category>.tokens.json`, `semantic/<category>.tokens.json`.
-- **Format**: every token declares `$type`. No group-level `$type` inheritance. Every semantic token has a `$description` that says when to use it, the same in every theme file; the Figma variable descriptions carry the same text.
-- **Dimension**: `px`, object form: `{ "value": 16, "unit": "px" }`.
-- **Color**: DTCG 2025.10 object form: `{ "colorSpace": "srgb", "components": [r, g, b], "hex": "#rrggbb" }` (components 0–1, optional `alpha`).
-- **Themes**: the DTCG resolver's `theme` modifier (`light` | `dark`, default `light`). Do not use `$extensions.mode`.
-- **Density**: the resolver's `density` modifier (`relaxed` | `compact`, default `relaxed`; ADR 0025). Only `padding/*`, `gap/within/*`, `gap/between/*`, and `size/control/*` change: compact aliases the next smaller `space` (or `dimension`) step. `space/*`, `gap/section/*`, and everything else are the same in both.
-- **Viewport**: the resolver's `viewport` modifier (`narrow` | `wide`, default `narrow`, mobile first; ADR 0029). `wide` starts at `breakpoint/md` (768px). Only `font-size/display/*`, `line-height/display/*`, and `letter-spacing/display/*` change: on narrow screens `display/xl` and `display/lg` take the values of the next smaller step (64 and 40px, with that step's line height and tracking), so `display/lg` equals `display/md`. The `text/*` composites alias them and need no change. Text sizes and everything else are the same in both.
-- **Aliases**: always the full path from the top-level group, regardless of file: `"{dimension.16}"`.
+- **Tiers**: primitive → semantic. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `padding/*` and `gap/*` reference the `space` scale (ADR 0026); `z-index`, `breakpoint`, and `line-height` hold values directly, since they have no meaning outside their role (ADR 0024, 0028). Add a component tier when components exist (ADR 0018).
+- **Group names**: primitive and semantic top-level groups never share a name (Terrazzo merges all files into one namespace): primitive `weight` ↔ semantic `font-weight`.
+- **Format**: every token declares `$type`; no group-level `$type` inheritance. Every semantic token has a `$description` that says when to use it, the same in every context file and in Figma.
+- **Values**: dimensions in `px` object form, `{ "value": 16, "unit": "px" }`. Colors in DTCG 2025.10 object form, `{ "colorSpace": "srgb", "components": [r, g, b], "hex": "#rrggbb" }` (components 0–1, optional `alpha`).
+- **Aliases**: always the full path from the top-level group, whatever the file: `"{dimension.16}"`.
 - **Naming**: kebab-case.
+
+### Modifiers
+
+The DTCG resolver's modifiers. Never `$extensions.mode`.
+
+- **theme**: `light` (default) | `dark`. Colors and shadows.
+- **density** (ADR 0025): `relaxed` (default) | `compact`. Only `padding/*`, `gap/within/*`, `gap/between/*`, and `size/control/*` change: compact aliases the next smaller `space` (or `dimension`) step.
+- **viewport** (ADR 0029): `narrow` (default, mobile first) | `wide` from `breakpoint/md` (768px). Only `font-size|line-height|letter-spacing/display/*` change: on narrow screens `display/xl` and `display/lg` take the next smaller step's values (so `display/lg` equals `display/md`). The `text/*` composites alias them and need no change.
 
 ### Primitives
 
-- `dimension/N`: N is the px value. Exception: `dimension/max` = 9999px.
-- `typeface/<font-name>`: font stack array, including fallbacks. `aspekta` (sans), `ibm-plex-serif`, `ibm-plex-mono`.
-- `weight/N`: numeric font weight (400, 500, 600, 700).
-- `tracking/N`: letter spacing in px, N = px × 100; negative values use `neg-` (`tracking/neg-50` = -0.5px).
-- `color/<hue>/N`: higher is darker. Hues (red, orange, green, blue, purple) have 10 steps (50–900); `neutral` has 13 (50–1000, including 850). Plus `color/white`, `color/black`.
-- `color/black-alpha/N`: black at N% opacity (5–90), for shadows and scrims only. There are no standalone opacity tokens.
-- `duration/N`: N ms. `easing/standard, decelerate, accelerate`: cubic Bézier.
+- `dimension/N`: N is the px value; `dimension/max` = 9999px.
+- `typeface/<font-name>`: font stack array with fallbacks: `aspekta` (sans), `ibm-plex-serif`, `ibm-plex-mono`.
+- `weight/N`: numeric font weight (400–700). `tracking/N`: letter spacing, N = px × 100, negatives as `neg-` (`tracking/neg-50` = -0.5px).
+- `color/<hue>/N`: higher is darker. Hues red, orange, green, blue, purple have 50–900; `neutral` has 50–1000 including 850. Plus `color/white`, `color/black`.
+- `color/black-alpha/N`: black at N% opacity, for shadows and scrims only. There are no standalone opacity tokens.
+- `duration/N`: N ms. `easing/standard|decelerate|accelerate`: cubic Bézier.
 
 ### Semantic
 
-- Spacing is a scale plus role tokens on top of it (ADR 0026). Pick a role token first; use `space/*` directly only when no role fits.
-  - `space/N`: the scale. px = N ÷ 25 (`space/400` = 16px), the same in every mode. N ÷ 400 is the multiple of 16px: `space/100` = 0.25, `space/500` = 1.25, `space/800` = 2. Steps 0, 50, 100 … 800, 1000, 1200, 1600 = 0, 2, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 64px: 4px apart up to 32, then 40, 48, 64.
-  - `padding/xs, sm, md, lg, xl` = space/100, 200, 300, 400, 600 (4, 8, 12, 16, 24px; compact 2, 4, 8, 12, 20): inside an element.
-  - `gap/*`: between elements (flex and grid gaps, margins between stacked items), in three families by what the gap does (ADR 0027):
-    - `gap/within/xs, sm, md, lg` = space/100, 200, 300, 400 (4, 8, 12, 16px; 0.25–1 × 16; compact 2, 4, 8, 12): spaces the items of one group.
-    - `gap/between/sm, md, lg` = space/500, 600, 800 (20, 24, 32px; 1.25–2 × 16; compact 16, 20, 28): separates groups.
-    - `gap/section/sm, md, lg` = space/1000, 1200, 1600 (40, 48, 64px): separates the regions of a page.
-    - Any `within` gap is smaller than any `between` gap, in both densities, so grouping reads at a glance (`pts/gap-order`).
-  - A role token aliases a `space/*` step, never a `dimension` directly, so the scale stays the one place values come from.
-- `radius`: t-shirt sizes. none = 0, xs = 2, sm = 4, md = 8, lg = 12, xl = 16, `full` = max.
-- `stroke`: weight names. thin = 1, thick = 2, thicker = 4. No zero-width token; "no border" means removing the border.
-- `focus-ring/width`, `focus-ring/offset`: 2px each. Color is `border/focus`.
-- `font-family`: sans (Aspekta), serif and mono (IBM Plex). Use `mono` wherever digits must line up: Aspekta has no tabular figures.
-- Type scale (ADR 0028): levels stacked together are either the same size, told apart by weight or color, or clearly apart (×1.5 or more). Never an in-between difference.
-- `font-weight`: regular, medium, semibold, bold. Every heading and display style is bold; size carries the hierarchy. No text style uses semibold.
-- `font-size`: two zones. `text/xs, sm, md, lg` = 12, 14, 16, 20 (reading and UI; `text/md` is the body default). `display/sm, md, lg, xl` = 24, 40, 64, 104 on wide screens (headings and display, about ×1.6 apart, rounded to the 4px grid); 24, 40, 40, 64 on narrow (Viewport). 12px is the minimum for text, so the scale has no smaller step (ADR 0023): `a11y/min-font-size` checks text styles, `pts/min-font-size` the scale. `pts/type-scale` checks the order and the display ratio.
-- `line-height/<zone>/<step>`: one per font-size step, same name, a unitless ratio held directly (DTCG line heights have no px) so that size × ratio is a whole 4px step: 12/16, 14/20, 16/24, 20/28, 24/28, 40/44, 64/64, 104/104. A text style uses the line height of its size; `pts/line-height-grid` checks both.
-- `letter-spacing/display/sm, md, lg, xl` = -0.25, -0.5, -1.25, -2.5px on wide screens, each step's tracking moving with its size on narrow (about -0.01em to -0.025em: larger text is tracked tighter). `normal` = 0 for every text size, `wide` = 1px for uppercase labels. px because DTCG dimensions only allow px/rem (no em).
-- `text/<role>-<size>`: `$type: typography` composites. Roles display, heading, body, label, caption, code × sizes lg, md, sm. All five properties (fontFamily, fontSize, fontWeight, letterSpacing, lineHeight) are required. display-lg, display-md, heading-lg, heading-md = display/xl, lg, md, sm; heading-sm (bold) and body-lg (regular) share text/lg as a title and subtitle pair. Display and heading styles follow the viewport through their display tokens (ADR 0029).
-- `size/icon/sm, md, lg` = 16, 24, 40. `size/control/sm, md, lg` = 32, 48, 56, compact 28, 40, 48 (shared control height for buttons, inputs, selects; in relaxed, md and up meet the 44–48px touch target).
-- `breakpoint/sm, md, lg, xl` = 640, 768, 1024, 1280 (min-width), held directly, not through `dimension` (ADR 0024). Emitted as CSS variables for reference only; custom properties can't be used inside media queries.
-- `motion/duration/fast, normal, slow` = 150, 300, 500ms. `motion/easing/standard, enter, exit`.
-- `z-index/base, dropdown, sticky, overlay, modal, popover, toast, tooltip` = 0, 1000, 1100, 1300 … 1700.
-- `shadow/sm, md, lg, xl`: t-shirt sizes, per theme (dark uses higher opacity).
+- **Spacing** (ADR 0026, 0027): a scale plus role tokens on top of it. Pick a role token first; use `space/*` only when no role fits. A role token aliases a `space/*` step, never a `dimension`.
+  - `space/N`: px = N ÷ 25 (`space/400` = 16px), the same in every mode. Steps `0`, `50`, `100` … `800`, `1000`, `1200`, `1600`: 4px apart up to 32px, then 40, 48, 64.
+  - `padding/xs–xl`: inside an element (`padding/md` = 12px).
+  - `gap/*`, between elements, in three families: `within/xs–lg` spaces the items of one group (4–16px), `between/sm–lg` separates groups (20–32px), `section/sm–lg` separates page regions (40–64px). Every `within` < every `between` < every `section`, in both densities.
+- **Border**: `radius/none–xl` and `full` (t-shirt sizes); `stroke/thin|thick|thicker` (1, 2, 4px; no zero width: "no border" means removing it); `focus-ring/width|offset` (color is `border/focus`).
+- **Typography** (ADR 0023, 0028):
+  - Levels stacked together are either the same size, told apart by weight or color, or clearly apart (×1.5 or more). Never an in-between difference.
+  - `font-family/sans|serif|mono`. Use `mono` wherever digits must line up: Aspekta has no tabular figures.
+  - `font-weight/regular|medium|semibold|bold`. Every heading and display style is bold; no text style uses semibold.
+  - `font-size`: two zones. `text/xs–lg` = 12–20px for reading and UI (`text/md` = 16px is the body default). `display/sm–xl` for headings and display, about ×1.6 apart on the 4px grid (up to 104px wide). 12px is the minimum; there is no smaller step.
+  - `line-height/<zone>/<step>`: one per font-size step, a unitless ratio held directly so that size × ratio is a whole 4px step (16/24). A text style uses the line height of its size.
+  - `letter-spacing/display/*`: tighter as size grows (about -0.01em to -0.025em, in px since DTCG has no em). `normal` = 0 for text sizes; `wide` = 1px for uppercase labels.
+  - `text/<role>-<size>`: `typography` composites, roles display, heading, body, label, caption, code × lg, md, sm, with all five properties (fontFamily, fontSize, fontWeight, letterSpacing, lineHeight). display-lg, display-md, heading-lg, heading-md use `display/xl`, `lg`, `md`, `sm`; heading-sm (bold) and body-lg (regular) share `text/lg` as a title and subtitle pair.
+- **Size**: `size/icon/sm–lg` (`md` = 24px); `size/control/sm–lg`, the shared height for buttons, inputs, and selects (`md` = 48px, compact 40; relaxed md and up meet the 44–48px touch target).
+- **Layout**: `breakpoint/sm–xl` (min-width, 640–1280px), CSS variables for reference only, since custom properties can't be used in media queries. `z-index/base, dropdown, sticky, overlay, modal, popover, toast, tooltip` in that order.
+- **Motion**: `motion/duration/fast|normal|slow`, `motion/easing/standard|enter|exit`.
+- **Elevation**: `shadow/sm–xl`, per theme (dark uses higher opacity).
 
 ### Color
 
@@ -168,78 +135,52 @@ utility/       scrim
 always/        white, black
 ```
 
-- **Layers**: `background` is the page (inside a surface, the inset fill for code blocks and neutral badges). `surface/subtle` sits on it: cards, popovers, modals, and tinted areas, one step from the background in both themes. `inverse` is the flipped fill for primary buttons, tooltips, and snackbars.
-- **Strength**: `subtle` < `base` < `strong` < `stronger`, as distance from the background (darker in light, lighter in dark). `subtle` is the soft fill everywhere; `base` is the resting default; `strong` / `stronger` are the hover and pressed fills in every group. The neutral surface has no `base`: its strong resting fill is the `inverse` layer. Never `default`, `canvas`, `raised`, `muted`, `emphasis`, or `on-`.
-- **Content**: `content/base` and `subtle` are text and icons on the background and surfaces. `content/inverse` is text on a flipped fill: on `inverse/*`, and on an intent's `surface/base`, `strong`, and `stronger`.
-- **Intents**: danger (red), warning (orange), success (green), info (blue), discovery (purple: new features, onboarding, recommendations, AI). Role first, then the same `surface` / `content` / `border` words as the neutral colors. `surface/subtle` is the soft fill (alerts, banners, soft badges), `surface/base` the strong fill (buttons, strong badges, tags). An intent's `content/base` also sits on its own `surface/subtle`.
-- **States**: interaction states are strength steps, and `$description` says hover or pressed. Every pressable fill has `strong` / `stronger`; component-specific states (selected, checked) go to a future component tier (ADR 0018). `disabled/*` is shared by every control. From hover to pressed, light gets darker and dark gets lighter.
-- **Utility**: colors outside the pairing system (the modal scrim). **Always**: the same in every theme, for icons and text on images; theme-independent, so they live in `semantic/color.tokens.json` (base set).
+- **Layers**: `background` is the page (inside a surface, the inset fill for code blocks and neutral badges). `surface/subtle` sits on it, one step from the background in both themes: cards, popovers, modals, and tinted areas. `inverse` is the flipped fill for primary buttons, tooltips, and snackbars.
+- **Strength**: `subtle` < `base` < `strong` < `stronger`, as distance from the background (darker in light, lighter in dark). `subtle` is the soft fill, `base` the resting default, `strong` / `stronger` the hover and pressed fills. The neutral surface has no `base`: its strong resting fill is `inverse`. Never `default`, `canvas`, `raised`, `muted`, `emphasis`, or `on-`.
+- **Content**: `content/base` and `subtle` go on the background and surfaces. `content/inverse` goes on a flipped fill: `inverse/*`, and an intent's `surface/base`, `strong`, `stronger`. An intent's `content/base` also sits on its own `surface/subtle`.
+- **Intents**: danger (red), warning (orange), success (green), info (blue), discovery (purple: new features, onboarding, recommendations, AI). `surface/subtle` is the soft fill (alerts, banners, soft badges), `surface/base` the strong fill (buttons, strong badges, tags).
+- **States**: interaction states are strength steps, and `$description` says hover or pressed. From hover to pressed, light gets darker and dark gets lighter. Component-specific states (selected, checked) go to a future component tier (ADR 0018). `disabled/*` is shared by every control.
+- **Utility**: colors outside the pairing system (the modal scrim). **Always**: the same in every theme, for icons and text on images; in `semantic/color.tokens.json` (base set).
 - **Descriptions**: a color's `$description` also says which content goes on a fill.
-- **Figma**: variable scopes follow the name (`content/*` and `disabled/content` → text and shape fills plus strokes; a `border` segment → strokes; `always/*` → all; everything else → frame and shape fills). The `Theme` collection holds the values that change with the theme; shadow offsets, blurs, and spreads are in `Semantic`. One exception: `always/*` stays in `Theme` (the same value in both modes) so every semantic color is in one collection for designers, while the JSON keeps it in the base set (`semantic/color.tokens.json`). The `Density` collection (modes `relaxed`, `compact`) holds only the density tokens, and the `Viewport` collection (modes `narrow`, `wide`) only the viewport tokens, the same principle as `Theme`. `Viewport` also holds `Typography/line-height/display/*-px`: Figma binds line heights as px while the tokens are ratios, so these Figma-only variables hold the px line each display step makes, and the display and heading text styles bind them. The other text styles set their line height in px. Primitives are hidden from pickers.
-- **Figma names and code syntax**: `Primitive` and `Theme` variables are named by their token path (`color/neutral/50`, `intent/danger/surface/base`). `Semantic`, `Density`, and `Viewport` variables sit in one folder per docs page, then the token path: `Spacing/` (space, padding, gap), `Typography/` (font-*, line-height, letter-spacing), `Border/` (radius, stroke, focus-ring), `Size/`, `Motion/`, `Layout/` (breakpoint, z-index), `Elevation/` (the shadow offsets, blurs, and spreads). A new semantic group goes in the folder of the docs page that shows it. Every variable's WEB code syntax is its CSS custom property, `var(--<token path with dashes>)`, so Dev Mode shows the real name whatever the folder; the shadow parts and the `*-px` line heights have none, since the CSS emits only the composite and the ratio (`--shadow-sm`, named in the effect style description).
 
-### Accessibility (required in both themes)
+### Accessibility (both themes)
 
-- Content: 4.5:1 against every paired background (WCAG 1.4.3): `content/base` and `subtle` on `background` and `surface/*`; `content/inverse/*` on `inverse/*`; an intent's `content/base` on the page and its own `surface/subtle`; an intent's `content/inverse` on its `surface/base`, `strong`, and `stronger`.
-- UI boundaries (`border/base`, `border/focus`, intent `border/base`, `inverse/*`, and an intent's `surface/base`, `strong`, `stronger`): 3:1 against `background` and `surface/*` (WCAG 1.4.11).
-- Exempt: `disabled/*` (inactive), `border/subtle` and intent `border/subtle` (decorative), `utility/*` (translucent scrim), `always/*` (sits on images; pair `always/white` with a dark overlay).
-- Translucent colors can't be contrast-checked; `npm run check` errors if one enters a contrast pair.
-- `npm run check` derives the pairs from these names (`tokens/lint/pairs.ts`), so new color tokens must follow them to be checked. A content name other than a level (`base`, `subtle`) or `inverse` is reported.
-- Steps must be visible: every step of a surface ladder (the neutral `background` / `surface/*`, `inverse/*`, each intent's `surface/*`) differs from the others, and `surface/strong` / `stronger` differ from `disabled/surface`. `npm run check` enforces this.
+`npm run check` derives the pairs from the names above (`tokens/lint/pairs.ts`), so new color tokens must follow them to be checked; a content name other than `base`, `subtle`, or `inverse` is reported.
 
-## Fonts
+- **Content 4.5:1** (WCAG 1.4.3) against every background it is paired with, as listed under Content above.
+- **UI boundaries 3:1** (WCAG 1.4.11) against `background` and `surface/*`: `border/base`, `border/focus`, intent `border/base`, `inverse/*`, and an intent's `surface/base`, `strong`, `stronger`.
+- **Exempt**: `disabled/*` (inactive), `border/subtle` and intent `border/subtle` (decorative), `utility/*` (translucent), `always/*` (sits on images; pair `always/white` with a dark overlay). A translucent color in a contrast pair is an error.
+- **Visible steps**: every step of a surface ladder differs from the others, and `surface/strong` / `stronger` differ from `disabled/surface`.
 
-- All three families are self-hosted in `@pts/web`; consumers `@import "@pts/web/fonts.css"` before `@pts/web/tokens.css`. Nothing is loaded from a font service.
-  - Aspekta (sans): one variable woff2, weight 100–900.
-  - IBM Plex Mono and IBM Plex Serif: static woff2 at 400, 500, 600, 700 (the font-weight tokens).
-- Licenses: SIL OFL 1.1, one `LICENSE.txt` per folder in `packages/web/fonts/`. "Aspekta" and "Plex" are Reserved Font Names, so ship files unmodified (no subsetting or conversion) or rename the family.
-- Aspekta is Latin only; the product UI is English-only. Missing glyphs (e.g. `^ ~ ± •`) fall back to `system-ui`. It has no tabular figures: use `font-family/mono` where digits must line up.
+## After a token change
 
-## Token Docs (Storybook)
-
-- Docs are generated from the token JSON. New tokens in an existing group appear without code changes.
-- A token's `$description` shows between its name and its CSS variable (`TokenTable`, text style specimens, shadow cards), in `text/body-sm` sans against the mono name and variable. Edit the description in the JSON, not in the docs.
-- The sidebar mirrors the tiers, ordered by how often each is used: Overview → Semantic → Primitive (a Component group would go above Semantic). Semantic pages show only semantic tokens; primitive pages are reference for defining tokens and say so, since product code uses semantic tokens only.
-- Page layout: `<PageHeader eyebrow title groups>` (stacked, left-aligned: eyebrow · token count, title, lead), then `<Section title path lead>…</Section>` blocks (heading, the token path it covers such as `space/*`, lead, full-width content). Sections are separated by space, not lines; only the Introduction uses `<Section divider>`. Table rows keep hairlines for scanning. No cards or boxes; `ThemeCell` is the only filled surface because its background is the information.
-- When adding a new **group**, wrap its block in a section on the matching `.mdx` page (e.g. `<Section title="New group" path="new-group/*"><TokenTable prefix="new-group" /></Section>`) and add the prefix to the page's `groups`.
-- **Aligned with the Figma specimens**: the same pages in the same order, the same token sections with the same titles and paths, and the same section leads. Each side may add explanatory sections of its own (the docs' Rules, Preview, Raised surface, Sans coverage; Figma's Shadow variables). A lead differs only by a platform-specific sentence (CSS usage in the docs; bound variables or Figma limits in Figma). Token paths read with slashes on both sides (`surface/subtle`, `→ color/neutral/50`); only CSS variables use dashes and the code props (`prefix`) keep the JSON's dots. When a section or lead changes on one side, change the other.
-- Groups that differ by theme are shown with light and dark side by side. `ThemeCell` sets `data-theme` so CSS variables inside it resolve to that theme. Groups that differ by density are shown with relaxed and compact side by side the same way (`DensityCell` sets `data-density`). Groups that differ by viewport are shown with narrow and wide side by side; a cell can't switch a media query, so their previews use resolved values, and the text style specimens follow the window.
-- The Figma specimens do the same within one frame per page, token first in every table: a table whose group differs by density or viewport has a column per mode, each cell (sample and value) pinning its mode, and a text style shows a narrow and a wide specimen only if it changes. Color and Elevation keep a light and a dark frame, since nearly every row differs by theme. A new modifier adds columns, not frames.
-- Contrast badges use the same pairing rules as `npm run check` (both import `tokens/lint/pairs.ts`); each badge shows the lowest ratio among a token's pairs.
-- Sample text in the docs is English only.
-- Docs styling dogfoods the tokens: color, type, spacing, radius, stroke, shadow, and motion come from `@pts/web` variables. Values that only describe the docs layout or sample geometry are `--docs-*` variables at the top of `docs.css`; never add product tokens just for the docs. Card preview illustrations may use raw geometry.
-- The docs fit phones down to 360px without page-level horizontal scroll. Container queries on the content width (`docs.css`) switch layouts: below 640px the gutter shrinks, side-by-side blocks stack, and every table row becomes a block (the first cell across, the other cells labeled by their header); tables with a preview per mode stack below the full 1080px, and palette ramps stand upright below about 880px. A new table sets its stacked columns (`cols()` in `components.tsx`) and gives each cell after the first a `data-label`.
-- Light/dark: the sun/moon button at the top right toggles a `theme` global. The preview sets `data-theme` on `<html>` from it, so the whole docs page switches through token variables; the manager switches between the two UI themes. The choice is saved in localStorage; `?globals=theme:dark` in the URL also works. The density button next to it does the same for `data-density` (`.storybook/density.ts`, `?globals=density:compact`).
-- The Storybook UI themes (`.storybook/theme.ts`) use hex copies of token values, since the manager can't read CSS variables. Update them if those tokens change.
-- Manager files (`.storybook/manager.tsx`, `theme.ts`, `density.ts`, `main.ts`) are only compiled at startup: restart `npm run storybook` after editing them. The manager uses the classic JSX runtime, so `manager.tsx` imports React.
+- Storybook updates by itself, except the hex copies in `apps/storybook/.storybook/theme.ts` (the manager can't read CSS variables): update them if the tokens they copy change.
+- Figma doesn't: load the `figma` skill and bring it in line.
+- The change type (breaking, new, fix) decides the next version; see Git Convention.
 
 ## Decisions
 
-Record decisions that change token structure, naming, tooling, or the pipeline as ADRs: `docs/adr/NNNN-kebab-case-title.md`, in English.
+Record decisions that change token structure, naming, tooling, or the pipeline as ADRs: `docs/adr/NNNN-kebab-case-title.md`, with the sections of the recent ones.
 
-- Status lifecycle: `proposed` while under discussion, `accepted` once implemented. When a later ADR changes an accepted one, add `(amended by NNNN)` to its status; use `superseded by NNNN` only when it is replaced entirely.
+- Status: `proposed` while under discussion, `accepted` once implemented. When a later ADR changes an accepted one, add `(amended by NNNN)`; `superseded by NNNN` only when it is replaced entirely.
+- A rule that follows from a decision goes where the table above says, not into the ADR alone.
 
 ## Continuity
 
-Work continues across chats and machines through the repository only. Chat history and Claude's local memory stay on one machine, so don't rely on them.
+Work continues across chats and machines through the repository only; chat history and local memory stay on one machine.
 
-- A session starts with git state and `docs/progress.md` in context (the SessionStart hook in `.claude/settings.json`). If the branch is behind its upstream, pull before editing.
-- `docs/progress.md` is the handoff note: current state, in-flight branches, next steps, open questions. When a unit of work is done, or before stopping mid-task, update it in the same commit. Record what isn't obvious from the code and git log; keep it short and replace stale lines instead of appending history.
-- Push work branches before switching machines. Uncommitted changes don't travel.
-- Cloud sessions (`claude --cloud`, claude.ai/code) clone the pushed branch, not the local checkout. A second SessionStart hook runs `npm ci` there (only when `CLAUDE_CODE_REMOTE` is `true`), which also wires the pre-commit hook. Name the work branch `feature/xxx` in the task.
-- Several sessions may share this checkout. Before switching branches here, check for busy sessions (`ListAgents`) and work in a separate git worktree if there is one. After an action that changes another session's branch or files (a rebase, a merge, an edit to a shared file), message that session directly (`SendMessage`): what changed, the new commit hashes, and which files to re-read.
-- Decisions go in ADRs, rules in this file, not in `progress.md`.
+- A session starts with git state and `docs/progress.md` in context (SessionStart hook). If the branch is behind its upstream, pull before editing.
+- `docs/progress.md` is the handoff note: current state, in-flight branches, next steps, open questions. Update it in the same commit when a unit of work is done, or before stopping mid-task. Record only what isn't in the code, git log, ADRs, or rules; replace stale lines instead of appending history.
+- Push work branches before switching machines. Cloud sessions (`claude --cloud`, claude.ai/code) clone the pushed branch and run `npm ci` through a second SessionStart hook. Name the work branch `feature/xxx` in the task.
+- Several sessions may share this checkout. Before switching branches, check for other sessions (`ListAgents`) and work in a separate git worktree (`.claude/worktrees/`) if there is one. After changing another session's branch or shared files, message it (`SendMessage`): what changed, the new commit hashes, which files to re-read.
 
 ## Deferred
 
-- Figma sync mechanism. Figma is treated as one consumer of the tokens: when tokens change, update its variables and specimens by hand (or a one-off script). The plan is Pro, so the REST variables API (Enterprise only) is not an option.
-- Native platform outputs (iOS, Android). Terrazzo has no Android plugin and a pre-1.0 Swift one: write a custom Terrazzo plugin rather than adding Style Dictionary (ADR 0022).
+- Figma sync: Figma is updated by hand (the `figma` skill).
+- Native platforms (iOS, Android): a custom Terrazzo plugin rather than Style Dictionary (ADR 0022).
 
 ## Git Convention
 
-- **main**: stable
-- **feature/xxx**: work branches
-- Releases: annotated tags on `main` (`v0.1.0`), see ADR 0014
-  - Semantic Versioning, one fixed version for every `@pts/*` package. Bump all workspaces together: `npm version X.Y.Z --workspaces --no-git-tag-version`.
-  - `0.x` during initial development: breaking changes bump MINOR, new tokens and fixes bump PATCH. From `1.0.0`, standard SemVer.
-  - Breaking = renaming or removing a token, changing what a name means, or changing the output format or selectors. Adjusting a value within its role is a fix.
+- `main` is stable; work happens on `feature/xxx` branches.
+- Releases are annotated tags on `main` (`v0.1.0`), ADR 0014. One Semantic Version for every `@pts/*` package; bump all together: `npm version X.Y.Z --workspaces --no-git-tag-version`.
+- In `0.x`, breaking changes bump MINOR, new tokens and fixes bump PATCH. Breaking = renaming or removing a token, changing what a name means, or changing the output format or selectors. Adjusting a value within its role is a fix.
