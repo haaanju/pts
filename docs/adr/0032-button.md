@@ -3,7 +3,7 @@
 - Status: proposed
 - Date: 2026-10-02
 
-The spec for the first component, written before the Figma component and the code, one question at a time. This draft settles the variants, sizes, and anatomy; the rest of the spec is listed under Open and is added here as it is decided. The ADR becomes `accepted` once the code ships.
+The spec for the first component, written before the Figma component and the code, one question at a time. This draft settles the variants, sizes, anatomy, and states; the rest of the spec is listed under Open and is added here as it is decided. The ADR becomes `accepted` once the code ships.
 
 ## What we learned
 
@@ -27,6 +27,8 @@ For sizes, `size/control/*` already sets a shared height for buttons, inputs, an
 - **16 · 24 · 32**: lg's 32px is past `padding/xl` and would need a new token.
 
 For the anatomy, an icon reads heavier than text, so with the same padding on both sides the icon side looks wider; Material 3 pads the icon side less. A pill radius was set aside because buttons share their row with inputs and selects, which read better with the same corners. Truncating a long label with an ellipsis hides what the button does, so a label is never cut.
+
+For states, two loading shapes were compared: a spinner replacing the content at the same width, and a spinner in the leading icon slot with the label kept. The second shows what is happening but widens a button that had no icon, more so if the label changes to "Saving…". For disabled, the HTML `disabled` attribute is simplest but takes the button out of the tab order, so keyboard and screen-reader users can't find it or learn why it is off.
 
 ## Why it matters
 
@@ -75,10 +77,21 @@ Three sizes, one per `size/control/*` step, so a button sits in a row with an in
 - **Width**: the content's width by default. A full-width option fills the container and keeps the content centered (a bottom call to action on a phone).
 - **Long labels are never cut.** The label stays on one line, with no wrapping and no ellipsis; the button grows to fit, and a layout that can't fit it changes the layout or the label. Icons never shrink.
 
-### Focus and disabled
+### States
 
-- **Focus**, every variant: an outline in `border/focus`, `focus-ring/width` wide at `focus-ring/offset`, on keyboard focus only.
-- **Disabled**, every variant: content `disabled/content`; fill `disabled/surface`, except Ghost, which stays transparent; Secondary keeps its outline in `disabled/border`. No hover or pressed.
+Rest, hover, and pressed are in the variant table. The others:
+
+| State | Look | Focusable | Responds to hover and press | Accessibility |
+|---|---|---|---|---|
+| Focus | an outline in `border/focus`, `focus-ring/width` wide at `focus-ring/offset`, on keyboard focus only (`:focus-visible`) | — | — | — |
+| Disabled | content `disabled/content`; fill `disabled/surface`, except Ghost, which stays transparent; Secondary's outline `disabled/border` | yes | no | `aria-disabled="true"` |
+| Loading | the variant's colors; a spinner replaces the content | yes | no | `aria-busy="true"`; the label stays the accessible name |
+
+- **Disabled stays focusable.** It uses `aria-disabled` instead of the HTML `disabled` attribute, which removes the button from the tab order. A keyboard or screen-reader user then still finds the button and can be told why it is unavailable (a tooltip or nearby text), and focus doesn't jump when a button becomes disabled. Code blocks the click itself. This is what Primer and Atlassian do.
+- **Loading keeps the width.** The label and icons stay in place but invisible, and a spinner is centered over them, so the button doesn't resize and the layout doesn't move when loading starts or ends. The spinner is the size of the button's icon (`size/icon/sm`, or `md` for `lg`) in the variant's content color. Loading keeps the variant's colors, since the action is under way, not unavailable; like disabled, it stays focusable and ignores clicks.
+- **The spinner keeps turning under `prefers-reduced-motion`**: it is the only sign that something is happening (WCAG 2.3.3 exempts essential motion).
+- **State changes animate** fill, border, and content colors over `motion/duration/fast` with `motion/easing/standard`, and switch instantly under `prefers-reduced-motion`.
+- **No selected or toggle state.** A button that stays on (Bold in a toolbar, a favorite) is a different component, a toggle button or a segmented control, decided with its own component tokens (ADR 0018). Button only triggers an action.
 
 ### Contrast
 
@@ -98,7 +111,6 @@ Every pair a variant uses is one `npm run check` already derives (`tokens/lint/p
 
 Decided next, in this order, and added above:
 
-- **States beyond these**: loading, and anything component-specific (ADR 0018).
 - **Component tokens or semantic tokens directly**, and whether a component token that aliases a density token is repeated in the density blocks (ADR 0025).
 - **Code**: CSS classes or React, where it lives (ADR 0016 roles), and whether props take tokens by category (`tokens.d.ts` types every value as `string`, ADR 0030).
 - **Figma**: the component, checked in both themes and densities before the code.
