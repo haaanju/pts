@@ -11,7 +11,7 @@
     "noEmit": true,
     "types": ["vite/client"],
     // Type-check against the component source, so typecheck needs no build of @pts/components first
-    "paths": { "@pts/components/*": ["../../packages/components/src/*"] }
+    "paths": { "@pts/components/*": ["../components/src/*"] }
   },
   "include": ["src", ".storybook", "vite.config.ts"]
 }

@@ -1,6 +1,6 @@
 # Plain
 
-A personal study project: building my own design token pipeline while learning how design token monorepos work.
+A personal study project: a design token monorepo, built end to end to learn how token pipelines work, and to work out practices for the tooling around them (linting, accessibility checks, docs, automation) to share with colleagues. Tokens and their outputs are the product; components exist only to test the component tier (ADR 0034).
 
 **Plain** is the display name (Storybook title and docs). `pts` / `@pts/*` are the code, package, and repository names.
 
@@ -18,7 +18,7 @@ Each fact has one home; elsewhere, link to it (ADR 0031).
 | Rules for every task | this file | always |
 | Storybook docs rules | `.claude/rules/storybook.md` | with files in `apps/storybook/` |
 | Web build and font rules | `.claude/rules/web.md` | with files in `packages/web/` |
-| Component code rules | `.claude/rules/components.md` | with files in `packages/components/` or `apps/storybook/src/component/` |
+| Component code rules | `.claude/rules/components.md` | with files in `apps/components/` or `apps/storybook/src/component/` |
 | Figma rules and procedures | `.claude/skills/figma/` | the `figma` skill, before any Figma work |
 | Session handoff: state, in flight, next | `docs/progress.md` | printed at session start |
 | Why a decision was made | `docs/adr/` | on demand |
@@ -34,7 +34,7 @@ Each fact has one home; elsewhere, link to it (ADR 0031).
 
 ## Structure
 
-Three roles (ADR 0016): `tokens/` is the source; `packages/` holds what ships, one package per platform for the token outputs (`@pts/<platform>`, depending on `@pts/tokens`) plus the web components (`@pts/components`, ADR 0032); `apps/<name>` holds tools and docs that run.
+Three roles (ADR 0016): `tokens/` is the source; `packages/` holds what ships, one package per platform for the token outputs (`@pts/<platform>`, depending on `@pts/tokens`); `apps/<name>` holds what runs or tests the tokens: the docs and the component fixtures (`@pts/components`, ADR 0034), never published.
 
 ```
 tokens/                     @pts/tokens (private)
@@ -45,7 +45,7 @@ tokens/                     @pts/tokens (private)
   src/semantic/<category>[.<context>].tokens.json
   src/component/<component>.tokens.json
 packages/web/               @pts/web: dist/ tokens.css, tokens.js + .d.ts, tokens.scss; fonts/
-packages/components/        @pts/components: Lit web components, src/ → dist/ (<pts-button>)
+apps/components/            @pts/components: Lit web components testing the component tier, src/ → dist/ (<pts-button>)
 apps/storybook/             @pts/storybook: token docs
 docs/progress.md, docs/adr/
 .claude/                    settings.json (SessionStart hooks), rules/, skills/
@@ -63,7 +63,7 @@ docs/progress.md, docs/adr/
   - `pts/*`: `theme-parity`, `contrast`, `component-pairs`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`.
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it.
 - `npm run typecheck`: TypeScript for the lint plugin, the components, and Storybook.
-- `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/components` → `packages/components/dist/`).
+- `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/components` → `apps/components/dist/`).
 - `npm run storybook`: docs dev server (http://localhost:6006), builds `@pts/web` and `@pts/components` first. `npm run build-storybook`: static build.
 - The pre-commit hook runs check and typecheck and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus both builds on pushes to `main` and on pull requests.
 

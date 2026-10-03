@@ -1,12 +1,12 @@
 ---
 paths:
-  - "packages/components/**"
+  - "apps/components/**"
   - "apps/storybook/src/component/**"
 ---
 
 # @pts/components
 
-Web components written with Lit, one file per element in `src/` (`button.ts` defines `<pts-button>`), each a subpath export (`@pts/components/button.js`). The spec of each lives in its ADR (Button: ADR 0032); the code follows it.
+Fixtures for the component tier, not a published library (ADR 0034): a component is added only when the tier needs a test it doesn't have. They are written with Lit as web components, one file per element in `src/` (`button.ts` defines `<pts-button>`), each a subpath export (`@pts/components/button.js`). The spec of each lives in its ADR (Button: ADR 0032); the code follows it.
 
 ## Code
 

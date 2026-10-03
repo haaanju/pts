@@ -14,14 +14,18 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## Next
 
-In no set order:
+The monorepo comes first; no new components (ADR 0034). In this order:
 
-- Next component: Input or Select would reuse `size/control/*` and `radius/md` (ADR 0032 keeps them shared). Start with the spec, as for Button.
+1. Release automation: version bumps, tags, and a changelog are done by hand (ADR 0014).
+2. Accessibility checks in Storybook (`addon-a11y`) on the token docs pages.
+3. A guide for colleagues: each practice in the repository, where it lives, and the ADR that says why.
+4. Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
+
+Waiting for a reason, not scheduled:
+
 - Large containers may need more than `padding/xl` (24px); buttons don't (ADR 0032).
-- A literal-typed `tokens.d.ts` (ADR 0030) waits for a component whose properties take tokens (a Box or Stack).
+- A literal-typed `tokens.d.ts` (ADR 0030) waits for a component whose properties take tokens (a Box or Stack); per ADR 0034 that component is added only as a fixture for it.
 - Dark-mode letter spacing: light text on a dark page reads tighter, so fine-tune letter spacing in dark. That makes `letter-spacing` (and the `text/*` composites that use it) theme-dependent: it would move into the theme files, the dark CSS blocks, and the Figma `Theme` collection. Since ADR 0028, text sizes share `letter-spacing/normal` (0), so dark may need per-size text values too. Needs an ADR. Low value for its cost: keep it until dark text visibly needs it.
-
-Still deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 ## Open questions
 

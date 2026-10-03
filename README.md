@@ -2,7 +2,7 @@
 
 Design tokens in the [DTCG](https://www.designtokens.org/) format, built with [Terrazzo](https://terrazzo.app) into CSS custom properties (with JS/TS and SCSS references to them), with light and dark themes, two densities, responsive display sizes, bundled fonts, and generated documentation.
 
-Plain is a personal study project: a small design token monorepo built end to end, from token source to published output, to learn how token pipelines work.
+Plain is a personal study project: a small design token monorepo built end to end, from token source to published output, to learn how token pipelines work and to work out practices for the tooling around them (linting, accessibility checks, docs, automation).
 
 ## Packages
 
@@ -10,10 +10,10 @@ Plain is a personal study project: a small design token monorepo built end to en
 |---------|---------------|
 | [`@pts/tokens`](tokens) | The token source (DTCG JSON), the resolver that combines the files and modes, and the lint rules that check them |
 | [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
-| [`@pts/components`](packages/components) | Web components on the tokens, framework-agnostic (Lit): `<pts-button>` (`@pts/components/button.js`) |
 | [`@pts/storybook`](apps/storybook) | Token and component documentation, generated from the token source |
+| [`@pts/components`](apps/components) | Internal, not published: web components (Lit) that test the component tier, `<pts-button>` |
 
-The source lives in `tokens/`, shippable outputs in `packages/` (one package per platform), and the docs in `apps/`.
+The source lives in `tokens/`, shippable outputs in `packages/` (one package per platform), and the docs and test fixtures in `apps/`.
 
 ## Tokens
 
@@ -92,7 +92,7 @@ const title = { ...text.headingMd }; // fontFamily, fontSize, fontWeight, letter
 
 Since the values are `var(…)`, Sass can't compute with them, and breakpoints can't be used in `@media` (the same limit as in CSS).
 
-**Components.** `@pts/components` holds web components built on these tokens, so they work in any framework. Load the fonts and tokens once, then import an element to define it:
+**Components.** `@pts/components` is not a component library: its web components exist to test the component tokens and show how code consumes them (ADR 0034). Inside this repository, load the fonts and tokens once, then import an element to define it:
 
 ```js
 import "@pts/web/fonts.css";
