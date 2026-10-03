@@ -1,6 +1,6 @@
 // Tags the current version and creates its GitHub Release (ADR 0035), run by the Release workflow
-// on main when no changesets are pending, that is, after a release PR is merged. It does nothing
-// for a version that is already tagged and released, so it is safe to run on every push.
+// on main when the version has no tag or release yet, that is, after a release PR is merged. It
+// skips whichever of the two already exists, so a failed run can be repeated.
 // The tag is `vX.Y.Z` (ADR 0014); its message and the release notes are that version's section
 // of packages/web/CHANGELOG.md.
 import { execFileSync } from "node:child_process";

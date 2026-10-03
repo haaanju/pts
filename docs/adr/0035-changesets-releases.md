@@ -47,7 +47,7 @@ Release notes were also compared by where they live: a root changelog (Changeset
 - `.changeset/changelog.mjs`: changelog lines without commit hashes or dependency notes.
 - `npm run version-packages`: `changeset version`, then removes the other packages' changelogs and updates `package-lock.json`.
 - `.github/scripts/check-changesets.mjs` (CI, pull requests): `changeset status` plus the rules above. Verified to reject a changeset without `@pts/web`, a `New:` with `minor`, and a summary without a prefix.
-- `.github/workflows/release.yml`: `changesets/action@v2` for the release PR (its own releases off), then `npm run release` (`.github/scripts/release.mjs`) when no changesets are pending. That script does nothing for a version already tagged and released, so it is safe on every push; on the first push it creates the missing GitHub Release for `v0.9.3`.
+- `.github/workflows/release.yml`: when the version on `main` has no tag or GitHub Release yet, check, typecheck, build, and `npm run release` (`.github/scripts/release.mjs`), which skips whichever already exists; then `changesets/action@v2` for the release PR (its own releases off). The action runs last because it leaves the next version's bumps in the working tree. The action's `has-changesets` output can't gate this, since an empty changeset counts as pending: the first run, with only an empty changeset on `main`, skipped the release step. On the next push it creates the missing GitHub Release for `v0.9.3`.
 - Repository setting: GitHub Actions may create pull requests.
 - ADR 0014 is marked `amended by 0035`; its release steps are replaced by the ones above.
 
