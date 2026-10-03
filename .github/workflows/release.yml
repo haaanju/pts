@@ -1,17 +1,21 @@
 name: Release
 
-# ADR 0035. While changesets are pending on main, opens or updates the release PR, which bumps
-# every workspace and writes packages/web/CHANGELOG.md. Whenever the version on main has no tag
-# or GitHub Release yet (once that PR is merged, or after a failed run), verifies the build, tags
-# vX.Y.Z, and creates the release. The changesets output can't decide this: an empty changeset
-# counts as pending. The release PR runs no CI (it is opened with the workflow token), so this
-# workflow verifies its commit and reports the result as `verify`, the check main requires.
+# ADR 0035, 0041. Runs when CI passes on a push to main, at the commit CI checked, so nothing is tagged
+# before every check (Storybook and the accessibility check included) has passed on it.
+# While changesets are pending on main, opens or updates the release PR, which bumps every workspace
+# and writes packages/web/CHANGELOG.md. Whenever the version on main has no tag or GitHub Release yet
+# (once that PR is merged, or after a failed run), tags vX.Y.Z and creates the release. The changesets
+# output can't decide this: an empty changeset counts as pending.
+# The release PR runs no CI (it is opened with the workflow token), so this workflow verifies its
+# commit and reports the result as `verify`, the check main requires.
 
 on:
-  push:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [main]
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency: release
 
 permissions:
   contents: write
@@ -19,11 +23,32 @@ permissions:
   statuses: write
 
 jobs:
+  # A run for a commit that is no longer the tip of main stops: the newer commit's own CI run releases,
+  # and a late run can't reset the release PR to older changes.
+  tip:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      current: ${{ steps.tip.outputs.current }}
+    steps:
+      - id: tip
+        run: |
+          tip=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
+          if [ "$tip" = "$HEAD_SHA" ]; then echo "current=true" >> "$GITHUB_OUTPUT"
+          else echo "current=false" >> "$GITHUB_OUTPUT"; echo "main is at $tip now; its own CI run will release"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+
   release:
+    needs: tip
+    if: needs.tip.outputs.current == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
@@ -39,9 +64,6 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ github.token }}
-      # A PR opened with the workflow token runs no CI, so the release is verified before it is tagged.
-      - if: steps.released.outputs.done == 'false'
-        run: npm run check && npm run typecheck && npm run build
       - if: steps.released.outputs.done == 'false'
         run: |
           git config user.name "github-actions[bot]"
@@ -62,9 +84,9 @@ jobs:
           git fetch -q origin changeset-release/main
           git checkout -q --force FETCH_HEAD
           state=success
-          { npm ci && npm run check && npm run typecheck && npm run build; } || state=failure
+          { npm ci && npm run check && npm test && npm run typecheck && npm run build; } || state=failure
           gh api "repos/$GITHUB_REPOSITORY/statuses/$(git rev-parse HEAD)" -f state=$state -f context=verify \
-            -f description="check, typecheck, and build, run by the Release workflow" \
+            -f description="check, test, typecheck, and build, run by the Release workflow" \
             -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           [ "$state" = success ]
         env:
