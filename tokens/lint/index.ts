@@ -3,6 +3,7 @@
 import type { Plugin } from "@terrazzo/parser";
 import colorHex from "./rules/color-hex.ts";
 import componentPairs from "./rules/component-pairs.ts";
+import componentStates from "./rules/component-states.ts";
 import contrast from "./rules/contrast.ts";
 import densityOrder from "./rules/density-order.ts";
 import gapOrder from "./rules/gap-order.ts";
@@ -22,6 +23,7 @@ export default function pts(): Plugin {
       "pts/theme-parity": themeParity,
       "pts/contrast": contrast,
       "pts/component-pairs": componentPairs,
+      "pts/component-states": componentStates,
       "pts/visible-steps": visibleSteps,
       "pts/density-order": densityOrder,
       "pts/gap-order": gapOrder,

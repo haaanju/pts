@@ -10,8 +10,11 @@ import { files, loadResolver } from "../../source.ts";
 type Options = {
   /** semantic groups that may hold raw values (z-index, breakpoint: stacking order and viewport widths have no meaning outside their role; line-height: a ratio only means something paired with its font size) */
   rawValues: string[];
-  /** semantic groups that may alias other semantic tokens (text/*: composites of semantic properties) */
-  semanticAliases: string[];
+  /**
+   * role groups and the only groups they alias, semantic ones included (text/*: composites of the semantic typography
+   * properties; padding/* and gap/*: steps of the space/* scale, never a dimension, ADR 0026)
+   */
+  roleAliases: Record<string, string[]>;
 };
 
 /** Leaves of a value that are not aliases; a color or dimension object counts as one leaf */
@@ -30,19 +33,20 @@ const aliasesIn = (value: unknown): string[] => {
 
 const TIERS = ["primitive", "semantic", "component"];
 
-const rule: LintRule<"FOLDER" | "RAW_VALUE" | "SEMANTIC_ALIAS" | "UPWARD_ALIAS" | "COMPONENT_RAW" | "COMPONENT_ALIAS", Options> = {
+const rule: LintRule<"FOLDER" | "RAW_VALUE" | "SEMANTIC_ALIAS" | "ROLE_ALIAS" | "UPWARD_ALIAS" | "COMPONENT_RAW" | "COMPONENT_ALIAS", Options> = {
   meta: {
     docs: { description: "Token files sit in primitive/, semantic/, or component/; semantic tokens alias primitives, component tokens alias semantic tokens." },
     messages: {
       FOLDER: "{{file}}: token files go in primitive/, semantic/, or component/",
       RAW_VALUE: "{{file}}: {{id}} holds a raw value ({{value}}); semantic tokens alias a primitive",
       SEMANTIC_ALIAS: "{{file}}: {{id}} → {{ref}} is a semantic token; semantic tokens alias a primitive",
+      ROLE_ALIAS: "{{file}}: {{id}} → {{ref}}; {{group}}/* aliases {{allowed}} only",
       UPWARD_ALIAS: "{{file}}: {{id}} → {{ref}} is a component token; tiers alias downward only",
       COMPONENT_RAW: "{{file}}: {{id}} holds a raw value ({{value}}); component tokens alias a semantic token",
       COMPONENT_ALIAS: "{{file}}: {{id}} → {{ref}} is a {{tier}} token; component tokens alias a semantic token",
     },
   },
-  defaultOptions: { rawValues: [], semanticAliases: [] },
+  defaultOptions: { rawValues: [], roleAliases: {} },
   async create({ report, options }) {
     const all = files(await loadResolver());
     const tierOf = new Map(all.flatMap(({ tier, tokens }) => Object.keys(tokens).map((id) => [id, tier] as const)));
@@ -69,10 +73,11 @@ const rule: LintRule<"FOLDER" | "RAW_VALUE" | "SEMANTIC_ALIAS" | "UPWARD_ALIAS" 
         for (const ref of aliasesIn(token.$value)) {
           if (tierOf.get(ref) === "component") report({ messageId: "UPWARD_ALIAS", data: { file, id, ref: `{${ref}}` } });
         }
-        if (!options.semanticAliases.includes(group)) {
-          for (const ref of aliasesIn(token.$value)) {
-            if (tierOf.get(ref) === "semantic") report({ messageId: "SEMANTIC_ALIAS", data: { file, id, ref: `{${ref}}` } });
-          }
+        const allowed = options.roleAliases[group];
+        for (const ref of aliasesIn(token.$value)) {
+          if (allowed && !allowed.includes(ref.split(".")[0]))
+            report({ messageId: "ROLE_ALIAS", data: { file, id, ref: `{${ref}}`, group, allowed: allowed.map((g) => `${g}/*`).join(", ") } });
+          else if (!allowed && tierOf.get(ref) === "semantic") report({ messageId: "SEMANTIC_ALIAS", data: { file, id, ref: `{${ref}}` } });
         }
       }
     }

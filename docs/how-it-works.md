@@ -35,12 +35,12 @@ Three parts that may be the most interesting to look at:
 
 ## Checks as code
 
-`npm run check` runs Terrazzo's built-in lint rules plus 13 project rules ([`tokens/lint/rules/`](../tokens/lint/rules)). Terrazzo lints the default mode only, so every project rule that compares values checks every theme × density × viewport permutation; the rules about names, files, and the resolver read those directly ([ADR 0021](adr/0021-terrazzo-lint.md)).
+`npm run check` runs Terrazzo's built-in lint rules plus 14 project rules ([`tokens/lint/rules/`](../tokens/lint/rules)). Terrazzo lints the default mode only, so every project rule that compares values checks every theme × density × viewport permutation; the rules about names, files, and the resolver read those directly ([ADR 0021](adr/0021-terrazzo-lint.md)).
 
 - **A built-in rule first.** A project rule exists only when no built-in one does the job, and its file header says why ("Why not built-in: …"). Read the headers to see what each rule enforces.
 - **The rules are tested too.** A rule that stops reporting looks the same as tokens that pass, so `npm test` breaks each rule on purpose in a copy of the tokens and expects `tz check` to report it ([`tokens/lint/rules.test.ts`](../tokens/lint/rules.test.ts), [ADR 0037](adr/0037-lint-rule-tests.md)).
 - **The output is tested against the resolver.** `npm test` also builds `@pts/web` and checks that `tokens.css` has a block for every modifier context holding every token that context changes (and none another modifier changes), and that `tokens.js`, `tokens.d.ts`, and `tokens.scss` hold every token. The expectations come from Terrazzo, not a snapshot, so a new mode the build doesn't emit fails ([`packages/web/test/output.test.ts`](../packages/web/test/output.test.ts), [ADR 0039](adr/0039-audit-checks.md)).
-- **What the rules cover**: contrast (`contrast`, `component-pairs`), visible state changes (`visible-steps`), mode parity and descriptions (`theme-parity`), scale order (`density-order`, `gap-order`, `type-scale`, `line-height-grid`, `min-font-size`), tiers (`tier-aliases`), consistent color values (`color-hex`), files the build would silently skip (`registered-files`), and modifiers that overlap (`orthogonal-modifiers`).
+- **What the rules cover**: contrast (`contrast`, `component-pairs`), visible state changes (`visible-steps`), mode parity, descriptions, and colors that stay the same (`theme-parity`), component states (`component-states`), scale order (`density-order`, `gap-order`, `type-scale`, `line-height-grid`, `min-font-size`), tiers (`tier-aliases`), consistent color values (`color-hex`), files the build would silently skip (`registered-files`), and what each modifier may change (`orthogonal-modifiers`).
 - **Gates**: a pre-commit hook ([`.githooks/pre-commit`](../.githooks/pre-commit)) runs check and typecheck; CI ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) adds the rule and output tests, both builds, the docs accessibility check, and the changeset check, and `main` accepts only pull requests that pass it ([ADR 0020](adr/0020-hand-edited-tokens-and-ci-gates.md)).
 
 ## Outputs
@@ -77,7 +77,7 @@ The docs are hosted at https://haaanju.github.io/pts/, deployed from `main` afte
 | What | Why | ADR |
 |---|---|---|
 | One version for every package; breaking = a token renamed or removed, a name's meaning changed, or the output format changed | For tokens, the public API is the set of names | [0014](adr/0014-versioning-policy.md) |
-| A changeset per pull request, summary starting `Breaking:`, `New:`, or `Fix:`, checked against the bump | The note is written by whoever made the change, when they made it | [0035](adr/0035-changesets-releases.md) |
+| A changeset per pull request, summary starting `Breaking:`, `New:`, or `Fix:`, checked against the bump and against the token changes (a removed token is `Breaking:`) | The note is written by whoever made the change, when they made it | [0035](adr/0035-changesets-releases.md), [0040](adr/0040-audit-checks-2.md) |
 | A "Release" pull request collects changesets; merging it tags `vX.Y.Z` and publishes the GitHub Release from the changelog | Releasing is a reviewable merge, and the timing stays a choice | [0035](adr/0035-changesets-releases.md) |
 
 How to write a changeset: [`CONTRIBUTING.md`](../CONTRIBUTING.md#releases). What changed in each version: [`packages/web/CHANGELOG.md`](../packages/web/CHANGELOG.md).

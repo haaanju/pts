@@ -164,6 +164,28 @@ const cases: Case[] = [
       ["pts/tier-aliases", "button.primary.content holds a raw value"],
     ],
   },
+  {
+    name: "state-specific content that pts/contrast doesn't pair with that state's fill",
+    mutate: (c) =>
+      c.set(BUTTON, "button.primary.content", (t) => ({
+        rest: t,
+        hover: { ...t, $value: "{content.base}" },
+        pressed: t,
+      })),
+    expect: [["pts/component-pairs", "button.primary.content.hover → {content.base} is not checked against button.primary.surface.hover"]],
+  },
+
+  // pts/component-states
+  {
+    name: "a property that changes with state but lacks one",
+    mutate: (c) => c.remove(BUTTON, "button.primary.surface.pressed"),
+    expect: [["pts/component-states", "button.primary.surface changes with state but has no pressed"]],
+  },
+  {
+    name: "two states that resolve to the same value",
+    mutate: (c) => c.value(BUTTON, "button.primary.surface.hover", "{inverse.base}"),
+    expect: [["pts/component-states", "button.primary.surface.rest and button.primary.surface.hover resolve to the same value"]],
+  },
 
   // pts/visible-steps
   {
@@ -182,6 +204,11 @@ const cases: Case[] = [
     name: "a density token that is not in px",
     mutate: (c) => c.value("semantic/spacing.compact.tokens.json", "padding.xs", { value: 0.125, unit: "rem" }),
     expect: [["pts/density-order", "padding.xs is not a px dimension"]],
+  },
+  {
+    name: "a compact padding two steps below relaxed",
+    mutate: (c) => c.value("semantic/spacing.compact.tokens.json", "padding.md", "{space.100}"),
+    expect: [["pts/density-order", "padding.md is space.100 in compact, but the step below space.300 (relaxed) is space.200"]],
   },
 
   // pts/gap-order
@@ -278,6 +305,11 @@ const cases: Case[] = [
     mutate: (c) => c.value(BUTTON, "button.primary.content", "{color.white}"),
     expect: [["pts/tier-aliases", "button.primary.content → {color.white} is a primitive token"]],
   },
+  {
+    name: "a role token aliasing outside its scale",
+    mutate: (c) => c.value("semantic/spacing.relaxed.tokens.json", "padding.md", "{size.control.sm}"),
+    expect: [["pts/tier-aliases", "padding.md → {size.control.sm}; padding/* aliases space/* only"]],
+  },
 
   // pts/registered-files
   {
@@ -294,6 +326,14 @@ const cases: Case[] = [
         c.set(file, "padding.md", () => ({ $type: "dimension", $value: "{space.300}", $description: "Padding by theme." }));
     },
     expect: [["pts/orthogonal-modifiers", "padding.md is defined by both the theme and the density modifier"]],
+  },
+  {
+    name: "a modifier defining a token outside its scope",
+    mutate: (c) => {
+      for (const file of ["semantic/size.relaxed.tokens.json", "semantic/size.compact.tokens.json"])
+        c.set(file, "size.icon.xl", () => ({ $type: "dimension", $value: "{dimension.32}", $description: "Extra large icons." }));
+    },
+    expect: [["pts/orthogonal-modifiers", "size.icon.xl is defined by the density modifier, which only changes padding/*"]],
   },
 ];
 
