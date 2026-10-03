@@ -30,7 +30,7 @@ Release notes were also compared by where they live: a root changelog (Changeset
 ## Why it matters
 
 - **Every PR that changes a package has a changeset** in `.changeset/`, written with the change: the bump type and a summary. A change that ships nothing (docs, tooling, CI) gets an empty one (`npx changeset --empty`). A change outside the workspaces needs none.
-- **Each changeset names `@pts/web`**, and the `fixed` group bumps every `@pts/*` package with it, so one version stays (ADR 0014). `packages/web/CHANGELOG.md` is the project's changelog; the other packages keep none. It starts with the notes of the fourteen tags so far.
+- **Each changeset names `@pts/web`**, and the `fixed` group bumps every `@pts/*` package with it, so one version stays (ADR 0014). `packages/web/CHANGELOG.md` is the project's changelog; the other packages keep a stub that points to it. It starts with the notes of the fourteen tags so far.
 - **The summary starts with `Breaking:`, `New:`, or `Fix:`**, as the tag messages did, and the bump must match it: in `0.x`, Breaking is `minor` and New and Fix are `patch`; from 1.0, `major`, `minor`, `patch`. A `major` changeset in `0.x` is refused: 1.0 is a decision (ADR 0014), not a changeset. CI checks all of this on every pull request.
 - **Releasing is merging the release PR.** The `Release` workflow keeps a PR titled "Release" open while changesets are pending on `main`; merging it bumps the versions and the changelog. The next run tags `vX.Y.Z` on `main` (annotated, with that version's changelog section as the message, as before) and creates the GitHub Release with the same notes.
 - **When to release is still the owner's choice**: the release PR waits until it is merged, collecting changesets meanwhile.
@@ -45,7 +45,7 @@ Release notes were also compared by where they live: a root changelog (Changeset
 
 - `@changesets/cli` 3 as a root devDependency. `.changeset/config.json`: `fixed: [["@pts/*"]]`, `privatePackages: { version: true, tag: false }`, no commit, no formatter.
 - `.changeset/changelog.mjs`: changelog lines without commit hashes or dependency notes.
-- `npm run version-packages`: `changeset version`, then removes the other packages' changelogs and updates `package-lock.json`.
+- `npm run version-packages`: `changeset version`, then restores the other packages' stub changelogs (it writes "No changes in this release" into them) and updates `package-lock.json`. The stubs can't simply be deleted: `changesets/action` reads every released package's changelog for the release PR's body, and the first release failed on the missing files.
 - `.github/scripts/check-changesets.mjs` (CI, pull requests): `changeset status` plus the rules above. Verified to reject a changeset without `@pts/web`, a `New:` with `minor`, and a summary without a prefix.
 - `.github/workflows/release.yml`: when the version on `main` has no tag or GitHub Release yet, check, typecheck, build, and `npm run release` (`.github/scripts/release.mjs`), which skips whichever already exists; then `changesets/action@v2` for the release PR (its own releases off). The action runs last because it leaves the next version's bumps in the working tree. The action's `has-changesets` output can't gate this, since an empty changeset counts as pending: the first run, with only an empty changeset on `main`, skipped the release step. On the next push it creates the missing GitHub Release for `v0.9.3`.
 - Repository setting: GitHub Actions may create pull requests.
