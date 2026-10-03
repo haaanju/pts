@@ -38,7 +38,7 @@ Three parts that may be the most interesting to look at:
 
 - **A built-in rule first.** A project rule exists only when no built-in one does the job, and its file header says why ("Why not built-in: …"). Read the headers to see what each rule enforces.
 - **What the rules cover**: contrast (`contrast`, `component-pairs`), visible state changes (`visible-steps`), mode parity and descriptions (`theme-parity`), scale order (`density-order`, `gap-order`, `type-scale`, `line-height-grid`, `min-font-size`), tiers (`tier-aliases`), consistent color values (`color-hex`), and files the build would silently skip (`registered-files`).
-- **Gates**: a pre-commit hook ([`.githooks/pre-commit`](../.githooks/pre-commit)) runs check and typecheck; CI ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) adds both builds, the docs accessibility check, and the changeset check ([ADR 0020](adr/0020-hand-edited-tokens-and-ci-gates.md)).
+- **Gates**: a pre-commit hook ([`.githooks/pre-commit`](../.githooks/pre-commit)) runs check and typecheck; CI ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) adds both builds, the docs accessibility check, and the changeset check, and `main` accepts only pull requests that pass it ([ADR 0020](adr/0020-hand-edited-tokens-and-ci-gates.md)).
 
 ## Outputs
 
@@ -59,6 +59,8 @@ Three parts that may be the most interesting to look at:
 - **Components as fixtures.** One web component, `<pts-button>`, tests the component tier the way product code would use it: a real `<button>` inside, disabled that stays focusable (`aria-disabled`), form association ([ADR 0032](adr/0032-button.md), [0034](adr/0034-components-as-token-fixtures.md)).
 
 ## Documentation
+
+The docs are hosted at https://haaanju.github.io/pts/, deployed from `main` after CI passes ([ADR 0020](adr/0020-hand-edited-tokens-and-ci-gates.md)).
 
 | What | Why | Where | ADR |
 |---|---|---|---|
@@ -94,5 +96,4 @@ This repository is built with Claude Code. This part matters only if you work wi
 
 - **Figma is synced by hand** (the `figma` skill), until Figma or the tooling offers a native sync ([ADR 0022](adr/0022-terrazzo-over-style-dictionary.md)).
 - **No native outputs** (iOS, Android); planned as a custom Terrazzo plugin ([ADR 0022](adr/0022-terrazzo-over-style-dictionary.md)).
-- **The docs aren't hosted.** Storybook on GitHub Pages and branch protection wait until the repository is public ([ADR 0020](adr/0020-hand-edited-tokens-and-ci-gates.md)).
-- **The release pull request runs no CI**, since the workflow's own token can't trigger workflows; the release is verified before it is tagged instead ([ADR 0035](adr/0035-changesets-releases.md)).
+- **The release pull request runs a shorter check than CI** (check, typecheck, build, reported as `verify`), since a pull request opened with the workflow's own token triggers no workflows ([ADR 0035](adr/0035-changesets-releases.md)).

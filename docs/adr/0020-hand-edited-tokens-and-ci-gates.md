@@ -1,6 +1,6 @@
 # 0020. Hand-Edited Tokens and CI Gates
 
-- Status: proposed (amended by 0021)
+- Status: accepted (amended by 0021)
 - Date: 2026-09-27
 
 ## What we learned
@@ -77,6 +77,12 @@ Branch protection and Pages on a private repository need a paid GitHub plan. Bot
 4. Add `CONTRIBUTING.md`: the flow above, where each kind of change goes (value, new token, new file, new group), and how to run the checks locally.
 5. Add the Pages deploy job to `.github/workflows/ci.yml`.
 6. On going public: protect `main` (pull request required, `verify` required), enable Pages.
+
+Steps 5 and 6 were done on 2026-10-03, when the repository went public:
+
+- `ci.yml`: on a push to `main`, `verify` uploads `apps/storybook/dist`, and a `deploy` job publishes it to https://haaanju.github.io/pts/.
+- `main` requires a pull request with no approvals (the owner is the only reviewer) and the `verify` check, for admins too; no force pushes or deletion.
+- The release PR runs no CI, since it is opened with the workflow's token (ADR 0035), so it could never pass the required check. The Release workflow verifies its commit (check, typecheck, build) and reports the result as a `verify` commit status, which the protection accepts like the CI job.
 
 ## Documented in
 

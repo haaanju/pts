@@ -67,7 +67,7 @@ docs/progress.md, docs/adr/
 - `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/components` → `apps/components/dist/`).
 - `npm run storybook`: docs dev server (http://localhost:6006), builds `@pts/web` and `@pts/components` first. `npm run build-storybook`: static build.
 - `npm run test-a11y`: builds Storybook, then checks every docs page and story with axe-core (WCAG 2.2 A and AA) in light and dark (ADR 0036). Needs Playwright's Chromium once: `npx playwright install chromium`.
-- The pre-commit hook runs check and typecheck and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus both builds and `test-a11y` on pushes to `main` and on pull requests.
+- The pre-commit hook runs check and typecheck and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus both builds and `test-a11y` on pushes to `main` and on pull requests, and deploys the docs to GitHub Pages on pushes to `main`.
 
 ## Output (`@pts/web`)
 
@@ -188,7 +188,7 @@ Work continues across chats and machines through the repository only; chat histo
 
 ## Git Convention
 
-- `main` is stable; work happens on `feature/xxx` branches.
+- `main` is stable and protected: changes arrive by pull request, and the `verify` check must pass, for admins too (ADR 0020). Work happens on `feature/xxx` branches. The docs on https://haaanju.github.io/pts/ deploy from `main`.
 - One Semantic Version for every `@pts/*` package (ADR 0014). In `0.x`, breaking changes bump MINOR, new tokens and fixes bump PATCH. Breaking = renaming or removing a token, changing what a name means, or changing the output format or selectors. Adjusting a value within its role is a fix.
 - Every PR that changes a workspace adds a changeset (ADR 0035), written by hand in `.changeset/<kebab-name>.md`: front matter `"@pts/web": patch` (always `@pts/web`; the fixed group bumps the rest), then a summary starting `Breaking:`, `New:`, or `Fix:` whose bump matches the rule above. A change that ships nothing gets an empty one (`npx changeset --empty`). CI enforces it.
 - Releasing is merging the "Release" PR the Release workflow keeps open; it then tags `vX.Y.Z` and creates the GitHub Release from `packages/web/CHANGELOG.md`. Never bump versions or tag by hand.

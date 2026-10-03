@@ -37,7 +37,7 @@ Release notes were also compared by where they live: a root changelog (Changeset
 
 ## Trade-offs
 
-- **The release PR runs no CI**: a pull request opened with the workflow's own token triggers no workflows. It only changes versions, the changelog, and the lockfile, and the Release workflow runs check, typecheck, and build before tagging. A personal access token or a GitHub App would fix this at the cost of a secret to manage.
+- **The release PR runs no CI**: a pull request opened with the workflow's own token triggers no workflows. It only changes versions, the changelog, and the lockfile; the Release workflow checks its commit and reports a `verify` status, which the branch protection requires (ADR 0020), and verifies again before tagging. A personal access token or a GitHub App would run the full CI at the cost of a secret to manage.
 - **Tags are made by `github-actions[bot]`**, not the owner.
 - **Changeset files are written by hand** more often than with `npx changeset`: its prompt offers only the packages a branch changed, and `@pts/web` is often not one of them (a token change edits `tokens/`).
 
