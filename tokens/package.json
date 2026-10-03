@@ -1,6 +1,6 @@
 {
   "name": "@pts/tokens",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "private": true,
   "type": "module",
   "description": "DTCG design token source (single source of truth)",

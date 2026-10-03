@@ -2,6 +2,12 @@
 
 The changelog of every `@pts/*` package, which share one version (ADR 0014). Entries from 0.9.4 on come from changesets (ADR 0035); earlier ones are the release tag messages.
 
+## 0.9.4
+
+### Patch Changes
+
+- Fix: the packages are licensed under MIT (`LICENSE`); the fonts in `@pts/web` stay under the SIL Open Font License 1.1, so its `license` is `(MIT AND OFL-1.1)`. No token changes.
+
 ## 0.9.3
 
 The md button (ADR 0033). Fix: button/md/label aliases text/label-lg (16/24) and button/md/icon aliases size/icon/md (24), like lg, so md and lg differ by height only. The descriptions of text/label-md, text/label-lg, font-size/text/sm, and font-size/text/md say which controls use them. Nothing is renamed or removed.
