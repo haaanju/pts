@@ -4,7 +4,8 @@ name: Release
 # every workspace and writes packages/web/CHANGELOG.md. Whenever the version on main has no tag
 # or GitHub Release yet (once that PR is merged, or after a failed run), verifies the build, tags
 # vX.Y.Z, and creates the release. The changesets output can't decide this: an empty changeset
-# counts as pending.
+# counts as pending. The release PR runs no CI (it is opened with the workflow token), so this
+# workflow verifies its commit and reports the result as `verify`, the check main requires.
 
 on:
   push:
@@ -15,6 +16,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 permissions:
   contents: write
   pull-requests: write
+  statuses: write
 
 jobs:
   release:
@@ -47,10 +49,23 @@ jobs:
           npm run release
         env:
           GH_TOKEN: ${{ github.token }}
-      # Last: the action leaves the bumped versions of the next release PR in the working tree.
-      - uses: changesets/action@v2
+      # After the release step: the action leaves the bumped versions of the next release PR in the working tree.
+      - id: changesets
+        uses: changesets/action@v2
         with:
           version-script: npm run version-packages
           commit-message: Release
           pr-title: Release
           create-github-releases: false
+      - if: steps.changesets.outputs.pr-number != ''
+        run: |
+          git fetch -q origin changeset-release/main
+          git checkout -q --force FETCH_HEAD
+          state=success
+          { npm ci && npm run check && npm run typecheck && npm run build; } || state=failure
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$(git rev-parse HEAD)" -f state=$state -f context=verify \
+            -f description="check, typecheck, and build, run by the Release workflow" \
+            -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          [ "$state" = success ]
+        env:
+          GH_TOKEN: ${{ github.token }}

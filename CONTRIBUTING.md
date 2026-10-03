@@ -10,7 +10,7 @@ This guide is for anyone changing the tokens, designers first. You edit JSON fil
 3. Open a PR   fill in the template and add a changeset
 4. Checks      CI validates the tokens and builds everything; it must pass
 5. Review      the owner reviews and merges
-6. Merged      the change is on main and ships with the next release
+6. Merged      the change is on main, in the docs (https://haaanju.github.io/pts/), and ships with the next release
 ```
 
 A release is cut separately, when the owner decides; see [Releases](#releases).
