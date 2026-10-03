@@ -14,10 +14,9 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## Next
 
-The monorepo comes first; no new components (ADR 0034). In this order:
+The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
 
-1. A guide for colleagues: each practice in the repository, where it lives, and the ADR that says why.
-2. Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
+- Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 Waiting for a reason, not scheduled:
 

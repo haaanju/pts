@@ -141,6 +141,7 @@ The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus b
 
 ## Decisions and conventions
 
+- **Practices**: [`docs/practices.md`](docs/practices.md) maps the practices in this repository (checks, accessibility, outputs, docs, releases) to where they live and the ADR behind each, for anyone building a token pipeline.
 - **Architecture decisions** are recorded in [`docs/adr/`](docs/adr).
 - **Token naming and authoring rules** live in [`CLAUDE.md`](CLAUDE.md), which also guides the AI assistant used on this project. Rules for one area are in [`.claude/rules/`](.claude/rules) (Storybook docs, the web build) and [`.claude/skills/figma/`](.claude/skills/figma) (the Figma file); see [ADR 0031](docs/adr/0031-agent-docs-by-scope.md).
 - **Versioning**: one Semantic Version for every package, released as a git tag (`vX.Y.Z`) and a GitHub Release; see [ADR 0014](docs/adr/0014-versioning-policy.md). While in `0.x`, breaking changes bump the minor version. What changed in each version: [`packages/web/CHANGELOG.md`](packages/web/CHANGELOG.md).

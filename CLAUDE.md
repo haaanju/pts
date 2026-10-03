@@ -24,7 +24,7 @@ Each fact has one home; elsewhere, link to it (ADR 0031).
 | Why a decision was made | `docs/adr/` | on demand |
 | Token values | `tokens/src/**/*.tokens.json` | on demand; this file gives representative values only |
 | What each check enforces, and why | the header of each `tokens/lint/rules/*.ts` | on demand |
-| Human guides | `README.md` (usage), `CONTRIBUTING.md` (changing tokens) | on demand |
+| Human guides | `README.md` (usage), `CONTRIBUTING.md` (changing tokens), `docs/practices.md` (the practices, for colleagues) | on demand |
 
 ## Tech Stack
 
@@ -170,6 +170,7 @@ Record decisions that change token structure, naming, tooling, or the pipeline a
 
 - Status: `proposed` while under discussion, `accepted` once implemented. When a later ADR changes an accepted one, add `(amended by NNNN)`; `superseded by NNNN` only when it is replaced entirely.
 - A rule that follows from a decision goes where the table above says, not into the ADR alone.
+- An ADR that adds or changes a practice also updates its row in `docs/practices.md`, which links rather than restates.
 
 ## Continuity
 
