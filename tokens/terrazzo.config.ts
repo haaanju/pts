@@ -3,7 +3,9 @@
 import { defineConfig } from "@terrazzo/cli";
 import { RECOMMENDED_CONFIG } from "@terrazzo/parser";
 import pts from "./lint/index.ts";
-import { primitiveGroups } from "./lint/source.ts";
+import { loadResolver, primitiveGroups } from "./source.ts";
+
+const resolver = await loadResolver();
 
 export default defineConfig({
   tokens: ["./src/pts.resolver.json"],
@@ -17,7 +19,7 @@ export default defineConfig({
       // 2. Terrazzo's built-in rules, turned on. They see the default theme only, which is enough for rules that
       //    don't depend on theme values (names and descriptions match across themes: pts/theme-parity).
       "core/required-type": "error",
-      "core/descriptions": ["error", { ignore: primitiveGroups().map((group) => `${group}.**`) }], // every semantic token
+      "core/descriptions": ["error", { ignore: primitiveGroups(resolver).map((group) => `${group}.**`) }], // every semantic token
       "core/colorspace": ["error", { colorSpace: "srgb" }],
       "core/max-gamut": ["error", { gamut: "srgb" }],
       "a11y/min-font-size": ["error", { minSizePx: 12 }],
@@ -37,6 +39,7 @@ export default defineConfig({
       "pts/color-hex": "error",
       "pts/tier-aliases": ["error", { rawValues: ["z-index", "breakpoint", "line-height"], semanticAliases: ["text", "padding", "gap"] }],
       "pts/registered-files": "error",
+      "pts/orthogonal-modifiers": "error",
     },
   },
 });

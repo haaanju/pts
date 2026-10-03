@@ -1,6 +1,6 @@
 # 0025. Density Modifier
 
-- Status: accepted
+- Status: accepted (amended by 0038)
 - Date: 2026-09-30
 
 ## What we learned

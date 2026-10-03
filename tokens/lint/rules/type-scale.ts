@@ -5,7 +5,7 @@
 // Why not built-in: no built-in rule compares one token's value with another's, and Terrazzo lints one permutation
 // only.
 import type { LintRule } from "@terrazzo/parser";
-import { themes } from "../source.ts";
+import { loadResolver, permutations } from "../../source.ts";
 
 type Options = {
   /** step names in ascending order */
@@ -39,7 +39,7 @@ const rule: LintRule<"UNKNOWN_STEP" | "NOT_ASCENDING" | "TOO_CLOSE" | "DUPLICATE
     const equal = new Map<string, { a: string; b: string; size: number }>();
     const apart = new Set<string>();
 
-    for (const { label, tokens } of await themes()) {
+    for (const { label, tokens } of permutations(await loadResolver())) {
       if (!tokens) continue; // reported by pts/theme-parity
       const zones = new Map<string, { id: string; rank: number; size: number }[]>();
       for (const [id, token] of Object.entries(tokens)) {

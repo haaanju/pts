@@ -39,6 +39,7 @@ Three roles (ADR 0016): `tokens/` is the source; `packages/` holds what ships, o
 ```
 tokens/                     @pts/tokens (private)
   terrazzo.config.ts        lint only (npm run check)
+  source.ts                 the tokens as Terrazzo resolves them, for lint, the build, and the docs (ADR 0038)
   lint/                     the pts/* lint plugin (ADR 0021); pairs.ts holds the color pairing rules
   src/pts.resolver.json     combines the token files and the modifiers (build entry point)
   src/primitive/<category>.tokens.json
@@ -56,12 +57,13 @@ docs/progress.md, docs/adr/
 - Register every new token file in `pts.resolver.json`: mode-independent files in `sets.base`, modifier-specific files in the matching `modifiers.<theme|density|viewport>` context. `npm run check` reports a file that isn't registered.
 - The files of one modifier's contexts (`color.light` / `color.dark`, `spacing.relaxed` / `spacing.compact`, `typography.narrow` / `typography.wide`) define **the same token names and descriptions**.
 - The token JSON is edited by hand, color included; nothing generates it (ADR 0020). `npm run check` enforces the rules a generator would.
+- Only Terrazzo resolves aliases (ADR 0038). Lint, the build config, and the docs take tokens from `tokens/source.ts`; use the resolver's API (`apply`, `aliasChain`, `partialAliasOf`, `resolver.source`) instead of reading the files to work out a value.
 
 ## Commands
 
 - `npm run check`: `tz check` in `tokens/` (ADR 0021). Terrazzo's built-in rules plus the `pts/*` rules, which check every theme × density × viewport permutation (Terrazzo alone lints the default one). Errors start with the rule name; the rule file's header says what it enforces.
   - Built-in rules turned on beyond the recommended ones: `$type` required, a `$description` on every semantic token, srgb colors, text styles at least 12px.
-  - `pts/*`: `theme-parity`, `contrast`, `component-pairs`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`.
+  - `pts/*`: `theme-parity`, `contrast`, `component-pairs`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`, `orthogonal-modifiers`.
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it. Every `pts/*` message gets a case in `tokens/lint/rules.test.ts`.
 - `npm test`: breaks each `pts/*` rule on purpose in a copy of `tokens/` and expects `tz check` to report it, so a rule that silently stops reporting fails (ADR 0037).
 - `npm run typecheck`: TypeScript for the lint plugin, the components, and Storybook.

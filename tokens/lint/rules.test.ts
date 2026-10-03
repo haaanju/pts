@@ -1,8 +1,8 @@
 // Regression tests for the lint rules: each case breaks one rule on purpose in a copy of tokens/ and expects
 // `tz check` to report it. A rule that silently stops reporting (a Terrazzo upgrade that changes the token shapes,
 // a rule that skips every permutation) still passes `npm run check`; here it fails. Run with `npm test`.
-// The copy is a temporary directory holding src/, lint/, and terrazzo.config.ts, with node_modules linked to the
-// repository's, so source.ts reads the copy (its paths are relative to its own file) and nothing here is mocked.
+// The copy is a temporary directory holding src/, lint/, source.ts, and terrazzo.config.ts, with node_modules linked to
+// the repository's, so source.ts reads the copy (its paths are relative to its own file) and nothing here is mocked.
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
@@ -23,7 +23,7 @@ class Copy {
   readonly dir = mkdtempSync(join(tmpdir(), "pts-lint-"));
 
   constructor() {
-    for (const path of ["src", "lint", "terrazzo.config.ts"]) cpSync(join(TOKENS, path), join(this.dir, path), { recursive: true });
+    for (const path of ["src", "lint", "source.ts", "terrazzo.config.ts"]) cpSync(join(TOKENS, path), join(this.dir, path), { recursive: true });
     symlinkSync(NODE_MODULES, join(this.dir, "node_modules"), "dir");
   }
 
@@ -101,8 +101,9 @@ type Case = {
   expect: [rule: string, message: string][];
 };
 
-// One case per message of every pts rule. MISSING in pts/contrast is left out: the pairs come from the ids of the
-// same permutation, so a pair's tokens always exist there.
+// One case per message of every pts rule, except two that the other checks make unreachable: MISSING in pts/contrast
+// (the pairs come from the ids of the same permutation, so a pair's tokens always exist there) and NOT_ORTHOGONAL in
+// pts/orthogonal-modifiers (a fallback in case Terrazzo finds an overlap that OVERLAP doesn't).
 const cases: Case[] = [
   // pts/theme-parity
   { name: "a token missing from one theme", mutate: (c) => c.remove(DARK, "content.subtle"), expect: [["pts/theme-parity", "content.subtle is in"]] },
@@ -271,6 +272,16 @@ const cases: Case[] = [
     name: "a token file the resolver doesn't list",
     mutate: (c) => c.write("semantic/extra.tokens.json", { extra: { $type: "number", $value: 1, $description: "Unlisted." } }),
     expect: [["pts/registered-files", "semantic/extra.tokens.json is not in pts.resolver.json"]],
+  },
+
+  // pts/orthogonal-modifiers
+  {
+    name: "a token two modifiers define",
+    mutate: (c) => {
+      for (const file of [LIGHT, DARK])
+        c.set(file, "padding.md", () => ({ $type: "dimension", $value: "{space.300}", $description: "Padding by theme." }));
+    },
+    expect: [["pts/orthogonal-modifiers", "padding.md is defined by both the theme and the density modifier"]],
   },
 ];
 

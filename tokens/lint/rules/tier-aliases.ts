@@ -4,7 +4,8 @@
 // component/), which a merged token no longer knows, so this rule reads the files.
 // Options name the documented exceptions, so they are visible in the config.
 import type { LintRule } from "@terrazzo/parser";
-import { files } from "../source.ts";
+import { isAlias, parseAlias } from "@terrazzo/token-tools";
+import { files, loadResolver } from "../../source.ts";
 
 type Options = {
   /** semantic groups that may hold raw values (z-index, breakpoint: stacking order and viewport widths have no meaning outside their role; line-height: a ratio only means something paired with its font size) */
@@ -13,18 +14,16 @@ type Options = {
   semanticAliases: string[];
 };
 
-const ALIAS = /^\{([^}]+)\}$/;
-
 /** Leaves of a value that are not aliases; a color or dimension object counts as one leaf */
 const rawLeaves = (value: unknown): unknown[] => {
-  if (typeof value === "string") return ALIAS.test(value) ? [] : [value];
+  if (typeof value === "string") return isAlias(value) ? [] : [value];
   if (Array.isArray(value)) return value.flatMap(rawLeaves);
   if (value && typeof value === "object" && !("colorSpace" in value) && !("unit" in value)) return Object.values(value).flatMap(rawLeaves);
   return [value];
 };
 
 const aliasesIn = (value: unknown): string[] => {
-  if (typeof value === "string") return [...value.matchAll(/\{([^}]+)\}/g)].map((m) => m[1]);
+  if (typeof value === "string") return isAlias(value) ? [parseAlias(value)] : [];
   if (value && typeof value === "object") return Object.values(value).flatMap(aliasesIn);
   return [];
 };
@@ -44,8 +43,8 @@ const rule: LintRule<"FOLDER" | "RAW_VALUE" | "SEMANTIC_ALIAS" | "UPWARD_ALIAS" 
     },
   },
   defaultOptions: { rawValues: [], semanticAliases: [] },
-  create({ report, options }) {
-    const all = files();
+  async create({ report, options }) {
+    const all = files(await loadResolver());
     const tierOf = new Map(all.flatMap(({ tier, tokens }) => Object.keys(tokens).map((id) => [id, tier] as const)));
     for (const { path: file, tier, tokens } of all) {
       if (!TIERS.includes(tier)) report({ messageId: "FOLDER", data: { file } });

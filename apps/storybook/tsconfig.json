@@ -13,5 +13,5 @@
     // Type-check against the component source, so typecheck needs no build of @pts/components first
     "paths": { "@pts/components/*": ["../components/src/*"] }
   },
-  "include": ["src", ".storybook", "vite.config.ts"]
+  "include": ["src", ".storybook"]
 }

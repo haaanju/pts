@@ -3,7 +3,7 @@
 // Why not built-in: a11y/min-font-size checks typography composites only, not the dimension tokens they alias, and
 // Terrazzo lints the default permutation only (the viewport changes font sizes, ADR 0029).
 import type { LintRule } from "@terrazzo/parser";
-import { themes } from "../source.ts";
+import { loadResolver, permutations } from "../../source.ts";
 
 type Options = { minSizePx: number };
 type Dimension = { value: number; unit: string };
@@ -16,7 +16,7 @@ const rule: LintRule<"TOO_SMALL", Options> = {
   defaultOptions: { minSizePx: 12 },
   async create({ options, report }) {
     const seen = new Set<string>();
-    for (const { label, tokens } of await themes()) {
+    for (const { label, tokens } of permutations(await loadResolver())) {
       if (!tokens) continue; // reported by pts/theme-parity
       for (const [id, token] of Object.entries(tokens)) {
         if (!id.startsWith("font-size.") || token.$type !== "dimension") continue;

@@ -2,7 +2,7 @@
 // Why not built-in: Terrazzo only reads the files the resolver lists, so an unlisted file is never seen:
 // its tokens silently miss the build and the docs.
 import type { LintRule } from "@terrazzo/parser";
-import { onDisk, registered } from "../source.ts";
+import { onDisk, registered } from "../../source.ts";
 
 const rule: LintRule<"UNREGISTERED"> = {
   meta: {

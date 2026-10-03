@@ -8,6 +8,7 @@ import densityOrder from "./rules/density-order.ts";
 import gapOrder from "./rules/gap-order.ts";
 import lineHeightGrid from "./rules/line-height-grid.ts";
 import minFontSize from "./rules/min-font-size.ts";
+import orthogonalModifiers from "./rules/orthogonal-modifiers.ts";
 import registeredFiles from "./rules/registered-files.ts";
 import themeParity from "./rules/theme-parity.ts";
 import tierAliases from "./rules/tier-aliases.ts";
@@ -30,6 +31,7 @@ export default function pts(): Plugin {
       "pts/color-hex": colorHex,
       "pts/tier-aliases": tierAliases,
       "pts/registered-files": registeredFiles,
+      "pts/orthogonal-modifiers": orthogonalModifiers,
     }),
   };
 }
