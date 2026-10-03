@@ -6,7 +6,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 - Latest release: `v0.9.2` (Button, ADR 0032: the component tier with `button/*`, `text/label-lg`, and `@pts/components` with `<pts-button>`). `main` is stable; CI and the pre-commit hook run check and typecheck.
 - Contribution flow (ADR 0020, proposed): steps 5–6 (Storybook on GitHub Pages, branch protection on `main`) wait until the repository goes public, since a private repo needs a paid plan for both; the ADR becomes `accepted` then.
-- Figma `pts` file: in line with the tokens at `v0.9.2` (variables, styles, specimens, the Button page and component sets; Overview count 331 variables). How to keep it so: the `figma` skill.
+- Figma `pts` file: in line with the tokens on `main` (variables, styles, specimens, the Button page and component sets; Overview count 331 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
 ## In flight
 
@@ -25,5 +25,4 @@ Still deferred (see CLAUDE.md): Figma sync, native platforms (iOS, Android; thro
 
 ## Open questions
 
-- The Size page specimen (and possibly other older specimens) binds text to deleted `Theme` variables `on-surface/base` and `on-surface/subtle` (from before ADR 0019). They still render, but rebind them to `content/base` and `content/subtle`.
 - Raw values in JS (`@terrazzo/plugin-js`, one token set per permutation) are left out (ADR 0030); add them as another subpath when a consumer needs real numbers or colors (charts, canvas).
