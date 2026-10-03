@@ -6,6 +6,8 @@ import pts from "./lint/index.ts";
 import { loadResolver, primitiveGroups } from "./source.ts";
 
 const resolver = await loadResolver();
+// The semantic properties a text style is made of (CLAUDE.md → Typography)
+const TEXT_PROPERTIES = ["font-family", "font-size", "font-weight", "letter-spacing", "line-height"];
 
 export default defineConfig({
   tokens: ["./src/pts.resolver.json"],
@@ -30,6 +32,7 @@ export default defineConfig({
       "pts/theme-parity": ["error", { constant: ["always"] }],
       "pts/contrast": "error",
       "pts/component-pairs": "error",
+      "pts/component-states": ["error", { states: ["rest", "hover", "pressed"], transparentRest: ["button.ghost.surface"] }], // Ghost is transparent at rest (ADR 0032)
       "pts/visible-steps": "error",
       "pts/density-order": ["error", { modifier: "density", tighter: "compact", looser: "relaxed" }],
       "pts/gap-order": ["error", { order: ["gap.within", "gap.between", "gap.section"] }],
@@ -37,9 +40,21 @@ export default defineConfig({
       "pts/type-scale": ["error", { order: ["xs", "sm", "md", "lg", "xl"], contrastZones: ["display"], minRatio: 1.5 }],
       "pts/line-height-grid": ["error", { gridPx: 4 }],
       "pts/color-hex": "error",
-      "pts/tier-aliases": ["error", { rawValues: ["z-index", "breakpoint", "line-height"], semanticAliases: ["text", "padding", "gap"] }],
+      "pts/tier-aliases": [
+        "error",
+        { rawValues: ["z-index", "breakpoint", "line-height"], roleAliases: { text: TEXT_PROPERTIES, padding: ["space"], gap: ["space"] } },
+      ],
       "pts/registered-files": "error",
-      "pts/orthogonal-modifiers": "error",
+      "pts/orthogonal-modifiers": [
+        "error",
+        {
+          scope: {
+            theme: { types: ["color", "shadow"] },
+            density: { groups: ["padding", "gap.within", "gap.between", "size.control"] },
+            viewport: { groups: ["font-size.display", "line-height.display", "letter-spacing.display"] },
+          },
+        },
+      ],
     },
   },
 });

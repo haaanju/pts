@@ -1,6 +1,6 @@
 # 0038. One Terrazzo Resolver for Lint, Build, and Docs
 
-- Status: accepted
+- Status: accepted (amended by 0040)
 - Date: 2026-10-03
 
 ## What we learned

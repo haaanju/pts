@@ -11,13 +11,13 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/audit-checks`: the first checks from the pipeline audit (ADR 0039), in a pull request.
+- `feature/audit-checks-2`: the second group of audit checks (ADR 0040), in a pull request.
 
 ## Next
 
 The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
 
-- The rest of the pipeline audit (ADR 0039, agreed with the owner), in this order. Next pull request: the changeset bump checked against removed or renamed token ids (Breaking needs `minor` and `Breaking:`), and against an empty changeset; component state completeness and distinctness (every state of a changing property, `rest` included, resolving differently); modifier scope (theme: colors and shadows; density: padding, gap/within, gap/between, size/control; viewport: display typography), compact exactly one scale step below relaxed, and role alias targets (`padding`, `gap` → `space`). The one after: Release tags only after the full CI on that commit (today it can tag before Storybook and test-a11y pass), and the changeset skip keyed on more than the branch name `changeset-release/main`. Then, if wanted: every top-level group shown on a docs page, `.storybook/theme.ts` hex copies matching the tokens, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light.
+- The rest of the pipeline audit (ADR 0039, agreed with the owner), in this order (ADR 0040 did the changeset, component state, density step, modifier scope, and role alias checks). Next pull request: Release tags only after the full CI on that commit (today it can tag before Storybook and test-a11y pass), and the changeset skip keyed on more than the branch name `changeset-release/main`. Then, if wanted: every top-level group shown on a docs page, `.storybook/theme.ts` hex copies matching the tokens, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light.
 - Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 Waiting for a reason, not scheduled:

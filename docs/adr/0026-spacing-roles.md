@@ -1,6 +1,6 @@
 # 0026. Spacing Roles on One Scale
 
-- Status: accepted (amended by 0027)
+- Status: accepted (amended by 0027, 0040)
 - Date: 2026-10-01
 
 ## What we learned
