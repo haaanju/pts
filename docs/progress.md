@@ -5,19 +5,19 @@ The handoff note between work sessions and machines. Read it before starting; up
 ## Current state
 
 - Releases: Changesets and the Release workflow (ADR 0035); the latest version is in `packages/web/CHANGELOG.md` and the tags. `main` is stable; CI and the pre-commit hook run check and typecheck.
-- Public repository; docs on https://haaanju.github.io/pts/, deployed from `main`; `main` protected (ADR 0020). The release PR's `verify` status comes from the Release workflow: first exercised by the next release.
+- Public repository; docs on https://haaanju.github.io/pts/, deployed from `main`; `main` protected (ADR 0020). The Release workflow runs after CI passes on `main` (ADR 0041), and the release PR's `verify` status comes from it: both first exercised by the next release, so watch that run.
 - Repository: recreated on 2026-10-03 with the commit author emails rewritten, so it can go public; the same files and tags, new commit hashes. The pull requests before that (#1–#29) are in the private `haaanju/pts-archive`.
 - Figma `pts` file: in line with the tokens at `v0.9.3` (variables, styles, specimens, the Button page and component sets; Overview count 331 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
 ## In flight
 
-- `feature/audit-checks-2`: the second group of audit checks (ADR 0040), in a pull request.
+- `feature/release-after-ci`: the Release workflow runs after CI (ADR 0041), in a pull request.
 
 ## Next
 
 The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
 
-- The rest of the pipeline audit (ADR 0039, agreed with the owner), in this order (ADR 0040 did the changeset, component state, density step, modifier scope, and role alias checks). Next pull request: Release tags only after the full CI on that commit (today it can tag before Storybook and test-a11y pass), and the changeset skip keyed on more than the branch name `changeset-release/main`. Then, if wanted: every top-level group shown on a docs page, `.storybook/theme.ts` hex copies matching the tokens, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light.
+- The rest of the pipeline audit (ADR 0039, agreed with the owner): ADR 0040 added the changeset, component state, density step, modifier scope, and role alias checks, and ADR 0041 made releases follow CI. Left, if wanted: every top-level group shown on a docs page, `.storybook/theme.ts` hex copies matching the tokens, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light.
 - Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 Waiting for a reason, not scheduled:

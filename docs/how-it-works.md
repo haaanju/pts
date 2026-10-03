@@ -99,4 +99,5 @@ This repository is built with Claude Code. This part matters only if you work wi
 
 - **Figma is synced by hand** (the `figma` skill), until Figma or the tooling offers a native sync ([ADR 0022](adr/0022-terrazzo-over-style-dictionary.md)).
 - **No native outputs** (iOS, Android); planned as a custom Terrazzo plugin ([ADR 0022](adr/0022-terrazzo-over-style-dictionary.md)).
-- **The release pull request runs a shorter check than CI** (check, typecheck, build, reported as `verify`), since a pull request opened with the workflow's own token triggers no workflows ([ADR 0035](adr/0035-changesets-releases.md)).
+- **Releases follow CI.** The Release workflow runs when CI passes on a push to `main`, at that commit, so nothing is tagged before every check has passed on it; a run for a commit `main` has moved past stops ([ADR 0041](adr/0041-release-after-ci.md)).
+- **The release pull request runs a shorter check than CI** (check, test, typecheck, build, reported as `verify`), since a pull request opened with the workflow's own token triggers no workflows ([ADR 0035](adr/0035-changesets-releases.md)). It only bumps versions and the changelog.
