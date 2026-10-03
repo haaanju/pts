@@ -10,7 +10,7 @@ import { availableParallelism, tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { suite, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { promisify } from "node:util";
+import { promisify, stripVTControlCharacters } from "node:util";
 
 const TOKENS = fileURLToPath(new URL("..", import.meta.url));
 const NODE_MODULES = fileURLToPath(new URL("../../node_modules", import.meta.url));
@@ -71,11 +71,14 @@ class Copy {
 
   async check(): Promise<{ ok: boolean; output: string }> {
     try {
-      const { stdout, stderr } = await promisify(execFile)(TZ, ["check"], { cwd: this.dir });
-      return { ok: true, output: stdout + stderr };
+      const { stdout, stderr } = await promisify(execFile)(TZ, ["check"], {
+        cwd: this.dir,
+        env: { ...process.env, NO_COLOR: "1", FORCE_COLOR: "0" },
+      });
+      return { ok: true, output: stripVTControlCharacters(stdout + stderr) };
     } catch (e) {
       const { stdout = "", stderr = "" } = e as { stdout?: string; stderr?: string };
-      return { ok: false, output: stdout + stderr };
+      return { ok: false, output: stripVTControlCharacters(stdout + stderr) };
     }
   }
 
