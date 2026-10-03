@@ -4,9 +4,9 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## Current state
 
-- Latest release: `v0.9.2` (Button, ADR 0032: the component tier with `button/*`, `text/label-lg`, and `@pts/components` with `<pts-button>`). `main` is stable; CI and the pre-commit hook run check and typecheck.
+- Latest release: `v0.9.3` (the md button label 16px and icon 24px, ADR 0033). `main` is stable; CI and the pre-commit hook run check and typecheck.
 - Contribution flow (ADR 0020, proposed): steps 5–6 (Storybook on GitHub Pages, branch protection on `main`) wait until the repository goes public, since a private repo needs a paid plan for both; the ADR becomes `accepted` then.
-- Figma `pts` file: in line with the tokens on `main` (variables, styles, specimens, the Button page and component sets; Overview count 331 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
+- Figma `pts` file: in line with the tokens at `v0.9.3` (variables, styles, specimens, the Button page and component sets; Overview count 331 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
 ## In flight
 
