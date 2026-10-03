@@ -1,18 +1,20 @@
-# Practices
+# How Plain Works
 
-A map of the practices in this repository for anyone building a design token pipeline: what each one is, why it's here, where it lives, and the ADR that explains the decision. This page links; the files and ADRs it points to hold the details.
+Plain is a personal study project: a small design token monorepo (DTCG 2025.10, built with Terrazzo, documented in Storybook), built end to end to learn how token pipelines work. It is shared for reference. The choices here fit one small system built by one person while learning; they are not recommendations, and the ADRs record the options that were weighed, so you can judge each one for your own case.
 
-Plain is a small design token monorepo (DTCG 2025.10, built with Terrazzo, documented in Storybook). The practices are meant to carry over to other stacks; where one depends on Terrazzo, it says so.
+This page maps what the repository does: what each part is, why it's here, where it lives, and the ADR that explains the decision. It links; the files and ADRs it points to hold the details. Most of the ideas don't depend on the stack; where one depends on Terrazzo, it says so.
 
-## If you take three things
+## Where to start
 
-1. **Lint the tokens for what your design rules say, in every mode.** Contrast, scale order, density order, and tier rules are checked on every commit, in every theme × density × viewport combination, not only the default one. → [Checks](#checks-as-code)
-2. **Derive contrast pairs from token names, and share them.** The names say which content sits on which fill, so the lint, the docs badges, and the docs accessibility check all read one pairing file instead of hand-kept lists. → [Accessibility](#accessibility)
-3. **Write the release note with the change.** Every pull request carries a changeset whose summary starts with `Breaking:`, `New:`, or `Fix:`; CI checks that the version bump matches. → [Releases](#releases-and-versions)
+Three parts that may be the most interesting to look at:
+
+1. **Design rules as lint rules, in every mode.** Contrast, scale order, density order, and tier rules are checked on every commit, in every theme × density × viewport combination, not only the default one. → [Checks](#checks-as-code)
+2. **Contrast pairs derived from token names.** The names say which content sits on which fill, so the lint, the docs badges, and the docs accessibility check all read one pairing file instead of hand-kept lists. → [Accessibility](#accessibility)
+3. **Release notes written with the change.** Every pull request carries a changeset whose summary starts with `Breaking:`, `New:`, or `Fix:`; CI checks that the version bump matches. → [Releases](#releases-and-versions)
 
 ## Source and structure
 
-| Practice | Why | Where | ADR |
+| What | Why | Where | ADR |
 |---|---|---|---|
 | Source, outputs, and tools in separate roles: `tokens/` (source), `packages/<platform>` (what ships), `apps/` (docs and fixtures) | Consumers take one package per platform; the source isn't something to install | [`tokens/`](../tokens), [`packages/web/`](../packages/web), [`apps/`](../apps) | [0016](adr/0016-platform-packages.md), [0034](adr/0034-components-as-token-fixtures.md) |
 | Token JSON edited by hand, color included; no generator | A generator hides decisions in code; the checks enforce what a generator would | [`tokens/src/`](../tokens/src) | [0020](adr/0020-hand-edited-tokens-and-ci-gates.md) |
@@ -40,7 +42,7 @@ Plain is a small design token monorepo (DTCG 2025.10, built with Terrazzo, docum
 
 ## Outputs
 
-| Practice | Why | ADR |
+| What | Why | ADR |
 |---|---|---|
 | One `tokens.css`: defaults on `:root`, then `[data-theme]` and `[data-density]` blocks that repeat only their own tokens | A mode attribute works on any subtree, and theme and density nest without resetting each other | [0025](adr/0025-density-modifier.md) |
 | Viewport through `@media`, with no attribute | The viewport is the window; a token can't pretend otherwise | [0029](adr/0029-viewport-modifier.md) |
@@ -58,7 +60,7 @@ Plain is a small design token monorepo (DTCG 2025.10, built with Terrazzo, docum
 
 ## Documentation
 
-| Practice | Why | Where | ADR |
+| What | Why | Where | ADR |
 |---|---|---|---|
 | Docs generated from the token JSON | A new token in an existing group shows up with no docs change | [`apps/storybook/src/tokens.ts`](../apps/storybook/src/tokens.ts) | [0009](adr/0009-storybook-token-docs.md) |
 | Docs styled with the tokens themselves | The docs are the first consumer; a broken token shows on its own page | [`docs.css`](../apps/storybook/src/docs.css) | [0011](adr/0011-letter-spacing-and-docs-dogfooding.md) |
@@ -67,7 +69,7 @@ Plain is a small design token monorepo (DTCG 2025.10, built with Terrazzo, docum
 
 ## Releases and versions
 
-| Practice | Why | ADR |
+| What | Why | ADR |
 |---|---|---|
 | One version for every package; breaking = a token renamed or removed, a name's meaning changed, or the output format changed | For tokens, the public API is the set of names | [0014](adr/0014-versioning-policy.md) |
 | A changeset per pull request, summary starting `Breaking:`, `New:`, or `Fix:`, checked against the bump | The note is written by whoever made the change, when they made it | [0035](adr/0035-changesets-releases.md) |
@@ -82,7 +84,7 @@ How to write a changeset: [`CONTRIBUTING.md`](../CONTRIBUTING.md#releases). What
 
 ## Working with an AI agent
 
-This repository is built with Claude Code. These practices matter only if your team works with an agent, and they reflect one person's workflow more than the rest of this page.
+This repository is built with Claude Code. This part matters only if you work with an agent, and it reflects one person's workflow even more than the rest of this page.
 
 - **One home per fact.** [`CLAUDE.md`](../CLAUDE.md) holds the rules every task needs, with a table of where everything else lives; area rules load only with their files ([`.claude/rules/`](../.claude/rules)); Figma procedures are a skill ([`.claude/skills/figma/`](../.claude/skills/figma)) ([ADR 0031](adr/0031-agent-docs-by-scope.md)).
 - **Handoff through the repository.** A session starts by printing git state and [`docs/progress.md`](progress.md) ([`.claude/settings.json`](../.claude/settings.json)), so work continues across machines and cloud sessions with no chat history.

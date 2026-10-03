@@ -6,6 +6,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 - Releases: Changesets and the Release workflow (ADR 0035); the latest version is in `packages/web/CHANGELOG.md` and the tags. `main` is stable; CI and the pre-commit hook run check and typecheck.
 - Contribution flow (ADR 0020, proposed): steps 5–6 (Storybook on GitHub Pages, branch protection on `main`) wait until the repository goes public, since a private repo needs a paid plan for both; the ADR becomes `accepted` then.
+- Repository: recreated on 2026-10-03 with the commit author emails rewritten, so it can go public; the same files and tags, new commit hashes. The pull requests before that (#1–#29) are in the private `haaanju/pts-archive`.
 - Figma `pts` file: in line with the tokens at `v0.9.3` (variables, styles, specimens, the Button page and component sets; Overview count 331 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
 ## In flight
@@ -14,9 +15,13 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## Next
 
-The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
+The monorepo comes first; no new components (ADR 0034). In this order:
 
-- Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
+1. The owner makes the repository public.
+2. ADR 0020 steps 5–6: Storybook on GitHub Pages and branch protection on `main`; the ADR becomes `accepted`.
+3. Then decide the next step with the owner. Left from the plan:
+
+   - Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 Waiting for a reason, not scheduled:
 

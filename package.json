@@ -2,6 +2,7 @@
   "name": "pts",
   "private": true,
   "description": "Plain — DTCG design tokens built with Terrazzo",
+  "license": "MIT",
   "workspaces": [
     "tokens",
     "packages/*",

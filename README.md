@@ -2,7 +2,7 @@
 
 Design tokens in the [DTCG](https://www.designtokens.org/) format, built with [Terrazzo](https://terrazzo.app) into CSS custom properties (with JS/TS and SCSS references to them), with light and dark themes, two densities, responsive display sizes, bundled fonts, and generated documentation.
 
-Plain is a personal study project: a small design token monorepo built end to end, from token source to published output, to learn how token pipelines work and to work out practices for the tooling around them (linting, accessibility checks, docs, automation).
+Plain is a personal study project: a small design token monorepo built end to end, from token source to published output, to learn how token pipelines work, including the tooling around them (linting, accessibility checks, docs, automation). It is shared for reference, not as a recommended setup.
 
 ## Packages
 
@@ -141,7 +141,7 @@ The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus b
 
 ## Decisions and conventions
 
-- **Practices**: [`docs/practices.md`](docs/practices.md) maps the practices in this repository (checks, accessibility, outputs, docs, releases) to where they live and the ADR behind each, for anyone building a token pipeline.
+- **How it works**: [`docs/how-it-works.md`](docs/how-it-works.md) maps each part of the repository (structure, checks, accessibility, outputs, docs, releases) to where it lives and the ADR behind it.
 - **Architecture decisions** are recorded in [`docs/adr/`](docs/adr).
 - **Token naming and authoring rules** live in [`CLAUDE.md`](CLAUDE.md), which also guides the AI assistant used on this project. Rules for one area are in [`.claude/rules/`](.claude/rules) (Storybook docs, the web build) and [`.claude/skills/figma/`](.claude/skills/figma) (the Figma file); see [ADR 0031](docs/adr/0031-agent-docs-by-scope.md).
 - **Versioning**: one Semantic Version for every package, released as a git tag (`vX.Y.Z`) and a GitHub Release; see [ADR 0014](docs/adr/0014-versioning-policy.md). While in `0.x`, breaking changes bump the minor version. What changed in each version: [`packages/web/CHANGELOG.md`](packages/web/CHANGELOG.md).
@@ -158,4 +158,4 @@ Deferred for now:
 
 The fonts in `@pts/web` are licensed under the SIL Open Font License 1.1; each font folder in [`packages/web/fonts/`](packages/web/fonts) includes its license. They are shipped unmodified.
 
-The rest of the repository has no license yet.
+The rest of the repository is licensed under the [MIT License](LICENSE).
