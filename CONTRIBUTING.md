@@ -38,7 +38,7 @@ All tokens are in `tokens/src/`. There are three tiers:
 | Tier | Folder | What it holds | Example |
 |---|---|---|---|
 | Primitive | `primitive/` | Raw values with no role | `color.red.600`, `dimension.16` |
-| Semantic | `semantic/` | Values with a role, pointing at a primitive | `intent.danger.surface.base` → `{color.red.600}` |
+| Semantic | `semantic/` | Values with a role, pointing at a primitive (`padding`, `gap`, and `text` point at other semantic tokens; `z-index`, `breakpoint`, and `line-height` hold values) | `intent.danger.surface.base` → `{color.red.600}` |
 | Component | `component/` | What one component uses, pointing at a semantic token | `button.danger.surface.rest` → `{intent.danger.surface.base}` |
 
 Product code uses semantic tokens, and a component's own code uses its component tokens. Most changes are to semantic tokens: pointing a role at a different primitive.
@@ -98,9 +98,9 @@ CI runs these on every pull request. A red check blocks the merge; open the fail
 
 | Check | Catches |
 |---|---|
-| `npm run check` | Values that aren't valid DTCG (wrong shape, unit, or type); a name that isn't kebab-case; a missing `$type`; an alias pointing at nothing, in any theme, density, or viewport; light and dark (or relaxed and compact, or narrow and wide) files with different names or descriptions; a compact value larger than its relaxed one; a `within` gap not smaller than every `between` gap, or a `between` gap not smaller than every `section` gap; text below 4.5:1 or UI below 3:1 contrast in either theme; hover or pressed states that look the same as the resting fill; a `hex` that doesn't match its `components`; a color outside srgb; a semantic token without a `$description`; a text style or `font-size` step below 12px, in any viewport; font sizes out of order, display steps less than ×1.5 apart, or two steps the same size in every viewport; a font size without its line height, a line that isn't a whole 4px step, or a text style using another size's line height; a semantic token with a raw value or pointing at another semantic token; a token file missing from the resolver; a token defined by two modifiers (theme, density, viewport) |
+| `npm run check` | Values that aren't valid DTCG (wrong shape, unit, or type); a name that isn't kebab-case; a missing `$type`; an alias pointing at nothing, in any theme, density, or viewport; light and dark (or relaxed and compact, or narrow and wide) defining different token names or descriptions; an `always` color that changes with the theme; a compact value larger than its relaxed one; a `within` gap not smaller than every `between` gap, or a `between` gap not smaller than every `section` gap; text below 4.5:1 or UI below 3:1 contrast in either theme; hover or pressed states that look the same as the resting fill; a `hex` that doesn't match its `components`; a color outside srgb; a semantic token without a `$description`; a text style or `font-size` step below 12px, in any viewport; font sizes out of order, display steps less than ×1.5 apart, or two steps the same size in every viewport; a font size without its line height, a line that isn't a whole 4px step, or a text style using another size's line height; a semantic token with a raw value or pointing at another semantic token; a token file missing from the resolver; a token defined by two modifiers (theme, density, viewport); a semantic color whose name the contrast pairs don't cover |
 | `npm run typecheck`, `npm run build`, `npm run build-storybook` | Changes that break the CSS output or the docs |
-| `npm test` | A change to a check (`tokens/lint/`) that stops it reporting what it should |
+| `npm test` | A change to a check (`tokens/lint/`) that stops it reporting what it should; a build that drops a token or a mode from `tokens.css`, `tokens.js`, or `tokens.scss` |
 
 Messages start with the rule that failed, then name the theme or file and the token:
 

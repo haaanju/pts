@@ -11,12 +11,13 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/terrazzo-pipeline`: one Terrazzo resolver for lint, the build, and the docs (ADR 0038), in a pull request.
+- `feature/audit-checks`: the first checks from the pipeline audit (ADR 0039), in a pull request.
 
 ## Next
 
 The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
 
+- The rest of the pipeline audit (ADR 0039, agreed with the owner), in this order. Next pull request: the changeset bump checked against removed or renamed token ids (Breaking needs `minor` and `Breaking:`), and against an empty changeset; component state completeness and distinctness (every state of a changing property, `rest` included, resolving differently); modifier scope (theme: colors and shadows; density: padding, gap/within, gap/between, size/control; viewport: display typography), compact exactly one scale step below relaxed, and role alias targets (`padding`, `gap` → `space`). The one after: Release tags only after the full CI on that commit (today it can tag before Storybook and test-a11y pass), and the changeset skip keyed on more than the branch name `changeset-release/main`. Then, if wanted: every top-level group shown on a docs page, `.storybook/theme.ts` hex copies matching the tokens, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light.
 - Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 Waiting for a reason, not scheduled:
@@ -27,5 +28,5 @@ Waiting for a reason, not scheduled:
 
 ## Open questions
 
-- `pts/visible-steps` checks only that steps differ. In OKLab, three pairs differ by ΔE 1.8 (×100), under the usual noticeable difference of about 2: light `surface/subtle` ↔ `surface/strong` and `surface/strong` ↔ `disabled/surface`, dark `inverse/strong` ↔ `inverse/stronger`. Owner to decide: a minimum ΔE (those colors change, with Figma) or a documented lower bar.
+- `pts/visible-steps` checks only that steps differ. In OKLab, three pairs differ by ΔE 1.8 (×100), under the usual noticeable difference of about 2: light `surface/subtle` ↔ `surface/strong` and `surface/strong` ↔ `disabled/surface`, dark `inverse/strong` ↔ `inverse/stronger`. Owner to decide: a minimum ΔE (those colors change, with Figma) or a documented lower bar. The audit (ADR 0039) adds the direction of each step (darker in light, lighter in dark, intents on their hue), which needs no decision: add it with the threshold.
 - Raw values in JS (`@terrazzo/plugin-js`, one token set per permutation) are left out (ADR 0030); add them as another subpath when a consumer needs real numbers or colors (charts, canvas).

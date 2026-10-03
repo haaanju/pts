@@ -8,8 +8,8 @@ paths:
 ## Build (`terrazzo.config.ts`)
 
 - One config; each web format is a plugin. A new format for this platform is a plugin here plus a subpath export in `package.json`, not a new package (ADR 0016, 0030).
-- `tokens.css` blocks are listed in the config's comments: `:root` at the defaults, then each modifier's selectors repeating only its tokens. The theme blocks take whole groups from the dark context files; the density and viewport blocks take token ids from the compact and wide files, since their groups also hold base tokens. The wide media query takes its width from `breakpoint/md`. Component tokens join the theme and density blocks when their aliases reach a token of that modifier (ADR 0032), since a variable declared on `:root` keeps the default value inside a `[data-theme]` or `[data-density]` subtree.
-- `sass()` must come after `css()` in `plugins`, or its token map builds empty without an error (ADR 0030).
+- `tokens.css` blocks are listed in the config's comments: `:root` at the defaults, then each modifier's selectors repeating only its tokens. Each modifier's blocks list the token ids Terrazzo's resolver says that modifier defines (`modifierTokens()` in `tokens/source.ts`, ADR 0038); the config reads no token file. The wide media query takes its width from `breakpoint/md`. Component tokens join the theme and density blocks when their aliases reach a token of that modifier (ADR 0032), since a variable declared on `:root` keeps the default value inside a `[data-theme]` or `[data-density]` subtree. Their aliases come from Terrazzo (`aliasChain`, `partialAliasOf`). `npm test` checks every block against the resolver (`test/output.test.ts`, ADR 0039): a new modifier context needs a selector there too.
+- `sass()` must come after `css()` in `plugins`, or its token map builds empty without a build error (ADR 0030); `npm test` catches it.
 - `tokens.js` and `tokens.scss` hold `var(--…)` references, not values; primitives are included, as in `tokens.css`. `tokens.d.ts` types every value as `string`.
 
 ## Fonts (`fonts/`)

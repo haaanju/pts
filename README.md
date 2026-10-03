@@ -22,7 +22,7 @@ The source lives in `tokens/`, shippable outputs in `packages/` (one package per
 Three tiers:
 
 - **Primitive** (`tokens/src/primitive/`): raw values such as `dimension.16`, `color.red.600`, `duration.200`.
-- **Semantic** (`tokens/src/semantic/`): values with a role, such as `space.400`, `content.subtle`, `intent.danger.surface.base`, `text.body-md`. Semantic tokens alias primitives. Product code uses semantic tokens.
+- **Semantic** (`tokens/src/semantic/`): values with a role, such as `space.400`, `content.subtle`, `intent.danger.surface.base`, `text.body-md`. Semantic tokens alias primitives, except `padding`, `gap`, and `text`, which build on other semantic tokens, and `z-index`, `breakpoint`, and `line-height`, which hold values. Product code uses semantic tokens.
 - **Component** (`tokens/src/component/`): what one component uses, per variant, size, and state, such as `button.primary.surface.hover` or `button.md.height`. Component tokens alias semantic tokens; a component's own code uses them (ADR 0032).
 
 Categories: color, typography, spacing, border, elevation, size, motion, and layout.
@@ -129,8 +129,9 @@ npm run build            # build @pts/web and @pts/components
 
 | Command | What it does |
 |---------|--------------|
-| `npm run check` | Validates the tokens with Terrazzo (`tz check` in `tokens/`): its built-in rules plus the project's `pts/*` rules in every theme, density, and viewport: contrast, visible states, parity between modes, spacing and type scale order, line heights on the 4px grid, hex values, descriptions, tier rules, unregistered files |
-| `npm run typecheck` | TypeScript for the lint plugin, the components, and Storybook |
+| `npm run check` | Validates the tokens with Terrazzo (`tz check` in `tokens/`): its built-in rules plus the project's `pts/*` rules (value rules in every theme, density, and viewport): contrast, visible states, parity between modes, spacing and type scale order, line heights on the 4px grid, hex values, descriptions, tier rules, unregistered files |
+| `npm test` | Checks that every lint rule still reports what it should, then builds `@pts/web` and checks its output against the tokens |
+| `npm run typecheck` | TypeScript for the lint plugin, the `@pts/web` build config and tests, the components, and Storybook |
 | `npm run build` | Builds `@pts/web` and `@pts/components` |
 | `npm run build-storybook` | Builds the static docs |
 | `npm run test-a11y` | Builds the docs, then checks every page and story with axe-core (WCAG 2.2 A and AA) in light and dark |

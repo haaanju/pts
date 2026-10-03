@@ -116,6 +116,11 @@ const cases: Case[] = [
     mutate: (c) => c.value(DARK, "content.base", "{color.missing}"),
     expect: [["pts/theme-parity", "does not resolve"]],
   },
+  {
+    name: "an always color that changes in one theme",
+    mutate: (c) => c.set(DARK, "always.white", () => ({ ...c.read("semantic/color.tokens.json").always.white, $value: "{color.neutral.50}" })),
+    expect: [["pts/theme-parity", "always.white differs between"]],
+  },
 
   // pts/contrast
   {
@@ -135,6 +140,14 @@ const cases: Case[] = [
     name: "a translucent color in a pair",
     mutate: (c) => c.value(DARK, "border.base", "{color.black-alpha.50}"),
     expect: [["pts/contrast", "border.base is translucent"]],
+  },
+  {
+    name: "a semantic color outside the color grammar",
+    mutate: (c) => {
+      for (const file of [LIGHT, DARK])
+        c.set(file, "status.error.content.base", () => ({ $type: "color", $value: "{color.red.300}", $description: "Error text." }));
+    },
+    expect: [["pts/contrast", "status.error.content.base is in no contrast pair and not exempt"]],
   },
 
   // pts/component-pairs

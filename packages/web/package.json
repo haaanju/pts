@@ -19,7 +19,10 @@
     "./fonts.css": "./fonts/fonts.css"
   },
   "scripts": {
-    "build": "tz build"
+    "build": "tz build",
+    "pretest": "npm run build --silent",
+    "test": "node --test test/output.test.ts",
+    "typecheck": "tsc -p ."
   },
   "dependencies": {
     "@pts/tokens": "*"
@@ -29,6 +32,8 @@
     "@terrazzo/parser": "^2.7.1",
     "@terrazzo/plugin-css": "^2.7.1",
     "@terrazzo/plugin-css-in-js": "^2.7.1",
-    "@terrazzo/plugin-sass": "^2.7.1"
+    "@terrazzo/plugin-sass": "^2.7.1",
+    "@types/node": "^22.20.4",
+    "typescript": "~5.9.3"
   }
 }
