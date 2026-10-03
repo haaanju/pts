@@ -32,6 +32,12 @@ paths:
 - Contrast badges use the same pairing rules as `npm run check` (both import `tokens/lint/pairs.ts`); each badge shows the lowest ratio among a token's pairs.
 - The sun/moon button at the top right toggles a `theme` global; the preview sets `data-theme` on `<html>` from it, so the whole page switches through token variables, and the manager switches between the two UI themes. Saved in localStorage; `?globals=theme:dark` also works. The density button next to it does the same for `data-density` (`.storybook/density.ts`, `?globals=density:compact`).
 
+## Accessibility
+
+- `npm run test-a11y` (`scripts/a11y.ts`) checks every docs page and story with axe-core (WCAG 2.2 A and AA) in light and dark; CI runs it (ADR 0036). `addon-a11y` shows the same checks in a story's Accessibility panel while developing (`parameters.a11y` in `preview.ts`).
+- A sample of a color exempt from contrast (`isExempt`, from `tokens/lint/pairs.ts`) carries `data-a11y-exempt`, and both checks skip it: the docs show disabled colors at their real contrast. Nothing else is exempt; fix a violation instead of excluding it.
+- Storybook's own blocks (Source, Controls) are styled for its static light theme: `docs.css` restyles them with tokens so they follow the toggle. A new Storybook block on a page needs the same, and the check shows where.
+
 ## Styling
 
 - Docs styling dogfoods the tokens: color, type, spacing, radius, stroke, shadow, and motion come from `@pts/web` variables. Values that only describe the docs layout or sample geometry are `--docs-*` variables at the top of `docs.css`; never add product tokens just for the docs. Card preview illustrations may use raw geometry.

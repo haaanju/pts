@@ -37,6 +37,11 @@ const preview: Preview = {
   },
   parameters: {
     docs: { theme: light },
+    // The same scope as scripts/a11y.ts: WCAG 2.2 A and AA, skipping samples of colors exempt from contrast.
+    a11y: {
+      context: { include: ["body"], exclude: ["[data-a11y-exempt]"] },
+      options: { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"] } },
+    },
     options: {
       storySort: {
         order: ["Overview", "Component", ["Button"], "Semantic", ["Color", "Typography", "Spacing", "Border", "Elevation", "Size", "Motion", "Layout"], "Primitive", ["Palette", "Scales"]],

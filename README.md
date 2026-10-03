@@ -131,10 +131,11 @@ npm run build            # build @pts/web and @pts/components
 | `npm run typecheck` | TypeScript for the lint plugin, the components, and Storybook |
 | `npm run build` | Builds `@pts/web` and `@pts/components` |
 | `npm run build-storybook` | Builds the static docs |
+| `npm run test-a11y` | Builds the docs, then checks every page and story with axe-core (WCAG 2.2 A and AA) in light and dark |
 
 **Working across machines.** Everything needed to continue lives in the repository. On a new machine: clone, `nvm use`, `npm install`. Pull before starting and push before switching. [`docs/progress.md`](docs/progress.md) records where work left off.
 
-The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus both builds on every push to `main` and every pull request, and checks each pull request's changeset.
+The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus both builds and the docs accessibility check on every push to `main` and every pull request, and checks each pull request's changeset.
 
 **Changing tokens.** Edit the JSON in `tokens/src/` directly, color included, then run `npm run check`. It enforces contrast, visible states, the tier rules, and a description on every semantic token. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full flow.
 

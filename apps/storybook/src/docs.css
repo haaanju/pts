@@ -84,6 +84,12 @@ body {
   color: var(--content-base) !important;
   font-family: var(--font-family-mono) !important;
 }
+.sbdocs .docblock-source .token {
+  color: var(--content-base) !important;
+}
+.sbdocs .docblock-source .token.tag {
+  color: var(--intent-discovery-content-base) !important;
+}
 .sbdocs .docblock-source .token.punctuation,
 .sbdocs .docblock-source .token.comment {
   color: var(--content-subtle) !important;
@@ -92,11 +98,13 @@ body {
 .sbdocs .docblock-source .token.class-name {
   color: var(--content-base) !important;
 }
-.sbdocs .docblock-source .token.property {
+.sbdocs .docblock-source .token.property,
+.sbdocs .docblock-source .token.attr-name {
   color: var(--intent-info-content-base) !important;
 }
 .sbdocs .docblock-source .token.string,
-.sbdocs .docblock-source .token.url {
+.sbdocs .docblock-source .token.url,
+.sbdocs .docblock-source .token.attr-value {
   color: var(--intent-success-content-base) !important;
 }
 .sbdocs .docblock-source .token.atrule,
@@ -109,6 +117,50 @@ body {
   background: var(--background) !important;
   color: var(--content-base) !important;
   border-color: var(--border-subtle) !important;
+}
+
+/* Controls table: also styled for Storybook's static light theme, so it stayed white on the dark
+   page and its muted text failed contrast (found by scripts/a11y.ts). Tokens make it follow the toggle. */
+.sbdocs .docblock-argstable-head th,
+.sbdocs .docblock-argstable-head th span,
+.sbdocs .docblock-argstable-head button {
+  color: var(--content-subtle) !important;
+}
+.sbdocs .docblock-argstable-body {
+  filter: none !important;
+}
+.sbdocs .docblock-argstable-body > tr > td {
+  background: var(--background) !important;
+  color: var(--content-base) !important;
+  border-color: var(--border-subtle) !important;
+}
+.sbdocs .docblock-argstable-body > tr:first-child > td {
+  border-top: var(--stroke-thin) solid var(--border-subtle) !important;
+}
+.sbdocs .docblock-argstable-body td > div span {
+  background: var(--surface-subtle) !important;
+  color: var(--content-base) !important;
+  border: none !important;
+}
+.sbdocs .docblock-argstable-body textarea {
+  background: var(--background) !important;
+  color: var(--content-base) !important;
+  box-shadow: inset 0 0 0 var(--stroke-thin) var(--border-base) !important;
+}
+.sbdocs .docblock-argstable-body input[type="radio"] {
+  accent-color: var(--inverse-base);
+}
+.sbdocs .docblock-argstable-body label:has(> input[role="switch"]) {
+  background: var(--surface-subtle) !important;
+}
+.sbdocs .docblock-argstable-body label:has(> input[role="switch"]) > span {
+  color: var(--content-subtle) !important;
+}
+.sbdocs .docblock-argstable-body label:has(> input[role="switch"]) > input:not(:checked) ~ span:first-of-type,
+.sbdocs .docblock-argstable-body label:has(> input[role="switch"]) > input:checked ~ span:last-of-type {
+  background: var(--background) !important;
+  color: var(--content-base) !important;
+  box-shadow: 0 0 0 var(--stroke-thin) var(--border-subtle) !important;
 }
 
 /* ---------- shared ---------- */

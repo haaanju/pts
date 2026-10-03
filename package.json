@@ -14,6 +14,7 @@
     "build": "npm run build --workspaces --if-present",
     "storybook": "npm run storybook -w @pts/storybook",
     "build-storybook": "npm run build-storybook -w @pts/storybook",
+    "test-a11y": "npm run build-storybook && npm run test-a11y -w @pts/storybook",
     "version-packages": "changeset version && rm -f tokens/CHANGELOG.md apps/*/CHANGELOG.md && npm install --package-lock-only --no-audit --no-fund",
     "release": "node .github/scripts/release.mjs"
   },

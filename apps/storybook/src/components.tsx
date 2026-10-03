@@ -403,7 +403,12 @@ const colorPreview = (t: TokenInfo, theme: Theme) => {
   const kind = property(t.id);
   const sample =
     kind === "content" ? (
-      <span className="pts-pair-sample" style={{ background: checks[0]?.bg.css ?? pageBg(theme), color: t.css }}>
+      // An exempt color (disabled/*, ...) is shown at its real contrast, so scripts/a11y.ts skips it as the lint does.
+      <span
+        className="pts-pair-sample"
+        style={{ background: checks[0]?.bg.css ?? pageBg(theme), color: t.css }}
+        data-a11y-exempt={isExempt(t.id) || undefined}
+      >
         Aa Text
       </span>
     ) : kind === "border" ? (

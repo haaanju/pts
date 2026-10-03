@@ -16,9 +16,8 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 The monorepo comes first; no new components (ADR 0034). In this order:
 
-1. Accessibility checks in Storybook (`addon-a11y`) on the token docs pages.
-2. A guide for colleagues: each practice in the repository, where it lives, and the ADR that says why.
-3. Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
+1. A guide for colleagues: each practice in the repository, where it lives, and the ADR that says why.
+2. Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 Waiting for a reason, not scheduled:
 
