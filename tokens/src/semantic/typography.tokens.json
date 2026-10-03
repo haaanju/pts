@@ -48,12 +48,12 @@
       "sm": {
         "$type": "dimension",
         "$value": "{dimension.14}",
-        "$description": "Small body text, control labels, and code (text/body-sm, text/label-md, text/code-md). 14px."
+        "$description": "Small body text, small control labels, and code (text/body-sm, text/label-md, text/code-md). 14px."
       },
       "md": {
         "$type": "dimension",
         "$value": "{dimension.16}",
-        "$description": "The default body size (text/body-md). 16px."
+        "$description": "The default body size and control labels (text/body-md, text/label-lg). 16px."
       },
       "lg": {
         "$type": "dimension",
@@ -196,7 +196,7 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.md}"
       },
-      "$description": "Labels on large controls, such as large buttons."
+      "$description": "Labels on default (md) and large controls, such as md and lg buttons."
     },
     "label-md": {
       "$type": "typography",
@@ -207,7 +207,7 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.sm}"
       },
-      "$description": "Labels on controls: buttons, inputs, tabs, and menu items."
+      "$description": "Labels on small controls, such as sm buttons, and on tabs and menu items."
     },
     "label-sm": {
       "$type": "typography",

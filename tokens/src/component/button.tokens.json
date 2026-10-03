@@ -172,12 +172,12 @@
       },
       "icon": {
         "$type": "dimension",
-        "$value": "{size.icon.sm}",
+        "$value": "{size.icon.md}",
         "$description": "Icon and spinner size of default (md) buttons."
       },
       "label": {
         "$type": "typography",
-        "$value": "{text.label-md}",
+        "$value": "{text.label-lg}",
         "$description": "Label text style of default (md) buttons."
       }
     },
