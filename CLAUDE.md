@@ -1,6 +1,6 @@
 # Plain
 
-A personal study project: a design token monorepo, built end to end to learn how token pipelines work, and to work out practices for the tooling around them (linting, accessibility checks, docs, automation) to share with colleagues. Tokens and their outputs are the product; components exist only to test the component tier (ADR 0034).
+A personal study project: a design token monorepo, built end to end to learn how token pipelines work, including the tooling around them (linting, accessibility checks, docs, automation), and shared with colleagues for reference, not as a recommendation. Tokens and their outputs are the product; components exist only to test the component tier (ADR 0034).
 
 **Plain** is the display name (Storybook title and docs). `pts` / `@pts/*` are the code, package, and repository names.
 
@@ -24,7 +24,7 @@ Each fact has one home; elsewhere, link to it (ADR 0031).
 | Why a decision was made | `docs/adr/` | on demand |
 | Token values | `tokens/src/**/*.tokens.json` | on demand; this file gives representative values only |
 | What each check enforces, and why | the header of each `tokens/lint/rules/*.ts` | on demand |
-| Human guides | `README.md` (usage), `CONTRIBUTING.md` (changing tokens), `docs/practices.md` (the practices, for colleagues) | on demand |
+| Human guides | `README.md` (usage), `CONTRIBUTING.md` (changing tokens), `docs/how-it-works.md` (a map of the repository, for colleagues) | on demand |
 
 ## Tech Stack
 
@@ -170,7 +170,7 @@ Record decisions that change token structure, naming, tooling, or the pipeline a
 
 - Status: `proposed` while under discussion, `accepted` once implemented. When a later ADR changes an accepted one, add `(amended by NNNN)`; `superseded by NNNN` only when it is replaced entirely.
 - A rule that follows from a decision goes where the table above says, not into the ADR alone.
-- An ADR that adds or changes a practice also updates its row in `docs/practices.md`, which links rather than restates.
+- An ADR that adds or changes how the repository works also updates its row in `docs/how-it-works.md`, which links rather than restates.
 
 ## Continuity
 

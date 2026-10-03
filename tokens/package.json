@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "DTCG design token source (single source of truth)",
+  "license": "MIT",
   "files": [
     "src"
   ],

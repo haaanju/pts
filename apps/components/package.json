@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Web components built on the @pts/web tokens: <pts-button>",
+  "license": "MIT",
   "files": [
     "dist"
   ],

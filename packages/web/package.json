@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Web output of @pts/tokens: CSS custom properties, JS/TS and SCSS references to them, and self-hosted fonts",
+  "license": "(MIT AND OFL-1.1)",
   "files": [
     "dist",
     "fonts"
