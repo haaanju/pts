@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "check": "tz check",
+    "test": "node --test lint/rules.test.ts",
     "typecheck": "tsc -p ."
   },
   "devDependencies": {

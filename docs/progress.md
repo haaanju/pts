@@ -11,12 +11,13 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- None.
+- `feature/rule-tests`: lint rule regression tests (ADR 0037), in a pull request.
 
 ## Next
 
 The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
 
+- One resolver for everything, agreed with the owner: lint, the `@pts/web` build config, and Storybook all take resolved tokens from Terrazzo, using Terrazzo wherever it can (branch `feature/terrazzo-pipeline`, ADR 0038). Today Storybook resolves aliases itself (`apps/storybook/src/tokens.ts`, merging in another order than the resolver), and `packages/web/terrazzo.config.ts` walks aliases by regex. Found in Terrazzo 2.7.1: `resolver.apply(input, { modifiers: [m], sets: [] })` lists the tokens a modifier defines; tokens carry `aliasChain` and `dependencies`; `resolver.orthogonal` says modifiers don't overlap (true today); a plugin's `build` hook gets `resolver` and `outputFile`, so the docs data can be a `tz build` output. Not yet checked: file order and source file from `resolver.source`, `tz build --watch` for the dev server. Done when `@pts/web` outputs are byte-identical.
 - Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 Waiting for a reason, not scheduled:
@@ -27,4 +28,5 @@ Waiting for a reason, not scheduled:
 
 ## Open questions
 
+- `pts/visible-steps` checks only that steps differ. In OKLab, three pairs differ by ΔE 1.8 (×100), under the usual noticeable difference of about 2: light `surface/subtle` ↔ `surface/strong` and `surface/strong` ↔ `disabled/surface`, dark `inverse/strong` ↔ `inverse/stronger`. Owner to decide: a minimum ΔE (those colors change, with Figma) or a documented lower bar.
 - Raw values in JS (`@terrazzo/plugin-js`, one token set per permutation) are left out (ADR 0030); add them as another subpath when a consumer needs real numbers or colors (charts, canvas).

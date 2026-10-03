@@ -100,6 +100,7 @@ CI runs these on every pull request. A red check blocks the merge; open the fail
 |---|---|
 | `npm run check` | Values that aren't valid DTCG (wrong shape, unit, or type); a name that isn't kebab-case; a missing `$type`; an alias pointing at nothing, in any theme, density, or viewport; light and dark (or relaxed and compact, or narrow and wide) files with different names or descriptions; a compact value larger than its relaxed one; a `within` gap not smaller than every `between` gap, or a `between` gap not smaller than every `section` gap; text below 4.5:1 or UI below 3:1 contrast in either theme; hover or pressed states that look the same as the resting fill; a `hex` that doesn't match its `components`; a color outside srgb; a semantic token without a `$description`; a text style or `font-size` step below 12px, in any viewport; font sizes out of order, display steps less than ×1.5 apart, or two steps the same size in every viewport; a font size without its line height, a line that isn't a whole 4px step, or a text style using another size's line height; a semantic token with a raw value or pointing at another semantic token; a token file missing from the resolver |
 | `npm run typecheck`, `npm run build`, `npm run build-storybook` | Changes that break the CSS output or the docs |
+| `npm test` | A change to a check (`tokens/lint/`) that stops it reporting what it should |
 
 Messages start with the rule that failed, then name the theme or file and the token:
 
