@@ -27,7 +27,7 @@ export default defineConfig({
       //      core/duplicate-values flags every alias target, which is the point of the tiers.
 
       // 3. Ours (tokens/lint/): what the built-in rules can't check. Each rule file says why.
-      "pts/theme-parity": "error",
+      "pts/theme-parity": ["error", { constant: ["always"] }],
       "pts/contrast": "error",
       "pts/component-pairs": "error",
       "pts/visible-steps": "error",
