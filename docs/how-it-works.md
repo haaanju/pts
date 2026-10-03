@@ -21,6 +21,7 @@ Three parts that may be the most interesting to look at:
 | Modes as DTCG resolver modifiers (theme, density, viewport), never `$extensions.mode` | One standard source for every mode, readable by any resolver-aware tool | [`pts.resolver.json`](../tokens/src/pts.resolver.json) | [0005](adr/0005-color-tokens-and-theme-resolver.md), [0025](adr/0025-density-modifier.md), [0029](adr/0029-viewport-modifier.md) |
 | Three tiers, primitive → semantic → component, each aliasing only the one below | Product code depends on meaning, not raw values; a component can change without touching the semantic tier | [`tokens/src/`](../tokens/src), checked by `pts/tier-aliases` | [0032](adr/0032-button.md) |
 | Terrazzo rather than Style Dictionary | Native DTCG resolver and a lint API; native platforms through a custom plugin | [`terrazzo.config.ts`](../packages/web/terrazzo.config.ts) | [0022](adr/0022-terrazzo-over-style-dictionary.md) |
+| One resolver: Terrazzo's, for lint, the build, and the docs | Two resolvers can disagree without anyone noticing; the docs show what the CSS ships | [`tokens/source.ts`](../tokens/source.ts), checked by `pts/orthogonal-modifiers` | [0038](adr/0038-one-terrazzo-resolver.md) |
 
 ### Naming systems
 
@@ -34,11 +35,11 @@ Three parts that may be the most interesting to look at:
 
 ## Checks as code
 
-`npm run check` runs Terrazzo's built-in lint rules plus 12 project rules ([`tokens/lint/rules/`](../tokens/lint/rules)). Terrazzo lints the default mode only, so every project rule checks every theme × density × viewport permutation ([ADR 0021](adr/0021-terrazzo-lint.md)).
+`npm run check` runs Terrazzo's built-in lint rules plus 13 project rules ([`tokens/lint/rules/`](../tokens/lint/rules)). Terrazzo lints the default mode only, so every project rule checks every theme × density × viewport permutation ([ADR 0021](adr/0021-terrazzo-lint.md)).
 
 - **A built-in rule first.** A project rule exists only when no built-in one does the job, and its file header says why ("Why not built-in: …"). Read the headers to see what each rule enforces.
 - **The rules are tested too.** A rule that stops reporting looks the same as tokens that pass, so `npm test` breaks each rule on purpose in a copy of the tokens and expects `tz check` to report it ([`tokens/lint/rules.test.ts`](../tokens/lint/rules.test.ts), [ADR 0037](adr/0037-lint-rule-tests.md)).
-- **What the rules cover**: contrast (`contrast`, `component-pairs`), visible state changes (`visible-steps`), mode parity and descriptions (`theme-parity`), scale order (`density-order`, `gap-order`, `type-scale`, `line-height-grid`, `min-font-size`), tiers (`tier-aliases`), consistent color values (`color-hex`), and files the build would silently skip (`registered-files`).
+- **What the rules cover**: contrast (`contrast`, `component-pairs`), visible state changes (`visible-steps`), mode parity and descriptions (`theme-parity`), scale order (`density-order`, `gap-order`, `type-scale`, `line-height-grid`, `min-font-size`), tiers (`tier-aliases`), consistent color values (`color-hex`), files the build would silently skip (`registered-files`), and modifiers that overlap (`orthogonal-modifiers`).
 - **Gates**: a pre-commit hook ([`.githooks/pre-commit`](../.githooks/pre-commit)) runs check and typecheck; CI ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) adds the rule tests, both builds, the docs accessibility check, and the changeset check, and `main` accepts only pull requests that pass it ([ADR 0020](adr/0020-hand-edited-tokens-and-ci-gates.md)).
 
 ## Outputs
@@ -65,7 +66,7 @@ The docs are hosted at https://haaanju.github.io/pts/, deployed from `main` afte
 
 | What | Why | Where | ADR |
 |---|---|---|---|
-| Docs generated from the token JSON | A new token in an existing group shows up with no docs change | [`apps/storybook/src/tokens.ts`](../apps/storybook/src/tokens.ts) | [0009](adr/0009-storybook-token-docs.md) |
+| Docs generated from the token JSON, by a Terrazzo build | A new token in an existing group shows up with no docs change | [`apps/storybook/scripts/docs-tokens.ts`](../apps/storybook/scripts/docs-tokens.ts), [`src/tokens.ts`](../apps/storybook/src/tokens.ts) | [0009](adr/0009-storybook-token-docs.md), [0038](adr/0038-one-terrazzo-resolver.md) |
 | Docs styled with the tokens themselves | The docs are the first consumer; a broken token shows on its own page | [`docs.css`](../apps/storybook/src/docs.css) | [0011](adr/0011-letter-spacing-and-docs-dogfooding.md) |
 | Light and dark (and density) toggles on the whole page, plus side-by-side cells per mode | Every mode is reviewable without a second build | [`.storybook/`](../apps/storybook/.storybook) | [0012](adr/0012-docs-dark-mode.md) |
 | Docs and Figma specimens kept aligned: the same pages, sections, and leads | Designers and developers read the same structure | [`.claude/rules/storybook.md`](../.claude/rules/storybook.md) | — |

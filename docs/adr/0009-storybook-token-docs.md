@@ -1,6 +1,6 @@
 # 0009. Storybook Token Documentation
 
-- Status: accepted
+- Status: accepted (amended by 0038)
 - Date: 2026-09-25
 
 ## What we learned

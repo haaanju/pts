@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@terrazzo/cli": "^2.7.1",
+    "@terrazzo/parser": "^2.7.1",
     "@terrazzo/plugin-css": "^2.7.1",
     "@terrazzo/plugin-css-in-js": "^2.7.1",
     "@terrazzo/plugin-sass": "^2.7.1"

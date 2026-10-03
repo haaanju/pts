@@ -4,7 +4,7 @@
 // multiplied by its font size; no built-in rule pairs two tokens like that. Terrazzo also lints the default
 // permutation only, and the viewport changes both (ADR 0029).
 import type { LintRule } from "@terrazzo/parser";
-import { files, themes } from "../source.ts";
+import { loadResolver, permutations } from "../../source.ts";
 
 type Options = { gridPx: number };
 type Dimension = { value: number; unit: string };
@@ -29,7 +29,7 @@ const rule: LintRule<"MISSING" | "UNPAIRED" | "OFF_GRID" | "STYLE_MISMATCH", Opt
         send();
       }
     };
-    for (const { label, tokens } of await themes()) {
+    for (const { label, tokens } of permutations(await loadResolver())) {
       if (!tokens) continue; // reported by pts/theme-parity
       const steps = (group: string) => new Set(Object.keys(tokens).filter((id) => id.startsWith(`${group}.`)).map((id) => id.slice(group.length + 1)));
       const sizes = steps("font-size");
@@ -47,15 +47,13 @@ const rule: LintRule<"MISSING" | "UNPAIRED" | "OFF_GRID" | "STYLE_MISMATCH", Opt
         const off = Math.abs(line / options.gridPx - Math.round(line / options.gridPx));
         if (off > 1e-6) once(`${id} ${line} ${size}`, () => report({ messageId: "OFF_GRID", data: { label, id, line: +line.toFixed(3), size, grid: options.gridPx } }));
       }
-    }
-    // Composites: read the files, since a resolved composite no longer says which tokens it aliased
-    for (const { tokens: raw } of files()) {
-      for (const [id, token] of Object.entries(raw)) {
+      // Composites: Terrazzo keeps the token each property aliases (partialAliasOf)
+      for (const [id, token] of Object.entries(tokens)) {
         if (token.$type !== "typography") continue;
-        const { fontSize, lineHeight } = token.$value as Record<string, string>;
-        const sizeStep = fontSize?.match(/^\{font-size\.(.+)\}$/)?.[1];
-        const lineStep = lineHeight?.match(/^\{line-height\.(.+)\}$/)?.[1];
-        if (sizeStep !== lineStep) report({ messageId: "STYLE_MISMATCH", data: { id, fontSize, lineHeight } });
+        const { fontSize, lineHeight } = (token.partialAliasOf ?? {}) as Record<string, string | undefined>;
+        if (fontSize?.replace(/^font-size\./, "line-height.") === lineHeight) continue;
+        const ref = (alias?: string) => (alias ? `{${alias}}` : "a raw value");
+        once(`style ${id}`, () => report({ messageId: "STYLE_MISMATCH", data: { id, fontSize: ref(fontSize), lineHeight: ref(lineHeight) } }));
       }
     }
   },

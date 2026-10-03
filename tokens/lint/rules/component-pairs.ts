@@ -5,10 +5,9 @@
 // semantic name says. This rule makes sure that pairing is one of the checked ones, so the values need no second check.
 // Exempt content (disabled/*) is skipped, as pts/contrast skips it.
 import type { LintRule } from "@terrazzo/parser";
+import { isAlias, parseAlias } from "@terrazzo/token-tools";
 import { contrastPairs, isExempt } from "../pairs.ts";
-import { files } from "../source.ts";
-
-const ALIAS = /^\{([^}]+)\}$/;
+import { files, loadResolver } from "../../source.ts";
 
 const rule: LintRule<"UNPAIRED" | "NOT_ALIAS"> = {
   meta: {
@@ -19,8 +18,8 @@ const rule: LintRule<"UNPAIRED" | "NOT_ALIAS"> = {
     },
   },
   defaultOptions: {},
-  create({ report }) {
-    const all = files();
+  async create({ report }) {
+    const all = files(await loadResolver());
     const semanticIds = all.filter((f) => f.tier === "semantic").flatMap((f) => Object.keys(f.tokens));
     const checked = new Set(contrastPairs([...new Set(semanticIds)]).map(([fg, bg]) => `${fg} on ${bg}`));
 
@@ -28,7 +27,7 @@ const rule: LintRule<"UNPAIRED" | "NOT_ALIAS"> = {
       if (tier !== "component") continue;
       const target = (id: string) => {
         const value = tokens[id].$value;
-        const ref = typeof value === "string" ? value.match(ALIAS)?.[1] : undefined;
+        const ref = typeof value === "string" && isAlias(value) ? parseAlias(value) : undefined;
         if (!ref) report({ messageId: "NOT_ALIAS", data: { file, id } });
         return ref;
       };

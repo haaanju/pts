@@ -2,7 +2,7 @@
 // Why not built-in: Terrazzo lints the default theme only, so a broken alias or a missing token in another theme
 // passes `tz check`, and core/descriptions never sees another theme's descriptions.
 import type { LintRule } from "@terrazzo/parser";
-import { themes } from "../source.ts";
+import { loadResolver, permutations } from "../../source.ts";
 
 const rule: LintRule<"UNRESOLVED" | "MISSING" | "DESCRIPTION"> = {
   meta: {
@@ -15,7 +15,7 @@ const rule: LintRule<"UNRESOLVED" | "MISSING" | "DESCRIPTION"> = {
   },
   defaultOptions: {},
   async create({ report }) {
-    const all = await themes();
+    const all = permutations(await loadResolver());
     for (const t of all) if (t.error) report({ messageId: "UNRESOLVED", data: { theme: t.label, error: t.error } });
 
     const [first, ...rest] = all.filter((t) => t.tokens);

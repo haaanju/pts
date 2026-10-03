@@ -6,7 +6,7 @@ import type { ColorTokenNormalized, LintRule } from "@terrazzo/parser";
 import { tokenToColor } from "@terrazzo/token-tools";
 import { contrastWCAG21 } from "colorjs.io/fn";
 import { contrastPairs } from "../pairs.ts";
-import { themes } from "../source.ts";
+import { loadResolver, permutations } from "../../source.ts";
 
 const NO_BACKGROUND = " (no background)";
 
@@ -23,7 +23,7 @@ const rule: LintRule<"INSUFFICIENT" | "MISSING" | "UNKNOWN_CONTENT" | "TRANSLUCE
   defaultOptions: {},
   async create({ report }) {
     const unknown = new Set<string>();
-    for (const { label: theme, tokens } of await themes()) {
+    for (const { label: theme, tokens } of permutations(await loadResolver())) {
       if (!tokens) continue; // reported by pts/theme-parity
       for (const [fg, bg, min] of contrastPairs(Object.keys(tokens))) {
         if (bg.endsWith(NO_BACKGROUND)) {

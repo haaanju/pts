@@ -4,7 +4,7 @@
 // Why not built-in: no built-in rule compares one group of tokens with another, and Terrazzo lints one
 // permutation only.
 import type { LintRule } from "@terrazzo/parser";
-import { themes } from "../source.ts";
+import { loadResolver, permutations } from "../../source.ts";
 
 type Options = {
   /** token groups from the smallest family to the largest, e.g. ["gap.within", "gap.between", "gap.section"] */
@@ -23,7 +23,7 @@ const rule: LintRule<"OVERLAP", Options> = {
   },
   defaultOptions: { order: [] },
   async create({ report, options }) {
-    for (const { label, tokens } of await themes()) {
+    for (const { label, tokens } of permutations(await loadResolver())) {
       if (!tokens) continue; // reported by pts/theme-parity
       const family = (prefix: string) =>
         Object.keys(tokens)

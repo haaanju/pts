@@ -3,7 +3,7 @@
 // Why not built-in: it runs per theme, and no built-in rule compares one token's value with another's.
 import type { ColorTokenNormalized, LintRule } from "@terrazzo/parser";
 import { distinctBackgrounds } from "../pairs.ts";
-import { themes } from "../source.ts";
+import { loadResolver, permutations } from "../../source.ts";
 
 const key = (t: ColorTokenNormalized) => `${t.$value.colorSpace} ${t.$value.components.join(" ")} ${t.$value.alpha ?? 1}`;
 
@@ -14,7 +14,7 @@ const rule: LintRule<"SAME_COLOR"> = {
   },
   defaultOptions: {},
   async create({ report }) {
-    for (const { label: theme, tokens } of await themes()) {
+    for (const { label: theme, tokens } of permutations(await loadResolver())) {
       if (!tokens) continue; // reported by pts/theme-parity
       for (const [a, b] of distinctBackgrounds(Object.keys(tokens))) {
         if (key(tokens[a] as ColorTokenNormalized) === key(tokens[b] as ColorTokenNormalized)) report({ messageId: "SAME_COLOR", data: { theme, a, b } });

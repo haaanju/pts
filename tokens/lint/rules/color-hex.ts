@@ -2,7 +2,7 @@
 // Why not built-in: core/valid-color validates hex and components separately, not against each other.
 // The CSS output uses hex; other formats use components, so a mismatch ships two different colors.
 import type { LintRule } from "@terrazzo/parser";
-import { files } from "../source.ts";
+import { files, loadResolver } from "../../source.ts";
 
 type ColorObject = { components?: number[]; hex?: string };
 
@@ -15,8 +15,8 @@ const rule: LintRule<"MISMATCH"> = {
     messages: { MISMATCH: "{{file}}: {{id}} has hex {{hex}}, but its components are {{actual}}{{hint}}" },
   },
   defaultOptions: {},
-  create({ report }) {
-    for (const { path: file, tokens } of files()) {
+  async create({ report }) {
+    for (const { path: file, tokens } of files(await loadResolver())) {
       for (const [id, token] of Object.entries(tokens)) {
         const value = token.$value as ColorObject;
         if (token.$type !== "color" || !value || typeof value !== "object" || !value.components) continue;
