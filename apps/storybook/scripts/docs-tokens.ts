@@ -3,9 +3,9 @@
 // the result as "virtual:pts-tokens". It runs again when a token file changes, so the dev server stays live.
 import { fileURLToPath } from "node:url";
 import { build, type Plugin as TerrazzoPlugin, type Resolver } from "@terrazzo/parser";
-import type { Plugin as VitePlugin } from "vite";
+import { normalizePath, type Plugin as VitePlugin } from "vite";
 import { files, parseSource, permutations, registered, RESOLVER } from "../../../tokens/source.ts";
-import type { DocsTokens, DocsValue } from "../src/tokens-data.ts";
+import type { DocsToken, DocsTokens, DocsValue } from "../src/tokens-data.ts";
 
 const FILENAME = "docs-tokens.json";
 const MODIFIERS = ["theme", "density", "viewport"];
@@ -15,20 +15,28 @@ const MODIFIERS = ["theme", "density", "viewport"];
 const LAYERS = ["density", "base", "theme", "viewport"];
 
 export const docsData = (resolver: Resolver): DocsTokens => {
-  const sources = files(resolver).sort((a, b) => LAYERS.indexOf(a.layer) - LAYERS.indexOf(b.layer));
+  const rank = (layer: string) => {
+    if (!LAYERS.includes(layer)) throw new Error(`docs-tokens.ts: add the ${layer} layer to LAYERS to place its files`);
+    return LAYERS.indexOf(layer);
+  };
+  const sources = files(resolver).sort((a, b) => rank(a.layer) - rank(b.layer));
   const tierOf = new Map<string, string>();
   for (const { tier, tokens } of sources) for (const id of Object.keys(tokens)) if (!tierOf.has(id)) tierOf.set(id, tier);
 
+  const meta = new Map<string, DocsToken>();
   const values: DocsTokens["values"] = {};
-  let first: DocsTokens["tokens"] | undefined;
   for (const { label, input, tokens, error } of permutations(resolver)) {
     if (!tokens) throw new Error(`${label} does not resolve: ${error}`);
-    first ??= [...tierOf].map(([id, tier]) => ({ id, type: tokens[id].$type, description: tokens[id].$description, tier }));
+    const unknown = Object.keys(input).find((m) => !MODIFIERS.includes(m));
+    if (unknown) throw new Error(`docs-tokens.ts: add the ${unknown} modifier to MODIFIERS to key its permutations`);
+    // a token one context lacks (pts/theme-parity reports it) is left out of that permutation only
+    const present = [...tierOf].filter(([id]) => tokens[id]);
+    for (const [id, tier] of present) if (!meta.has(id)) meta.set(id, { id, type: tokens[id].$type, description: tokens[id].$description, tier });
     values[MODIFIERS.map((m) => input[m]).join("/")] = Object.fromEntries(
-      [...tierOf.keys()].map((id): [string, DocsValue] => [id, { value: tokens[id].$value, alias: tokens[id].aliasChain?.[0] }]),
+      present.map(([id]): [string, DocsValue] => [id, { value: tokens[id].$value, alias: tokens[id].aliasChain?.[0] }]),
     );
   }
-  return { tokens: first ?? [], values };
+  return { tokens: [...tierOf.keys()].flatMap((id) => meta.get(id) ?? []), values };
 };
 
 /** Terrazzo plugin: writes docs-tokens.json */
@@ -49,11 +57,15 @@ export const tokensModule = (): VitePlugin => {
     resolveId: (source) => (source === id ? resolved : undefined),
     async load(source) {
       if (source !== resolved) return;
-      // the resolver and every file it lists; a change rebuilds (hotUpdate below)
-      for (const path of [RESOLVER, ...registered().map((file) => new URL(file, RESOLVER))]) {
-        watched.add(fileURLToPath(path));
-        this.addWatchFile(fileURLToPath(path));
-      }
+      // the resolver and every file it lists; a change rebuilds (hotUpdate below). The resolver first, so a resolver that
+      // doesn't parse is still watched and fixing it rebuilds. Vite compares posix paths (normalizePath).
+      const watch = (url: URL) => {
+        const path = normalizePath(fileURLToPath(url));
+        watched.add(path);
+        this.addWatchFile(path);
+      };
+      watch(RESOLVER);
+      for (const file of registered()) watch(new URL(file, RESOLVER));
       const { tokens, resolver, sources, config, logger } = await parseSource([docsTokens()]);
       const { outputFiles } = await build(tokens, { resolver, sources, config, logger });
       const output = outputFiles.find((file) => file.filename === FILENAME);

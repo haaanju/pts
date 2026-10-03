@@ -64,7 +64,7 @@ docs/progress.md, docs/adr/
 - `npm run check`: `tz check` in `tokens/` (ADR 0021). Terrazzo's built-in rules plus the `pts/*` rules, which check every theme × density × viewport permutation (Terrazzo alone lints the default one). Errors start with the rule name; the rule file's header says what it enforces.
   - Built-in rules turned on beyond the recommended ones: `$type` required, a `$description` on every semantic token, srgb colors, text styles at least 12px.
   - `pts/*`: `theme-parity`, `contrast`, `component-pairs`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`, `orthogonal-modifiers`.
-  - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it. Every `pts/*` message gets a case in `tokens/lint/rules.test.ts`.
+  - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it. Every `pts/*` message gets a case in `tokens/lint/rules.test.ts`, unless it can't be reached (the file says why).
 - `npm test`: breaks each `pts/*` rule on purpose in a copy of `tokens/` and expects `tz check` to report it, so a rule that silently stops reporting fails (ADR 0037).
 - `npm run typecheck`: TypeScript for the lint plugin, the components, and Storybook.
 - `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/components` → `apps/components/dist/`).

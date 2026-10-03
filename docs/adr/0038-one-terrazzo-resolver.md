@@ -41,7 +41,7 @@ Terrazzo 2.7 already offers what the hand-written parts did:
 - **The docs data is larger.** Every permutation's resolved values are inlined: 280 KB, or 18 KB gzipped, up from 9 KB for the raw files. Only the docs load it.
 - **Lint parses the tokens a second time.** Terrazzo doesn't hand a rule its resolver, so `loadResolver()` parses once per process, next to `tz check`'s own parse. Both use the same engine, so they can't disagree, but it isn't one parse.
 - **More of Terrazzo's API.** `resolver.source`, `listPermutations`, and partial `apply` are less central than `parse`. A Terrazzo upgrade that changes them breaks lint, the build, and the docs together and loudly. The rule tests (ADR 0037) and the byte comparison below catch it.
-- **File names still come from the resolver document.** Terrazzo's normalized resolver keeps each file's tokens but not its `$ref`, so `files()` reads the `$ref` paths from `pts.resolver.json` and pairs them by position.
+- **File names still come from the resolver document.** Terrazzo's normalized resolver keeps each file's tokens but not its `$ref`, so `files()` takes the `$ref` paths from `pts.resolver.json`, as the same parse read it, and pairs them by position. An inline source (tokens written in the resolver itself) is rejected with an error.
 - **The docs' order is a docs choice.** Terrazzo returns tokens in id order. The docs list them in file order, with density files first and viewport files last (`LAYERS` in `docs-tokens.ts`), as before.
 
 ## Implementation notes

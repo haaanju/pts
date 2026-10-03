@@ -101,9 +101,8 @@ type Case = {
   expect: [rule: string, message: string][];
 };
 
-// One case per message of every pts rule, except two that the other checks make unreachable: MISSING in pts/contrast
-// (the pairs come from the ids of the same permutation, so a pair's tokens always exist there) and NOT_ORTHOGONAL in
-// pts/orthogonal-modifiers (a fallback in case Terrazzo finds an overlap that OVERLAP doesn't).
+// One case per message of every pts rule. MISSING in pts/contrast is left out: the pairs come from the ids of the
+// same permutation, so a pair's tokens always exist there.
 const cases: Case[] = [
   // pts/theme-parity
   { name: "a token missing from one theme", mutate: (c) => c.remove(DARK, "content.subtle"), expect: [["pts/theme-parity", "content.subtle is in"]] },

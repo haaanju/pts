@@ -68,23 +68,25 @@ const format = (type: string, v: any, forCss: boolean): string => {
 const build = (theme: Theme, density: Density, viewport: Viewport): Record<string, TokenInfo> => {
   const values = data.values[`${theme}/${density}/${viewport}`];
   return Object.fromEntries(
-    data.tokens.map(({ id, type, description }) => {
-      const { value: resolved, alias } = values[id];
-      // A line height pairs with the font size of the same name (ADR 0028): show the line it produces
-      const size = id.startsWith("line-height.") ? values[id.replace("line-height.", "font-size.")] : undefined;
-      const sizePx = size && (size.value as { value: number }).value;
-      const info: TokenInfo = {
-        id,
-        type,
-        cssVar: `--${id.replaceAll(".", "-")}`,
-        alias,
-        resolved,
-        display: sizePx ? `${fmtNum(resolved as number)} · ${linePx(sizePx, resolved as number)}px line` : format(type, resolved, false),
-        css: format(type, resolved, true),
-        description,
-      };
-      return [id, info];
-    }),
+    data.tokens
+      .filter(({ id }) => values[id])
+      .map(({ id, type, description }) => {
+        const { value: resolved, alias } = values[id];
+        // A line height pairs with the font size of the same name (ADR 0028): show the line it produces
+        const size = id.startsWith("line-height.") ? values[id.replace("line-height.", "font-size.")] : undefined;
+        const sizePx = size && (size.value as { value: number }).value;
+        const info: TokenInfo = {
+          id,
+          type,
+          cssVar: `--${id.replaceAll(".", "-")}`,
+          alias,
+          resolved,
+          display: sizePx ? `${fmtNum(resolved as number)} · ${linePx(sizePx, resolved as number)}px line` : format(type, resolved, false),
+          css: format(type, resolved, true),
+          description,
+        };
+        return [id, info];
+      }),
   );
 };
 
@@ -107,16 +109,13 @@ export const group = (prefix: string, theme: Theme = "light", density: Density =
   Object.values(at(theme, density, viewport)).filter((t) => t.id === prefix || t.id.startsWith(`${prefix}.`));
 
 /** True if any token under the prefix resolves differently between themes */
-export const isThemed = (prefix: string) =>
-  group(prefix, "light").some((t) => t.css !== token(t.id, "dark").css);
+export const isThemed = (prefix: string) => group(prefix, "light").some((t) => t.css !== token(t.id, "dark").css);
 
 /** True if any token under the prefix resolves differently between densities */
-export const isDense = (prefix: string) =>
-  group(prefix).some((t) => t.css !== token(t.id, "light", "compact").css);
+export const isDense = (prefix: string) => group(prefix).some((t) => t.css !== token(t.id, "light", "compact").css);
 
 /** True if any token under the prefix resolves differently between viewports */
-export const isResponsive = (prefix: string) =>
-  group(prefix).some((t) => t.css !== token(t.id, "light", "relaxed", "wide").css);
+export const isResponsive = (prefix: string) => group(prefix).some((t) => t.css !== token(t.id, "light", "relaxed", "wide").css);
 
 /** Last path segment, e.g. "intent.danger.surface.strong" → "strong" */
 export const leaf = (id: string) => id.slice(id.lastIndexOf(".") + 1);

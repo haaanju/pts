@@ -25,9 +25,17 @@ export type Permutation = { label: string; input: Record<string, string>; tokens
 /** Parses the resolver and every file it lists, with a config that holds the given plugins, for Terrazzo's build(). Each call parses again. */
 export const parseSource = async (plugins: Plugin[] = [], logger = new Logger({ level: "silent" })) => {
   const config = defineConfig({ tokens: [fileURLToPath(RESOLVER)], plugins }, { logger, cwd: SRC });
-  const result = await parse([{ filename: RESOLVER, src: readFileSync(RESOLVER, "utf8") }], { config, logger, skipLint: true });
+  const src = readFileSync(RESOLVER, "utf8");
+  const result = await parse([{ filename: RESOLVER, src }], { config, logger, skipLint: true });
+  documents.set(result.resolver, JSON.parse(src));
   return { ...result, config, logger };
 };
+
+// The resolver document each parse read, as written: files() takes only the $ref paths from it, since Terrazzo's
+// normalized resolver keeps each file's tokens but not its name. Both list the sources in the same order. Kept per parse,
+// so a resolver file saved after the parse can't pair one file's path with another's tokens.
+const documents = new WeakMap<Resolver, any>();
+const resolverDocument = () => JSON.parse(readFileSync(RESOLVER, "utf8"));
 
 let cache: Promise<Resolver> | undefined;
 /** The resolver, parsed once per process */
@@ -57,13 +65,10 @@ const flatten = (node: Tree, prefix = "", out: Record<string, RawToken> = {}) =>
   return out;
 };
 
-// The resolver document as written: only the $ref paths come from here, since Terrazzo's normalized resolver keeps each
-// file's tokens but not its name. Both list the sources in the same order.
-const resolverDocument = () => JSON.parse(readFileSync(RESOLVER, "utf8"));
 
 /** Registered files with their tier: the first folder, primitive/, semantic/, or component/. In resolver order. */
 export const files = (resolver: Resolver): SourceFile[] => {
-  const doc = resolverDocument();
+  const doc = documents.get(resolver) ?? resolverDocument();
   const { sets = {}, modifiers = {} } = resolver.source;
   const pairs: [Ref, string, Tree][] = [
     ...Object.entries(sets).flatMap(([name, set]) =>
@@ -75,6 +80,8 @@ export const files = (resolver: Resolver): SourceFile[] => {
       ),
     ),
   ];
+  const inline = pairs.find(([ref]) => typeof ref.$ref !== "string");
+  if (inline) throw new Error(`pts.resolver.json lists an inline source in ${inline[1]}; list token files by \$ref`);
   const seen = new Set<string>();
   return pairs
     .filter(([{ $ref }]) => !seen.has($ref) && seen.add($ref))

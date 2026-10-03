@@ -30,8 +30,9 @@ const rule: LintRule<"LARGER" | "NOT_PX", Options> = {
   defaultOptions: { modifier: "density", tighter: "compact", looser: "relaxed" },
   async create({ report, options }) {
     const { modifier, tighter, looser } = options;
-    const ids = modifierTokens(await loadResolver(), modifier);
-    const all = (permutations(await loadResolver())).filter((t) => t.tokens);
+    const resolver = await loadResolver();
+    const ids = modifierTokens(resolver, modifier);
+    const all = permutations(resolver).filter((t) => t.tokens);
     // pair each tighter permutation with the looser one that has the same other inputs (same theme)
     for (const tight of all.filter((t) => t.input[modifier] === tighter)) {
       const others = (t: (typeof all)[number]) => Object.entries(t.input).filter(([k]) => k !== modifier).map(([k, v]) => `${k}=${v}`).join(", ");

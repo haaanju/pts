@@ -22,14 +22,19 @@ const viewportTokens = modifierTokens(resolver, "viewport");
 // (aliasChain), and for a composite the token each property aliases (partialAliasOf).
 const leaves = (value: unknown): string[] =>
   typeof value === "string" ? [value] : value && typeof value === "object" ? Object.values(value).flatMap(leaves) : [];
-const aliasesOf = (token: TokenNormalized): string[] => token.aliasChain ?? leaves(token.partialAliasOf);
-const reaches = (id: string, targets: Set<string>): boolean =>
-  targets.has(id) || (tokens[id] !== undefined && aliasesOf(tokens[id]).some((ref) => reaches(ref, targets)));
+// aliasChain is the whole chain; a composite's properties each alias a token whose own chain is followed in turn
+const reaches = (token: TokenNormalized | undefined, targets: Set<string>): boolean =>
+  !!token &&
+  (targets.has(token.id) ||
+    (token.aliasChain ?? []).some((id) => targets.has(id)) ||
+    leaves(token.partialAliasOf).some((id) => reaches(tokens[id], targets)));
 const componentTokens = files(resolver)
   .filter((file) => file.tier === "component")
   .flatMap((file) => Object.keys(file.tokens));
-const themedComponentTokens = componentTokens.filter((id) => reaches(id, new Set(themeTokens)));
-const denseComponentTokens = componentTokens.filter((id) => reaches(id, new Set(densityTokens)));
+const themeSet = new Set(themeTokens);
+const densitySet = new Set(densityTokens);
+const themedComponentTokens = componentTokens.filter((id) => reaches(tokens[id], themeSet));
+const denseComponentTokens = componentTokens.filter((id) => reaches(tokens[id], densitySet));
 
 // The width where the wide display sizes start (ADR 0029). Custom properties can't be used in media queries, so the
 // query takes the value of breakpoint/md.
