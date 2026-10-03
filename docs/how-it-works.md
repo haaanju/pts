@@ -37,8 +37,9 @@ Three parts that may be the most interesting to look at:
 `npm run check` runs Terrazzo's built-in lint rules plus 12 project rules ([`tokens/lint/rules/`](../tokens/lint/rules)). Terrazzo lints the default mode only, so every project rule checks every theme × density × viewport permutation ([ADR 0021](adr/0021-terrazzo-lint.md)).
 
 - **A built-in rule first.** A project rule exists only when no built-in one does the job, and its file header says why ("Why not built-in: …"). Read the headers to see what each rule enforces.
+- **The rules are tested too.** A rule that stops reporting looks the same as tokens that pass, so `npm test` breaks each rule on purpose in a copy of the tokens and expects `tz check` to report it ([`tokens/lint/rules.test.ts`](../tokens/lint/rules.test.ts), [ADR 0037](adr/0037-lint-rule-tests.md)).
 - **What the rules cover**: contrast (`contrast`, `component-pairs`), visible state changes (`visible-steps`), mode parity and descriptions (`theme-parity`), scale order (`density-order`, `gap-order`, `type-scale`, `line-height-grid`, `min-font-size`), tiers (`tier-aliases`), consistent color values (`color-hex`), and files the build would silently skip (`registered-files`).
-- **Gates**: a pre-commit hook ([`.githooks/pre-commit`](../.githooks/pre-commit)) runs check and typecheck; CI ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) adds both builds, the docs accessibility check, and the changeset check, and `main` accepts only pull requests that pass it ([ADR 0020](adr/0020-hand-edited-tokens-and-ci-gates.md)).
+- **Gates**: a pre-commit hook ([`.githooks/pre-commit`](../.githooks/pre-commit)) runs check and typecheck; CI ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) adds the rule tests, both builds, the docs accessibility check, and the changeset check, and `main` accepts only pull requests that pass it ([ADR 0020](adr/0020-hand-edited-tokens-and-ci-gates.md)).
 
 ## Outputs
 
