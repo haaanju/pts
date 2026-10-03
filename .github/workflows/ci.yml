@@ -10,11 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the changeset check compares with origin/main
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - name: Changesets (ADR 0035)
+        if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
+        run: node .github/scripts/check-changesets.mjs origin/${{ github.base_ref }}
       - run: npm run check
       - run: npm run typecheck
       - run: npm run build

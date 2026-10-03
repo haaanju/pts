@@ -2,14 +2,9 @@
 
 <!-- Which tokens, and why. For a value change, old → new (e.g. `intent.danger.surface.base`: red.600 → red.700). -->
 
-## Type of change
+## Changeset
 
-<!-- Pick one; it decides the next version number (ADR 0014). -->
-
-- [ ] **Breaking**: a token renamed or removed, a name's meaning changed, or the output format or selectors changed
-- [ ] **New**: new tokens, groups, themes, or outputs
-- [ ] **Fix**: a value adjusted within its role (color tuning, a contrast fix)
-- [ ] **Other**: docs, tooling, or CI only
+<!-- Add `.changeset/<name>.md` naming "@pts/web", with a summary starting Breaking:, New:, or Fix: (CONTRIBUTING.md, Releases); it decides the next version (ADR 0014, 0035). If nothing ships (tooling, CI), run `npx changeset --empty`. CI checks it. -->
 
 ## Checklist
 
@@ -17,4 +12,4 @@
 - [ ] A new group has a section on its Storybook page, and its prefix is in the page's `groups`
 - [ ] A decision about structure, naming, or tooling has an ADR
 
-<!-- Leave items that don't apply unchecked. CI runs check, typecheck, and both builds; it must pass before merging. -->
+<!-- Leave items that don't apply unchecked. CI checks the changeset and runs check, typecheck, and both builds; it must pass before merging. -->

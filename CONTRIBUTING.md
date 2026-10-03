@@ -7,13 +7,13 @@ This guide is for anyone changing the tokens, designers first. You edit JSON fil
 ```
 1. Explore     try the change in the Figma pts file
 2. Edit        change the token JSON on a branch
-3. Open a PR   fill in the template
+3. Open a PR   fill in the template and add a changeset
 4. Checks      CI validates the tokens and builds everything; it must pass
 5. Review      the owner reviews and merges
 6. Merged      the change is on main and ships with the next release
 ```
 
-A release (a version tag) is cut separately, when the owner decides; see [ADR 0014](docs/adr/0014-versioning-policy.md).
+A release is cut separately, when the owner decides; see [Releases](#releases).
 
 **The JSON is the source of truth, not Figma.** Figma is where you try things. Once a change is merged, the JSON is what ships, and Figma should match it.
 
@@ -114,8 +114,34 @@ Here the danger text is too dark on the dark page: point it at a lighter step in
 The template asks for:
 
 - **What changed**, with old → new values for value changes.
-- **The type of change**: breaking, new, fix, or other. It decides the next version number.
+- **A changeset**: see below. CI fails without one.
 - **Figma**: the variables and specimens match the new values. The contrast badges and hex labels on the specimen pages are drawn by hand, so update them too.
+
+## Releases
+
+Each pull request says what it changes for the next release in a **changeset**, a small file in `.changeset/` ([ADR 0035](docs/adr/0035-changesets-releases.md)). Create `.changeset/<any-kebab-name>.md`:
+
+```md
+---
+"@pts/web": patch
+---
+
+Fix: intent/danger/content/base is red.300 in dark (was red.400) for 4.5:1 on the page.
+```
+
+- **Always name `@pts/web`.** Every package shares one version, and `packages/web/CHANGELOG.md` is the changelog.
+- **Start the summary with the type of change**, and pick the bump that goes with it ([ADR 0014](docs/adr/0014-versioning-policy.md)):
+
+  | Summary starts with | When | Bump (before 1.0) |
+  |---|---|---|
+  | `Breaking:` | a token renamed or removed, a name's meaning changed, the output format or selectors changed | `minor` |
+  | `New:` | new tokens, groups, themes, or outputs | `patch` |
+  | `Fix:` | a value adjusted within its role, docs | `patch` |
+
+- **Nothing to release** (tooling, CI, a docs page no one installs): run `npx changeset --empty`.
+- Say what a consumer needs to know: old → new values, and for a breaking change what to use instead.
+
+Once merged, changesets wait on `main`. A pull request titled **Release** collects them and shows the next version and changelog; the owner merges it when it's time, and the version tag and the GitHub Release follow automatically.
 
 ## Decisions
 

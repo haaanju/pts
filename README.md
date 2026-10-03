@@ -134,7 +134,7 @@ npm run build            # build @pts/web and @pts/components
 
 **Working across machines.** Everything needed to continue lives in the repository. On a new machine: clone, `nvm use`, `npm install`. Pull before starting and push before switching. [`docs/progress.md`](docs/progress.md) records where work left off.
 
-The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus both builds on every push to `main` and every pull request.
+The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus both builds on every push to `main` and every pull request, and checks each pull request's changeset.
 
 **Changing tokens.** Edit the JSON in `tokens/src/` directly, color included, then run `npm run check`. It enforces contrast, visible states, the tier rules, and a description on every semantic token. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full flow.
 
@@ -142,7 +142,8 @@ The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus b
 
 - **Architecture decisions** are recorded in [`docs/adr/`](docs/adr).
 - **Token naming and authoring rules** live in [`CLAUDE.md`](CLAUDE.md), which also guides the AI assistant used on this project. Rules for one area are in [`.claude/rules/`](.claude/rules) (Storybook docs, the web build) and [`.claude/skills/figma/`](.claude/skills/figma) (the Figma file); see [ADR 0031](docs/adr/0031-agent-docs-by-scope.md).
-- **Versioning**: one Semantic Version for every package, released as a git tag (`vX.Y.Z`); see [ADR 0014](docs/adr/0014-versioning-policy.md). While in `0.x`, breaking changes bump the minor version.
+- **Versioning**: one Semantic Version for every package, released as a git tag (`vX.Y.Z`) and a GitHub Release; see [ADR 0014](docs/adr/0014-versioning-policy.md). While in `0.x`, breaking changes bump the minor version. What changed in each version: [`packages/web/CHANGELOG.md`](packages/web/CHANGELOG.md).
+- **Releases** are automated with [Changesets](https://github.com/changesets/changesets): each pull request adds a changeset, and merging the Release pull request tags and publishes the notes; see [ADR 0035](docs/adr/0035-changesets-releases.md).
 
 ## Status
 

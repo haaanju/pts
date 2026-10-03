@@ -4,7 +4,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## Current state
 
-- Latest release: `v0.9.3` (the md button label 16px and icon 24px, ADR 0033). `main` is stable; CI and the pre-commit hook run check and typecheck.
+- Releases: Changesets and the Release workflow (ADR 0035); the latest version is in `packages/web/CHANGELOG.md` and the tags. `main` is stable; CI and the pre-commit hook run check and typecheck.
 - Contribution flow (ADR 0020, proposed): steps 5–6 (Storybook on GitHub Pages, branch protection on `main`) wait until the repository goes public, since a private repo needs a paid plan for both; the ADR becomes `accepted` then.
 - Figma `pts` file: in line with the tokens at `v0.9.3` (variables, styles, specimens, the Button page and component sets; Overview count 331 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
@@ -16,10 +16,9 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 The monorepo comes first; no new components (ADR 0034). In this order:
 
-1. Release automation: version bumps, tags, and a changelog are done by hand (ADR 0014).
-2. Accessibility checks in Storybook (`addon-a11y`) on the token docs pages.
-3. A guide for colleagues: each practice in the repository, where it lives, and the ADR that says why.
-4. Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
+1. Accessibility checks in Storybook (`addon-a11y`) on the token docs pages.
+2. A guide for colleagues: each practice in the repository, where it lives, and the ADR that says why.
+3. Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 Waiting for a reason, not scheduled:
 

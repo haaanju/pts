@@ -13,9 +13,14 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "storybook": "npm run storybook -w @pts/storybook",
-    "build-storybook": "npm run build-storybook -w @pts/storybook"
+    "build-storybook": "npm run build-storybook -w @pts/storybook",
+    "version-packages": "changeset version && rm -f tokens/CHANGELOG.md apps/*/CHANGELOG.md && npm install --package-lock-only --no-audit --no-fund",
+    "release": "node .github/scripts/release.mjs"
   },
   "engines": {
     "node": ">=22.18"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^3.0.3"
   }
 }

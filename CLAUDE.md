@@ -49,7 +49,8 @@ apps/components/            @pts/components: Lit web components testing the comp
 apps/storybook/             @pts/storybook: token docs
 docs/progress.md, docs/adr/
 .claude/                    settings.json (SessionStart hooks), rules/, skills/
-.githooks/pre-commit, .github/ (CI, PR template)
+.changeset/                 pending release notes and the Changesets config (ADR 0035)
+.githooks/pre-commit, .github/ (CI and Release workflows, their scripts, PR template)
 ```
 
 - Register every new token file in `pts.resolver.json`: mode-independent files in `sets.base`, modifier-specific files in the matching `modifiers.<theme|density|viewport>` context. `npm run check` reports a file that isn't registered.
@@ -160,7 +161,7 @@ always/        white, black
 
 - Storybook updates by itself, except the hex copies in `apps/storybook/.storybook/theme.ts` (the manager can't read CSS variables): update them if the tokens they copy change.
 - Figma doesn't: load the `figma` skill and bring it in line.
-- The change type (breaking, new, fix) decides the next version; see Git Convention.
+- Add a changeset: the change type (breaking, new, fix) decides the next version; see Git Convention.
 
 ## Decisions
 
@@ -186,5 +187,6 @@ Work continues across chats and machines through the repository only; chat histo
 ## Git Convention
 
 - `main` is stable; work happens on `feature/xxx` branches.
-- Releases are annotated tags on `main` (`v0.1.0`), ADR 0014. One Semantic Version for every `@pts/*` package; bump all together: `npm version X.Y.Z --workspaces --no-git-tag-version`.
-- In `0.x`, breaking changes bump MINOR, new tokens and fixes bump PATCH. Breaking = renaming or removing a token, changing what a name means, or changing the output format or selectors. Adjusting a value within its role is a fix.
+- One Semantic Version for every `@pts/*` package (ADR 0014). In `0.x`, breaking changes bump MINOR, new tokens and fixes bump PATCH. Breaking = renaming or removing a token, changing what a name means, or changing the output format or selectors. Adjusting a value within its role is a fix.
+- Every PR that changes a workspace adds a changeset (ADR 0035), written by hand in `.changeset/<kebab-name>.md`: front matter `"@pts/web": patch` (always `@pts/web`; the fixed group bumps the rest), then a summary starting `Breaking:`, `New:`, or `Fix:` whose bump matches the rule above. A change that ships nothing gets an empty one (`npx changeset --empty`). CI enforces it.
+- Releasing is merging the "Release" PR the Release workflow keeps open; it then tags `vX.Y.Z` and creates the GitHub Release from `packages/web/CHANGELOG.md`. Never bump versions or tag by hand.
