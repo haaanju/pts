@@ -1,6 +1,6 @@
 {
-  // Type-checks the Node code: the scripts, and the Vite config with the docs' token build. The scripts run without a
-  // build step (Node's type stripping), so only erasable TypeScript syntax is allowed.
+  // Type-checks the Node code: the scripts, the Vite config with the docs' token build, and the Storybook main config.
+  // The scripts run without a build step (Node's type stripping), so only erasable TypeScript syntax is allowed.
   "compilerOptions": {
     "target": "ES2023",
     "module": "NodeNext",
@@ -13,5 +13,5 @@
     "skipLibCheck": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["*.ts", "../vite.config.ts"]
+  "include": ["*.ts", "../vite.config.ts", "../.storybook/main.ts"]
 }

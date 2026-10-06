@@ -1,4 +1,5 @@
 import type { StorybookConfig } from "@storybook/react-vite";
+import { uiTokensScript } from "../scripts/ui-tokens.ts";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.tsx"],
@@ -6,6 +7,9 @@ const config: StorybookConfig = {
   addons: ["@storybook/addon-docs", "@storybook/addon-a11y"],
   // Serves the @pts/web font files to the Storybook UI (manager-head.html); the docs import @pts/web/fonts.css directly.
   staticDirs: [{ from: "../../../packages/web/fonts", to: "/fonts" }],
+  // The UI themes (theme.ts) read token values resolved here at startup, since the manager can't read CSS variables
+  managerHead: async (head) => `${head}\n${await uiTokensScript()}`,
+  previewHead: async (head) => `${head}\n${await uiTokensScript()}`,
   framework: { name: "@storybook/react-vite", options: {} },
   // Docs first: no component onboarding and no canvas tools (the toolbar keeps the theme toggle).
   features: {
