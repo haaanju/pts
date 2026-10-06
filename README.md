@@ -130,16 +130,17 @@ npm run build            # build @pts/web and @pts/components
 
 **Working across machines.** Everything needed to continue lives in the repository. On a new machine: clone, `nvm use`, `npm install`. Pull before starting and push before switching. [`docs/progress.md`](docs/progress.md) records where work left off.
 
-The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus `npm test`, both builds, and the docs accessibility check on every push to `main` and every pull request.
+The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus `npm test`, both builds, and the docs accessibility check on every push to `main` and every pull request, and checks each pull request's changeset.
 
 **Changing tokens.** Edit the JSON in `tokens/src/` directly, color included, then run `npm run check`. It enforces contrast, visible states, the tier rules, and a description on every semantic token. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full flow.
 
 ## Decisions and conventions
 
-- **How it works**: [`docs/how-it-works.md`](docs/how-it-works.md) maps each part of the repository (structure, checks, accessibility, outputs, docs) to where it lives and the ADR behind it.
+- **How it works**: [`docs/how-it-works.md`](docs/how-it-works.md) maps each part of the repository (structure, checks, accessibility, outputs, docs, releases) to where it lives and the ADR behind it.
 - **Architecture decisions** are recorded in [`docs/adr/`](docs/adr).
 - **Token naming and authoring rules** live in [`CLAUDE.md`](CLAUDE.md), which also guides the AI assistant used on this project. Rules for one area are in [`.claude/rules/`](.claude/rules) (Storybook docs, the web build) and [`.claude/skills/figma/`](.claude/skills/figma) (the Figma file); see [ADR 0031](docs/adr/0031-agent-docs-by-scope.md).
-- **No releases**: the packages are private, never published, and stay at `0.9.4`; see [ADR 0042](docs/adr/0042-no-releases.md). The changes up to then: [`packages/web/CHANGELOG.md`](packages/web/CHANGELOG.md).
+- **Versioning**: one Semantic Version for every package, released as a git tag (`vX.Y.Z`) and a GitHub Release; see [ADR 0014](docs/adr/0014-versioning-policy.md). While in `0.x`, breaking changes bump the minor version. What changed in each version: [`packages/web/CHANGELOG.md`](packages/web/CHANGELOG.md).
+- **Releases** are automated with [Changesets](https://github.com/changesets/changesets): each pull request adds a changeset, and merging the Release pull request tags and publishes the notes; see [ADR 0035](docs/adr/0035-changesets-releases.md).
 
 ## Status
 

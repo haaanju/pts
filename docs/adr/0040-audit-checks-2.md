@@ -1,6 +1,6 @@
 # 0040. Checks from the Pipeline Audit, Part 2
 
-- Status: accepted (amended by 0042)
+- Status: accepted
 - Date: 2026-10-03
 
 ## What we learned

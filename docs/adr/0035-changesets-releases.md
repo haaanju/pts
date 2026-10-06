@@ -1,6 +1,6 @@
 # 0035. Releases with Changesets
 
-- Status: superseded by 0042
+- Status: accepted (amended by 0040, 0041, 0042)
 - Date: 2026-10-03
 
 ## What we learned

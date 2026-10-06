@@ -6,11 +6,13 @@ This guide is for changing the tokens: where they live, their format, the common
 
 ```
 1. Explore     try the change in the Figma pts file
-2. Edit        change the token JSON (on a feature branch for larger work)
+2. Edit        change the token JSON on a feature branch
 3. Check       npm run check; npm run storybook to see it in the docs
-4. Push        CI runs every check on main and on pull requests
-5. Docs        once CI passes on main, the docs (https://haaanju.github.io/pts/) show the change
+4. Open a PR   fill in the template and add a changeset; CI must pass
+5. Merged      the change is on main, in the docs (https://haaanju.github.io/pts/), and ships with the next release
 ```
+
+A release is cut separately, when the owner decides; see [Releases](#releases).
 
 **The JSON is the source of truth, not Figma.** Figma is where you try things. Once a change is on `main`, the JSON is what ships, and Figma should match it.
 
@@ -21,6 +23,7 @@ Install Node 22.18 or later, then:
 ```sh
 git clone <repo> && cd pts
 npm install              # also installs a hook that runs check and typecheck before each commit
+git switch -c feature/my-change
 npm run check            # every token rule (tz check); the fastest feedback
 npm run storybook        # the docs at http://localhost:6006, with your change
 ```
@@ -84,7 +87,7 @@ The full naming and structure rules are in [`CLAUDE.md`](CLAUDE.md) (Token Rules
 | Add a token to an existing group | Add it to the file. For a themed file, add it to both `light` and `dark`; for a density file, to both `relaxed` and `compact` (compact one `space` step smaller); for a viewport file, to both `narrow` and `wide`. It appears in the docs by itself |
 | Add a new file | Create it in `primitive/` or `semantic/` and add it to `tokens/src/pts.resolver.json`: mode-independent files in `sets.base`, per-theme files under `modifiers.theme`, per-density files under `modifiers.density`, per-viewport files under `modifiers.viewport` |
 | Add a new top-level group | As above, then add a section to the matching docs page in `apps/storybook/src/` (e.g. `<Section title="Opacity" path="opacity/*"><TokenTable prefix="opacity" /></Section>`) and add the prefix to the page's `groups` |
-| Rename or remove a token | Change it in every file that defines or aliases it; `npm run check` reports an alias left pointing at the old name |
+| Rename or remove a token | A breaking change: write a `Breaking:` changeset. Change it in every file that defines or aliases it; `npm run check` reports an alias left pointing at the old name |
 
 ## What the checks catch
 
@@ -106,10 +109,38 @@ Here the danger text is too dark on the dark page: point it at a lighter step in
 
 ## Pull requests
 
-For larger work, the pull request template asks for:
+The template asks for:
 
 - **What changed**, with old → new values for value changes.
+- **A changeset**: see below. CI fails without one.
 - **Figma**: the variables and specimens match the new values. The contrast badges and hex labels on the specimen pages are drawn by hand, so update them too.
+
+## Releases
+
+Each pull request says what it changes for the next release in a **changeset**, a small file in `.changeset/` ([ADR 0035](docs/adr/0035-changesets-releases.md)). Create `.changeset/<any-kebab-name>.md`:
+
+```md
+---
+"@pts/web": patch
+---
+
+Fix: intent/danger/content/base is red.300 in dark (was red.400) for 4.5:1 on the page.
+```
+
+- **Always name `@pts/web`.** Every package shares one version, and `packages/web/CHANGELOG.md` is the changelog.
+- **Start the summary with the type of change**, and pick the bump that goes with it ([ADR 0014](docs/adr/0014-versioning-policy.md)):
+
+  | Summary starts with | When | Bump (before 1.0) |
+  |---|---|---|
+  | `Breaking:` | a token renamed or removed, a name's meaning changed, the output format or selectors changed | `minor` |
+  | `New:` | new tokens, groups, themes, or outputs | `patch` |
+  | `Fix:` | a value adjusted within its role, docs | `patch` |
+
+- **Nothing to release** (tooling, CI, a docs page no one installs): run `npx changeset --empty`.
+- **CI compares the tokens with `main`.** A token removed or renamed fails without a `Breaking:` changeset, and a token added or a value changed fails with only an empty one. It can't see a change in meaning: say `Breaking:` yourself when a name now means something else.
+- Say what a consumer needs to know: old → new values, and for a breaking change what to use instead.
+
+Once merged, changesets wait on `main`. A pull request titled **Release** collects them and shows the next version and changelog; the owner merges it when it's time, and the version tag and the GitHub Release follow automatically.
 
 ## Decisions
 
