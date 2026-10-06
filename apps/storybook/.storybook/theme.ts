@@ -1,7 +1,14 @@
 import { create } from "storybook/theming";
-import { copies } from "./token-copies";
+import type { UiTokens } from "./ui-tokens";
 
-// Storybook UI themes, from copies of token values (token-copies.ts), since the manager can't read CSS variables.
+// Storybook UI themes, from token values main.ts resolves at startup (ui-tokens.ts), since the manager can't read CSS
+// variables.
+
+declare global {
+  interface Window {
+    PTS_UI_TOKENS: UiTokens;
+  }
+}
 
 export const THEME_GLOBAL = "theme";
 export const STORAGE_KEY = "pts-docs-theme";
@@ -29,13 +36,13 @@ export const saveMode = (mode: Mode) => {
 /** Explicit global (toggle or ?globals=theme:…) wins, then the saved choice, then light. */
 export const resolveMode = (globalValue: unknown): Mode => asMode(globalValue) ?? readSaved() ?? "light";
 
-const { light: l, dark: d, any } = copies;
+const { light: l, dark: d, ...any } = window.PTS_UI_TOKENS;
 
 const shared = {
   brandTitle: "Plain",
   brandTarget: "_self",
-  fontBase: `"${any["font-family.sans"]}", system-ui, sans-serif`,
-  fontCode: `"${any["font-family.mono"]}", ui-monospace, monospace`,
+  fontBase: any["font-family.sans"],
+  fontCode: any["font-family.mono"],
   appBorderRadius: any["radius.md"],
   inputBorderRadius: any["radius.md"],
 };

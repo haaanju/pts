@@ -13,5 +13,7 @@
     // Type-check against the component source, so typecheck needs no build of @pts/components first
     "paths": { "@pts/components/*": ["../components/src/*"] }
   },
-  "include": ["src", ".storybook"]
+  "include": ["src", ".storybook"],
+  // main.ts runs in Node at startup and resolves tokens: scripts/tsconfig.json checks it
+  "exclude": [".storybook/main.ts"]
 }

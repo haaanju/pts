@@ -1,6 +1,6 @@
 # 0044. Storybook Token Copies Checked
 
-- Status: accepted
+- Status: superseded by 0046
 - Date: 2026-10-06
 
 ## What we learned
