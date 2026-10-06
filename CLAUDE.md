@@ -159,7 +159,7 @@ always/        white, black
 - **Content 4.5:1** (WCAG 1.4.3) against every background it is paired with, as listed under Content above.
 - **UI boundaries 3:1** (WCAG 1.4.11) against `background` and `surface/*`: `border/base`, `border/focus`, intent `border/base`, `inverse/*`, and an intent's `surface/base`, `strong`, `stronger`.
 - **Exempt**: `disabled/*` (inactive), `border/subtle` and intent `border/subtle` (decorative), `utility/*` (translucent), `always/*` (sits on images; pair `always/white` with a dark overlay). A translucent color in a contrast pair is an error.
-- **Visible steps**: every step of a surface ladder differs from the others, and `surface/strong` / `stronger` differ from `disabled/surface`.
+- **Visible steps**: every step of a surface ladder differs from the others, and `surface/strong` / `stronger` differ from `disabled/surface`, by at least ΔE 2 (OKLab ×100; ADR 0045).
 
 ## After a token change
 
