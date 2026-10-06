@@ -10,11 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the changeset check compares with origin/main
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - name: Changesets (ADR 0035)
+        # skipped only for the release PR the Release workflow opens: its branch name alone could be anyone's
+        if: github.event_name == 'pull_request' && !(github.head_ref == 'changeset-release/main' && github.event.pull_request.user.login == 'github-actions[bot]')
+        run: node .github/scripts/check-changesets.mjs origin/${{ github.base_ref }}
       - run: npm run check
       - run: npm test # the lint rules still report what they should (ADR 0037); the @pts/web output holds every token and mode (ADR 0039)
       - run: npm run typecheck

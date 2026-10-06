@@ -2,8 +2,6 @@
 
 The changelog of every `@pts/*` package, which share one version (ADR 0014). Entries from 0.9.4 on come from changesets (ADR 0035); earlier ones are the release tag messages.
 
-No longer updated: the project stopped releasing at 0.9.4 (ADR 0042).
-
 ## 0.9.4
 
 ### Patch Changes
