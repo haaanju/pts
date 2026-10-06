@@ -6,11 +6,10 @@ This page maps what the repository does: what each part is, why it's here, where
 
 ## Where to start
 
-Three parts that may be the most interesting to look at:
+Two parts that may be the most interesting to look at:
 
 1. **Design rules as lint rules, in every mode.** Contrast, scale order, density order, and tier rules are checked on every commit, in every theme × density × viewport combination, not only the default one. → [Checks](#checks-as-code)
 2. **Contrast pairs derived from token names.** The names say which content sits on which fill, so the lint, the docs badges, and the docs accessibility check all read one pairing file instead of hand-kept lists. → [Accessibility](#accessibility)
-3. **Release notes written with the change.** Every pull request carries a changeset whose summary starts with `Breaking:`, `New:`, or `Fix:`; CI checks that the version bump matches. → [Releases](#releases-and-versions)
 
 ## Source and structure
 
@@ -41,7 +40,7 @@ Three parts that may be the most interesting to look at:
 - **The rules are tested too.** A rule that stops reporting looks the same as tokens that pass, so `npm test` breaks each rule on purpose in a copy of the tokens and expects `tz check` to report it ([`tokens/lint/rules.test.ts`](../tokens/lint/rules.test.ts), [ADR 0037](adr/0037-lint-rule-tests.md)).
 - **The output is tested against the resolver.** `npm test` also builds `@pts/web` and checks that `tokens.css` has a block for every modifier context holding every token that context changes (and none another modifier changes), and that `tokens.js`, `tokens.d.ts`, and `tokens.scss` hold every token. The expectations come from Terrazzo, not a snapshot, so a new mode the build doesn't emit fails ([`packages/web/test/output.test.ts`](../packages/web/test/output.test.ts), [ADR 0039](adr/0039-audit-checks.md)).
 - **What the rules cover**: contrast (`contrast`, `component-pairs`), visible state changes (`visible-steps`), mode parity, descriptions, and colors that stay the same (`theme-parity`), component states (`component-states`), scale order (`density-order`, `gap-order`, `type-scale`, `line-height-grid`, `min-font-size`), tiers (`tier-aliases`), consistent color values (`color-hex`), files the build would silently skip (`registered-files`), and what each modifier may change (`orthogonal-modifiers`).
-- **Gates**: a pre-commit hook ([`.githooks/pre-commit`](../.githooks/pre-commit)) runs check and typecheck; CI ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) adds the rule and output tests, both builds, the docs accessibility check, and the changeset check, and `main` accepts only pull requests that pass it ([ADR 0020](adr/0020-hand-edited-tokens-and-ci-gates.md)).
+- **Gates**: a pre-commit hook ([`.githooks/pre-commit`](../.githooks/pre-commit)) runs check and typecheck; CI ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)) adds the rule and output tests, both builds, and the docs accessibility check, on every push to `main` and every pull request; the docs deploy only after it passes ([ADR 0020](adr/0020-hand-edited-tokens-and-ci-gates.md)). `main` isn't protected and nothing is released or versioned: the packages are private ([ADR 0042](adr/0042-no-releases.md)).
 
 ## Outputs
 
@@ -72,20 +71,10 @@ The docs are hosted at https://haaanju.github.io/pts/, deployed from `main` afte
 | Light and dark (and density) toggles on the whole page, plus side-by-side cells per mode | Every mode is reviewable without a second build | [`.storybook/`](../apps/storybook/.storybook) | [0012](adr/0012-docs-dark-mode.md) |
 | Docs and Figma specimens kept aligned: the same pages, sections, and leads | Designers and developers read the same structure | [`.claude/rules/storybook.md`](../.claude/rules/storybook.md) | — |
 
-## Releases and versions
-
-| What | Why | ADR |
-|---|---|---|
-| One version for every package; breaking = a token renamed or removed, a name's meaning changed, or the output format changed | For tokens, the public API is the set of names | [0014](adr/0014-versioning-policy.md) |
-| A changeset per pull request, summary starting `Breaking:`, `New:`, or `Fix:`, checked against the bump and against the token changes (a removed token is `Breaking:`) | The note is written by whoever made the change, when they made it | [0035](adr/0035-changesets-releases.md), [0040](adr/0040-audit-checks-2.md) |
-| A "Release" pull request collects changesets; merging it tags `vX.Y.Z` and publishes the GitHub Release from the changelog | Releasing is a reviewable merge, and the timing stays a choice | [0035](adr/0035-changesets-releases.md) |
-
-How to write a changeset: [`CONTRIBUTING.md`](../CONTRIBUTING.md#releases). What changed in each version: [`packages/web/CHANGELOG.md`](../packages/web/CHANGELOG.md).
-
 ## Decisions and contribution
 
 - **Architecture decision records** for every change to structure, naming, tooling, or the pipeline ([`docs/adr/`](adr)). Each has the same sections: what we learned (the options compared), why it matters (the decision), implementation notes, and where it is documented. Status is `proposed` → `accepted`; a later ADR that changes one marks it `amended by NNNN` instead of rewriting history.
-- **A contribution guide for designers** ([`CONTRIBUTING.md`](../CONTRIBUTING.md)): edit JSON in the browser or locally, read the check's error, open a pull request with the template ([`.github/pull_request_template.md`](../.github/pull_request_template.md)).
+- **A contribution guide** ([`CONTRIBUTING.md`](../CONTRIBUTING.md)): where tokens live, their format, the common changes, and how to read a check's error.
 
 ## Working with an AI agent
 
@@ -99,5 +88,3 @@ This repository is built with Claude Code. This part matters only if you work wi
 
 - **Figma is synced by hand** (the `figma` skill), until Figma or the tooling offers a native sync ([ADR 0022](adr/0022-terrazzo-over-style-dictionary.md)).
 - **No native outputs** (iOS, Android); planned as a custom Terrazzo plugin ([ADR 0022](adr/0022-terrazzo-over-style-dictionary.md)).
-- **Releases follow CI.** The Release workflow runs when CI passes on a push to `main`, at that commit, so nothing is tagged before every check has passed on it; a run for a commit `main` has moved past stops ([ADR 0041](adr/0041-release-after-ci.md)).
-- **The release pull request runs a shorter check than CI** (check, test, typecheck, build, reported as `verify`), since a pull request opened with the workflow's own token triggers no workflows ([ADR 0035](adr/0035-changesets-releases.md)). It only bumps versions and the changelog.

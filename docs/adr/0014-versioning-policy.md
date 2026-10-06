@@ -1,6 +1,6 @@
 # 0014. Versioning Policy
 
-- Status: accepted (amended by 0035)
+- Status: superseded by 0042
 - Date: 2026-09-26
 
 ## What we learned

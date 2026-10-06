@@ -3,8 +3,6 @@
 import data from "virtual:pts-tokens";
 import { contrastPairs, isExempt as isExemptSemantic } from "../../../tokens/lint/pairs.ts";
 
-export { TEXT, UI } from "../../../tokens/lint/pairs.ts";
-
 export type Theme = "light" | "dark";
 export const THEMES: Theme[] = ["light", "dark"];
 export type Density = "relaxed" | "compact";

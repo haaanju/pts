@@ -1,6 +1,6 @@
 # 0020. Hand-Edited Tokens and CI Gates
 
-- Status: accepted (amended by 0021)
+- Status: accepted (amended by 0021, 0042)
 - Date: 2026-09-27
 
 ## What we learned
