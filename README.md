@@ -122,7 +122,7 @@ npm run build            # build @pts/web and @pts/components
 | Command | What it does |
 |---------|--------------|
 | `npm run check` | Validates the tokens with Terrazzo (`tz check` in `tokens/`): its built-in rules plus the project's `pts/*` rules (value rules in every theme, density, and viewport): contrast, visible states, parity between modes, spacing and type scale order, line heights on the 4px grid, hex values, descriptions, tier rules, unregistered files |
-| `npm test` | Checks that every lint rule still reports what it should, then builds `@pts/web` and checks its output against the tokens |
+| `npm test` | Checks that every lint rule still reports what it should, then builds `@pts/web` and checks its output against the tokens, and checks the Storybook UI's copies of token values |
 | `npm run typecheck` | TypeScript for the lint plugin, the `@pts/web` build config and tests, the components, and Storybook |
 | `npm run build` | Builds `@pts/web` and `@pts/components` |
 | `npm run build-storybook` | Builds the static docs |

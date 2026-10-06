@@ -10,7 +10,7 @@ paths:
 - `src/tokens.ts`: the data layer. Formats every token of every theme × density × viewport permutation from `virtual:pts-tokens`, which `scripts/docs-tokens.ts` builds with Terrazzo (a Terrazzo plugin, run in memory by a Vite plugin in `vite.config.ts`; ADR 0038). Nothing in the docs resolves an alias.
 - `src/components.tsx`: the doc blocks (`PageHeader`, `Section`, `TokenTable`, `ColorTable`, `Palette`, …). `src/docs.css`: their styles.
 - `src/Introduction.mdx` (Overview), `src/component/*.mdx` (Button), `src/semantic/*.mdx` (Color, Typography, Spacing, Border, Elevation, Size, Motion, Layout), `src/primitive/*.mdx` (Palette, Scales).
-- `.storybook/`: `main.ts`, `preview` (imports `tokens.css`, syncs `data-theme` and `data-density`), `manager.tsx` (the toggles), `theme.ts` (the light and dark UI themes), `density.ts`.
+- `.storybook/`: `main.ts`, `preview` (imports `tokens.css`, syncs `data-theme` and `data-density`), `manager.tsx` (the toggles), `theme.ts` (the light and dark UI themes, from `token-copies.ts`), `density.ts`.
 
 ## Content
 
@@ -45,5 +45,5 @@ paths:
 
 ## Manager
 
-- The Storybook UI themes (`.storybook/theme.ts`) use hex copies of token values, since the manager can't read CSS variables. Update them if those tokens change.
-- Manager files (`.storybook/manager.tsx`, `theme.ts`, `density.ts`, `main.ts`) are only compiled at startup: restart `npm run storybook` after editing them. The manager uses the classic JSX runtime, so `manager.tsx` imports React.
+- The Storybook UI themes (`.storybook/theme.ts`) use copies of token values, since the manager can't read CSS variables. The copies live in `.storybook/token-copies.ts`, keyed by token id; `npm test` checks them against the tokens (`scripts/token-copies.test.ts`, ADR 0044). A UI color needs its token in that map, not a literal in `theme.ts`.
+- Manager files (`.storybook/manager.tsx`, `theme.ts`, `token-copies.ts`, `density.ts`, `main.ts`) are only compiled at startup: restart `npm run storybook` after editing them. The manager uses the classic JSX runtime, so `manager.tsx` imports React.

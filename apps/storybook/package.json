@@ -11,6 +11,7 @@
     "prebuild-storybook": "npm run build -w @pts/web -w @pts/components",
     "build-storybook": "storybook build -o dist",
     "typecheck": "tsc -p . && tsc -p scripts",
+    "test": "node --test scripts/token-copies.test.ts",
     "test-a11y": "node scripts/a11y.ts"
   },
   "dependencies": {
