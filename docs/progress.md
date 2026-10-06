@@ -17,7 +17,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
 
-- The rest of the pipeline audit (ADR 0039, agreed with the owner): ADR 0040 added the changeset, component state, density step, modifier scope, and role alias checks, and ADR 0041 made releases follow CI. Left, if wanted: every top-level group shown on a docs page, `.storybook/theme.ts` hex copies matching the tokens, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light.
+- The rest of the pipeline audit (ADR 0039, agreed with the owner): ADR 0040 added the changeset, component state, density step, modifier scope, and role alias checks, and ADR 0041 made releases follow CI. Left, if wanted: every top-level group shown on a docs page, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light.
 - Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 Waiting for a reason, not scheduled:

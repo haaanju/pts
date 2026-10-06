@@ -1,7 +1,7 @@
 import { create } from "storybook/theming";
+import { copies } from "./token-copies";
 
-// Storybook UI themes. Hex values mirror PTS tokens (the manager can't read CSS variables).
-// Update them if these tokens change.
+// Storybook UI themes, from copies of token values (token-copies.ts), since the manager can't read CSS variables.
 
 export const THEME_GLOBAL = "theme";
 export const STORAGE_KEY = "pts-docs-theme";
@@ -29,61 +29,59 @@ export const saveMode = (mode: Mode) => {
 /** Explicit global (toggle or ?globals=theme:…) wins, then the saved choice, then light. */
 export const resolveMode = (globalValue: unknown): Mode => asMode(globalValue) ?? readSaved() ?? "light";
 
+const { light: l, dark: d, any } = copies;
+
 const shared = {
   brandTitle: "Plain",
   brandTarget: "_self",
-  fontBase: '"Aspekta", system-ui, sans-serif', // font-family.sans
-  fontCode: '"IBM Plex Mono", ui-monospace, monospace', // font-family.mono
-  appBorderRadius: 8, // radius.md
-  inputBorderRadius: 8,
+  fontBase: `"${any["font-family.sans"]}", system-ui, sans-serif`,
+  fontCode: `"${any["font-family.mono"]}", ui-monospace, monospace`,
+  appBorderRadius: any["radius.md"],
+  inputBorderRadius: any["radius.md"],
 };
 
-// light: background #FFFFFF, surface.subtle #F8F8F8, border.subtle #E8E8E8,
-//        content.base #181818, content.subtle #666666
 export const light = create({
   ...shared,
   base: "light",
-  colorPrimary: "#181818",
-  colorSecondary: "#181818",
-  appBg: "#F8F8F8",
-  appContentBg: "#FFFFFF",
-  appPreviewBg: "#FFFFFF",
-  appBorderColor: "#E8E8E8",
-  textColor: "#181818",
-  textMutedColor: "#666666",
-  textInverseColor: "#FFFFFF",
-  barBg: "#FFFFFF",
-  barTextColor: "#666666",
-  barSelectedColor: "#181818",
-  barHoverColor: "#181818",
-  inputBg: "#FFFFFF",
-  inputBorder: "#E8E8E8",
-  inputTextColor: "#181818",
+  colorPrimary: l["content.base"],
+  colorSecondary: l["content.base"],
+  appBg: l["surface.subtle"],
+  appContentBg: l.background,
+  appPreviewBg: l.background,
+  appBorderColor: l["border.subtle"],
+  textColor: l["content.base"],
+  textMutedColor: l["content.subtle"],
+  textInverseColor: l.background,
+  barBg: l.background,
+  barTextColor: l["content.subtle"],
+  barSelectedColor: l["content.base"],
+  barHoverColor: l["content.base"],
+  inputBg: l.background,
+  inputBorder: l["border.subtle"],
+  inputTextColor: l["content.base"],
 });
 
-// dark: background #181818, surface.subtle #242424, border.subtle #404040,
-//       content.base #F8F8F8, content.subtle #BABABA
 export const dark = create({
   ...shared,
   base: "dark",
   // Storybook draws selected sidebar items with white text on colorSecondary,
   // so dark uses neutral.800 (#404040, 10.4:1 with white) instead of a light fill.
-  colorPrimary: "#F8F8F8",
-  colorSecondary: "#404040",
-  appBg: "#242424",
-  appContentBg: "#181818",
-  appPreviewBg: "#181818",
-  appBorderColor: "#404040",
-  textColor: "#F8F8F8",
-  textMutedColor: "#BABABA",
-  textInverseColor: "#181818",
-  barBg: "#181818",
-  barTextColor: "#BABABA",
-  barSelectedColor: "#F8F8F8",
-  barHoverColor: "#F8F8F8",
-  inputBg: "#181818",
-  inputBorder: "#404040",
-  inputTextColor: "#F8F8F8",
+  colorPrimary: d["content.base"],
+  colorSecondary: d["color.neutral.800"],
+  appBg: d["surface.subtle"],
+  appContentBg: d.background,
+  appPreviewBg: d.background,
+  appBorderColor: d["border.subtle"],
+  textColor: d["content.base"],
+  textMutedColor: d["content.subtle"],
+  textInverseColor: d.background,
+  barBg: d.background,
+  barTextColor: d["content.subtle"],
+  barSelectedColor: d["content.base"],
+  barHoverColor: d["content.base"],
+  inputBg: d.background,
+  inputBorder: d["border.subtle"],
+  inputTextColor: d["content.base"],
 });
 
 export const themeFor = (mode: Mode) => (mode === "dark" ? dark : light);

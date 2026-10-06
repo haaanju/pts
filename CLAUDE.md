@@ -65,7 +65,7 @@ docs/progress.md, docs/adr/
   - Built-in rules turned on beyond the recommended ones: `$type` required, a `$description` on every semantic token, srgb colors, text styles at least 12px.
   - `pts/*`: `theme-parity`, `contrast`, `component-pairs`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`, `orthogonal-modifiers`, `component-states`.
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it. Every `pts/*` message gets a case in `tokens/lint/rules.test.ts`, unless it can't be reached (the file says why).
-- `npm test`: breaks each `pts/*` rule on purpose in a copy of `tokens/` and expects `tz check` to report it, so a rule that silently stops reporting fails (ADR 0037); then builds `@pts/web` and checks its output against the resolver: every token in `:root`, every modifier context in its block with every token it changes and none another modifier changes, and every token in `tokens.js`, `tokens.d.ts`, and `tokens.scss` (ADR 0039).
+- `npm test`: breaks each `pts/*` rule on purpose in a copy of `tokens/` and expects `tz check` to report it, so a rule that silently stops reporting fails (ADR 0037); then builds `@pts/web` and checks its output against the resolver: every token in `:root`, every modifier context in its block with every token it changes and none another modifier changes, and every token in `tokens.js`, `tokens.d.ts`, and `tokens.scss` (ADR 0039); and checks the Storybook UI's copies of token values against the tokens (ADR 0044).
 - `npm run typecheck`: TypeScript for the lint plugin, the `@pts/web` build config and tests, the components, and Storybook.
 - `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/components` → `apps/components/dist/`).
 - `npm run storybook`: docs dev server (http://localhost:6006), builds `@pts/web` and `@pts/components` first. `npm run build-storybook`: static build.
@@ -163,7 +163,7 @@ always/        white, black
 
 ## After a token change
 
-- Storybook updates by itself, except the hex copies in `apps/storybook/.storybook/theme.ts` (the manager can't read CSS variables): update them if the tokens they copy change.
+- Storybook updates by itself, except the copies in `apps/storybook/.storybook/token-copies.ts` (the manager can't read CSS variables): `npm test` fails until they match the tokens again.
 - Figma doesn't: load the `figma` skill and bring it in line.
 - Add a changeset: the change type (breaking, new, fix) decides the next version; see Git Convention.
 
