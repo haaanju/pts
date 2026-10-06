@@ -1,6 +1,6 @@
 # 0042. Unprotected Main
 
-- Status: accepted
+- Status: accepted (amended by 0043)
 - Date: 2026-10-06
 
 ## What we learned

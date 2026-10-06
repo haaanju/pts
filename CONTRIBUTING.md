@@ -9,7 +9,7 @@ This guide is for changing the tokens: where they live, their format, the common
 2. Edit        change the token JSON on a feature branch
 3. Check       npm run check; npm run storybook to see it in the docs
 4. Open a PR   fill in the template and add a changeset; CI must pass
-5. Merged      the change is on main, in the docs (https://haaanju.github.io/pts/), and ships with the next release
+5. Merged      the change is on main and ships with the next release
 ```
 
 A release is cut separately, when the owner decides; see [Releases](#releases).
