@@ -33,7 +33,7 @@ Three answers were weighed: change the color and require a minimum, document "di
 - `tokens/src/primitive/color.tokens.json`: `neutral.100` hex and components (240 ÷ 255 = 0.9412).
 - `tokens/lint/rules/visible-steps.ts`: `deltaEOK` from `colorjs.io/fn` on `tokenToColor`, as `pts/contrast` computes its ratio.
 - `tokens/lint/rules.test.ts`: a same-color case and a ΔE 1.8 case (the old `neutral.100`).
-- Figma: the `neutral/100` variable and the hex labels on the specimen pages.
+- Figma: the `color/neutral/100` variable; the hex labels on Palette and Button (four); the badges for `neutral/100` on Palette (W 1.14, B 18.43, were 1.12, 18.76) and for dark `inverse/strong` on Color and Button (9.10 against `surface/stronger`, was 9.26).
 
 ## Documented in
 

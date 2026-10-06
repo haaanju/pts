@@ -7,7 +7,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 - Releases: Changesets and the Release workflow (ADR 0035); the latest version is in `packages/web/CHANGELOG.md` and the tags. CI and the pre-commit hook run check and typecheck.
 - Private repository (ADR 0043): colleagues are invited as collaborators, and the docs run locally (`npm run storybook`). `main` is not protected (ADR 0042): workspace changes go through a pull request so the changeset check runs. The Release workflow runs after CI passes on `main` (ADR 0041): its trigger and tip check ran on `e125a84` (nothing to tag). Tagging and the release PR's `verify` status are first exercised by the next real release, so watch that run.
 - Repository: recreated on 2026-10-03 with the commit author emails rewritten, so it can go public; the same files and tags, new commit hashes. The pull requests before that (#1–#29) are in the private `haaanju/pts-archive`.
-- Figma `pts` file: in line with the tokens at `v0.9.3` (variables, styles, specimens, the Button page and component sets; Overview count 331 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
+- Figma `pts` file: in line with the tokens on `main`, through ADR 0045 (variables, styles, specimens, the Button page and component sets; Overview count 331 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
 ## In flight
 
