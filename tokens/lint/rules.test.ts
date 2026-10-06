@@ -191,7 +191,12 @@ const cases: Case[] = [
   {
     name: "two surface steps with the same color",
     mutate: (c) => c.value(DARK, "surface.strong", "{color.neutral.900}"),
-    expect: [["pts/visible-steps", "are the same color"]],
+    expect: [["pts/visible-steps", "surface.subtle and surface.strong differ by ΔE 0.0"]],
+  },
+  {
+    name: "two surface steps that differ, but by less than ΔE 2",
+    mutate: (c) => c.value("primitive/color.tokens.json", "color.neutral.100", { colorSpace: "srgb", components: [0.949, 0.949, 0.949], hex: "#f2f2f2" }),
+    expect: [["pts/visible-steps", "surface.subtle and surface.strong differ by ΔE 1.8"]],
   },
 
   // pts/density-order

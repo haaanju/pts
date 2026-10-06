@@ -1,23 +1,28 @@
-// pts/visible-steps: the steps of every surface ladder, and hover/pressed against disabled, resolve to different
-// colors in every theme, so a step or a state change is actually visible (pairs.ts, ADR 0019).
+// pts/visible-steps: the steps of every surface ladder, and hover/pressed against disabled, differ by at least
+// ΔE 2 (OKLab, ×100) in every theme, so a step or a state change is actually visible (pairs.ts, ADR 0019, 0045).
+// About 2 is the smallest difference most people notice; near white, where the light surfaces sit, even that is faint.
 // Why not built-in: it runs per theme, and no built-in rule compares one token's value with another's.
 import type { ColorTokenNormalized, LintRule } from "@terrazzo/parser";
+import { tokenToColor } from "@terrazzo/token-tools";
+import { deltaEOK } from "colorjs.io/fn";
 import { distinctBackgrounds } from "../pairs.ts";
 import { loadResolver, permutations } from "../../source.ts";
 
-const key = (t: ColorTokenNormalized) => `${t.$value.colorSpace} ${t.$value.components.join(" ")} ${t.$value.alpha ?? 1}`;
+const MIN_DELTA_E = 2;
 
-const rule: LintRule<"SAME_COLOR"> = {
+const rule: LintRule<"TOO_CLOSE"> = {
   meta: {
-    docs: { description: "Surface steps and interaction states resolve to different colors in every theme." },
-    messages: { SAME_COLOR: "{{theme}}: {{a}} and {{b}} are the same color, so the step is invisible" },
+    docs: { description: "Surface steps and interaction states differ visibly in every theme." },
+    messages: { TOO_CLOSE: "{{theme}}: {{a}} and {{b}} differ by ΔE {{de}} (needs {{min}}), so the step is barely visible" },
   },
   defaultOptions: {},
   async create({ report }) {
     for (const { label: theme, tokens } of permutations(await loadResolver())) {
       if (!tokens) continue; // reported by pts/theme-parity
+      const color = (id: string) => tokenToColor((tokens[id] as ColorTokenNormalized).$value);
       for (const [a, b] of distinctBackgrounds(Object.keys(tokens))) {
-        if (key(tokens[a] as ColorTokenNormalized) === key(tokens[b] as ColorTokenNormalized)) report({ messageId: "SAME_COLOR", data: { theme, a, b } });
+        const de = deltaEOK(color(a), color(b)) * 100;
+        if (de < MIN_DELTA_E) report({ messageId: "TOO_CLOSE", data: { theme, a, b, de: de.toFixed(1), min: MIN_DELTA_E } });
       }
     }
   },
