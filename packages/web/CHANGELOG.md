@@ -2,6 +2,12 @@
 
 The changelog of every `@pts/*` package, which share one version (ADR 0014). Entries from 0.9.4 on come from changesets (ADR 0035); earlier ones are the release tag messages.
 
+## 0.9.5
+
+### Patch Changes
+
+- Fix: color/neutral/100 is #f0f0f0 (was #f2f2f2), so light surface/strong (hover) and dark inverse/strong (hover) are visibly apart from the steps next to them, ΔE 2.4 instead of 1.8 (ADR 0045).
+
 ## 0.9.4
 
 ### Patch Changes
