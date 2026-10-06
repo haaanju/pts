@@ -50,8 +50,7 @@ apps/components/            @pts/components: Lit web components testing the comp
 apps/storybook/             @pts/storybook: token docs
 docs/progress.md, docs/adr/
 .claude/                    settings.json (SessionStart hooks), rules/, skills/
-.changeset/                 pending release notes and the Changesets config (ADR 0035)
-.githooks/pre-commit, .github/ (CI and Release workflows, their scripts, PR template)
+.githooks/pre-commit, .github/ (CI workflow, PR template)
 ```
 
 - Register every new token file in `pts.resolver.json`: mode-independent files in `sets.base`, modifier-specific files in the matching `modifiers.<theme|density|viewport>` context. `npm run check` reports a file that isn't registered.
@@ -165,7 +164,6 @@ always/        white, black
 
 - Storybook updates by itself, except the hex copies in `apps/storybook/.storybook/theme.ts` (the manager can't read CSS variables): update them if the tokens they copy change.
 - Figma doesn't: load the `figma` skill and bring it in line.
-- Add a changeset: the change type (breaking, new, fix) decides the next version; see Git Convention.
 
 ## Decisions
 
@@ -191,7 +189,5 @@ Work continues across chats and machines through the repository only; chat histo
 
 ## Git Convention
 
-- `main` is stable and protected: changes arrive by pull request, and the `verify` check must pass, for admins too (ADR 0020). Work happens on `feature/xxx` branches. The docs on https://haaanju.github.io/pts/ deploy from `main`.
-- One Semantic Version for every `@pts/*` package (ADR 0014). In `0.x`, breaking changes bump MINOR, new tokens and fixes bump PATCH. Breaking = renaming or removing a token, changing what a name means, or changing the output format or selectors. Adjusting a value within its role is a fix.
-- Every PR that changes a workspace adds a changeset (ADR 0035), written by hand in `.changeset/<kebab-name>.md`: front matter `"@pts/web": patch` (always `@pts/web`; the fixed group bumps the rest), then a summary starting `Breaking:`, `New:`, or `Fix:` whose bump matches the rule above. A change that ships nothing gets an empty one (`npx changeset --empty`). CI enforces it, and compares the tokens with the base (ADR 0040): a removed or renamed token needs `Breaking:`, and an added token or a changed value needs a changeset that releases.
-- Releasing is merging the "Release" PR the Release workflow keeps open; once CI passes on that commit, the workflow tags `vX.Y.Z` and creates the GitHub Release from `packages/web/CHANGELOG.md` (ADR 0041). Never bump versions or tag by hand.
+- `main` deploys the docs on https://haaanju.github.io/pts/, after CI passes on it. It isn't protected (ADR 0042): small changes may go straight to `main`; larger work goes on a `feature/xxx` branch and a pull request, so CI runs before it lands.
+- No versions or releases (ADR 0042): every package is private and stays at `0.9.4`. Don't bump versions, tag, or add changesets.

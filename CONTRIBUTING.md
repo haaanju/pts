@@ -1,35 +1,29 @@
 # Contributing
 
-This guide is for anyone changing the tokens, designers first. You edit JSON files; automated checks tell you if something is wrong before it reaches `main`. See [ADR 0020](docs/adr/0020-hand-edited-tokens-and-ci-gates.md) for why it works this way.
+This guide is for changing the tokens: where they live, their format, the common changes, and what the checks catch. See [ADR 0020](docs/adr/0020-hand-edited-tokens-and-ci-gates.md) for why the JSON is edited by hand.
 
 ## The flow
 
 ```
 1. Explore     try the change in the Figma pts file
-2. Edit        change the token JSON on a branch
-3. Open a PR   fill in the template and add a changeset
-4. Checks      CI validates the tokens and builds everything; it must pass
-5. Review      the owner reviews and merges
-6. Merged      the change is on main, in the docs (https://haaanju.github.io/pts/), and ships with the next release
+2. Edit        change the token JSON (on a feature branch for larger work)
+3. Check       npm run check; npm run storybook to see it in the docs
+4. Push        CI runs every check on main and on pull requests
+5. Docs        once CI passes on main, the docs (https://haaanju.github.io/pts/) show the change
 ```
 
-A release is cut separately, when the owner decides; see [Releases](#releases).
+**The JSON is the source of truth, not Figma.** Figma is where you try things. Once a change is on `main`, the JSON is what ships, and Figma should match it.
 
-**The JSON is the source of truth, not Figma.** Figma is where you try things. Once a change is merged, the JSON is what ships, and Figma should match it.
+## Setup
 
-## Two ways to edit
+Install Node 22.18 or later, then:
 
-- **In the browser.** Open a file on GitHub, click the pencil icon, edit, and choose "Create a new branch and start a pull request". Nothing to install; the checks run on the pull request.
-- **On your machine.** Install Node 22.18 or later, then:
-
-  ```sh
-  git clone <repo> && cd pts
-  npm install              # also installs a hook that runs the checks before each commit
-  git switch -c feature/my-change
-  # edit, then
-  npm run check            # every token rule (tz check); the fastest feedback
-  npm run storybook        # the docs at http://localhost:6006, with your change
-  ```
+```sh
+git clone <repo> && cd pts
+npm install              # also installs a hook that runs check and typecheck before each commit
+npm run check            # every token rule (tz check); the fastest feedback
+npm run storybook        # the docs at http://localhost:6006, with your change
+```
 
 ## Where tokens live
 
@@ -90,15 +84,15 @@ The full naming and structure rules are in [`CLAUDE.md`](CLAUDE.md) (Token Rules
 | Add a token to an existing group | Add it to the file. For a themed file, add it to both `light` and `dark`; for a density file, to both `relaxed` and `compact` (compact one `space` step smaller); for a viewport file, to both `narrow` and `wide`. It appears in the docs by itself |
 | Add a new file | Create it in `primitive/` or `semantic/` and add it to `tokens/src/pts.resolver.json`: mode-independent files in `sets.base`, per-theme files under `modifiers.theme`, per-density files under `modifiers.density`, per-viewport files under `modifiers.viewport` |
 | Add a new top-level group | As above, then add a section to the matching docs page in `apps/storybook/src/` (e.g. `<Section title="Opacity" path="opacity/*"><TokenTable prefix="opacity" /></Section>`) and add the prefix to the page's `groups` |
-| Rename or remove a token | This is a breaking change. Say so in the pull request |
+| Rename or remove a token | Change it in every file that defines or aliases it; `npm run check` reports an alias left pointing at the old name |
 
 ## What the checks catch
 
-CI runs these on every pull request. A red check blocks the merge; open the failed run to read the messages.
+CI runs these on every push to `main` and every pull request; open a failed run to read the messages.
 
 | Check | Catches |
 |---|---|
-| `npm run check` | Values that aren't valid DTCG (wrong shape, unit, or type); a name that isn't kebab-case; a missing `$type`; an alias pointing at nothing, in any theme, density, or viewport; light and dark (or relaxed and compact, or narrow and wide) defining different token names or descriptions; an `always` color that changes with the theme; a compact value larger than its relaxed one; a `within` gap not smaller than every `between` gap, or a `between` gap not smaller than every `section` gap; text below 4.5:1 or UI below 3:1 contrast in either theme; hover or pressed states that look the same as the resting fill; a `hex` that doesn't match its `components`; a color outside srgb; a semantic token without a `$description`; a text style or `font-size` step below 12px, in any viewport; font sizes out of order, display steps less than ×1.5 apart, or two steps the same size in every viewport; a font size without its line height, a line that isn't a whole 4px step, or a text style using another size's line height; a semantic token with a raw value or pointing at another semantic token; a token file missing from the resolver; a token defined by two modifiers (theme, density, viewport); a semantic color whose name the contrast pairs don't cover; a compact value that isn't exactly one step below relaxed; a modifier changing a token outside its scope; a `padding` or `gap` token aliasing something other than `space`; a Button state missing or the same color as another state |
+| `npm run check` | Every token rule, in every theme, density, and viewport: Terrazzo's built-in rules (valid DTCG values, kebab-case names, `$type`, aliases pointing at nothing, srgb colors, a `$description` on every semantic token) and the 14 `pts/*` rules (contrast, visible states, mode parity, scale order, tiers, and more). What each `pts/*` rule enforces is in the header of its file in [`tokens/lint/rules/`](tokens/lint/rules) |
 | `npm run typecheck`, `npm run build`, `npm run build-storybook` | Changes that break the CSS output or the docs |
 | `npm test` | A change to a check (`tokens/lint/`) that stops it reporting what it should; a build that drops a token or a mode from `tokens.css`, `tokens.js`, or `tokens.scss` |
 
@@ -110,40 +104,12 @@ Messages start with the rule that failed, then name the theme or file and the to
 
 Here the danger text is too dark on the dark page: point it at a lighter step in `color.dark.tokens.json`.
 
-## The pull request
+## Pull requests
 
-The template asks for:
+For larger work, the pull request template asks for:
 
 - **What changed**, with old → new values for value changes.
-- **A changeset**: see below. CI fails without one.
 - **Figma**: the variables and specimens match the new values. The contrast badges and hex labels on the specimen pages are drawn by hand, so update them too.
-
-## Releases
-
-Each pull request says what it changes for the next release in a **changeset**, a small file in `.changeset/` ([ADR 0035](docs/adr/0035-changesets-releases.md)). Create `.changeset/<any-kebab-name>.md`:
-
-```md
----
-"@pts/web": patch
----
-
-Fix: intent/danger/content/base is red.300 in dark (was red.400) for 4.5:1 on the page.
-```
-
-- **Always name `@pts/web`.** Every package shares one version, and `packages/web/CHANGELOG.md` is the changelog.
-- **Start the summary with the type of change**, and pick the bump that goes with it ([ADR 0014](docs/adr/0014-versioning-policy.md)):
-
-  | Summary starts with | When | Bump (before 1.0) |
-  |---|---|---|
-  | `Breaking:` | a token renamed or removed, a name's meaning changed, the output format or selectors changed | `minor` |
-  | `New:` | new tokens, groups, themes, or outputs | `patch` |
-  | `Fix:` | a value adjusted within its role, docs | `patch` |
-
-- **Nothing to release** (tooling, CI, a docs page no one installs): run `npx changeset --empty`.
-- **CI compares the tokens with `main`.** A token removed or renamed fails without a `Breaking:` changeset, and a token added or a value changed fails with only an empty one. It can't see a change in meaning: say `Breaking:` yourself when a name now means something else.
-- Say what a consumer needs to know: old → new values, and for a breaking change what to use instead.
-
-Once merged, changesets wait on `main`. A pull request titled **Release** collects them and shows the next version and changelog; the owner merges it when it's time, and the version tag and the GitHub Release follow automatically.
 
 ## Decisions
 

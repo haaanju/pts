@@ -1,6 +1,6 @@
 # 0041. Releases Follow CI
 
-- Status: accepted
+- Status: superseded by 0042
 - Date: 2026-10-03
 
 ## What we learned

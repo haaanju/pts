@@ -4,8 +4,8 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## Current state
 
-- Releases: Changesets and the Release workflow (ADR 0035); the latest version is in `packages/web/CHANGELOG.md` and the tags. `main` is stable; CI and the pre-commit hook run check and typecheck.
-- Public repository; docs on https://haaanju.github.io/pts/, deployed from `main`; `main` protected (ADR 0020). The Release workflow runs after CI passes on `main` (ADR 0041): its trigger and tip check ran on `e125a84` (nothing to tag). Tagging and the release PR's `verify` status are first exercised by the next real release, so watch that run.
+- No releases or versions (ADR 0042): the packages are private and stay at `0.9.4`; the tags and `packages/web/CHANGELOG.md` are history. CI and the pre-commit hook run check and typecheck.
+- Public repository; docs on https://haaanju.github.io/pts/, deployed from `main` after CI passes (ADR 0020). `main` is not protected (ADR 0042).
 - Repository: recreated on 2026-10-03 with the commit author emails rewritten, so it can go public; the same files and tags, new commit hashes. The pull requests before that (#1–#29) are in the private `haaanju/pts-archive`.
 - Figma `pts` file: in line with the tokens at `v0.9.3` (variables, styles, specimens, the Button page and component sets; Overview count 331 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
@@ -17,7 +17,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
 
-- The rest of the pipeline audit (ADR 0039, agreed with the owner): ADR 0040 added the changeset, component state, density step, modifier scope, and role alias checks, and ADR 0041 made releases follow CI. Left, if wanted: every top-level group shown on a docs page, `.storybook/theme.ts` hex copies matching the tokens, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light.
+- The rest of the pipeline audit (ADR 0039, agreed with the owner): ADR 0040 added the component state, density step, modifier scope, and role alias checks. Left, if wanted: every top-level group shown on a docs page, `.storybook/theme.ts` hex copies matching the tokens, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light.
 - Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 Waiting for a reason, not scheduled:
