@@ -17,11 +17,11 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
 
-- The rest of the pipeline audit (ADR 0039, agreed with the owner): ADR 0040 added the changeset, component state, density step, modifier scope, and role alias checks, and ADR 0041 made releases follow CI. Left, if wanted: every top-level group shown on a docs page, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light.
 - Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 Waiting for a reason, not scheduled:
 
+- Five rules from the pipeline audit (ADR 0039) stay unchecked by choice: every top-level group shown on a docs page, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light. The tokens follow all five (checked 2026-10-06), these tokens rarely change, and a break shows on the docs page. Add a check once one breaks.
 - Large containers may need more than `padding/xl` (24px); buttons don't (ADR 0032).
 - A literal-typed `tokens.d.ts` (ADR 0030) waits for a component whose properties take tokens (a Box or Stack); per ADR 0034 that component is added only as a fixture for it.
 - Dark-mode letter spacing: light text on a dark page reads tighter, so fine-tune letter spacing in dark. That makes `letter-spacing` (and the `text/*` composites that use it) theme-dependent: it would move into the theme files, the dark CSS blocks, and the Figma `Theme` collection. Since ADR 0028, text sizes share `letter-spacing/normal` (0), so dark may need per-size text values too. Needs an ADR. Low value for its cost: keep it until dark text visibly needs it.
