@@ -4,6 +4,11 @@
       "$type": "dimension",
       "$value": "{radius.full}",
       "$description": "Corners of controls: buttons, inputs, and selects, so a row of controls shares one shape. 8px (radius/md) in the soft shape, fully rounded (radius/full) in the round one."
+    },
+    "container": {
+      "$type": "dimension",
+      "$value": "{radius.2xl}",
+      "$description": "Corners of containers: cards, panels, dialogs, and sheets, so the surfaces of a page share one shape. 8px (radius/md) in the soft shape, 32px (radius/2xl) in the round one."
     }
   }
 }

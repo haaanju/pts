@@ -14,11 +14,11 @@ import { token } from "../tokens";
   <ProductList />
 </Section>
 
-<Section title="Preview" lead="The same layout in each product, spaced only by padding and gap tokens, with Buttons whose height and padding follow the density and whose corners follow the shape: 8px in dense-app, a pill in roomy-app. It follows the theme toggle; the density and shape toggles don't apply, since each product fixes its own.">
+<Section title="Preview" lead="The same layout in each product, spaced only by padding and gap tokens, with Buttons whose height and padding follow the density. The corners follow the shape: in dense-app, 8px on the Buttons and the container; in roomy-app, pill Buttons in a 32px container. It follows the theme toggle; the density and shape toggles don't apply, since each product fixes its own.">
   <ProductPreview />
 </Section>
 
-<Section title="Tokens that differ" lead="Every token whose value differs between the products, at each product's density and shape: padding, the gaps within and between groups, control heights, the control radius, and the Button tokens that alias them.">
+<Section title="Tokens that differ" lead="Every token whose value differs between the products, at each product's density and shape: padding, the gaps within and between groups, control heights, the control and container radii, and the Button tokens that alias them.">
   <ProductDiff />
 </Section>
 

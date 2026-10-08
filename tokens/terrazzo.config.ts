@@ -44,7 +44,7 @@ export default defineConfig({
         "error",
         {
           rawValues: ["z-index", "breakpoint", "line-height"],
-          roleAliases: { text: TEXT_PROPERTIES, padding: ["space"], gap: ["space"], "radius.control": ["radius"] }, // ADR 0026, 0048
+          roleAliases: { text: TEXT_PROPERTIES, padding: ["space"], gap: ["space"], "radius.control": ["radius"], "radius.container": ["radius"] }, // ADR 0026, 0048, 0049
         },
       ],
       "pts/registered-files": "error",
@@ -55,7 +55,7 @@ export default defineConfig({
             theme: { types: ["color", "shadow"] },
             density: { groups: ["padding", "gap.within", "gap.between", "size.control"] },
             viewport: { groups: ["font-size.display", "line-height.display", "letter-spacing.display"] },
-            shape: { tokens: ["radius.control"] },
+            shape: { tokens: ["radius.control", "radius.container"] },
           },
         },
       ],

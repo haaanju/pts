@@ -1,6 +1,6 @@
 # 0048. Shape Modifier for Control Corners
 
-- Status: accepted
+- Status: accepted (amended by 0049)
 - Date: 2026-10-08
 
 ## What we learned

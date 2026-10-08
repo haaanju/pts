@@ -320,6 +320,11 @@ const cases: Case[] = [
     mutate: (c) => c.value("semantic/border.round.tokens.json", "radius.control", "{dimension.max}"),
     expect: [["pts/tier-aliases", "radius.control → {dimension.max}; radius/control aliases radius/* only"]],
   },
+  {
+    name: "the container radius aliasing outside its scale",
+    mutate: (c) => c.value("semantic/border.round.tokens.json", "radius.container", "{dimension.32}"),
+    expect: [["pts/tier-aliases", "radius.container → {dimension.32}; radius/container aliases radius/* only"]],
+  },
 
   // pts/registered-files
   {
@@ -349,9 +354,9 @@ const cases: Case[] = [
     name: "a modifier scoped to single tokens defining another",
     mutate: (c) => {
       for (const file of ["semantic/border.soft.tokens.json", "semantic/border.round.tokens.json"])
-        c.set(file, "radius.container", () => ({ $type: "dimension", $value: "{radius.lg}", $description: "Corners of containers." }));
+        c.set(file, "radius.media", () => ({ $type: "dimension", $value: "{radius.lg}", $description: "Corners of images." }));
     },
-    expect: [["pts/orthogonal-modifiers", "radius.container is defined by the shape modifier, which only changes radius/control"]],
+    expect: [["pts/orthogonal-modifiers", "radius.media is defined by the shape modifier, which only changes radius/control, radius/container"]],
   },
 ];
 
