@@ -2,6 +2,13 @@
 
 The changelog of every `@pts/*` package, which share one version (ADR 0014). Entries from 0.9.4 on come from changesets (ADR 0035); earlier ones are the release tag messages.
 
+## 0.9.6
+
+### Patch Changes
+
+- New: per-product outputs, `@pts/web/products/<name>.css` and `@pts/web/products/<name>.js` (typed by `<name>.d.ts`), for two example products: `dense-app` (density compact) and `roomy-app` (density relaxed). A product's CSS holds every token at its density on `:root`, keeps the theme blocks and the viewport media query, and has no `[data-density]` blocks. Its JS holds resolved values from Terrazzo's resolver, one token set per theme × viewport (ADR 0047). `tokens.css`, `tokens.js`, and `tokens.scss` are unchanged.
+- New: a `shape` modifier (`soft`, the default, and `round`) and the `radius/control` token it sets: 8px (`radius/md`) in soft, fully rounded (`radius/full`) in round. `tokens.css` adds `[data-shape="soft"|"round"]` blocks, which work on any element like `data-density`. `button/radius` now aliases `radius/control`, so it is still 8px by default and a pill in round. The example product `roomy-app` fixes `shape: round` and `dense-app` `shape: soft`, so their JS `apply()` takes a `shape` input too (ADR 0048).
+
 ## 0.9.5
 
 ### Patch Changes
