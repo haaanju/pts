@@ -8,15 +8,18 @@ import {
   isDense,
   isExempt,
   isResponsive,
+  isShaped,
   isThemed,
   leaf,
   pairsOf,
+  SHAPES,
   THEMES,
   token,
   tokenCount,
   tokensAt,
   VIEWPORTS,
   type Density,
+  type Shape,
   type Theme,
   type TokenInfo,
   type Viewport,
@@ -271,27 +274,38 @@ const DensityCell = ({ density, children }: { density: Density; children: ReactN
 );
 
 /**
+ * A cell rendered in a given shape. data-shape="round" makes every shape variable inside resolve to its round value
+ * (see the [data-shape] blocks in @pts/web tokens.css), whatever the page's shape toggle says.
+ */
+const ShapeCell = ({ shape, children }: { shape: Shape; children: ReactNode }) => <div data-shape={shape}>{children}</div>;
+
+/**
  * A preview gets the token at its column's permutation. Viewport columns can't switch the media query, so a preview
  * that depends on the viewport uses resolved values (t.css), not variables.
  */
 type Preview = (t: TokenInfo, theme: Theme, viewport: Viewport) => ReactNode;
-type Column = { key: string; label: string; theme: Theme; density: Density; viewport: Viewport };
+type Column = { key: string; label: string; theme: Theme; density: Density; viewport: Viewport; shape: Shape };
 
 /**
  * Generic token table. Shows light and dark columns when the group differs by theme, relaxed and compact columns
- * when it differs by density, and narrow and wide columns when it differs by viewport.
+ * when it differs by density, narrow and wide columns when it differs by viewport, and soft and round columns when it
+ * differs by shape.
  */
 export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Preview }) => {
   const themed = isThemed(prefix);
   const dense = !themed && isDense(prefix);
   const responsive = !themed && !dense && isResponsive(prefix);
+  const shaped = !themed && !dense && !responsive && isShaped(prefix);
+  const defaults = { theme: "light", density: "relaxed", viewport: "narrow", shape: "soft" } as const;
   const columns: Column[] = themed
-    ? THEMES.map((theme) => ({ key: theme, label: theme, theme, density: "relaxed", viewport: "narrow" }))
+    ? THEMES.map((theme) => ({ ...defaults, key: theme, label: theme, theme }))
     : dense
-      ? DENSITIES.map((density) => ({ key: density, label: density, theme: "light", density, viewport: "narrow" }))
+      ? DENSITIES.map((density) => ({ ...defaults, key: density, label: density, density }))
       : responsive
-        ? VIEWPORTS.map((viewport) => ({ key: viewport, label: viewport, theme: "light", density: "relaxed", viewport }))
-        : [{ key: "value", label: "Value", theme: "light", density: "relaxed", viewport: "narrow" }];
+        ? VIEWPORTS.map((viewport) => ({ ...defaults, key: viewport, label: viewport, viewport }))
+        : shaped
+          ? SHAPES.map((shape) => ({ ...defaults, key: shape, label: shape, shape }))
+          : [{ ...defaults, key: "value", label: "Value" }];
   const split = columns.length > 1;
   const previewLabel = (c: Column) => (split ? `Preview · ${c.label}` : "Preview");
   return (
@@ -315,7 +329,7 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
                 <CopyVar name={t.cssVar} />
               </td>
               {columns.map((c) => {
-                const v = token(t.id, c.theme, c.density, c.viewport);
+                const v = token(t.id, c.theme, c.density, c.viewport, c.shape);
                 return (
                   <td key={c.key} className="pts-value-cell" data-label={c.label}>
                     <span className="pts-value">{v.display}</span>
@@ -325,13 +339,15 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
               })}
               {preview &&
                 columns.map((c) => {
-                  const v = token(t.id, c.theme, c.density, c.viewport);
+                  const v = token(t.id, c.theme, c.density, c.viewport, c.shape);
                   return (
                     <td key={`p-${c.key}`} className="pts-preview-cell" data-label={previewLabel(c)}>
                       {themed ? (
                         <ThemeCell theme={c.theme}>{preview(v, c.theme, c.viewport)}</ThemeCell>
                       ) : dense ? (
                         <DensityCell density={c.density}>{preview(v, c.theme, c.viewport)}</DensityCell>
+                      ) : shaped ? (
+                        <ShapeCell shape={c.shape}>{preview(v, c.theme, c.viewport)}</ShapeCell>
                       ) : (
                         preview(v, c.theme, c.viewport)
                       )}
@@ -550,7 +566,7 @@ export const FocusRing = () => (
             outline: `${token("focus-ring.width").css} solid ${token("border.focus", th).css}`,
             outlineOffset: token("focus-ring.offset").css,
             height: token("size.control.md").css,
-            borderRadius: token("radius.md").css,
+            borderRadius: "var(--radius-control)",
           }}
         >
           Focused
@@ -693,8 +709,9 @@ export const ProductList = () => (
 
 /**
  * The same small layout in each product. One page has one :root, so the cells don't load the product files: each
- * sets its product's inputs as tokens.css attributes (data-density), which give the values the product's :root holds;
- * npm test checks both files against the resolver. The theme follows the page toggle, as it would in the product.
+ * sets its product's inputs as tokens.css attributes (data-density, data-shape), which give the values the product's
+ * :root holds; npm test checks both files against the resolver. The theme follows the page toggle, as it would in the
+ * product.
  */
 export const ProductPreview = () => (
   <Block className="pts-button-preview">

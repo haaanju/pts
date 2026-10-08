@@ -7,10 +7,10 @@ paths:
 
 ## Files
 
-- `src/tokens.ts`: the data layer. Formats every token of every theme × density × viewport permutation from `virtual:pts-tokens`, which `scripts/docs-tokens.ts` builds with Terrazzo (a Terrazzo plugin, run in memory by a Vite plugin in `vite.config.ts`; ADR 0038). Nothing in the docs resolves an alias.
+- `src/tokens.ts`: the data layer. Formats every token of every theme × density × viewport × shape permutation from `virtual:pts-tokens`, which `scripts/docs-tokens.ts` builds with Terrazzo (a Terrazzo plugin, run in memory by a Vite plugin in `vite.config.ts`; ADR 0038). Nothing in the docs resolves an alias.
 - `src/components.tsx`: the doc blocks (`PageHeader`, `Section`, `TokenTable`, `ColorTable`, `Palette`, …). `src/docs.css`: their styles.
 - `src/Introduction.mdx` (Overview), `src/component/*.mdx` (Button), `src/semantic/*.mdx` (Color, Typography, Spacing, Border, Elevation, Size, Motion, Layout), `src/primitive/*.mdx` (Palette, Scales), `src/output/*.mdx` (Products: the per-product outputs, ADR 0047).
-- `.storybook/`: `main.ts`, `preview` (imports `tokens.css`, syncs `data-theme` and `data-density`), `manager.tsx` (the toggles), `theme.ts` (the light and dark UI themes, from the values `main.ts` resolves at startup; `ui-tokens.ts` lists them), `density.ts`.
+- `.storybook/`: `main.ts`, `preview` (imports `tokens.css`, syncs `data-theme`, `data-density`, and `data-shape`), `manager.tsx` (the toggles), `theme.ts` (the light and dark UI themes, from the values `main.ts` resolves at startup; `ui-tokens.ts` lists them), `attributes.ts` (the density and shape globals).
 
 ## Content
 
@@ -27,10 +27,10 @@ paths:
 
 ## Modes
 
-- Groups that differ by theme show light and dark side by side: `ThemeCell` sets `data-theme`, so CSS variables inside it resolve to that theme. Density works the same way through `DensityCell` (`data-density`).
+- Groups that differ by theme show light and dark side by side: `ThemeCell` sets `data-theme`, so CSS variables inside it resolve to that theme. Density and shape work the same way through `DensityCell` (`data-density`) and `ShapeCell` (`data-shape`).
 - Groups that differ by viewport show narrow and wide side by side. A cell can't switch a media query, so their previews use resolved values; the text style specimens follow the window.
 - Contrast badges use the same pairing rules as `npm run check` (both import `tokens/lint/pairs.ts`); each badge shows the lowest ratio among a token's pairs.
-- The sun/moon button at the top right toggles a `theme` global; the preview sets `data-theme` on `<html>` from it, so the whole page switches through token variables, and the manager switches between the two UI themes. Saved in localStorage; `?globals=theme:dark` also works. The density button next to it does the same for `data-density` (`.storybook/density.ts`, `?globals=density:compact`).
+- The sun/moon button at the top right toggles a `theme` global; the preview sets `data-theme` on `<html>` from it, so the whole page switches through token variables, and the manager switches between the two UI themes. Saved in localStorage; `?globals=theme:dark` also works. The density and shape buttons next to it do the same for `data-density` and `data-shape` (`.storybook/attributes.ts`, `?globals=density:compact`, `?globals=shape:round`).
 
 ## Accessibility
 
@@ -46,4 +46,4 @@ paths:
 ## Manager
 
 - The Storybook UI themes (`.storybook/theme.ts`) need plain values, since the manager can't read CSS variables. `main.ts` resolves them at startup (`scripts/ui-tokens.ts`) and writes them into the manager's and the preview's `<head>` as `window.PTS_UI_TOKENS` (ADR 0046). A new UI color: add its token id to `UI_COLORS` in `.storybook/ui-tokens.ts`, never a hex in `theme.ts`.
-- Manager files (`.storybook/manager.tsx`, `theme.ts`, `ui-tokens.ts`, `density.ts`, `main.ts`) are only compiled at startup: restart `npm run storybook` after editing them. The manager uses the classic JSX runtime, so `manager.tsx` imports React.
+- Manager files (`.storybook/manager.tsx`, `theme.ts`, `ui-tokens.ts`, `attributes.ts`, `main.ts`) are only compiled at startup: restart `npm run storybook` after editing them. The manager uses the classic JSX runtime, so `manager.tsx` imports React.

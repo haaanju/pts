@@ -6,10 +6,10 @@ import * as ButtonStories from "./Button.stories";
 
 <PageHeader eyebrow="Component" title="Button" groups={["button"]}>
   What a button uses, per variant, size, and state. Every token aliases a semantic token, so the button follows the
-  theme and density with the rest of the page. The component is `<pts-button>` from `@pts/components`.
+  theme, density, and shape with the rest of the page. The component is `<pts-button>` from `@pts/components`.
 </PageHeader>
 
-<Section title="Preview" lead="Button in each theme and density. Each cell sets data-theme and data-density; the button follows through its button/* variables. On the surface row, Secondary is set apart by its outline.">
+<Section title="Preview" lead="Button in each theme and density. Each cell sets data-theme and data-density; the button follows through its button/* variables, and its corners follow the shape toggle. On the surface row, Secondary is set apart by its outline.">
   <Story of={ButtonStories.Preview} />
 </Section>
 
@@ -74,7 +74,7 @@ import "@pts/components/button.js"; // defines <pts-button>`}
   <TokenTable prefix="button.lg" />
 </Section>
 
-<Section title="Shape" path="button/radius, button/border-width" lead="Every variant reserves the border width, transparent unless it has an outline, so all variants have the same box.">
+<Section title="Shape" path="button/radius, button/border-width" lead="The radius is radius/control, shared with inputs and selects: 8px in the soft shape, a pill in the round one. Every variant reserves the border width, transparent unless it has an outline, so all variants have the same box.">
   <TokenTable prefix="button.radius" />
   <TokenTable prefix="button.border-width" />
 </Section>

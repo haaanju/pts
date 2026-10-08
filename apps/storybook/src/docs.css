@@ -799,7 +799,7 @@ body {
   display: inline-flex;
   align-items: center;
   padding: 0 var(--space-400);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-control);
   background: var(--inverse-base);
   color: var(--content-inverse-base);
   font: var(--text-label-md);

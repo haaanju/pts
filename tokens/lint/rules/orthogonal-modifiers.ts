@@ -1,5 +1,5 @@
-// pts/orthogonal-modifiers: each modifier (theme, density, viewport) defines only the tokens its scope allows, and no
-// token is defined by two modifiers (ADR 0038, 0040).
+// pts/orthogonal-modifiers: each modifier (theme, density, viewport, shape) defines only the tokens its scope allows,
+// and no token is defined by two modifiers (ADR 0038, 0040, 0048).
 // tokens.css repeats each modifier's tokens in that modifier's own selectors, and those nest in any order
 // ([data-theme] inside [data-density] or the other way round). A token two modifiers define would take the value of
 // whichever selector is nearer in the page, not the one the resolver's order gives, so the CSS and the docs (which
@@ -11,8 +11,8 @@ import type { LintRule } from "@terrazzo/parser";
 import { loadResolver, modifierTokens } from "../../source.ts";
 
 type Options = {
-  /** what each modifier may define: tokens of these $types, or under these groups (dot paths) */
-  scope: Record<string, { types?: string[]; groups?: string[] }>;
+  /** what each modifier may define: tokens of these $types, under these groups, or these tokens (dot paths) */
+  scope: Record<string, { types?: string[]; groups?: string[]; tokens?: string[] }>;
 };
 
 const rule: LintRule<"OVERLAP" | "OUT_OF_SCOPE", Options> = {
@@ -34,10 +34,12 @@ const rule: LintRule<"OVERLAP" | "OUT_OF_SCOPE", Options> = {
       }
     });
     for (const { name, ids } of modifiers) {
-      const { types = [], groups = [] } = options.scope[name] ?? {};
-      const scope = [...types.map((t) => `${t} tokens`), ...groups.map((g) => `${g.replaceAll(".", "/")}/*`)].join(", ") || "nothing";
+      const { types = [], groups = [], tokens: only = [] } = options.scope[name] ?? {};
+      const scope =
+        [...types.map((t) => `${t} tokens`), ...groups.map((g) => `${g.replaceAll(".", "/")}/*`), ...only.map((t) => t.replaceAll(".", "/"))].join(", ") ||
+        "nothing";
       for (const id of ids) {
-        const inScope = types.includes(tokens[id]?.$type) || groups.some((g) => id.startsWith(`${g}.`));
+        const inScope = types.includes(tokens[id]?.$type) || groups.some((g) => id.startsWith(`${g}.`)) || only.includes(id);
         if (!inScope) report({ messageId: "OUT_OF_SCOPE", data: { id, modifier: name, scope } });
       }
     }

@@ -4,27 +4,21 @@ import { addons } from "storybook/preview-api";
 import "@pts/web/fonts.css";
 import "@pts/web/tokens.css";
 import "../src/docs.css";
-import { DENSITY_GLOBAL, resolveDensity } from "./density";
+import { ATTRIBUTE_MODES, density, shape } from "./attributes";
 import { light, resolveMode, THEME_GLOBAL } from "./theme";
 
 // The docs follow the theme toggle (manager.tsx) through a global. Setting data-theme on <html>
 // switches every token variable; an explicit value also stops the OS color scheme from overriding it.
 // The theme global is left unset by default so the saved choice can apply (see resolveMode).
-// Density works the same way through data-density (ADR 0025).
-const applyTheme = (globalValue: unknown) => {
-  document.documentElement.dataset.theme = resolveMode(globalValue);
+// Density and shape work the same way through data-density and data-shape (ADR 0025, 0048).
+const apply = (globals: Record<string, unknown>) => {
+  document.documentElement.dataset.theme = resolveMode(globals[THEME_GLOBAL]);
+  for (const mode of ATTRIBUTE_MODES) document.documentElement.dataset[mode.global] = mode.resolve(globals[mode.global]);
 };
-const applyDensity = (globalValue: unknown) => {
-  document.documentElement.dataset.density = resolveDensity(globalValue);
-};
-applyTheme(undefined);
-applyDensity(undefined);
+apply({});
 
 const channel = addons.getChannel();
-const onGlobals = ({ globals }: { globals: Record<string, unknown> }) => {
-  applyTheme(globals[THEME_GLOBAL]);
-  applyDensity(globals[DENSITY_GLOBAL]);
-};
+const onGlobals = ({ globals }: { globals: Record<string, unknown> }) => apply(globals);
 channel.on(SET_GLOBALS, onGlobals);
 channel.on(GLOBALS_UPDATED, onGlobals);
 
@@ -33,7 +27,8 @@ const preview: Preview = {
   // the toggle in manager.tsx is the UI, and an unset value falls back to the saved choice.
   globalTypes: {
     [THEME_GLOBAL]: { description: "Docs color theme (light | dark)" },
-    [DENSITY_GLOBAL]: { description: "Docs density (relaxed | compact)" },
+    [density.global]: { description: "Docs density (relaxed | compact)" },
+    [shape.global]: { description: "Docs shape (soft | round)" },
   },
   parameters: {
     docs: { theme: light },

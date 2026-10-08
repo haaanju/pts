@@ -315,6 +315,11 @@ const cases: Case[] = [
     mutate: (c) => c.value("semantic/spacing.relaxed.tokens.json", "padding.md", "{size.control.sm}"),
     expect: [["pts/tier-aliases", "padding.md → {size.control.sm}; padding/* aliases space/* only"]],
   },
+  {
+    name: "a role token aliasing outside its scale, named by its id",
+    mutate: (c) => c.value("semantic/border.round.tokens.json", "radius.control", "{dimension.max}"),
+    expect: [["pts/tier-aliases", "radius.control → {dimension.max}; radius/control aliases radius/* only"]],
+  },
 
   // pts/registered-files
   {
@@ -339,6 +344,14 @@ const cases: Case[] = [
         c.set(file, "size.icon.xl", () => ({ $type: "dimension", $value: "{dimension.32}", $description: "Extra large icons." }));
     },
     expect: [["pts/orthogonal-modifiers", "size.icon.xl is defined by the density modifier, which only changes padding/*"]],
+  },
+  {
+    name: "a modifier scoped to single tokens defining another",
+    mutate: (c) => {
+      for (const file of ["semantic/border.soft.tokens.json", "semantic/border.round.tokens.json"])
+        c.set(file, "radius.container", () => ({ $type: "dimension", $value: "{radius.lg}", $description: "Corners of containers." }));
+    },
+    expect: [["pts/orthogonal-modifiers", "radius.container is defined by the shape modifier, which only changes radius/control"]],
   },
 ];
 

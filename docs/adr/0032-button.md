@@ -1,6 +1,6 @@
 # 0032. Button
 
-- Status: accepted (amended by 0033, 0034, 0038, 0040)
+- Status: accepted (amended by 0033, 0034, 0038, 0040, 0048)
 - Date: 2026-10-02
 
 The spec for the first component, written before the Figma component and the code, one question at a time, then implemented in that order: the tokens, the Figma component, the code.

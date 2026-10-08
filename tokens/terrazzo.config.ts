@@ -42,7 +42,10 @@ export default defineConfig({
       "pts/color-hex": "error",
       "pts/tier-aliases": [
         "error",
-        { rawValues: ["z-index", "breakpoint", "line-height"], roleAliases: { text: TEXT_PROPERTIES, padding: ["space"], gap: ["space"] } },
+        {
+          rawValues: ["z-index", "breakpoint", "line-height"],
+          roleAliases: { text: TEXT_PROPERTIES, padding: ["space"], gap: ["space"], "radius.control": ["radius"] }, // ADR 0026, 0048
+        },
       ],
       "pts/registered-files": "error",
       "pts/orthogonal-modifiers": [
@@ -52,6 +55,7 @@ export default defineConfig({
             theme: { types: ["color", "shadow"] },
             density: { groups: ["padding", "gap.within", "gap.between", "size.control"] },
             viewport: { groups: ["font-size.display", "line-height.display", "letter-spacing.display"] },
+            shape: { tokens: ["radius.control"] },
           },
         },
       ],

@@ -18,7 +18,7 @@
     "md": {
       "$type": "dimension",
       "$value": "{dimension.8}",
-      "$description": "Default corners for controls: buttons, inputs, and selects."
+      "$description": "Medium corners. Controls take theirs from radius/control, which is radius/md in the soft shape."
     },
     "lg": {
       "$type": "dimension",

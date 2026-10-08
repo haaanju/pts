@@ -1,5 +1,5 @@
-// The docs' data layer: every token per permutation (theme × density × viewport) as Terrazzo resolves it, built by
-// scripts/docs-tokens.ts from the current token files (ADR 0038). Nothing here resolves an alias.
+// The docs' data layer: every token per permutation (theme × density × viewport × shape) as Terrazzo resolves it,
+// built by scripts/docs-tokens.ts from the current token files (ADR 0038). Nothing here resolves an alias.
 import data from "virtual:pts-tokens";
 import { contrastPairs, isExempt as isExemptSemantic } from "../../../tokens/lint/pairs.ts";
 
@@ -9,6 +9,8 @@ export type Density = "relaxed" | "compact";
 export const DENSITIES: Density[] = ["relaxed", "compact"];
 export type Viewport = "narrow" | "wide";
 export const VIEWPORTS: Viewport[] = ["narrow", "wide"];
+export type Shape = "soft" | "round";
+export const SHAPES: Shape[] = ["soft", "round"];
 
 export interface TokenInfo {
   id: string;
@@ -63,8 +65,10 @@ const format = (type: string, v: any, forCss: boolean): string => {
   }
 };
 
-const build = (theme: Theme, density: Density, viewport: Viewport): Record<string, TokenInfo> => {
-  const values = data.values[`${theme}/${density}/${viewport}`];
+type Key = `${Theme}/${Density}/${Viewport}/${Shape}`;
+
+const build = (key: Key): Record<string, TokenInfo> => {
+  const values = data.values[key];
   return Object.fromEntries(
     data.tokens
       .filter(({ id }) => values[id])
@@ -88,16 +92,15 @@ const build = (theme: Theme, density: Density, viewport: Viewport): Record<strin
   );
 };
 
-/** Every theme × density × viewport permutation, as the resolver applies them */
-const byMode = Object.fromEntries(
-  THEMES.flatMap((theme) =>
-    DENSITIES.flatMap((density) => VIEWPORTS.map((viewport) => [`${theme}/${density}/${viewport}`, build(theme, density, viewport)])),
-  ),
-) as Record<`${Theme}/${Density}/${Viewport}`, Record<string, TokenInfo>>;
-const at = (theme: Theme, density: Density, viewport: Viewport) => byMode[`${theme}/${density}/${viewport}`];
+/** Every theme × density × viewport × shape permutation, as the resolver applies them */
+const keys = THEMES.flatMap((theme) =>
+  DENSITIES.flatMap((density) => VIEWPORTS.flatMap((viewport) => SHAPES.map((shape): Key => `${theme}/${density}/${viewport}/${shape}`))),
+);
+const byMode = Object.fromEntries(keys.map((key) => [key, build(key)])) as Record<Key, Record<string, TokenInfo>>;
+const at = (theme: Theme, density: Density, viewport: Viewport, shape: Shape = "soft") => byMode[`${theme}/${density}/${viewport}/${shape}`];
 
-export const token = (id: string, theme: Theme = "light", density: Density = "relaxed", viewport: Viewport = "narrow") => {
-  const t = at(theme, density, viewport)[id];
+export const token = (id: string, theme: Theme = "light", density: Density = "relaxed", viewport: Viewport = "narrow", shape: Shape = "soft") => {
+  const t = at(theme, density, viewport, shape)[id];
   if (!t) throw new Error(`Unknown token: ${id}`);
   return t;
 };
@@ -107,7 +110,14 @@ export const token = (id: string, theme: Theme = "light", density: Density = "re
  * give the values its :root holds (ADR 0047)
  */
 export const tokensAt = (input: Record<string, string>) =>
-  Object.values(at((input.theme ?? "light") as Theme, (input.density ?? "relaxed") as Density, (input.viewport ?? "narrow") as Viewport));
+  Object.values(
+    at(
+      (input.theme ?? "light") as Theme,
+      (input.density ?? "relaxed") as Density,
+      (input.viewport ?? "narrow") as Viewport,
+      (input.shape ?? "soft") as Shape,
+    ),
+  );
 
 /** Tokens under a group prefix (e.g. "intent.danger"), or the single token with that id (e.g. "background"), in file order */
 export const group = (prefix: string, theme: Theme = "light", density: Density = "relaxed", viewport: Viewport = "narrow") =>
@@ -121,6 +131,9 @@ export const isDense = (prefix: string) => group(prefix).some((t) => t.css !== t
 
 /** True if any token under the prefix resolves differently between viewports */
 export const isResponsive = (prefix: string) => group(prefix).some((t) => t.css !== token(t.id, "light", "relaxed", "wide").css);
+
+/** True if any token under the prefix resolves differently between shapes */
+export const isShaped = (prefix: string) => group(prefix).some((t) => t.css !== token(t.id, "light", "relaxed", "narrow", "round").css);
 
 /** Last path segment, e.g. "intent.danger.surface.strong" → "strong" */
 export const leaf = (id: string) => id.slice(id.lastIndexOf(".") + 1);

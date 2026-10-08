@@ -2,7 +2,8 @@
 // A real <button> inside a shadow root does the keyboard, role, and screen-reader work; the host adds what a button
 // inside a shadow root can't do on its own (submitting the surrounding form) and the states the spec adds
 // (aria-disabled that stays focusable, loading). Styles read the button/* tokens from @pts/web/tokens.css, which the
-// page loads: custom properties inherit into the shadow root, so data-theme and data-density reach it unchanged.
+// page loads: custom properties inherit into the shadow root, so data-theme, data-density, and data-shape reach it
+// unchanged.
 import { css, html, LitElement, type PropertyValues } from "lit";
 import { ifDefined } from "lit/directives/if-defined.js";
 

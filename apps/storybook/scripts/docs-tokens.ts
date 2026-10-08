@@ -8,11 +8,12 @@ import { files, parseSource, permutations, registered, RESOLVER } from "../../..
 import type { DocsToken, DocsTokens, DocsValue } from "../src/tokens-data.ts";
 
 const FILENAME = "docs-tokens.json";
-const MODIFIERS = ["theme", "density", "viewport"];
+const MODIFIERS = ["theme", "density", "viewport", "shape"];
 
-// The order the docs list tokens in: file order, with the density files first, so gap/within and gap/between come
-// before the base gap/section, and the viewport files last, so the display steps follow the base text steps.
-const LAYERS = ["density", "base", "theme", "viewport"];
+// The order the docs list tokens in: file order, with the density and shape files first, so gap/within and gap/between
+// come before the base gap/section and radius/control before the radius scale (role tokens first, like the Spacing
+// page), and the viewport files last, so the display steps follow the base text steps.
+const LAYERS = ["density", "shape", "base", "theme", "viewport"];
 
 export const docsData = (resolver: Resolver): DocsTokens => {
   const rank = (layer: string) => {
