@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/product-outputs` (pull request open, not merged): per-product outputs in `@pts/web` for the example products `dense-app` and `roomy-app`, and the Output/Products docs page (ADR 0047). Once merged, the page appears on https://haaanju.github.io/pts/.
+- None.
 
 ## Next
 
