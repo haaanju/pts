@@ -9,14 +9,14 @@ paths:
 
 - `src/tokens.ts`: the data layer. Formats every token of every theme × density × viewport permutation from `virtual:pts-tokens`, which `scripts/docs-tokens.ts` builds with Terrazzo (a Terrazzo plugin, run in memory by a Vite plugin in `vite.config.ts`; ADR 0038). Nothing in the docs resolves an alias.
 - `src/components.tsx`: the doc blocks (`PageHeader`, `Section`, `TokenTable`, `ColorTable`, `Palette`, …). `src/docs.css`: their styles.
-- `src/Introduction.mdx` (Overview), `src/component/*.mdx` (Button), `src/semantic/*.mdx` (Color, Typography, Spacing, Border, Elevation, Size, Motion, Layout), `src/primitive/*.mdx` (Palette, Scales).
+- `src/Introduction.mdx` (Overview), `src/component/*.mdx` (Button), `src/semantic/*.mdx` (Color, Typography, Spacing, Border, Elevation, Size, Motion, Layout), `src/primitive/*.mdx` (Palette, Scales), `src/output/*.mdx` (Products: the per-product outputs, ADR 0047).
 - `.storybook/`: `main.ts`, `preview` (imports `tokens.css`, syncs `data-theme` and `data-density`), `manager.tsx` (the toggles), `theme.ts` (the light and dark UI themes, from the values `main.ts` resolves at startup; `ui-tokens.ts` lists them), `density.ts`.
 
 ## Content
 
 - Docs are generated from the token JSON. New tokens in an existing group appear without code changes.
 - A token's `$description` shows between its name and its CSS variable (`TokenTable`, text style specimens, shadow cards), in `text/body-sm` sans against the mono name and variable. Edit the description in the JSON, not in the docs.
-- The sidebar mirrors the tiers: Overview → Component → Semantic → Primitive. Each page shows only its tier's tokens; primitive pages are reference for defining tokens and say so, since product code uses semantic tokens. A component page (`src/component/<Name>.mdx`) has one section per variant (`ColorTable`), per size (`TokenTable`), and for shared parts; a component color's contrast badge uses the pairs of the semantic token it aliases (`pairsOf` in `tokens.ts`).
+- The sidebar mirrors the tiers: Overview → Component → Semantic → Primitive, then Output (what the build makes from them; docs only, with no Figma specimen). Each page shows only its tier's tokens; primitive pages are reference for defining tokens and say so, since product code uses semantic tokens. A component page (`src/component/<Name>.mdx`) has one section per variant (`ColorTable`), per size (`TokenTable`), and for shared parts; a component color's contrast badge uses the pairs of the semantic token it aliases (`pairsOf` in `tokens.ts`).
 - Sample text is English only.
 
 ## Pages

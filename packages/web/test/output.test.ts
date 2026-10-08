@@ -1,13 +1,15 @@
 // Contract tests for the @pts/web output: what dist/ must hold for every token in every mode. The expectations come
 // from Terrazzo's resolver (tokens/source.ts), not from a snapshot, so a token change needs no test change, but a
 // mode, token, or output the build drops fails: a new theme context with no CSS block, a modifier block that misses a
-// token (or resets another modifier's), JS or SCSS without a token (sass() before css() builds an empty map).
+// token (or resets another modifier's), JS or SCSS without a token (sass() before css() builds an empty map). Each
+// product's CSS and JS (products.ts, ADR 0047) is checked the same way at the inputs it fixes.
 // `npm test` builds first (pretest).
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { suite, test } from "node:test";
 import type { TokenNormalizedSet } from "@terrazzo/parser";
 import { loadResolver, permutations } from "../../../tokens/source.ts";
+import { products } from "../products.ts";
 
 const read = (file: string) => readFileSync(new URL(`../dist/${file}`, import.meta.url), "utf8");
 const cssVar = (id: string) => `--${id.replaceAll(".", "-")}`;
@@ -44,11 +46,11 @@ const dependsOn = (modifier: string, by: "resolved" | "declared" = "resolved") =
   return ids;
 };
 
-/** tokens.css as { "selector path": { "--name": "value" } }, nested at-rules joined with a space */
-const blocks = (() => {
+/** A CSS file as { "selector path": { "--name": "value" } }, nested at-rules joined with a space */
+const parse = (file: string) => {
   const out = new Map<string, Map<string, string>>();
   const stack: string[] = [];
-  for (const line of read("tokens.css")
+  for (const line of read(file)
     .split("\n")
     .map((l) => l.trim())) {
     if (line.endsWith("{")) stack.push(line.slice(0, -1).trim());
@@ -62,7 +64,7 @@ const blocks = (() => {
     }
   }
   return out;
-})();
+};
 
 // Where each modifier context lives in tokens.css (ADR 0029, CLAUDE.md → Output). The viewport is the window, so its
 // blocks sit on :root and the default viewport is :root itself. A context with no selector here fails the test until
@@ -91,40 +93,98 @@ const expectReference = (block: Map<string, string>, tokens: TokenNormalizedSet,
   if (target) assert.equal(block.get(cssVar(id)), `var(${cssVar(target)})`, `${where}: ${cssVar(id)} should reference ${target}`);
 };
 
-suite("@pts/web output", () => {
-  test(":root declares every token at the defaults", () => {
-    const root = blocks.get(":root");
-    assert.ok(root, "tokens.css has no :root block");
-    const tokens = at({});
-    for (const id of Object.keys(tokens)) {
-      assert.ok(root.has(cssVar(id)), `:root lacks ${cssVar(id)}`);
-      expectReference(root, tokens, id, ":root");
-    }
-  });
+// tokens.css fixes no modifier; each product's CSS fixes the ones products.ts lists (ADR 0047). Its :root and every
+// block take those inputs, and a fixed modifier has no blocks.
+const cssFiles = [
+  { file: "tokens.css", fixed: {} as Record<string, string> },
+  ...Object.entries(products).map(([name, fixed]) => ({ file: `products/${name}.css`, fixed })),
+];
 
-  for (const modifier of modifiers) {
-    const onRoot = modifier.name === "viewport";
-    const own = dependsOn(modifier.name, onRoot ? "declared" : "resolved");
-    const others = new Set(modifiers.filter((m) => m !== modifier).flatMap((m) => [...dependsOn(m.name)]));
-    for (const context of modifier.contexts) {
-      for (const selector of selectors(modifier.name, context)) {
-        test(`${selector} holds every token ${modifier.name}=${context} changes, and no other modifier's`, () => {
-          const block = blocks.get(selector);
-          assert.ok(block, `tokens.css has no block for ${modifier.name}=${context} (${selector})`);
-          const tokens = at({ [modifier.name]: context });
-          for (const id of own) {
-            assert.ok(block.has(cssVar(id)), `${selector} lacks ${cssVar(id)}, which ${modifier.name} changes`);
-            expectReference(block, tokens, id, selector);
-          }
-          // a declaration of another modifier's token would reset it inside this subtree
-          for (const name of block.keys()) {
-            const id = [...others].find((other) => cssVar(other) === name);
-            assert.ok(!id, `${selector} declares ${name}, which another modifier changes`);
-          }
+for (const { file, fixed } of cssFiles) {
+  suite(file, () => {
+    const blocks = parse(file);
+    const inputs = Object.entries(fixed).map(([k, v]) => `${k}=${v}`).join(", ") || "the defaults";
+
+    test(`:root declares every token at ${inputs}`, () => {
+      const root = blocks.get(":root");
+      assert.ok(root, `${file} has no :root block`);
+      const tokens = at(fixed);
+      for (const id of Object.keys(tokens)) {
+        assert.ok(root.has(cssVar(id)), `:root lacks ${cssVar(id)}`);
+        expectReference(root, tokens, id, ":root");
+      }
+    });
+
+    for (const modifier of modifiers) {
+      if (fixed[modifier.name]) {
+        test(`no ${modifier.name} blocks: ${modifier.name} is fixed`, () => {
+          const selector = [...blocks.keys()].find(
+            (path) =>
+              path.includes(`[data-${modifier.name}=`) || modifier.contexts.some((c) => selectors(modifier.name, c).includes(path)),
+          );
+          assert.ok(!selector, `${file} has a block for ${modifier.name}, which it fixes: ${selector}`);
         });
+        continue;
+      }
+      const onRoot = modifier.name === "viewport";
+      const own = dependsOn(modifier.name, onRoot ? "declared" : "resolved");
+      const others = new Set(modifiers.filter((m) => m !== modifier).flatMap((m) => [...dependsOn(m.name)]));
+      for (const context of modifier.contexts) {
+        for (const selector of selectors(modifier.name, context)) {
+          test(`${selector} holds every token ${modifier.name}=${context} changes, and no other modifier's`, () => {
+            const block = blocks.get(selector);
+            assert.ok(block, `${file} has no block for ${modifier.name}=${context} (${selector})`);
+            const tokens = at({ ...fixed, [modifier.name]: context });
+            for (const id of own) {
+              assert.ok(block.has(cssVar(id)), `${selector} lacks ${cssVar(id)}, which ${modifier.name} changes`);
+              expectReference(block, tokens, id, selector);
+            }
+            // a declaration of another modifier's token would reset it inside this subtree
+            for (const name of block.keys()) {
+              const id = [...others].find((other) => cssVar(other) === name);
+              assert.ok(!id, `${selector} declares ${name}, which another modifier changes`);
+            }
+          });
+        }
       }
     }
-  }
+  });
+}
+
+// A product's JS holds plugin-js's token sets: one per permutation of the contexts it leaves open, with the values
+// Terrazzo's resolver gives that permutation. Its .d.ts types every token.
+for (const [name, fixed] of Object.entries(products)) {
+  const { resolver: product } = await import(new URL(`../dist/products/${name}.js`, import.meta.url).href);
+  suite(`products/${name}.js`, () => {
+    const expected = all.filter(({ input }) => Object.entries(fixed).every(([k, v]) => input[k] === v));
+
+    test("holds one token set per permutation it leaves open, and no other", () => {
+      const key = (input: Record<string, string>) => JSON.stringify(Object.entries(input).sort());
+      assert.deepEqual(product.listPermutations().map(key).sort(), expected.map(({ input }) => key(input)).sort());
+    });
+
+    for (const { input, tokens } of expected) {
+      const label = Object.entries(input).map(([k, v]) => `${k}=${v}`).join(", ");
+      test(`${label}: every token with the resolver's value`, () => {
+        const set = product.apply(input);
+        assert.ok(set, `${name}.js has no token set for ${label}`);
+        assert.deepEqual(Object.keys(set).sort(), Object.keys(tokens).sort());
+        for (const [id, token] of Object.entries(tokens)) {
+          // plugin-js writes each token as JSON
+          const value = JSON.parse(JSON.stringify({ $type: token.$type, $value: token.$value }));
+          assert.deepEqual(set[id], value, `${name}.js: ${id} at ${label}`);
+        }
+      });
+    }
+
+    test(`${name}.d.ts types every token`, () => {
+      const dts = read(`products/${name}.d.ts`);
+      for (const id of Object.keys(at(fixed))) assert.ok(dts.includes(`  ${JSON.stringify(id)}: `), `${name}.d.ts lacks "${id}"`);
+    });
+  });
+}
+
+suite("tokens.js and tokens.scss", () => {
 
   test("tokens.js references every token, and tokens.d.ts types the same exports", () => {
     const js = read("tokens.js");

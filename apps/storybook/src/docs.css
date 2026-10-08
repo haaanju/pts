@@ -1063,6 +1063,25 @@ body {
   border-radius: var(--radius-md);
   background: var(--surface-subtle);
 }
+/* Output/Products: a small layout spaced only by density tokens, so each product's cell shows its density */
+.pts-product-sample {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-within-sm);
+  padding: var(--padding-xl);
+  border-radius: var(--radius-md);
+  background: var(--surface-subtle);
+  font: var(--text-body-md);
+}
+.pts-product-title {
+  font: var(--text-heading-sm);
+}
+.pts-product-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-within-md);
+  margin-top: var(--gap-between-sm);
+}
 /* Storybook blocks wider than a phone (the Controls table) scroll inside the page instead of widening it */
 .pts-scroll {
   overflow-x: auto;

@@ -45,7 +45,7 @@ tokens/                     @pts/tokens (private)
   src/primitive/<category>.tokens.json
   src/semantic/<category>[.<context>].tokens.json
   src/component/<component>.tokens.json
-packages/web/               @pts/web: dist/ tokens.css, tokens.js + .d.ts, tokens.scss; fonts/
+packages/web/               @pts/web: dist/ tokens.css, tokens.js + .d.ts, tokens.scss, products/ (ADR 0047); fonts/
 apps/components/            @pts/components: Lit web components testing the component tier, src/ → dist/ (<pts-button>)
 apps/storybook/             @pts/storybook: token docs
 docs/progress.md, docs/adr/
@@ -65,7 +65,7 @@ docs/progress.md, docs/adr/
   - Built-in rules turned on beyond the recommended ones: `$type` required, a `$description` on every semantic token, srgb colors, text styles at least 12px.
   - `pts/*`: `theme-parity`, `contrast`, `component-pairs`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`, `orthogonal-modifiers`, `component-states`.
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it. Every `pts/*` message gets a case in `tokens/lint/rules.test.ts`, unless it can't be reached (the file says why).
-- `npm test`: breaks each `pts/*` rule on purpose in a copy of `tokens/` and expects `tz check` to report it, so a rule that silently stops reporting fails (ADR 0037); then builds `@pts/web` and checks its output against the resolver: every token in `:root`, every modifier context in its block with every token it changes and none another modifier changes, and every token in `tokens.js`, `tokens.d.ts`, and `tokens.scss` (ADR 0039).
+- `npm test`: breaks each `pts/*` rule on purpose in a copy of `tokens/` and expects `tz check` to report it, so a rule that silently stops reporting fails (ADR 0037); then builds `@pts/web` and checks its output against the resolver: every token in `:root`, every modifier context in its block with every token it changes and none another modifier changes, and every token in `tokens.js`, `tokens.d.ts`, and `tokens.scss` (ADR 0039); each product's CSS and JS the same way at the inputs it fixes, its JS values equal to the resolver's (ADR 0047).
 - `npm run typecheck`: TypeScript for the lint plugin, the `@pts/web` build config and tests, the components, and Storybook.
 - `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/components` → `apps/components/dist/`).
 - `npm run storybook`: docs dev server (http://localhost:6006), builds `@pts/web` and `@pts/components` first. `npm run build-storybook`: static build.
@@ -77,6 +77,7 @@ docs/progress.md, docs/adr/
 - `tokens.css`: `:root` holds every token at the defaults (light, relaxed, narrow). `[data-theme="light"|"dark"]` (plus `prefers-color-scheme: dark`) repeat only the theme groups; `[data-density="compact"|"relaxed"]` only the density tokens. They work on any subtree and nest without resetting each other. `@media (min-width: 768px)` (from `breakpoint/md`) repeats only the viewport tokens; there is no viewport attribute, since the viewport is the window (ADR 0029).
 - `tokens.js` (+ `tokens.d.ts`) and `tokens.scss` hold `var(--…)` references, not values, so every modifier works through `tokens.css` (ADR 0030).
 - A token that aliases a theme or density token must be repeated in that modifier's blocks, since CSS variables resolve where they are declared (ADR 0025). The build repeats the component tokens that do (the Button's colors, sizes, and paddings; ADR 0032); `npm test` checks it.
+- Per-product outputs (ADR 0047): `products/<name>.css` and `.js` (+ `.d.ts`) for each product in `packages/web/products.ts`, a fixed set of modifier inputs (the examples `dense-app` and `roomy-app` fix the density). The CSS has no blocks for a fixed modifier; the JS holds resolved values from `@terrazzo/plugin-js`.
 
 ## Token Rules
 
