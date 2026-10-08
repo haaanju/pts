@@ -63,7 +63,7 @@ Three parts that may be the most interesting to look at:
 
 ## Documentation
 
-The docs run locally with `npm run storybook`; there is no hosted copy ([ADR 0043](adr/0043-public-repository.md)).
+The docs are hosted at https://haaanju.github.io/pts/, deployed from `main` after CI passes ([ADR 0020](adr/0020-hand-edited-tokens-and-ci-gates.md), [0043](adr/0043-public-repository.md)).
 
 | What | Why | Where | ADR |
 |---|---|---|---|

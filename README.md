@@ -4,7 +4,7 @@ Design tokens in the [DTCG](https://www.designtokens.org/) format, built with [T
 
 Plain is a personal study project: a small design token monorepo built end to end, from token source to built output, to learn how token pipelines work, including the tooling around them (linting, accessibility checks, docs, automation). It is shared for reference, not as a recommended setup.
 
-**Docs**: `npm run storybook` (http://localhost:6006; see Development). **How it works**: [`docs/how-it-works.md`](docs/how-it-works.md).
+**Docs**: https://haaanju.github.io/pts/ (Storybook, built from `main`). **How it works**: [`docs/how-it-works.md`](docs/how-it-works.md).
 
 ## Packages
 
