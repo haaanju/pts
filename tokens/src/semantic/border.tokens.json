@@ -18,17 +18,22 @@
     "md": {
       "$type": "dimension",
       "$value": "{dimension.8}",
-      "$description": "Medium corners. Controls take theirs from radius/control, which is radius/md in the soft shape."
+      "$description": "Medium corners. Controls and containers take theirs from radius/control and radius/container, which are radius/md in the soft shape."
     },
     "lg": {
       "$type": "dimension",
       "$value": "{dimension.12}",
-      "$description": "Corners for containers: cards, popovers, and menus."
+      "$description": "Corners for popovers and menus. Cards, dialogs, and sheets take theirs from radius/container."
     },
     "xl": {
       "$type": "dimension",
       "$value": "{dimension.16}",
-      "$description": "Corners for large containers such as modals and sheets."
+      "$description": "Large corners. Containers take theirs from radius/container: radius/md in the soft shape, radius/2xl in the round one."
+    },
+    "2xl": {
+      "$type": "dimension",
+      "$value": "{dimension.32}",
+      "$description": "Very rounded corners for large surfaces. Containers take theirs from radius/container, which is radius/2xl in the round shape."
     },
     "full": {
       "$type": "dimension",

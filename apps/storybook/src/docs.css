@@ -1064,13 +1064,14 @@ body {
   border-radius: var(--radius-md);
   background: var(--surface-subtle);
 }
-/* Output/Products: a small layout spaced only by density tokens, so each product's cell shows its density */
+/* Output/Products: a small layout spaced only by density tokens and rounded by the container radius, so each
+   product's cell shows its density and shape */
 .pts-product-sample {
   display: flex;
   flex-direction: column;
   gap: var(--gap-within-sm);
   padding: var(--padding-xl);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-container);
   background: var(--surface-subtle);
   font: var(--text-body-md);
 }

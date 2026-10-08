@@ -83,7 +83,7 @@ docs/progress.md, docs/adr/
 
 ### Structure
 
-- **Tiers**: primitive → semantic → component. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `padding/*` and `gap/*` reference the `space` scale (ADR 0026), and `radius/control` the `radius` scale (ADR 0048); `z-index`, `breakpoint`, and `line-height` hold values directly, since they have no meaning outside their role (ADR 0024, 0028).
+- **Tiers**: primitive → semantic → component. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `padding/*` and `gap/*` reference the `space` scale (ADR 0026), and `radius/control` and `radius/container` the `radius` scale (ADR 0048, 0049); `z-index`, `breakpoint`, and `line-height` hold values directly, since they have no meaning outside their role (ADR 0024, 0028).
 - **Component tier** (ADR 0032): `component/<component>.tokens.json`, in `sets.base`. Component tokens reference semantic tokens only, with no exceptions; a value no semantic token holds is a missing semantic token. Names: `<component>/<variant>/<surface | content | border>/<state>` for colors (a property that changes with state names every state, `rest` included, and its states resolve differently, checked by `pts/component-states`; Ghost's fill, transparent at rest, is the one exception; one that doesn't change is a single token), `<component>/<size>/<part>` for sizes. State words (`rest`, `hover`, `pressed`) appear only in this tier. A variant's `content` (or `content/<state>`, with that state's fill) and `surface/*` must alias a pair `pts/contrast` checks (`pts/component-pairs`). The build repeats a component token in the theme, density, and shape blocks when its aliases reach a token of that modifier.
 - **Group names**: primitive and semantic top-level groups never share a name (Terrazzo merges all files into one namespace): primitive `weight` ↔ semantic `font-weight`.
 - **Format**: every token declares `$type`; no group-level `$type` inheritance. Every semantic token has a `$description` that says when to use it, the same in every context file and in Figma.
@@ -98,7 +98,7 @@ The DTCG resolver's modifiers. Never `$extensions.mode`.
 - **theme**: `light` (default) | `dark`. Colors and shadows.
 - **density** (ADR 0025): `relaxed` (default) | `compact`. Only `padding/*`, `gap/within/*`, `gap/between/*`, and `size/control/*` change: compact aliases exactly the next smaller `space` (or `dimension`) step (`pts/density-order`). Each modifier changes only its scope, and no token is changed by two (`pts/orthogonal-modifiers`).
 - **viewport** (ADR 0029): `narrow` (default, mobile first) | `wide` from `breakpoint/md` (768px). Only `font-size|line-height|letter-spacing/display/*` change: on narrow screens `display/xl` and `display/lg` take the next smaller step's values (so `display/lg` equals `display/md`). The `text/*` composites alias them and need no change.
-- **shape** (ADR 0048): `soft` (default) | `round`. Only `radius/control` changes: `radius/md` (8px) in soft, `radius/full` in round. Components take their corners from it (`button/radius`).
+- **shape** (ADR 0048, 0049): `soft` (default) | `round`. Only `radius/control` and `radius/container` change: `radius/control` is `radius/md` (8px) in soft and `radius/full` in round, `radius/container` `radius/md` in soft and `radius/2xl` (32px) in round. Components take their corners from them (`button/radius`).
 
 ### Primitives
 
@@ -115,7 +115,7 @@ The DTCG resolver's modifiers. Never `$extensions.mode`.
   - `space/N`: px = N ÷ 25 (`space/400` = 16px), the same in every mode. Steps `0`, `50`, `100` … `800`, `1000`, `1200`, `1600`: 4px apart up to 32px, then 40, 48, 64.
   - `padding/xs–xl`: inside an element (`padding/md` = 12px).
   - `gap/*`, between elements, in three families: `within/xs–lg` spaces the items of one group (4–16px), `between/sm–lg` separates groups (20–32px), `section/sm–lg` separates page regions (40–64px). Every `within` < every `between` < every `section`, in both densities.
-- **Border**: `radius/none–xl` and `full` (t-shirt sizes), plus the role `radius/control` for buttons, inputs, and selects (by shape); `stroke/thin|thick|thicker` (1, 2, 4px; no zero width: "no border" means removing it); `focus-ring/width|offset` (color is `border/focus`).
+- **Border**: `radius/none–2xl` and `full` (t-shirt sizes), plus two roles by shape: `radius/control` for buttons, inputs, and selects, and `radius/container` for cards, panels, dialogs, and sheets (popovers and menus keep `radius/lg`); `stroke/thin|thick|thicker` (1, 2, 4px; no zero width: "no border" means removing it); `focus-ring/width|offset` (color is `border/focus`).
 - **Typography** (ADR 0023, 0028):
   - Levels stacked together are either the same size, told apart by weight or color, or clearly apart (×1.5 or more). Never an in-between difference.
   - `font-family/sans|serif|mono`. Use `mono` wherever digits must line up: Aspekta has no tabular figures.

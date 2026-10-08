@@ -35,8 +35,9 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
     `[data-density="compact"]` tightens any element and its children.
   - **Viewport**: display and heading sizes, **narrow** (default) and **wide**. From `breakpoint/md` (768px), a media
     query switches to wide.
-  - **Shape**: the corners of controls (`radius/control`), **soft** (default, 8px) and **round** (pills).
-    `[data-shape="round"]` rounds any element's controls and its children's.
+  - **Shape**: the corners of controls (`radius/control`) and containers (`radius/container`), **soft** (default, 8px
+    both) and **round** (pill controls, 32px containers). `[data-shape="round"]` rounds any element's controls and
+    containers and its children's.
 
   `data-theme`, `data-density`, and `data-shape` work on `<html>` or any element, and nest without resetting each other.
 </Section>

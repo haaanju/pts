@@ -73,7 +73,7 @@ Colors are layers (`background`, `surface`, `inverse`) with the `content` and `b
 
 **Viewport.** Display and heading sizes are mobile first: `:root` holds the `narrow` sizes, and from `breakpoint/md` (768px) a media query switches to `wide`. Only the two largest display steps change (104 → 64px and 64 → 40px on narrow screens); the `text/*` styles follow on their own, so there is nothing to set. Since the viewport is the window, there is no attribute for it.
 
-**Shape.** The corners of controls (buttons, inputs, selects) come from `radius/control`: 8px (`soft`) by default, fully rounded with `data-shape="round"`. Like `data-density`, it works on any element; the radius scale itself doesn't change.
+**Shape.** The corners of controls (buttons, inputs, selects) come from `radius/control`, and those of containers (cards, panels, dialogs, sheets) from `radius/container`: both 8px (`soft`) by default; with `data-shape="round"`, controls are fully rounded and containers 32px. Like `data-density`, it works on any element; the radius scale itself doesn't change.
 
 **JS/TS and SCSS.** Both hold references to the CSS variables, not values, so `tokens.css` must still be imported; theme, density, viewport, and shape keep working through it. They add names, autocomplete, and type errors on typos.
 
@@ -96,7 +96,7 @@ const title = { ...text.headingMd }; // fontFamily, fontSize, fontWeight, letter
 
 Since the values are `var(…)`, Sass can't compute with them, and breakpoints can't be used in `@media` (the same limit as in CSS).
 
-**Per-product outputs.** A product fixes some modes at build time; its files hold the tokens at those modes, and the rest still switch. `dense-app` (density compact, shape soft) and `roomy-app` (density relaxed, shape round: pill buttons) are example products, not real ones: they exist to show and test per-product outputs from one source (ADR 0047, 0048). Import a product's CSS instead of `tokens.css`: its `:root` holds every token at the product's density and shape, with the theme blocks and the viewport media query as in `tokens.css` and no `[data-density]` or `[data-shape]` blocks.
+**Per-product outputs.** A product fixes some modes at build time; its files hold the tokens at those modes, and the rest still switch. `dense-app` (density compact, shape soft) and `roomy-app` (density relaxed, shape round: pill buttons, 32px containers) are example products, not real ones: they exist to show and test per-product outputs from one source (ADR 0047, 0048, 0049). Import a product's CSS instead of `tokens.css`: its `:root` holds every token at the product's density and shape, with the theme blocks and the viewport media query as in `tokens.css` and no `[data-density]` or `[data-shape]` blocks.
 
 ```css
 @import "@pts/web/fonts.css";

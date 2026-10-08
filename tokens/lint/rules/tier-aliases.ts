@@ -3,7 +3,8 @@
 // Why not built-in: Terrazzo has no notion of tiers. The tier is the token's folder (primitive/, semantic/, or
 // component/), which a merged token no longer knows, so this rule reads the files.
 // Options name the documented exceptions, so they are visible in the config: groups that hold raw values, and role
-// tokens that alias a semantic scale (padding/* and gap/* → space/*, ADR 0026; radius/control → radius/*, ADR 0048).
+// tokens that alias a semantic scale (padding/* and gap/* → space/*, ADR 0026; radius/control and radius/container →
+// radius/*, ADR 0048, 0049).
 import type { LintRule } from "@terrazzo/parser";
 import { isAlias, parseAlias } from "@terrazzo/token-tools";
 import { files, loadResolver } from "../../source.ts";
@@ -14,7 +15,7 @@ type Options = {
   /**
    * role groups (or single role tokens, by dot path) and the only groups they alias, semantic ones included (text/*:
    * composites of the semantic typography properties; padding/* and gap/*: steps of the space/* scale, never a
-   * dimension, ADR 0026; radius/control: a step of the radius/* scale, ADR 0048)
+   * dimension, ADR 0026; radius/control and radius/container: a step of the radius/* scale, ADR 0048, 0049)
    */
   roleAliases: Record<string, string[]>;
 };

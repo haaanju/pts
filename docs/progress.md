@@ -17,6 +17,8 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
 
+- Figma: add radius/2xl (Semantic) and radius/container (Shape), bind nothing new; Border page Radius table and lead; Overview counts (ADR 0049).
+
 - Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 
 Waiting for a reason, not scheduled:
