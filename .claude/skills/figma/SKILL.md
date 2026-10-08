@@ -20,7 +20,8 @@ The Figma MCP must be authenticated with the personal account that owns the `pts
 | `Semantic` | one | the semantic tokens that don't change with any modifier, including shadow offsets, blurs, and spreads |
 | `Density` | `relaxed`, `compact` | the density tokens only: `Spacing/padding/*`, `Spacing/gap/within\|between/*`, `Size/size/control/*` |
 | `Viewport` | `narrow`, `wide` | the viewport tokens only: `Typography/font-size\|line-height\|letter-spacing/display/*`, plus the Figma-only `Typography/line-height/display/*-px` |
-| `Component` | one | the component tokens (`button/*`), each an alias of a `Theme`, `Density`, or `Semantic` variable, so a component follows the frame's modes. Typography composites (`button/<size>/label`) are text styles instead |
+| `Shape` | `soft`, `round` | the shape tokens only: `Border/radius/control` (ADR 0048) |
+| `Component` | one | the component tokens (`button/*`), each an alias of a `Theme`, `Density`, `Shape`, or `Semantic` variable, so a component follows the frame's modes. Typography composites (`button/<size>/label`) are text styles instead |
 
 - `always/*` is the same in both `Theme` modes; it stays in `Theme` so every semantic color is in one collection for designers, while the JSON keeps it in the base set.
 - A new modifier is a new collection holding only its tokens, the same principle.
