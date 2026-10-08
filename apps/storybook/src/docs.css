@@ -1080,6 +1080,7 @@ body {
 .pts-product-actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: var(--gap-within-md);
   margin-top: var(--gap-between-sm);
 }
