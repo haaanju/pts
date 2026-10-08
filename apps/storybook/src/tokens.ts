@@ -102,6 +102,13 @@ export const token = (id: string, theme: Theme = "light", density: Density = "re
   return t;
 };
 
+/**
+ * Every token at a set of modifier inputs, the rest at their defaults: a product's inputs (packages/web/products.ts)
+ * give the values its :root holds (ADR 0047)
+ */
+export const tokensAt = (input: Record<string, string>) =>
+  Object.values(at((input.theme ?? "light") as Theme, (input.density ?? "relaxed") as Density, (input.viewport ?? "narrow") as Viewport));
+
 /** Tokens under a group prefix (e.g. "intent.danger"), or the single token with that id (e.g. "background"), in file order */
 export const group = (prefix: string, theme: Theme = "light", density: Density = "relaxed", viewport: Viewport = "narrow") =>
   Object.values(at(theme, density, viewport)).filter((t) => t.id === prefix || t.id.startsWith(`${prefix}.`));

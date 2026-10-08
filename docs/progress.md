@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- None.
+- `feature/product-outputs` (pull request open, not merged): per-product outputs in `@pts/web` for the example products `dense-app` and `roomy-app`, and the Output/Products docs page (ADR 0047). Once merged, the page appears on https://haaanju.github.io/pts/.
 
 ## Next
 
@@ -28,4 +28,4 @@ Waiting for a reason, not scheduled:
 
 ## Open questions
 
-- Raw values in JS (`@terrazzo/plugin-js`, one token set per permutation) are left out (ADR 0030); add them as another subpath when a consumer needs real numbers or colors (charts, canvas).
+- None. (Raw values in JS, open since ADR 0030, ship with each product's JS: ADR 0047. A product-independent values file, every permutation in one, is left out until a consumer needs it.)

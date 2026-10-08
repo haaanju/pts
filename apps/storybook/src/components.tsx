@@ -1,4 +1,6 @@
 import { useState, type CSSProperties, type ReactNode } from "react";
+import "@pts/components/button.js";
+import { products } from "../../../packages/web/products.ts";
 import {
   contrast,
   DENSITIES,
@@ -12,6 +14,7 @@ import {
   THEMES,
   token,
   tokenCount,
+  tokensAt,
   VIEWPORTS,
   type Density,
   type Theme,
@@ -647,3 +650,115 @@ export const ZIndexStack = () => (
     <span className="pts-alias">Back</span>
   </Block>
 );
+
+// ---------- products ----------
+
+// The example products of packages/web/products.ts (ADR 0047), each a fixed set of modifier inputs
+const PRODUCTS = Object.entries(products);
+const inputsLabel = (input: Record<string, string>) =>
+  Object.entries(input)
+    .map(([modifier, context]) => `${modifier} ${context}`)
+    .join(", ");
+
+/** Each product: what it fixes, and its two imports */
+export const ProductList = () => (
+  <Block className="pts-table-wrap">
+    <table className="pts-table" style={cols(2)}>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Fixes</th>
+          <th>Imports</th>
+        </tr>
+      </thead>
+      <tbody>
+        {PRODUCTS.map(([name, input]) => (
+          <tr key={name}>
+            <td className="pts-token-cell">
+              <span className="pts-token-name">{name}</span>
+            </td>
+            <td className="pts-value-cell" data-label="Fixes">
+              <span className="pts-value">{inputsLabel(input)}</span>
+            </td>
+            <td className="pts-value-cell" data-label="Imports">
+              <span className="pts-value">@pts/web/products/{name}.css</span>
+              <span className="pts-value">@pts/web/products/{name}.js</span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </Block>
+);
+
+/**
+ * The same small layout in each product. One page has one :root, so the cells don't load the product files: each
+ * sets its product's inputs as tokens.css attributes (data-density), which give the values the product's :root holds;
+ * npm test checks both files against the resolver. The theme follows the page toggle, as it would in the product.
+ */
+export const ProductPreview = () => (
+  <Block className="pts-button-preview">
+    {PRODUCTS.map(([name, input]) => {
+      // the viewport is the window, so it has no attribute (ADR 0029)
+      const attributes = Object.fromEntries(
+        Object.entries(input)
+          .filter(([modifier]) => modifier !== "viewport")
+          .map(([modifier, context]) => [`data-${modifier}`, context]),
+      );
+      return (
+        <div key={name} className="pts-button-preview-cell" {...attributes}>
+          <span className="pts-alias">
+            {name} · {inputsLabel(input)}
+          </span>
+          <div className="pts-product-sample">
+            <strong className="pts-product-title">Invite people</strong>
+            <span>Members can edit every page in this space.</span>
+            <div className="pts-product-actions">
+              <pts-button variant="primary">Send invite</pts-button>
+              <pts-button>Cancel</pts-button>
+            </div>
+          </div>
+        </div>
+      );
+    })}
+  </Block>
+);
+
+/** The tokens whose values differ between the products, side by side, each at its product's inputs */
+export const ProductDiff = () => {
+  const columns = PRODUCTS.map(([name, input]) => ({ name, tokens: new Map(tokensAt(input).map((t) => [t.id, t])) }));
+  const rows = tokensAt({}).filter((t) => new Set(columns.map((c) => c.tokens.get(t.id)?.css)).size > 1);
+  return (
+    <Block className="pts-table-wrap">
+      <table className="pts-table" style={cols(columns.length)}>
+        <thead>
+          <tr>
+            <th>Token</th>
+            {columns.map((c) => (
+              <th key={c.name}>{c.name}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((t) => (
+            <tr key={t.id}>
+              <td className="pts-token-cell">
+                <span className="pts-token-name">{slash(t.id)}</span>
+                <CopyVar name={t.cssVar} />
+              </td>
+              {columns.map((c) => {
+                const v = c.tokens.get(t.id);
+                return (
+                  <td key={c.name} className="pts-value-cell" data-label={c.name}>
+                    <span className="pts-value">{v?.display}</span>
+                    {v?.alias && <span className="pts-alias">→ {slash(v.alias)}</span>}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Block>
+  );
+};

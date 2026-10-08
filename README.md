@@ -11,7 +11,7 @@ Plain is a personal study project: a small design token monorepo built end to en
 | Package | What it holds |
 |---------|---------------|
 | [`@pts/tokens`](tokens) | The token source (DTCG JSON), the resolver that combines the files and modes, and the lint rules that check them |
-| [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
+| [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), per-product CSS and JS values (`@pts/web/products/<name>.css`, `.js`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
 | [`@pts/storybook`](apps/storybook) | Token and component documentation, generated from the token source |
 | [`@pts/components`](apps/components) | Internal, not published: web components (Lit) that test the component tier, `<pts-button>` |
 
@@ -93,6 +93,25 @@ const title = { ...text.headingMd }; // fontFamily, fontSize, fontWeight, letter
 ```
 
 Since the values are `var(…)`, Sass can't compute with them, and breakpoints can't be used in `@media` (the same limit as in CSS).
+
+**Per-product outputs.** A product fixes some modes at build time; its files hold the tokens at those modes, and the rest still switch. `dense-app` (density compact) and `roomy-app` (density relaxed) are example products, not real ones: they exist to show and test per-product outputs from one source (ADR 0047). Import a product's CSS instead of `tokens.css`: its `:root` holds every token at the product's density, with the theme blocks and the viewport media query as in `tokens.css` and no `[data-density]` blocks.
+
+```css
+@import "@pts/web/fonts.css";
+@import "@pts/web/products/dense-app.css";
+```
+
+Its JS holds resolved values, not references, for code that can't read a CSS variable (charts, canvas): one token set per theme × viewport at the product's density, from Terrazzo's resolver. Pass every modifier, the product's own included. TypeScript requires it; in plain JS an omitted modifier takes the resolver's default, so `dense-app` without `density: "compact"` returns `undefined`.
+
+```ts
+import { resolver } from "@pts/web/products/dense-app.js"; // with types (dense-app.d.ts)
+
+const tokens = resolver.apply({ theme: "dark", density: "compact", viewport: "narrow" });
+tokens["padding.md"].$value; // { value: 8, unit: "px" }
+tokens["surface.subtle"].$value.hex; // "#242424"
+```
+
+The Output/Products page of the [docs](https://haaanju.github.io/pts/) shows both products side by side.
 
 **Components.** `@pts/components` is not a component library: its web components exist to test the component tokens and show how code consumes them (ADR 0034). Inside this repository, load the fonts and tokens once, then import an element to define it:
 

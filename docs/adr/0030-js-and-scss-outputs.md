@@ -1,6 +1,6 @@
 # 0030. JS/TS and SCSS Outputs as CSS Variable References
 
-- Status: accepted
+- Status: accepted (amended by 0047)
 - Date: 2026-10-01
 
 ## What we learned
