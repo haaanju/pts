@@ -63,7 +63,7 @@ Three parts that may be the most interesting to look at:
 
 ## Documentation
 
-The docs run locally with `npm run storybook`; the repository is private, so there is no hosted copy ([ADR 0043](adr/0043-private-repository.md)).
+The docs run locally with `npm run storybook`; there is no hosted copy ([ADR 0043](adr/0043-public-repository.md)).
 
 | What | Why | Where | ADR |
 |---|---|---|---|
