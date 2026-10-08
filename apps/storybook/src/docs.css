@@ -361,7 +361,8 @@ body {
 .pts-section-body strong {
   color: var(--content-base);
 }
-.pts-section-body :not(pre) > code {
+.pts-section-body :not(pre) > code,
+.pts-lead :not(pre) > code {
   font-family: var(--font-family-mono);
   font-size: var(--font-size-text-sm);
   padding: var(--space-50) var(--space-100);
