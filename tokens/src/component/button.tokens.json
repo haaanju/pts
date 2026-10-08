@@ -217,7 +217,7 @@
     },
     "radius": {
       "$type": "dimension",
-      "$value": "{radius.md}",
+      "$value": "{radius.control}",
       "$description": "Corner radius of every button, the same as inputs and selects so a row of controls has the same corners."
     },
     "border-width": {

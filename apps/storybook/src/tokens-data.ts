@@ -21,8 +21,8 @@ export interface DocsTokens {
   /** every token, in the docs' order */
   tokens: DocsToken[];
   /**
-   * each token's value per permutation, keyed "theme/density/viewport", e.g. "dark/relaxed/narrow"; a token one context
-   * lacks has no entry there
+   * each token's value per permutation, keyed "theme/density/viewport/shape", e.g. "dark/relaxed/narrow/soft"; a token
+   * one context lacks has no entry there
    */
   values: Record<string, Record<string, DocsValue>>;
 }

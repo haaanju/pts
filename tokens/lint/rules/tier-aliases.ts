@@ -2,7 +2,8 @@
 // (CLAUDE.md → Token Rules → Tiers, ADR 0032).
 // Why not built-in: Terrazzo has no notion of tiers. The tier is the token's folder (primitive/, semantic/, or
 // component/), which a merged token no longer knows, so this rule reads the files.
-// Options name the documented exceptions, so they are visible in the config.
+// Options name the documented exceptions, so they are visible in the config: groups that hold raw values, and role
+// tokens that alias a semantic scale (padding/* and gap/* → space/*, ADR 0026; radius/control → radius/*, ADR 0048).
 import type { LintRule } from "@terrazzo/parser";
 import { isAlias, parseAlias } from "@terrazzo/token-tools";
 import { files, loadResolver } from "../../source.ts";
@@ -11,8 +12,9 @@ type Options = {
   /** semantic groups that may hold raw values (z-index, breakpoint: stacking order and viewport widths have no meaning outside their role; line-height: a ratio only means something paired with its font size) */
   rawValues: string[];
   /**
-   * role groups and the only groups they alias, semantic ones included (text/*: composites of the semantic typography
-   * properties; padding/* and gap/*: steps of the space/* scale, never a dimension, ADR 0026)
+   * role groups (or single role tokens, by dot path) and the only groups they alias, semantic ones included (text/*:
+   * composites of the semantic typography properties; padding/* and gap/*: steps of the space/* scale, never a
+   * dimension, ADR 0026; radius/control: a step of the radius/* scale, ADR 0048)
    */
   roleAliases: Record<string, string[]>;
 };
@@ -40,7 +42,7 @@ const rule: LintRule<"FOLDER" | "RAW_VALUE" | "SEMANTIC_ALIAS" | "ROLE_ALIAS" | 
       FOLDER: "{{file}}: token files go in primitive/, semantic/, or component/",
       RAW_VALUE: "{{file}}: {{id}} holds a raw value ({{value}}); semantic tokens alias a primitive",
       SEMANTIC_ALIAS: "{{file}}: {{id}} → {{ref}} is a semantic token; semantic tokens alias a primitive",
-      ROLE_ALIAS: "{{file}}: {{id}} → {{ref}}; {{group}}/* aliases {{allowed}} only",
+      ROLE_ALIAS: "{{file}}: {{id}} → {{ref}}; {{role}} aliases {{allowed}} only",
       UPWARD_ALIAS: "{{file}}: {{id}} → {{ref}} is a component token; tiers alias downward only",
       COMPONENT_RAW: "{{file}}: {{id}} holds a raw value ({{value}}); component tokens alias a semantic token",
       COMPONENT_ALIAS: "{{file}}: {{id}} → {{ref}} is a {{tier}} token; component tokens alias a semantic token",
@@ -73,10 +75,13 @@ const rule: LintRule<"FOLDER" | "RAW_VALUE" | "SEMANTIC_ALIAS" | "ROLE_ALIAS" | 
         for (const ref of aliasesIn(token.$value)) {
           if (tierOf.get(ref) === "component") report({ messageId: "UPWARD_ALIAS", data: { file, id, ref: `{${ref}}` } });
         }
-        const allowed = options.roleAliases[group];
+        // the role a token belongs to: a group (padding → padding/*) or the token itself (radius.control → radius/control)
+        const role = Object.keys(options.roleAliases).find((key) => id === key || id.startsWith(`${key}.`));
+        const allowed = role ? options.roleAliases[role] : undefined;
+        const roleName = role && role.replaceAll(".", "/") + (role === id ? "" : "/*");
         for (const ref of aliasesIn(token.$value)) {
           if (allowed && !allowed.includes(ref.split(".")[0]))
-            report({ messageId: "ROLE_ALIAS", data: { file, id, ref: `{${ref}}`, group, allowed: allowed.map((g) => `${g}/*`).join(", ") } });
+            report({ messageId: "ROLE_ALIAS", data: { file, id, ref: `{${ref}}`, role: roleName, allowed: allowed.map((g) => `${g}/*`).join(", ") } });
           else if (!allowed && tierOf.get(ref) === "semantic") report({ messageId: "SEMANTIC_ALIAS", data: { file, id, ref: `{${ref}}` } });
         }
       }

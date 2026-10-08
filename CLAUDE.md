@@ -54,14 +54,14 @@ docs/progress.md, docs/adr/
 .githooks/pre-commit, .github/ (CI and Release workflows, their scripts, PR template)
 ```
 
-- Register every new token file in `pts.resolver.json`: mode-independent files in `sets.base`, modifier-specific files in the matching `modifiers.<theme|density|viewport>` context. `npm run check` reports a file that isn't registered.
-- The files of one modifier's contexts (`color.light` / `color.dark`, `spacing.relaxed` / `spacing.compact`, `typography.narrow` / `typography.wide`) define **the same token names and descriptions**.
+- Register every new token file in `pts.resolver.json`: mode-independent files in `sets.base`, modifier-specific files in the matching `modifiers.<theme|density|viewport|shape>` context. `npm run check` reports a file that isn't registered.
+- The files of one modifier's contexts (`color.light` / `color.dark`, `spacing.relaxed` / `spacing.compact`, `typography.narrow` / `typography.wide`, `border.soft` / `border.round`) define **the same token names and descriptions**.
 - The token JSON is edited by hand, color included; nothing generates it (ADR 0020). `npm run check` enforces the rules a generator would.
 - Only Terrazzo resolves aliases (ADR 0038). Lint, the build config, and the docs take tokens from `tokens/source.ts`; use the resolver's API (`apply`, `aliasChain`, `partialAliasOf`, `resolver.source`) instead of reading the files to work out a value.
 
 ## Commands
 
-- `npm run check`: `tz check` in `tokens/` (ADR 0021). Terrazzo's built-in rules plus the `pts/*` rules. The rules that compare values check every theme × density × viewport permutation (Terrazzo alone lints the default one); `component-pairs`, `color-hex`, `tier-aliases`, `registered-files`, and `orthogonal-modifiers` check names, files, and the resolver. Errors start with the rule name; the rule file's header says what it enforces.
+- `npm run check`: `tz check` in `tokens/` (ADR 0021). Terrazzo's built-in rules plus the `pts/*` rules. The rules that compare values check every theme × density × viewport × shape permutation (Terrazzo alone lints the default one); `component-pairs`, `color-hex`, `tier-aliases`, `registered-files`, and `orthogonal-modifiers` check names, files, and the resolver. Errors start with the rule name; the rule file's header says what it enforces.
   - Built-in rules turned on beyond the recommended ones: `$type` required, a `$description` on every semantic token, srgb colors, text styles at least 12px.
   - `pts/*`: `theme-parity`, `contrast`, `component-pairs`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`, `orthogonal-modifiers`, `component-states`.
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it. Every `pts/*` message gets a case in `tokens/lint/rules.test.ts`, unless it can't be reached (the file says why).
@@ -74,17 +74,17 @@ docs/progress.md, docs/adr/
 
 ## Output (`@pts/web`)
 
-- `tokens.css`: `:root` holds every token at the defaults (light, relaxed, narrow). `[data-theme="light"|"dark"]` (plus `prefers-color-scheme: dark`) repeat only the theme groups; `[data-density="compact"|"relaxed"]` only the density tokens. They work on any subtree and nest without resetting each other. `@media (min-width: 768px)` (from `breakpoint/md`) repeats only the viewport tokens; there is no viewport attribute, since the viewport is the window (ADR 0029).
+- `tokens.css`: `:root` holds every token at the defaults (light, relaxed, narrow, soft). `[data-theme="light"|"dark"]` (plus `prefers-color-scheme: dark`) repeat only the theme groups; `[data-density="compact"|"relaxed"]` only the density tokens; `[data-shape="round"|"soft"]` only the shape tokens (ADR 0048). They work on any subtree and nest without resetting each other. `@media (min-width: 768px)` (from `breakpoint/md`) repeats only the viewport tokens; there is no viewport attribute, since the viewport is the window (ADR 0029).
 - `tokens.js` (+ `tokens.d.ts`) and `tokens.scss` hold `var(--…)` references, not values, so every modifier works through `tokens.css` (ADR 0030).
-- A token that aliases a theme or density token must be repeated in that modifier's blocks, since CSS variables resolve where they are declared (ADR 0025). The build repeats the component tokens that do (the Button's colors, sizes, and paddings; ADR 0032); `npm test` checks it.
-- Per-product outputs (ADR 0047): `products/<name>.css` and `.js` (+ `.d.ts`) for each product in `packages/web/products.ts`, a fixed set of modifier inputs (the examples `dense-app` and `roomy-app` fix the density). The CSS has no blocks for a fixed modifier; the JS holds resolved values from `@terrazzo/plugin-js`.
+- A token that aliases a theme, density, or shape token must be repeated in that modifier's blocks, since CSS variables resolve where they are declared (ADR 0025). The build repeats the component tokens that do (the Button's colors, sizes, paddings, and radius; ADR 0032); `npm test` checks it.
+- Per-product outputs (ADR 0047): `products/<name>.css` and `.js` (+ `.d.ts`) for each product in `packages/web/products.ts`, a fixed set of modifier inputs (the examples `dense-app` and `roomy-app` fix the density and the shape, ADR 0048). The CSS has no blocks for a fixed modifier; the JS holds resolved values from `@terrazzo/plugin-js`.
 
 ## Token Rules
 
 ### Structure
 
-- **Tiers**: primitive → semantic → component. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `padding/*` and `gap/*` reference the `space` scale (ADR 0026); `z-index`, `breakpoint`, and `line-height` hold values directly, since they have no meaning outside their role (ADR 0024, 0028).
-- **Component tier** (ADR 0032): `component/<component>.tokens.json`, in `sets.base`. Component tokens reference semantic tokens only, with no exceptions; a value no semantic token holds is a missing semantic token. Names: `<component>/<variant>/<surface | content | border>/<state>` for colors (a property that changes with state names every state, `rest` included, and its states resolve differently, checked by `pts/component-states`; Ghost's fill, transparent at rest, is the one exception; one that doesn't change is a single token), `<component>/<size>/<part>` for sizes. State words (`rest`, `hover`, `pressed`) appear only in this tier. A variant's `content` (or `content/<state>`, with that state's fill) and `surface/*` must alias a pair `pts/contrast` checks (`pts/component-pairs`). The build repeats a component token in the theme and density blocks when its aliases reach a theme or density token.
+- **Tiers**: primitive → semantic → component. Semantic tokens reference primitives only. Exceptions: composite tokens (`text/*`) reference semantic property tokens; `padding/*` and `gap/*` reference the `space` scale (ADR 0026), and `radius/control` the `radius` scale (ADR 0048); `z-index`, `breakpoint`, and `line-height` hold values directly, since they have no meaning outside their role (ADR 0024, 0028).
+- **Component tier** (ADR 0032): `component/<component>.tokens.json`, in `sets.base`. Component tokens reference semantic tokens only, with no exceptions; a value no semantic token holds is a missing semantic token. Names: `<component>/<variant>/<surface | content | border>/<state>` for colors (a property that changes with state names every state, `rest` included, and its states resolve differently, checked by `pts/component-states`; Ghost's fill, transparent at rest, is the one exception; one that doesn't change is a single token), `<component>/<size>/<part>` for sizes. State words (`rest`, `hover`, `pressed`) appear only in this tier. A variant's `content` (or `content/<state>`, with that state's fill) and `surface/*` must alias a pair `pts/contrast` checks (`pts/component-pairs`). The build repeats a component token in the theme, density, and shape blocks when its aliases reach a token of that modifier.
 - **Group names**: primitive and semantic top-level groups never share a name (Terrazzo merges all files into one namespace): primitive `weight` ↔ semantic `font-weight`.
 - **Format**: every token declares `$type`; no group-level `$type` inheritance. Every semantic token has a `$description` that says when to use it, the same in every context file and in Figma.
 - **Values**: dimensions in `px` object form, `{ "value": 16, "unit": "px" }`. Colors in DTCG 2025.10 object form, `{ "colorSpace": "srgb", "components": [r, g, b], "hex": "#rrggbb" }` (components 0–1, optional `alpha`).
@@ -98,6 +98,7 @@ The DTCG resolver's modifiers. Never `$extensions.mode`.
 - **theme**: `light` (default) | `dark`. Colors and shadows.
 - **density** (ADR 0025): `relaxed` (default) | `compact`. Only `padding/*`, `gap/within/*`, `gap/between/*`, and `size/control/*` change: compact aliases exactly the next smaller `space` (or `dimension`) step (`pts/density-order`). Each modifier changes only its scope, and no token is changed by two (`pts/orthogonal-modifiers`).
 - **viewport** (ADR 0029): `narrow` (default, mobile first) | `wide` from `breakpoint/md` (768px). Only `font-size|line-height|letter-spacing/display/*` change: on narrow screens `display/xl` and `display/lg` take the next smaller step's values (so `display/lg` equals `display/md`). The `text/*` composites alias them and need no change.
+- **shape** (ADR 0048): `soft` (default) | `round`. Only `radius/control` changes: `radius/md` (8px) in soft, `radius/full` in round. Components take their corners from it (`button/radius`).
 
 ### Primitives
 
@@ -114,7 +115,7 @@ The DTCG resolver's modifiers. Never `$extensions.mode`.
   - `space/N`: px = N ÷ 25 (`space/400` = 16px), the same in every mode. Steps `0`, `50`, `100` … `800`, `1000`, `1200`, `1600`: 4px apart up to 32px, then 40, 48, 64.
   - `padding/xs–xl`: inside an element (`padding/md` = 12px).
   - `gap/*`, between elements, in three families: `within/xs–lg` spaces the items of one group (4–16px), `between/sm–lg` separates groups (20–32px), `section/sm–lg` separates page regions (40–64px). Every `within` < every `between` < every `section`, in both densities.
-- **Border**: `radius/none–xl` and `full` (t-shirt sizes); `stroke/thin|thick|thicker` (1, 2, 4px; no zero width: "no border" means removing it); `focus-ring/width|offset` (color is `border/focus`).
+- **Border**: `radius/none–xl` and `full` (t-shirt sizes), plus the role `radius/control` for buttons, inputs, and selects (by shape); `stroke/thin|thick|thicker` (1, 2, 4px; no zero width: "no border" means removing it); `focus-ring/width|offset` (color is `border/focus`).
 - **Typography** (ADR 0023, 0028):
   - Levels stacked together are either the same size, told apart by weight or color, or clearly apart (×1.5 or more). Never an in-between difference.
   - `font-family/sans|serif|mono`. Use `mono` wherever digits must line up: Aspekta has no tabular figures.

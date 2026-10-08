@@ -11,11 +11,13 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- None.
+- `feature/shape-modifier`: the `shape` modifier and `radius/control` (ADR 0048); `roomy-app` gets pill buttons. Pull request open, not merged.
 
 ## Next
 
 The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
+
+- Figma: add a Shape collection (Soft, Round) and bind the Button's radius to radius/control (ADR 0048). The Border specimen's Radius table and lead change with it (the Storybook lead now mentions `radius/control`), and `radius/md`'s description changed.
 
 - Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 

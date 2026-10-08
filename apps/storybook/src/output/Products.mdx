@@ -10,15 +10,15 @@ import { token } from "../tokens";
   show and test per-product outputs, the way the Button tests the component tier.
 </PageHeader>
 
-<Section title="Example products" lead="Each fixes the density. The theme still switches at runtime, through data-theme or the OS color scheme, and the viewport through the breakpoint/md media query.">
+<Section title="Example products" lead="Each fixes the density and the shape. The theme still switches at runtime, through data-theme or the OS color scheme, and the viewport through the breakpoint/md media query.">
   <ProductList />
 </Section>
 
-<Section title="Preview" lead="The same layout in each product, spaced only by padding and gap tokens, with Buttons whose height and padding follow the density. It follows the theme toggle; the density toggle doesn't apply, since each product fixes its own.">
+<Section title="Preview" lead="The same layout in each product, spaced only by padding and gap tokens, with Buttons whose height and padding follow the density and whose corners follow the shape: 8px in dense-app, a pill in roomy-app. It follows the theme toggle; the density and shape toggles don't apply, since each product fixes its own.">
   <ProductPreview />
 </Section>
 
-<Section title="Tokens that differ" lead="Every token whose value differs between the products, at each product's density: padding, the gaps within and between groups, control heights, and the Button tokens that alias them.">
+<Section title="Tokens that differ" lead="Every token whose value differs between the products, at each product's density and shape: padding, the gaps within and between groups, control heights, the control radius, and the Button tokens that alias them.">
   <ProductDiff />
 </Section>
 
@@ -27,19 +27,19 @@ import { token } from "../tokens";
     language="css"
     dark
     code={`@import "@pts/web/fonts.css";
-@import "@pts/web/products/dense-app.css"; /* every token at density compact; no [data-density] blocks */`}
+@import "@pts/web/products/dense-app.css"; /* density compact, shape soft; no [data-density] or [data-shape] blocks */`}
   />
   <Source
     language="ts"
     dark
     code={`import { resolver } from "@pts/web/products/dense-app.js"; // typed by dense-app.d.ts
 
-// Pass every modifier: the product's own density, and the theme and viewport it leaves open.
-const tokens = resolver.apply({ theme: "dark", density: "compact", viewport: "narrow" });
+// Pass every modifier: the product's own density and shape, and the theme and viewport it leaves open.
+const tokens = resolver.apply({ theme: "dark", density: "compact", viewport: "narrow", shape: "soft" });
 tokens["padding.md"].$value; // ${JSON.stringify(token("padding.md", "dark", "compact").resolved)}
 tokens["surface.subtle"].$value.hex; // "${token("surface.subtle", "dark", "compact").resolved.hex}"`}
   />
 
-  - The JS holds one token set per theme × viewport at the product's density, as Terrazzo's resolver gives them, with each token's `$type` and `$value` (the DTCG shape: a color has `hex` and `components`, a dimension `value` and `unit`).
-  - `apply()` fills an omitted modifier with the resolver's default, so in plain JS `dense-app` needs `density: "compact"` passed too; TypeScript requires every modifier.
+  - The JS holds one token set per theme × viewport at the product's density and shape, as Terrazzo's resolver gives them, with each token's `$type` and `$value` (the DTCG shape: a color has `hex` and `components`, a dimension `value` and `unit`).
+  - `apply()` fills an omitted modifier with the resolver's default, so in plain JS `dense-app` needs `density: "compact"` passed too, and `roomy-app` `shape: "round"`; TypeScript requires every modifier.
 </Section>

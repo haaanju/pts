@@ -1,0 +1,9 @@
+{
+  "radius": {
+    "control": {
+      "$type": "dimension",
+      "$value": "{radius.md}",
+      "$description": "Corners of controls: buttons, inputs, and selects, so a row of controls shares one shape. 8px (radius/md) in the soft shape, fully rounded (radius/full) in the round one."
+    }
+  }
+}

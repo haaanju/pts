@@ -35,12 +35,12 @@ All tokens are in `tokens/src/`. There are three tiers:
 | Tier | Folder | What it holds | Example |
 |---|---|---|---|
 | Primitive | `primitive/` | Raw values with no role | `color.red.600`, `dimension.16` |
-| Semantic | `semantic/` | Values with a role, pointing at a primitive (`padding`, `gap`, and `text` point at other semantic tokens; `z-index`, `breakpoint`, and `line-height` hold values) | `intent.danger.surface.base` → `{color.red.600}` |
+| Semantic | `semantic/` | Values with a role, pointing at a primitive (`padding`, `gap`, `radius.control`, and `text` point at other semantic tokens; `z-index`, `breakpoint`, and `line-height` hold values) | `intent.danger.surface.base` → `{color.red.600}` |
 | Component | `component/` | What one component uses, pointing at a semantic token | `button.danger.surface.rest` → `{intent.danger.surface.base}` |
 
 Product code uses semantic tokens, and a component's own code uses its component tokens. Most changes are to semantic tokens: pointing a role at a different primitive.
 
-Colors and shadows differ per theme, so they have one file per theme: `color.light.tokens.json` and `color.dark.tokens.json`. Padding, the within and between gaps, and control heights differ per density, so they have one file per density: `spacing.relaxed.tokens.json` and `spacing.compact.tokens.json`, `size.relaxed.tokens.json` and `size.compact.tokens.json`. The display font sizes, line heights, and letter spacing differ per viewport, so they have one file per viewport: `typography.narrow.tokens.json` and `typography.wide.tokens.json`. **The files of one pair must define the same token names**; only the values differ.
+Colors and shadows differ per theme, so they have one file per theme: `color.light.tokens.json` and `color.dark.tokens.json`. Padding, the within and between gaps, and control heights differ per density, so they have one file per density: `spacing.relaxed.tokens.json` and `spacing.compact.tokens.json`, `size.relaxed.tokens.json` and `size.compact.tokens.json`. The display font sizes, line heights, and letter spacing differ per viewport, so they have one file per viewport: `typography.narrow.tokens.json` and `typography.wide.tokens.json`. The control radius differs per shape, so it has one file per shape: `border.soft.tokens.json` and `border.round.tokens.json`. **The files of one pair must define the same token names**; only the values differ.
 
 ## Token format
 
@@ -84,8 +84,8 @@ The full naming and structure rules are in [`CLAUDE.md`](CLAUDE.md) (Token Rules
 | Use a different color for a role | In `semantic/color.light.tokens.json` or `color.dark.tokens.json`, change the alias (`{color.red.600}` → `{color.red.700}`) |
 | Change a palette color | In `primitive/color.tokens.json`, change `hex` and `components`. Every semantic token that points at it changes too |
 | Change any other value | Edit it in its file. Semantic tokens point at primitives, so you usually change the alias |
-| Add a token to an existing group | Add it to the file. For a themed file, add it to both `light` and `dark`; for a density file, to both `relaxed` and `compact` (compact one `space` step smaller); for a viewport file, to both `narrow` and `wide`. It appears in the docs by itself |
-| Add a new file | Create it in `primitive/` or `semantic/` and add it to `tokens/src/pts.resolver.json`: mode-independent files in `sets.base`, per-theme files under `modifiers.theme`, per-density files under `modifiers.density`, per-viewport files under `modifiers.viewport` |
+| Add a token to an existing group | Add it to the file. For a themed file, add it to both `light` and `dark`; for a density file, to both `relaxed` and `compact` (compact one `space` step smaller); for a viewport file, to both `narrow` and `wide`; for a shape file, to both `soft` and `round`. It appears in the docs by itself |
+| Add a new file | Create it in `primitive/` or `semantic/` and add it to `tokens/src/pts.resolver.json`: mode-independent files in `sets.base`, per-theme files under `modifiers.theme`, per-density files under `modifiers.density`, per-viewport files under `modifiers.viewport`, per-shape files under `modifiers.shape` |
 | Add a new top-level group | As above, then add a section to the matching docs page in `apps/storybook/src/` (e.g. `<Section title="Opacity" path="opacity/*"><TokenTable prefix="opacity" /></Section>`) and add the prefix to the page's `groups` |
 | Rename or remove a token | A breaking change: write a `Breaking:` changeset. Change it in every file that defines or aliases it; `npm run check` reports an alias left pointing at the old name |
 
@@ -95,7 +95,7 @@ CI runs these on every push to `main` and every pull request; open a failed run 
 
 | Check | Catches |
 |---|---|
-| `npm run check` | Every token rule, in every theme, density, and viewport: Terrazzo's built-in rules (valid DTCG values, kebab-case names, `$type`, aliases pointing at nothing, srgb colors, a `$description` on every semantic token) and the 14 `pts/*` rules (contrast, visible states, mode parity, scale order, tiers, and more). What each `pts/*` rule enforces is in the header of its file in [`tokens/lint/rules/`](tokens/lint/rules) |
+| `npm run check` | Every token rule, in every theme, density, viewport, and shape: Terrazzo's built-in rules (valid DTCG values, kebab-case names, `$type`, aliases pointing at nothing, srgb colors, a `$description` on every semantic token) and the 14 `pts/*` rules (contrast, visible states, mode parity, scale order, tiers, and more). What each `pts/*` rule enforces is in the header of its file in [`tokens/lint/rules/`](tokens/lint/rules) |
 | `npm run typecheck`, `npm run build`, `npm run build-storybook` | Changes that break the CSS output or the docs |
 | `npm test` | A change to a check (`tokens/lint/`) that stops it reporting what it should; a build that drops a token or a mode from `tokens.css`, `tokens.js`, or `tokens.scss` |
 

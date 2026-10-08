@@ -1,7 +1,7 @@
 {
   "name": "PTS",
   "version": "2025.10",
-  "description": "Base tokens plus a theme modifier (light | dark), a density modifier (relaxed | compact), and a viewport modifier (narrow | wide).",
+  "description": "Base tokens plus a theme modifier (light | dark), a density modifier (relaxed | compact), a viewport modifier (narrow | wide), and a shape modifier (soft | round).",
   "sets": {
     "base": {
       "sources": [
@@ -104,6 +104,21 @@
         ]
       },
       "default": "narrow"
+    },
+    "shape": {
+      "contexts": {
+        "soft": [
+          {
+            "$ref": "semantic/border.soft.tokens.json"
+          }
+        ],
+        "round": [
+          {
+            "$ref": "semantic/border.round.tokens.json"
+          }
+        ]
+      },
+      "default": "soft"
     }
   },
   "resolutionOrder": [
@@ -118,6 +133,9 @@
     },
     {
       "$ref": "#/modifiers/viewport"
+    },
+    {
+      "$ref": "#/modifiers/shape"
     }
   ]
 }

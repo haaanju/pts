@@ -1,9 +1,9 @@
-import { CollapseIcon, ExpandIcon, MoonIcon, SunIcon } from "@storybook/icons";
+import { CircleHollowIcon, CollapseIcon, ExpandIcon, MoonIcon, StopAltHollowIcon, SunIcon } from "@storybook/icons";
 // The manager is compiled with the classic JSX runtime, so React must be in scope.
-import React, { useEffect } from "react";
+import React, { useEffect, type ReactNode } from "react";
 import { IconButton } from "storybook/internal/components";
 import { addons, types, useGlobals, useStorybookApi } from "storybook/manager-api";
-import { DENSITY_GLOBAL, resolveDensity, saveDensity, type Density } from "./density";
+import { density, shape, type AttributeMode } from "./attributes";
 import { resolveMode, saveMode, THEME_GLOBAL, themeFor, type Mode } from "./theme";
 
 const ADDON_ID = "pts/theme";
@@ -32,23 +32,35 @@ const ThemeToggle = () => {
   );
 };
 
-// Density toggle (ADR 0025): switches the docs between relaxed and compact through a global, like the theme.
-const DensityToggle = () => {
-  const [globals, updateGlobals] = useGlobals();
-  const density = resolveDensity(globals[DENSITY_GLOBAL]);
-  const next: Density = density === "compact" ? "relaxed" : "compact";
-  const toggle = () => {
-    saveDensity(next);
-    updateGlobals({ [DENSITY_GLOBAL]: next });
+// Density and shape toggles (ADR 0025, 0048): switch the docs between the two contexts of an attribute modifier through
+// a global, like the theme. The icon shows the context a click switches to.
+const attributeToggle =
+  <Context extends string>(mode: AttributeMode<Context>, icons: Record<Context, ReactNode>) =>
+  () => {
+    const [globals, updateGlobals] = useGlobals();
+    const next = mode.next(mode.resolve(globals[mode.global]));
+    const toggle = () => {
+      mode.save(next);
+      updateGlobals({ [mode.global]: next });
+    };
+    const title = `Switch to ${next} ${mode.global}`;
+    return (
+      <IconButton key={`${ADDON_ID}/${mode.global}`} title={title} aria-label={title} onClick={toggle}>
+        {icons[next]}
+      </IconButton>
+    );
   };
-  return (
-    <IconButton key={`${ADDON_ID}/density`} title={`Switch to ${next} density`} aria-label={`Switch to ${next} density`} onClick={toggle}>
-      {density === "compact" ? <ExpandIcon /> : <CollapseIcon />}
-    </IconButton>
-  );
-};
+
+const DensityToggle = attributeToggle(density, { relaxed: <ExpandIcon />, compact: <CollapseIcon /> });
+const ShapeToggle = attributeToggle(shape, { round: <CircleHollowIcon />, soft: <StopAltHollowIcon /> });
 
 addons.register(ADDON_ID, () => {
+  addons.add(`${ADDON_ID}/shape`, {
+    type: types.TOOLEXTRA,
+    title: "Shape",
+    match: () => true,
+    render: ShapeToggle,
+  });
   addons.add(`${ADDON_ID}/density`, {
     type: types.TOOLEXTRA,
     title: "Density",

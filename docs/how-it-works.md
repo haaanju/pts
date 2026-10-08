@@ -8,7 +8,7 @@ This page maps what the repository does: what each part is, why it's here, where
 
 Three parts that may be the most interesting to look at:
 
-1. **Design rules as lint rules, in every mode.** Contrast, scale order, density order, and tier rules are checked on every commit, in every theme × density × viewport combination, not only the default one. → [Checks](#checks-as-code)
+1. **Design rules as lint rules, in every mode.** Contrast, scale order, density order, and tier rules are checked on every commit, in every theme × density × viewport × shape combination, not only the default one. → [Checks](#checks-as-code)
 2. **Contrast pairs derived from token names.** The names say which content sits on which fill, so the lint, the docs badges, and the docs accessibility check all read one pairing file instead of hand-kept lists. → [Accessibility](#accessibility)
 3. **Release notes written with the change.** Every pull request carries a changeset whose summary starts with `Breaking:`, `New:`, or `Fix:`; CI checks that the version bump matches. → [Releases](#releases-and-versions)
 
@@ -18,8 +18,8 @@ Three parts that may be the most interesting to look at:
 |---|---|---|---|
 | Source, outputs, and tools in separate roles: `tokens/` (source), `packages/<platform>` (what ships), `apps/` (docs and fixtures) | Consumers take one package per platform; the source isn't something to install | [`tokens/`](../tokens), [`packages/web/`](../packages/web), [`apps/`](../apps) | [0016](adr/0016-platform-packages.md), [0034](adr/0034-components-as-token-fixtures.md) |
 | Token JSON edited by hand, color included; no generator | A generator hides decisions in code; the checks enforce what a generator would | [`tokens/src/`](../tokens/src) | [0020](adr/0020-hand-edited-tokens-and-ci-gates.md) |
-| Modes as DTCG resolver modifiers (theme, density, viewport), never `$extensions.mode` | One standard source for every mode, readable by any resolver-aware tool | [`pts.resolver.json`](../tokens/src/pts.resolver.json) | [0005](adr/0005-color-tokens-and-theme-resolver.md), [0025](adr/0025-density-modifier.md), [0029](adr/0029-viewport-modifier.md) |
-| Three tiers, primitive → semantic → component, each aliasing only the one below (documented exceptions: `padding`, `gap`, and `text` alias other semantic tokens; `z-index`, `breakpoint`, and `line-height` hold values) | Product code depends on meaning, not raw values; a component can change without touching the semantic tier | [`tokens/src/`](../tokens/src), checked by `pts/tier-aliases` | [0032](adr/0032-button.md) |
+| Modes as DTCG resolver modifiers (theme, density, viewport, shape), never `$extensions.mode` | One standard source for every mode, readable by any resolver-aware tool | [`pts.resolver.json`](../tokens/src/pts.resolver.json) | [0005](adr/0005-color-tokens-and-theme-resolver.md), [0025](adr/0025-density-modifier.md), [0029](adr/0029-viewport-modifier.md), [0048](adr/0048-shape-modifier.md) |
+| Three tiers, primitive → semantic → component, each aliasing only the one below (documented exceptions: `padding`, `gap`, `radius/control`, and `text` alias other semantic tokens; `z-index`, `breakpoint`, and `line-height` hold values) | Product code depends on meaning, not raw values; a component can change without touching the semantic tier | [`tokens/src/`](../tokens/src), checked by `pts/tier-aliases` | [0032](adr/0032-button.md), [0048](adr/0048-shape-modifier.md) |
 | Terrazzo rather than Style Dictionary | Native DTCG resolver and a lint API; native platforms through a custom plugin | [`terrazzo.config.ts`](../packages/web/terrazzo.config.ts) | [0022](adr/0022-terrazzo-over-style-dictionary.md) |
 | One resolver: Terrazzo's, for lint, the build, and the docs | Two resolvers can disagree without anyone noticing; the docs show what the CSS ships | [`tokens/source.ts`](../tokens/source.ts), checked by `pts/orthogonal-modifiers` | [0038](adr/0038-one-terrazzo-resolver.md) |
 
@@ -35,7 +35,7 @@ Three parts that may be the most interesting to look at:
 
 ## Checks as code
 
-`npm run check` runs Terrazzo's built-in lint rules plus 14 project rules ([`tokens/lint/rules/`](../tokens/lint/rules)). Terrazzo lints the default mode only, so every project rule that compares values checks every theme × density × viewport permutation; the rules about names, files, and the resolver read those directly ([ADR 0021](adr/0021-terrazzo-lint.md)).
+`npm run check` runs Terrazzo's built-in lint rules plus 14 project rules ([`tokens/lint/rules/`](../tokens/lint/rules)). Terrazzo lints the default mode only, so every project rule that compares values checks every theme × density × viewport × shape permutation; the rules about names, files, and the resolver read those directly ([ADR 0021](adr/0021-terrazzo-lint.md)).
 
 - **A built-in rule first.** A project rule exists only when no built-in one does the job, and its file header says why ("Why not built-in: …"). Read the headers to see what each rule enforces.
 - **The rules are tested too.** A rule that stops reporting looks the same as tokens that pass, so `npm test` breaks each rule on purpose in a copy of the tokens and expects `tz check` to report it ([`tokens/lint/rules.test.ts`](../tokens/lint/rules.test.ts), [ADR 0037](adr/0037-lint-rule-tests.md)).
@@ -47,11 +47,11 @@ Three parts that may be the most interesting to look at:
 
 | What | Why | ADR |
 |---|---|---|
-| One `tokens.css`: defaults on `:root`, then `[data-theme]` and `[data-density]` blocks that repeat only their own tokens | A mode attribute works on any subtree, and theme and density nest without resetting each other | [0025](adr/0025-density-modifier.md) |
+| One `tokens.css`: defaults on `:root`, then `[data-theme]`, `[data-density]`, and `[data-shape]` blocks that repeat only their own tokens | A mode attribute works on any subtree, and the modes nest without resetting each other | [0025](adr/0025-density-modifier.md), [0048](adr/0048-shape-modifier.md) |
 | Viewport through `@media`, with no attribute | The viewport is the window; a token can't pretend otherwise | [0029](adr/0029-viewport-modifier.md) |
 | A token aliasing a mode token is repeated in that mode's block | CSS variables resolve where they are declared, so an alias on `:root` would freeze the default | [0025](adr/0025-density-modifier.md), [0032](adr/0032-button.md) |
 | JS/TS and SCSS hold `var(--…)` references, not values | Every mode keeps working through the CSS; the JS adds names, autocomplete, and typo errors | [0030](adr/0030-js-and-scss-outputs.md) |
-| Per-product outputs: a product is a fixed set of modifier inputs ([`products.ts`](../packages/web/products.ts); two example products fix the density), built into its own CSS (no blocks for what it fixes) and JS with resolved values | One source serves products that differ by a fixed choice, without changing the resolver; code that can't read a CSS variable gets real values | [0047](adr/0047-per-product-outputs.md) |
+| Per-product outputs: a product is a fixed set of modifier inputs ([`products.ts`](../packages/web/products.ts); two example products fix the density and the shape), built into its own CSS (no blocks for what it fixes) and JS with resolved values | One source serves products that differ by a fixed choice, without changing the resolver; code that can't read a CSS variable gets real values | [0047](adr/0047-per-product-outputs.md), [0048](adr/0048-shape-modifier.md) |
 | Fonts shipped with the tokens | The type tokens name fonts; the package that names them provides them | [0013](adr/0013-self-hosted-aspekta.md), [0016](adr/0016-platform-packages.md) |
 
 ## Accessibility
@@ -70,7 +70,7 @@ The docs are hosted at https://haaanju.github.io/pts/, deployed from `main` afte
 |---|---|---|---|
 | Docs generated from the token JSON, by a Terrazzo build | A new token in an existing group shows up with no docs change | [`apps/storybook/scripts/docs-tokens.ts`](../apps/storybook/scripts/docs-tokens.ts), [`src/tokens.ts`](../apps/storybook/src/tokens.ts) | [0009](adr/0009-storybook-token-docs.md), [0038](adr/0038-one-terrazzo-resolver.md) |
 | Docs styled with the tokens themselves | The docs are the first consumer; a broken token shows on its own page | [`docs.css`](../apps/storybook/src/docs.css) | [0011](adr/0011-letter-spacing-and-docs-dogfooding.md) |
-| Light and dark (and density) toggles on the whole page, plus side-by-side cells per mode | Every mode is reviewable without a second build | [`.storybook/`](../apps/storybook/.storybook) | [0012](adr/0012-docs-dark-mode.md) |
+| Light and dark (and density and shape) toggles on the whole page, plus side-by-side cells per mode | Every mode is reviewable without a second build | [`.storybook/`](../apps/storybook/.storybook) | [0012](adr/0012-docs-dark-mode.md) |
 | The Storybook UI (sidebar, toolbar) themed from the tokens, resolved when Storybook starts | It can't read CSS variables, and copies would drift | [`scripts/ui-tokens.ts`](../apps/storybook/scripts/ui-tokens.ts) | [0046](adr/0046-storybook-ui-tokens-at-startup.md) |
 | An Output/Products page: each example product's inputs and imports, a preview in each, and the tokens that differ | The per-product outputs are visible next to the tokens they come from | [`src/output/Products.mdx`](../apps/storybook/src/output/Products.mdx) | [0047](adr/0047-per-product-outputs.md) |
 | Docs and Figma specimens kept aligned: the same pages, sections, and leads | Designers and developers read the same structure | [`.claude/rules/storybook.md`](../.claude/rules/storybook.md) | — |
