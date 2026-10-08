@@ -38,6 +38,7 @@ Two new tokens; no token is renamed or removed and no existing value changes. Th
 - `tokens/terrazzo.config.ts`: `roleAliases["radius.container"]`, `scope.shape.tokens` adds `radius.container`. `tokens/lint/rules.test.ts`: the container radius aliasing outside its scale; the shape-scoped case now adds `radius.media`, since `radius.container` is in scope, and its message lists both tokens.
 - `packages/web` needed no change: the shape blocks list what the resolver says the modifier defines, and `npm test` checks them.
 - Storybook: `.pts-product-sample` in `docs.css`; the Border page's Radius lead and the Products page's Preview and "Tokens that differ" leads. The Radius table and the diff table read the tokens, so they needed no code change.
+- Figma (2026-10-08): `Border/radius/2xl` in `Semantic` (aliasing `dimension/32`) and `Border/radius/container` in `Shape` (`radius/md` soft, `radius/2xl` round), with the tokens' descriptions, the `CORNER_RADIUS` scope, and their CSS variables as code syntax; the new `radius/md`, `lg`, and `xl` descriptions. The Border page's Radius table gains `container` and `2xl` rows and the new lead. Nothing in the Button binds the container radius. Overview: Semantic 83, Shape 3, 335 variables.
 
 ## Documented in
 
