@@ -731,8 +731,8 @@ export const ProductPreview = () => (
             <strong className="pts-product-title">Invite people</strong>
             <span>Members can edit every page in this space.</span>
             <div className="pts-product-actions">
-              <pts-button variant="primary">Send invite</pts-button>
               <pts-button>Cancel</pts-button>
+              <pts-button variant="primary">Send invite</pts-button>
             </div>
           </div>
         </div>
