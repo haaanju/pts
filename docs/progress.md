@@ -7,7 +7,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 - Releases: Changesets and the Release workflow (ADR 0035); the latest version is in `packages/web/CHANGELOG.md` and the tags. CI and the pre-commit hook run check and typecheck.
 - Public repository (ADR 0043); docs on https://haaanju.github.io/pts/, deployed from `main` after CI passes (ADR 0020). `main` is not protected (ADR 0042): workspace changes go through a pull request so the changeset check runs. The Release workflow runs after CI passes on `main` (ADR 0041); `v0.9.5` was its first full run: release PR with `verify`, tag, GitHub Release.
 - Repository: recreated on 2026-10-03 with the commit author emails rewritten; the same files and tags, new commit hashes. The pull requests before that (#1–#29) are in the private `haaanju/pts-archive`.
-- Figma `pts` file: in line with the tokens on `main` after ADR 0048 (variables, styles, specimens, the Button page and component sets; Overview count 332 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
+- Figma `pts` file: in line with the tokens on `main` after ADR 0048 (variables, styles, specimens, the Button page and component sets; Overview count 333 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
 ## In flight
 
@@ -16,8 +16,6 @@ The handoff note between work sessions and machines. Read it before starting; up
 ## Next
 
 The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
-
-- Figma: the Button's `focus-ring` layer keeps a fixed 12px radius (radius/md + the 4px offset), so in the round shape it is no pill, while the code's outline follows the button's radius. Fixing it needs a Figma-only Shape variable for the ring radius (12px soft, 9999px round), like `line-height/display/*-px`; waiting for the owner's call.
 
 - Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
 

@@ -20,11 +20,12 @@ The Figma MCP must be authenticated with the personal account that owns the `pts
 | `Semantic` | one | the semantic tokens that don't change with any modifier, including shadow offsets, blurs, and spreads |
 | `Density` | `relaxed`, `compact` | the density tokens only: `Spacing/padding/*`, `Spacing/gap/within\|between/*`, `Size/size/control/*` |
 | `Viewport` | `narrow`, `wide` | the viewport tokens only: `Typography/font-size\|line-height\|letter-spacing/display/*`, plus the Figma-only `Typography/line-height/display/*-px` |
-| `Shape` | `soft`, `round` | the shape tokens only: `Border/radius/control` (ADR 0048) |
+| `Shape` | `soft`, `round` | the shape tokens only: `Border/radius/control` (ADR 0048), plus the Figma-only `Border/radius/control-ring` |
 | `Component` | one | the component tokens (`button/*`), each an alias of a `Theme`, `Density`, `Shape`, or `Semantic` variable, so a component follows the frame's modes. Typography composites (`button/<size>/label`) are text styles instead |
 
 - `always/*` is the same in both `Theme` modes; it stays in `Theme` so every semantic color is in one collection for designers, while the JSON keeps it in the base set.
 - A new modifier is a new collection holding only its tokens, the same principle.
+- `radius/control-ring`: the corners of a control's focus ring, `radius/control` plus `focus-ring/offset` and `width` (12px soft, 9999px round), worked out by hand since Figma can't add variables; the CSS outline follows the control's radius on its own. Every `focus-ring` layer in the Button and Icon button sets binds it. Recompute it when `radius/control` or the focus ring changes.
 - `line-height/display/*-px`: Figma binds line heights as px while the tokens are ratios, so these hold the px line each display step makes (font size × ratio, worked out by hand). The display and heading text styles bind them. `npm run check` can't see Figma: recompute them when a display size or line height changes.
 
 ## Variables
