@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/shape-modifier`: the `shape` modifier and `radius/control` (ADR 0048); `roomy-app` gets pill buttons. Pull request open, not merged.
+- None.
 
 ## Next
 
