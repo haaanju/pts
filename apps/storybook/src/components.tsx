@@ -685,7 +685,7 @@ export const EasingPreview = ({ t }: { t: TokenInfo }) => {
 // The four easing tokens, each in a color that reads as text on the page in both themes
 const CURVE_COLORS = ["--intent-info-content-base", "--intent-discovery-content-base", "--intent-success-content-base", "--intent-warning-content-base"];
 
-// The duration each easing is shown at when it is picked alone: the pairs of the In use section, and normal for exit
+// The duration each easing is shown at when it is picked alone: the pairs of the In use section (exit: the sheet leaving)
 const PAIRED: Record<string, string> = { standard: "fast", emphasized: "slow", enter: "normal", exit: "normal" };
 
 /**
@@ -867,7 +867,8 @@ const UseSample = ({ name, tokens, how, children }: { name: string; tokens: stri
 
 /**
  * The pairs the duration descriptions name, each on a small screen to try: a sample moves in with its duration and
- * easing tokens, and leaves with easing/exit over the same duration. Styles in docs.css read the tokens.
+ * easing tokens, and leaves with easing/exit one duration step shorter; the screen change goes back the way it came.
+ * Styles in docs.css read the tokens.
  */
 export const MotionInUse = () => {
   const [sheet, setSheet] = useState(false);
@@ -877,7 +878,7 @@ export const MotionInUse = () => {
       <UseSample name="Hover" tokens="duration/fast · easing/standard" how="Point at the button or press it. Its fill changes over duration/fast with easing/standard, the Button's own transition.">
         <pts-button variant="primary">Hover me</pts-button>
       </UseSample>
-      <UseSample name="Tooltip" tokens="duration/normal · easing/enter" how="Point at the icon button, or focus it with Tab. The tooltip appears below over duration/normal with easing/enter, and leaves with easing/exit.">
+      <UseSample name="Tooltip" tokens="duration/normal · easing/enter" how="Point at the icon button, or focus it with Tab. The tooltip appears below over duration/normal with easing/enter, and leaves over duration/fast with easing/exit.">
         <span className="pts-use-tip">
           <pts-button label="Details">
             <InfoIcon slot="start" />
@@ -887,7 +888,7 @@ export const MotionInUse = () => {
           </span>
         </span>
       </UseSample>
-      <UseSample name="Bottom sheet" tokens="duration/slow · easing/emphasized" how="Press Open sheet. The sheet rises over duration/slow with easing/emphasized; Close sends it down with easing/exit.">
+      <UseSample name="Bottom sheet" tokens="duration/slow · easing/emphasized" how="Press Open sheet. The sheet rises over duration/slow with easing/emphasized; Close sends it down over duration/normal with easing/exit.">
         <pts-button size="sm" onClick={() => setSheet(true)}>
           Open sheet
         </pts-button>
@@ -898,7 +899,7 @@ export const MotionInUse = () => {
           </pts-button>
         </div>
       </UseSample>
-      <UseSample name="Screen change" tokens="duration/slower · easing/emphasized" how="Press Next. The next screen slides in over duration/slower with easing/emphasized; Back slides it out with easing/exit.">
+      <UseSample name="Screen change" tokens="duration/slower · easing/emphasized" how="Press Next. The next screen slides in over duration/slower with easing/emphasized; Back slides it out the same way, since going back is a screen change too.">
         <div className="pts-use-screen-a">
           <span className="pts-skeleton" />
           <pts-button size="sm" onClick={() => setScreen(true)}>

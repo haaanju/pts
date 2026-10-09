@@ -41,7 +41,7 @@
       "exit": {
         "$type": "cubicBezier",
         "$value": "{easing.accelerate}",
-        "$description": "Elements leaving: starts slow and speeds up."
+        "$description": "Elements leaving: starts slow and speeds up. Leave one duration step shorter than the element entered: a tooltip in over normal leaves over fast, a sheet in over slow leaves over normal. Going back to a screen is a screen change, not an exit."
       }
     }
   }

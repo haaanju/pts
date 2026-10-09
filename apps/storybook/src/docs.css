@@ -970,8 +970,9 @@ body {
 }
 
 /*
- * Motion in use: each sample moves in with its duration and easing, and leaves with easing/exit over the same
- * duration. A transition takes the timing of the state it goes to, so the open state sets the entering easing.
+ * Motion in use: each sample moves in with its duration and easing, and leaves with easing/exit one duration step
+ * shorter; the screen change goes back the way it came. A transition takes the timing of the state it goes to, so
+ * the open state sets the entering timing and the closed state the leaving one.
  * Hidden samples are also `visibility: hidden` (switched at the end of leaving), so they leave the tab order.
  */
 .pts-use {
@@ -1017,9 +1018,9 @@ body {
   visibility: hidden;
   transform: translate(-50%, calc(-1 * var(--space-100)));
   transition:
-    opacity var(--motion-duration-normal) var(--motion-easing-exit),
-    transform var(--motion-duration-normal) var(--motion-easing-exit),
-    visibility 0s linear var(--motion-duration-normal);
+    opacity var(--motion-duration-fast) var(--motion-easing-exit),
+    transform var(--motion-duration-fast) var(--motion-easing-exit),
+    visibility 0s linear var(--motion-duration-fast);
 }
 .pts-use-tip:hover .pts-use-tooltip,
 .pts-use-tip:focus-within .pts-use-tooltip {
@@ -1057,8 +1058,8 @@ body {
   visibility: hidden;
   transform: translateY(110%);
   transition:
-    transform var(--motion-duration-slow) var(--motion-easing-exit),
-    visibility 0s linear var(--motion-duration-slow);
+    transform var(--motion-duration-normal) var(--motion-easing-exit),
+    visibility 0s linear var(--motion-duration-normal);
 }
 .pts-use-sheet[data-open] {
   visibility: visible;
@@ -1076,7 +1077,7 @@ body {
   visibility: hidden;
   transform: translateX(100%);
   transition:
-    transform var(--motion-duration-slower) var(--motion-easing-exit),
+    transform var(--motion-duration-slower) var(--motion-easing-emphasized),
     visibility 0s linear var(--motion-duration-slower);
 }
 .pts-use-screen[data-open] {
