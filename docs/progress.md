@@ -17,7 +17,8 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
 
-- Last, once the rest is done: Figma sync (Figma is updated by hand, the `figma` skill) and native platforms (iOS, Android; through a custom Terrazzo plugin, ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver).
+- **Next, chosen by the owner (2026-10-09; starts after this week): native platforms, Android first, then iOS**, through a custom Terrazzo plugin (ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver). The goal is an end-to-end demo: change a semantic color, release, and see a dummy app change in the Android emulator and then the iOS simulator. Android: resolve each theme with the resolver into `values/` and `values-night/` resources, a dummy Compose app, published to `mavenLocal` first. iOS: one `.xcassets` colorset per color holding light and dark. Needs an ADR. The owner's Mac has neither Android Studio nor Xcode (only `~/Library/Android/sdk` with the emulator and an android-35 image); ask before installing anything.
+- Figma sync stays manual (the `figma` skill).
 
 Waiting for a reason, not scheduled:
 
