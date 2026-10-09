@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useRef, useState, type CSSProperties, type ReactNode } from "react";
 import "@pts/components/button.js";
 import { products } from "../../../packages/web/products.ts";
 import {
@@ -685,19 +685,37 @@ export const EasingPreview = ({ t }: { t: TokenInfo }) => {
 // The four easing tokens, each in a color that reads as text on the page in both themes
 const CURVE_COLORS = ["--intent-info-content-base", "--intent-discovery-content-base", "--intent-success-content-base", "--intent-warning-content-base"];
 
+// The duration each easing is shown at when it is picked alone: the pairs of the In use section, and normal for exit
+const PAIRED: Record<string, string> = { standard: "fast", emphasized: "slow", enter: "normal", exit: "normal" };
+
 /**
- * Every motion/easing token on one plot, with the speed each one moves at over time. Play runs a dot along each
- * curve for the duration chosen; slow motion stretches it four times.
+ * One easing token, or all of them on one plot, with the speed each moves at over time. Picking one easing switches
+ * to the duration it pairs with; Play runs a dot along each curve and across a track below, with the easing's CSS
+ * value. Slow motion stretches the duration four times.
  */
 export const EasingCurves = () => {
-  const easings = group("motion.easing").map((t, i) => ({ t, f: ease(t.resolved as Bezier), color: `var(${CURVE_COLORS[i % CURVE_COLORS.length]})` }));
+  const all = group("motion.easing").map((t, i) => ({ t, f: ease(t.resolved as Bezier), color: `var(${CURVE_COLORS[i % CURVE_COLORS.length]})` }));
   const durations = group("motion.duration");
+  const [view, setView] = useState("all");
   const [duration, setDuration] = useState(durations.find((d) => leaf(d.id) === "slow")?.id ?? durations[0].id);
   const [slow, setSlow] = useState(false);
   const [x, setX] = useState<number | null>(null);
+  const tracks = useRef<HTMLDivElement>(null);
+  const easings = view === "all" ? all : all.filter((e) => e.t.id === view);
   const ms = (token(duration).resolved as { value: number }).value;
+
+  const pick = (id: string) => {
+    setView(id);
+    setX(null);
+    const paired = durations.find((d) => leaf(d.id) === PAIRED[leaf(id)]);
+    if (paired) setDuration(paired.id);
+  };
   const play = () => {
     const total = ms * (slow ? 4 : 1);
+    tracks.current?.querySelectorAll<HTMLElement>(".pts-dot").forEach((dot) => {
+      const distance = (dot.parentElement?.clientWidth ?? 0) - dot.offsetWidth - 2 * dot.offsetLeft;
+      dot.animate([{ transform: "translateX(0)" }, { transform: `translateX(${distance}px)` }], { duration: total, easing: dot.dataset.easing, fill: "forwards" });
+    });
     const start = performance.now();
     const tick = (now: number) => {
       const p = Math.min(1, (now - start) / total);
@@ -719,10 +737,22 @@ export const EasingCurves = () => {
   };
   const steps = Array.from({ length: 201 }, (_, i) => i / 200);
   const fractions = [0, 0.25, 0.5, 0.75, 1];
+  const single = easings.length === 1 ? easings[0].t : undefined;
 
   return (
     <Block className="pts-curves">
       <div className="pts-curves-controls">
+        <label className="pts-alias">
+          Curve{" "}
+          <select value={view} onChange={(e) => pick(e.target.value)}>
+            <option value="all">All easings</option>
+            {all.map(({ t }) => (
+              <option key={t.id} value={t.id}>
+                {leaf(t.id)}
+              </option>
+            ))}
+          </select>
+        </label>
         <label className="pts-alias">
           Duration{" "}
           <select value={duration} onChange={(e) => setDuration(e.target.value)}>
@@ -740,9 +770,16 @@ export const EasingCurves = () => {
           Play
         </pts-button>
       </div>
+      {single && (
+        <p className="pts-curves-note">
+          <span className="pts-token-name">{slash(single.id)}</span> <span className="pts-value">{single.display}</span>
+          <br />
+          {single.description}
+        </p>
+      )}
       <div className="pts-curves-plots">
         <figure>
-          <svg viewBox={`-40 -12 ${S + 52} ${S + 36}`} role="img" aria-label="Progress over time for each easing">
+          <svg viewBox={`-40 -12 ${S + 52} ${S + 36}`} role="img" aria-label="Progress over time">
             {fractions.map((v) => (
               <g key={v}>
                 <line className="pts-grid" x1={v * S} y1={0} x2={v * S} y2={S} />
@@ -765,7 +802,7 @@ export const EasingCurves = () => {
           <figcaption className="pts-alias">Progress over time</figcaption>
         </figure>
         <figure>
-          <svg viewBox={`-40 -12 ${W + 52} ${H + 36}`} role="img" aria-label="Speed over time for each easing">
+          <svg viewBox={`-40 -12 ${W + 52} ${H + 36}`} role="img" aria-label="Speed over time">
             {fractions.map((v) => (
               <g key={v}>
                 <line className="pts-grid" x1={v * W} y1={0} x2={v * W} y2={H} />
@@ -795,56 +832,86 @@ export const EasingCurves = () => {
           <figcaption className="pts-alias">Speed over time, 1× = linear</figcaption>
         </figure>
       </div>
-      <ul className="pts-curves-legend">
+      <div className="pts-curves-tracks" ref={tracks}>
         {easings.map(({ t, color }) => (
-          <li key={t.id} style={{ color }}>
-            <span className="pts-token-name">{leaf(t.id)}</span> <span className="pts-value">{t.display}</span>
-          </li>
+          <div key={t.id} className="pts-curves-track" style={{ color }}>
+            <span className="pts-token-name">{leaf(t.id)}</span>
+            <div className="pts-track">
+              <div className="pts-dot" data-easing={t.css} />
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </Block>
   );
 };
 
-/**
- * The pairings the duration descriptions name, played on small screens: each sample animates with its duration and
- * easing token, so it shows what a component built on them would do. Play restarts every sample at once.
- */
-const IN_USE = [
-  { name: "Hover", duration: "fast", easing: "standard", sample: "pts-use-hover" },
-  { name: "Tooltip", duration: "normal", easing: "enter", sample: "pts-use-tooltip" },
-  { name: "Bottom sheet", duration: "slow", easing: "emphasized", sample: "pts-use-sheet" },
-  { name: "Screen change", duration: "slower", easing: "emphasized", sample: "pts-use-screen" },
-];
+const InfoIcon = (props: { slot?: string }) => (
+  <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 11v5M12 8h.01" />
+  </svg>
+);
 
+/** One sample of the In use section: a small screen to try, its name and tokens, and what to do */
+const UseSample = ({ name, tokens, how, children }: { name: string; tokens: string; how: string; children: ReactNode }) => (
+  <figure>
+    <div className="pts-use-stage">{children}</div>
+    <figcaption>
+      <span className="pts-token-name">{name}</span>
+      <span className="pts-alias">{tokens}</span>
+      <span className="pts-use-how">{how}</span>
+    </figcaption>
+  </figure>
+);
+
+/**
+ * The pairs the duration descriptions name, each on a small screen to try: a sample moves in with its duration and
+ * easing tokens, and leaves with easing/exit over the same duration. Styles in docs.css read the tokens.
+ */
 export const MotionInUse = () => {
-  const [run, setRun] = useState(0);
+  const [sheet, setSheet] = useState(false);
+  const [screen, setScreen] = useState(false);
   return (
     <Block className="pts-use">
-      <pts-button size="sm" onClick={() => setRun((n) => n + 1)}>
-        Play
-      </pts-button>
-      <div className="pts-use-grid">
-        {IN_USE.map((u) => (
-          <figure key={u.name}>
-            <div className="pts-use-stage">
-              <div
-                key={run}
-                className={run ? `${u.sample} pts-use-run` : u.sample}
-                style={{ animationDuration: `var(--motion-duration-${u.duration})`, animationTimingFunction: `var(--motion-easing-${u.easing})` }}
-              >
-                {u.name === "Hover" ? "Button" : u.name === "Tooltip" ? "Tooltip" : <span className="pts-skeleton" />}
-              </div>
-            </div>
-            <figcaption>
-              <span className="pts-token-name">{u.name}</span>
-              <span className="pts-alias">
-                duration/{u.duration} · easing/{u.easing}
-              </span>
-            </figcaption>
-          </figure>
-        ))}
-      </div>
+      <UseSample name="Hover" tokens="duration/fast · easing/standard" how="Point at the button or press it. Its fill changes over duration/fast with easing/standard, the Button's own transition.">
+        <pts-button variant="primary">Hover me</pts-button>
+      </UseSample>
+      <UseSample name="Tooltip" tokens="duration/normal · easing/enter" how="Point at the icon button, or focus it with Tab. The tooltip appears below over duration/normal with easing/enter, and leaves with easing/exit.">
+        <span className="pts-use-tip">
+          <pts-button label="Details">
+            <InfoIcon slot="start" />
+          </pts-button>
+          <span className="pts-use-tooltip" role="tooltip">
+            Saved 2 minutes ago
+          </span>
+        </span>
+      </UseSample>
+      <UseSample name="Bottom sheet" tokens="duration/slow · easing/emphasized" how="Press Open sheet. The sheet rises over duration/slow with easing/emphasized; Close sends it down with easing/exit.">
+        <pts-button size="sm" onClick={() => setSheet(true)}>
+          Open sheet
+        </pts-button>
+        <div className="pts-use-sheet" data-open={sheet || undefined}>
+          <span className="pts-skeleton" />
+          <pts-button size="sm" onClick={() => setSheet(false)}>
+            Close
+          </pts-button>
+        </div>
+      </UseSample>
+      <UseSample name="Screen change" tokens="duration/slower · easing/emphasized" how="Press Next. The next screen slides in over duration/slower with easing/emphasized; Back slides it out with easing/exit.">
+        <div className="pts-use-screen-a">
+          <span className="pts-skeleton" />
+          <pts-button size="sm" onClick={() => setScreen(true)}>
+            Next
+          </pts-button>
+        </div>
+        <div className="pts-use-screen" data-open={screen || undefined}>
+          <span className="pts-skeleton" />
+          <pts-button size="sm" onClick={() => setScreen(false)}>
+            Back
+          </pts-button>
+        </div>
+      </UseSample>
     </Block>
   );
 };
