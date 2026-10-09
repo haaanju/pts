@@ -7,8 +7,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 - Releases: Changesets and the Release workflow (ADR 0035); the latest version is in `packages/web/CHANGELOG.md` and the tags. CI and the pre-commit hook run check and typecheck.
 - Public repository (ADR 0043); docs on https://haaanju.github.io/pts/, deployed from `main` after CI passes (ADR 0020). `main` is not protected (ADR 0042): workspace changes go through a pull request so the changeset check runs. The Release workflow runs after CI passes on `main` (ADR 0041); `v0.9.5` was its first full run: release PR with `verify`, tag, GitHub Release.
 - Repository: recreated on 2026-10-03 with the commit author emails rewritten; the same files and tags, new commit hashes. The pull requests before that (#1–#29) are in the private `haaanju/pts-archive`.
-- Figma `pts` file: in line with the tokens through ADR 0049 (variables, styles, specimens, the Button page and component sets; Overview count 335 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
-- **Figma behind ADR 0051** (motion): the Desktop Bridge wasn't connected on 2026-10-09. To do: in `Primitive`, add `duration/200`, `400`, `600` and `easing/emphasized`; in `Semantic`, set `Motion/motion/duration/normal` → `duration/200`, `slow` → `duration/400`, add `slower` → `duration/600` and `Motion/motion/easing/emphasized`, with the tokens' descriptions (all four easings' and three durations' changed); redraw the Motion page's Duration and Easing tables and the Scales page's; update the Overview counts. Then delete this line.
+- Figma `pts` file: in line with the tokens through ADR 0051 (variables, styles, specimens, the Button page and component sets; Overview count 340 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
 ## In flight
 
