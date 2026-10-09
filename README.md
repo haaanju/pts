@@ -1,6 +1,6 @@
 # Plain
 
-Design tokens in the [DTCG](https://www.designtokens.org/) format, built with [Terrazzo](https://terrazzo.app) into CSS custom properties (with JS/TS and SCSS references to them), with light and dark themes, two densities, responsive display sizes, bundled fonts, and generated documentation.
+Design tokens in the [DTCG](https://www.designtokens.org/) format, built with [Terrazzo](https://terrazzo.app) into CSS custom properties (with JS/TS and SCSS references to them), with light and dark themes, two densities, responsive display sizes, two corner shapes, per-product outputs, bundled fonts, and generated documentation.
 
 Plain is a personal study project: a small design token monorepo built end to end, from token source to built output, to learn how token pipelines work, including the tooling around them (linting, accessibility checks, docs, automation). It is shared for reference, not as a recommended setup.
 
@@ -27,7 +27,7 @@ Three tiers:
 
 Categories: color, typography, spacing, border, elevation, size, motion, and layout.
 
-Colors are layers (`background`, `surface`, `inverse`) with the `content` and `border` on them, plus one group per intent (`intent.danger.*`) with the same shape; see ADR 0019. Color and shadow have **light** and **dark** values; padding, the gaps within and between groups, and control heights have **relaxed** and **compact** values; display font sizes, line heights, and letter spacing have **narrow** and **wide** values. A DTCG resolver (`pts.resolver.json`) combines them.
+Colors are layers (`background`, `surface`, `inverse`) with the `content` and `border` on them, plus one group per intent (`intent.danger.*`) with the same shape; see ADR 0019. Color and shadow have **light** and **dark** values; padding, the gaps within and between groups, and control heights have **relaxed** and **compact** values; display font sizes, line heights, and letter spacing have **narrow** and **wide** values; the corners of controls and containers have **soft** and **round** values. A DTCG resolver (`pts.resolver.json`) combines them.
 
 ## Usage
 
