@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/intent-shape`: `core/required-children` checks that every intent has the same tokens (ADR 0050). Pull request open; tokens unchanged, empty changeset.
+- None.
 
 ## Next
 
