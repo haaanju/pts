@@ -358,6 +358,16 @@ const cases: Case[] = [
     },
     expect: [["pts/orthogonal-modifiers", "radius.media is defined by the shape modifier, which only changes radius/control, radius/container"]],
   },
+
+  // core/required-children: built in, but its matches are generated in terrazzo.config.ts (ADR 0050), so a config
+  // that stops covering an intent is caught here. Warning, since the Button aliases danger.
+  {
+    name: "an intent missing a token of the shared shape",
+    mutate: (c) => {
+      for (const file of [LIGHT, DARK]) c.remove(file, "intent.warning.surface.strong");
+    },
+    expect: [["core/required-children", 'some groups missing required token "strong"']],
+  },
 ];
 
 suite("pts lint rules", { concurrency: availableParallelism() }, () => {
