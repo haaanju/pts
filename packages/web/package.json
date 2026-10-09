@@ -1,6 +1,6 @@
 {
   "name": "@pts/web",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "private": true,
   "type": "module",
   "description": "Web output of @pts/tokens: CSS custom properties, JS/TS and SCSS references to them, per-product CSS and JS values, and self-hosted fonts",
