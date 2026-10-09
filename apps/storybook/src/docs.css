@@ -28,7 +28,9 @@
   --docs-track-height: 28px;
   --docs-dot-size: 20px;
   --docs-curve-icon-size: 40px;
-  --docs-stage-height: 152px; /* the small screens of the motion samples */
+  --docs-stage-height: 168px; /* the small screens of the motion samples */
+  --docs-track-label-width: 96px;
+  --docs-use-min-width: 220px; /* the narrowest a motion sample gets before the row wraps */
   --docs-layer-width: 240px;
 }
 
@@ -932,21 +934,26 @@ body {
   stroke: var(--content-subtle);
   stroke-dasharray: 2 3;
 }
-.pts-curves-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-200) var(--gap-within-lg);
+.pts .pts-curves-note {
+  max-width: var(--docs-measure);
   margin: 0;
-  padding: 0;
-  list-style: none;
+  font: var(--text-body-sm);
+  color: var(--content-subtle);
 }
-.pts-curves-legend li::before {
-  content: "";
-  display: inline-block;
-  width: var(--space-400);
-  height: var(--stroke-thick);
-  margin-right: var(--space-200);
-  vertical-align: middle;
+.pts-curves-tracks {
+  display: grid;
+  gap: var(--space-300);
+}
+.pts-curves-track {
+  display: grid;
+  grid-template-columns: var(--docs-track-label-width) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-400);
+}
+.pts-curves-track .pts-track {
+  cursor: default;
+}
+.pts-curves-track .pts-dot {
   background: currentColor;
 }
 .pts-curve-icon {
@@ -962,22 +969,25 @@ body {
   stroke-width: var(--stroke-thick);
 }
 
-/* Motion in use: each sample rests at its end state; Play replays it from its start with its own tokens */
+/*
+ * Motion in use: each sample moves in with its duration and easing, and leaves with easing/exit over the same
+ * duration. A transition takes the timing of the state it goes to, so the open state sets the entering easing.
+ * Hidden samples are also `visibility: hidden` (switched at the end of leaving), so they leave the tab order.
+ */
 .pts-use {
   display: grid;
-  justify-items: start;
-  gap: var(--gap-within-lg);
+  grid-template-columns: repeat(auto-fit, minmax(var(--docs-use-min-width), 1fr));
+  gap: var(--gap-between-sm) var(--gap-within-lg);
   margin: 0 0 var(--gap-section-sm);
-}
-.pts-use-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--gap-within-lg);
-  width: 100%;
 }
 .pts-use figcaption {
   display: grid;
-  margin-top: var(--space-200);
+  gap: var(--space-100);
+  margin-top: var(--space-300);
+}
+.pts .pts-use-how {
+  font: var(--text-body-sm);
+  color: var(--content-subtle);
 }
 .pts-use-stage {
   position: relative;
@@ -989,78 +999,92 @@ body {
   border-radius: var(--radius-lg);
   background: var(--surface-subtle);
 }
-.pts-use-run {
-  animation-fill-mode: both;
-}
-.pts-use-hover,
-.pts-use-tooltip {
-  font: var(--text-label-sm);
-  color: var(--content-inverse-base);
-  background: var(--inverse-strong);
-}
-.pts-use-hover {
-  padding: var(--padding-sm) var(--padding-md);
-  border-radius: var(--radius-control);
-}
-.pts-use-hover.pts-use-run {
-  animation-name: pts-use-hover;
+.pts-use-tip {
+  position: relative;
+  display: inline-flex;
 }
 .pts-use-tooltip {
+  position: absolute;
+  top: calc(100% + var(--space-200));
+  left: 50%;
   padding: var(--padding-xs) var(--padding-sm);
   border-radius: var(--radius-sm);
+  font: var(--text-label-sm);
+  white-space: nowrap;
+  color: var(--content-inverse-base);
   background: var(--inverse-base);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, calc(-1 * var(--space-100)));
+  transition:
+    opacity var(--motion-duration-normal) var(--motion-easing-exit),
+    transform var(--motion-duration-normal) var(--motion-easing-exit),
+    visibility 0s linear var(--motion-duration-normal);
 }
-.pts-use-tooltip.pts-use-run {
-  animation-name: pts-use-tooltip;
+.pts-use-tip:hover .pts-use-tooltip,
+.pts-use-tip:focus-within .pts-use-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition:
+    opacity var(--motion-duration-normal) var(--motion-easing-enter),
+    transform var(--motion-duration-normal) var(--motion-easing-enter),
+    visibility 0s;
 }
 .pts-use-sheet,
-.pts-use-screen {
+.pts-use-screen,
+.pts-use-screen-a {
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--gap-within-sm);
   padding: var(--padding-md);
-  background: var(--background);
+}
+.pts-use-sheet .pts-skeleton,
+.pts-use-screen .pts-skeleton,
+.pts-use-screen-a .pts-skeleton {
+  width: 60%;
+  margin: 0;
 }
 .pts-use-sheet {
   left: var(--space-200);
   right: var(--space-200);
   bottom: 0;
-  height: 65%;
   border-radius: var(--radius-container) var(--radius-container) 0 0;
+  background: var(--background);
   box-shadow: var(--shadow-lg);
+  visibility: hidden;
+  transform: translateY(110%);
+  transition:
+    transform var(--motion-duration-slow) var(--motion-easing-exit),
+    visibility 0s linear var(--motion-duration-slow);
 }
-.pts-use-sheet.pts-use-run {
-  animation-name: pts-use-sheet;
+.pts-use-sheet[data-open] {
+  visibility: visible;
+  transform: none;
+  transition:
+    transform var(--motion-duration-slow) var(--motion-easing-emphasized),
+    visibility 0s;
 }
+.pts-use-screen-a,
 .pts-use-screen {
   inset: 0;
 }
-.pts-use-screen.pts-use-run {
-  animation-name: pts-use-screen;
+.pts-use-screen {
+  background: var(--background);
+  visibility: hidden;
+  transform: translateX(100%);
+  transition:
+    transform var(--motion-duration-slower) var(--motion-easing-exit),
+    visibility 0s linear var(--motion-duration-slower);
 }
-.pts-use-sheet .pts-skeleton,
-.pts-use-screen .pts-skeleton {
-  display: block;
-  width: 60%;
-}
-@keyframes pts-use-hover {
-  from {
-    background: var(--inverse-base);
-  }
-}
-@keyframes pts-use-tooltip {
-  from {
-    opacity: 0;
-    transform: translateY(var(--space-100));
-  }
-}
-@keyframes pts-use-sheet {
-  from {
-    transform: translateY(100%);
-  }
-}
-@keyframes pts-use-screen {
-  from {
-    transform: translateX(100%);
-  }
+.pts-use-screen[data-open] {
+  visibility: visible;
+  transform: none;
+  transition:
+    transform var(--motion-duration-slower) var(--motion-easing-emphasized),
+    visibility 0s;
 }
 
 /* ---------- layers ---------- */
@@ -1196,9 +1220,6 @@ body {
   .pts-shadow-grid,
   .pts-curves-plots {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .pts-use-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .pts-specimen {
