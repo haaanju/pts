@@ -25,7 +25,7 @@ Three ways to fit the durations were weighed:
 - **Durations from use**: `normal` 300 → 200ms (tooltips, menus), `slow` 500 → 400ms (a dialog or bottom sheet), and a new `slower` = 600ms (one screen replacing another). New primitives `duration/400` and `600`; `normal` aliases the existing `duration/200`. `fast` stays 150ms.
 - **The pairing lives in the descriptions**: `slow` and `slower` say to pair with `emphasized`, and `emphasized` names them. A token holds one value, so a pair can't be a token; a `transition` composite would fix the pair where components may need to mix them.
 - **One family, one axis**: the descriptions of `standard`, `enter`, and `emphasized` say they share a landing and differ in how long they hold. `exit` keeps its own curve: leaving is a different motion.
-- **Docs**: the Motion page gains In use (each pair the descriptions name, played on a small screen), Curves (every easing's progress and speed over time, played at any duration), and a curve in each easing row. The Scales page's easing table shows the curve too.
+- **Docs**: the Motion page gains In use (each pair the descriptions name, on a small screen to try: a button on hover, a tooltip under an icon button, a bottom sheet, a screen change; each leaves with `exit`), Curves (one easing at the duration it pairs with, or all of them at one duration: progress and speed over time, and a dot that moves with the easing), and a curve in each easing row. The Scales page's easing table shows the curve too.
 
 ### Not breaking
 
