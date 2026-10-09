@@ -107,7 +107,7 @@ The DTCG resolver's modifiers. Never `$extensions.mode`.
 - `weight/N`: numeric font weight (400–700). `tracking/N`: letter spacing, N = px × 100, negatives as `neg-` (`tracking/neg-50` = -0.5px).
 - `color/<hue>/N`: higher is darker. Hues red, orange, green, blue, purple have 50–900; `neutral` has 50–1000 including 850. Plus `color/white`, `color/black`.
 - `color/black-alpha/N`: black at N% opacity, for shadows and scrims only. There are no standalone opacity tokens.
-- `duration/N`: N ms. `easing/standard|decelerate|accelerate`: cubic Bézier.
+- `duration/N`: N ms. `easing/standard|emphasized|decelerate|accelerate`: cubic Bézier.
 
 ### Semantic
 
@@ -126,7 +126,7 @@ The DTCG resolver's modifiers. Never `$extensions.mode`.
   - `text/<role>-<size>`: `typography` composites, roles display, heading, body, label, caption, code × lg, md, sm, with all five properties (fontFamily, fontSize, fontWeight, letterSpacing, lineHeight). display-lg, display-md, heading-lg, heading-md use `display/xl`, `lg`, `md`, `sm`; heading-sm (bold) and body-lg (regular) share `text/lg` as a title and subtitle pair.
 - **Size**: `size/icon/sm–lg` (`md` = 24px); `size/control/sm–lg`, the shared height for buttons, inputs, and selects (`md` = 48px, compact 40; relaxed md and up meet the 44–48px touch target).
 - **Layout**: `breakpoint/sm–xl` (min-width, 640–1280px), CSS variables for reference only, since custom properties can't be used in media queries. `z-index/base, dropdown, sticky, overlay, modal, popover, toast, tooltip` in that order.
-- **Motion**: `motion/duration/fast|normal|slow`, `motion/easing/standard|enter|exit`.
+- **Motion** (ADR 0051): `motion/duration/fast|normal|slow|slower` (150, 200, 400, 600ms), `motion/easing/standard|emphasized|enter|exit`. `enter`, `standard`, and `emphasized` share their landing, (0, 1), and differ in x1, how long they hold first (0, 0.2, 0.5). `slow` and `slower` pair with `emphasized` (a dialog or sheet, a screen change).
 - **Elevation**: `shadow/sm–xl`, per theme (dark uses higher opacity).
 
 ### Color

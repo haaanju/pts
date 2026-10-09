@@ -27,6 +27,8 @@
   --docs-overlay-height: 160px;
   --docs-track-height: 28px;
   --docs-dot-size: 20px;
+  --docs-curve-icon-size: 40px;
+  --docs-stage-height: 152px; /* the small screens of the motion samples */
   --docs-layer-width: 240px;
 }
 
@@ -875,6 +877,192 @@ body {
   left: calc(100% - var(--docs-dot-size) - var(--space-100));
 }
 
+/* Easing curves: a plot of every easing and the speed it moves at, colored per easing (set inline as currentColor) */
+.pts-curves {
+  display: grid;
+  gap: var(--gap-within-lg);
+  margin: 0 0 var(--gap-section-sm);
+}
+.pts-curves-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-within-lg);
+}
+.pts-curves-controls select {
+  margin-left: var(--space-100);
+  padding: var(--space-100) var(--space-200);
+  font: inherit;
+  color: var(--content-base);
+  background: var(--background);
+  border: var(--stroke-thin) solid var(--border-base);
+  border-radius: var(--radius-sm);
+}
+.pts-curves-plots {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: var(--space-600);
+  align-items: end;
+}
+.pts figure {
+  margin: 0;
+  min-width: 0;
+}
+.pts-curves svg,
+.pts-curve-icon {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.pts-curves svg text {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-text-xs);
+  fill: var(--content-subtle);
+}
+.pts-grid {
+  stroke: var(--border-subtle);
+}
+.pts-curve {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--stroke-thick);
+}
+.pts-playhead {
+  stroke: var(--content-subtle);
+  stroke-dasharray: 2 3;
+}
+.pts-curves-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-200) var(--gap-within-lg);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pts-curves-legend li::before {
+  content: "";
+  display: inline-block;
+  width: var(--space-400);
+  height: var(--stroke-thick);
+  margin-right: var(--space-200);
+  vertical-align: middle;
+  background: currentColor;
+}
+.pts-curve-icon {
+  width: var(--docs-curve-icon-size);
+}
+.pts-curve-icon rect {
+  fill: none;
+  stroke: var(--border-subtle);
+}
+.pts-curve-icon path {
+  fill: none;
+  stroke: var(--content-base);
+  stroke-width: var(--stroke-thick);
+}
+
+/* Motion in use: each sample rests at its end state; Play replays it from its start with its own tokens */
+.pts-use {
+  display: grid;
+  justify-items: start;
+  gap: var(--gap-within-lg);
+  margin: 0 0 var(--gap-section-sm);
+}
+.pts-use-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gap-within-lg);
+  width: 100%;
+}
+.pts-use figcaption {
+  display: grid;
+  margin-top: var(--space-200);
+}
+.pts-use-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: var(--docs-stage-height);
+  overflow: hidden;
+  border: var(--stroke-thin) solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-subtle);
+}
+.pts-use-run {
+  animation-fill-mode: both;
+}
+.pts-use-hover,
+.pts-use-tooltip {
+  font: var(--text-label-sm);
+  color: var(--content-inverse-base);
+  background: var(--inverse-strong);
+}
+.pts-use-hover {
+  padding: var(--padding-sm) var(--padding-md);
+  border-radius: var(--radius-control);
+}
+.pts-use-hover.pts-use-run {
+  animation-name: pts-use-hover;
+}
+.pts-use-tooltip {
+  padding: var(--padding-xs) var(--padding-sm);
+  border-radius: var(--radius-sm);
+  background: var(--inverse-base);
+}
+.pts-use-tooltip.pts-use-run {
+  animation-name: pts-use-tooltip;
+}
+.pts-use-sheet,
+.pts-use-screen {
+  position: absolute;
+  padding: var(--padding-md);
+  background: var(--background);
+}
+.pts-use-sheet {
+  left: var(--space-200);
+  right: var(--space-200);
+  bottom: 0;
+  height: 65%;
+  border-radius: var(--radius-container) var(--radius-container) 0 0;
+  box-shadow: var(--shadow-lg);
+}
+.pts-use-sheet.pts-use-run {
+  animation-name: pts-use-sheet;
+}
+.pts-use-screen {
+  inset: 0;
+}
+.pts-use-screen.pts-use-run {
+  animation-name: pts-use-screen;
+}
+.pts-use-sheet .pts-skeleton,
+.pts-use-screen .pts-skeleton {
+  display: block;
+  width: 60%;
+}
+@keyframes pts-use-hover {
+  from {
+    background: var(--inverse-base);
+  }
+}
+@keyframes pts-use-tooltip {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-100));
+  }
+}
+@keyframes pts-use-sheet {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes pts-use-screen {
+  from {
+    transform: translateX(100%);
+  }
+}
+
 /* ---------- layers ---------- */
 
 .pts-stack {
@@ -1005,8 +1193,12 @@ body {
   }
 
   .pts-row,
-  .pts-shadow-grid {
+  .pts-shadow-grid,
+  .pts-curves-plots {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .pts-use-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .pts-specimen {

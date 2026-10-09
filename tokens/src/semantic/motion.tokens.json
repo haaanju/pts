@@ -8,25 +8,35 @@
       },
       "normal": {
         "$type": "duration",
-        "$value": "{duration.300}",
-        "$description": "Default for most transitions: elements appearing, expanding, or moving."
+        "$value": "{duration.200}",
+        "$description": "Default for most transitions: small elements appearing, expanding, or moving, such as tooltips and menus."
       },
       "slow": {
         "$type": "duration",
-        "$value": "{duration.500}",
-        "$description": "Large transitions, such as a modal or sheet entering."
+        "$value": "{duration.400}",
+        "$description": "Large transitions, such as a dialog or bottom sheet entering. Pair with motion/easing/emphasized."
+      },
+      "slower": {
+        "$type": "duration",
+        "$value": "{duration.600}",
+        "$description": "Full-screen transitions: one screen replacing another. Pair with motion/easing/emphasized."
       }
     },
     "easing": {
       "standard": {
         "$type": "cubicBezier",
         "$value": "{easing.standard}",
-        "$description": "Elements moving or resizing on screen."
+        "$description": "Elements moving or resizing on screen: a short hold, then a slow landing."
+      },
+      "emphasized": {
+        "$type": "cubicBezier",
+        "$value": "{easing.emphasized}",
+        "$description": "Large moves the eye should follow, such as a dialog, sheet, or screen entering: holds a beat, sweeps through the middle, and settles slowly. The landing of standard with a longer hold. Pair with motion/duration/slow or slower."
       },
       "enter": {
         "$type": "cubicBezier",
         "$value": "{easing.decelerate}",
-        "$description": "Elements appearing: starts fast and slows to rest."
+        "$description": "Elements appearing: starts fast and slows to rest. The landing of standard with no hold."
       },
       "exit": {
         "$type": "cubicBezier",

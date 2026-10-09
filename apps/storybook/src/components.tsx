@@ -651,6 +651,204 @@ export const MotionDemo = () => (
   </Block>
 );
 
+type Bezier = [number, number, number, number];
+
+/** Progress at time x for a cubic Bézier, solved the way CSS does: find the curve parameter for x, return its y */
+const ease =
+  ([x1, y1, x2, y2]: Bezier) =>
+  (x: number) => {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    const b = (p1: number, p2: number, t: number) => 3 * p1 * (1 - t) ** 2 * t + 3 * p2 * (1 - t) * t * t + t ** 3;
+    let lo = 0;
+    let hi = 1;
+    for (let i = 0; i < 40; i++) {
+      const mid = (lo + hi) / 2;
+      if (b(x1, x2, mid) < x) lo = mid;
+      else hi = mid;
+    }
+    return b(y1, y2, (lo + hi) / 2);
+  };
+
+/** An easing token's curve as a small plot, for the value cells of the easing tables */
+export const EasingPreview = ({ t }: { t: TokenInfo }) => {
+  const [x1, y1, x2, y2] = t.resolved as Bezier;
+  const s = 40;
+  return (
+    <svg className="pts-curve-icon" viewBox={`-2 -2 ${s + 4} ${s + 4}`} aria-hidden="true">
+      <rect x="0" y="0" width={s} height={s} />
+      <path d={`M0 ${s} C${x1 * s} ${s - y1 * s} ${x2 * s} ${s - y2 * s} ${s} 0`} />
+    </svg>
+  );
+};
+
+// The four easing tokens, each in a color that reads as text on the page in both themes
+const CURVE_COLORS = ["--intent-info-content-base", "--intent-discovery-content-base", "--intent-success-content-base", "--intent-warning-content-base"];
+
+/**
+ * Every motion/easing token on one plot, with the speed each one moves at over time. Play runs a dot along each
+ * curve for the duration chosen; slow motion stretches it four times.
+ */
+export const EasingCurves = () => {
+  const easings = group("motion.easing").map((t, i) => ({ t, f: ease(t.resolved as Bezier), color: `var(${CURVE_COLORS[i % CURVE_COLORS.length]})` }));
+  const durations = group("motion.duration");
+  const [duration, setDuration] = useState(durations.find((d) => leaf(d.id) === "slow")?.id ?? durations[0].id);
+  const [slow, setSlow] = useState(false);
+  const [x, setX] = useState<number | null>(null);
+  const ms = (token(duration).resolved as { value: number }).value;
+  const play = () => {
+    const total = ms * (slow ? 4 : 1);
+    const start = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - start) / total);
+      setX(p);
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+
+  const S = 240; // plot size
+  const W = 400; // speed plot width
+  const H = 160;
+  const vMax = 6; // speed, relative to linear
+  const speed = (f: (x: number) => number, at: number) => {
+    const h = 1 / 400;
+    const a = Math.max(0, at - h);
+    const b = Math.min(1, at + h);
+    return (f(b) - f(a)) / (b - a);
+  };
+  const steps = Array.from({ length: 201 }, (_, i) => i / 200);
+  const fractions = [0, 0.25, 0.5, 0.75, 1];
+
+  return (
+    <Block className="pts-curves">
+      <div className="pts-curves-controls">
+        <label className="pts-alias">
+          Duration{" "}
+          <select value={duration} onChange={(e) => setDuration(e.target.value)}>
+            {durations.map((d) => (
+              <option key={d.id} value={d.id}>
+                {leaf(d.id)} · {d.display}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="pts-alias">
+          <input type="checkbox" checked={slow} onChange={(e) => setSlow(e.target.checked)} /> Slow motion ×4
+        </label>
+        <pts-button size="sm" onClick={play}>
+          Play
+        </pts-button>
+      </div>
+      <div className="pts-curves-plots">
+        <figure>
+          <svg viewBox={`-40 -12 ${S + 52} ${S + 36}`} role="img" aria-label="Progress over time for each easing">
+            {fractions.map((v) => (
+              <g key={v}>
+                <line className="pts-grid" x1={v * S} y1={0} x2={v * S} y2={S} />
+                <line className="pts-grid" x1={0} y1={S - v * S} x2={S} y2={S - v * S} />
+                <text x={v * S} y={S + 18} textAnchor="middle">
+                  {Math.round(v * ms)}ms
+                </text>
+                <text x={-6} y={S - v * S + 4} textAnchor="end">
+                  {v * 100}%
+                </text>
+              </g>
+            ))}
+            {easings.map(({ t, f, color }) => (
+              <g key={t.id} style={{ color }}>
+                <path className="pts-curve" d={steps.map((s, i) => `${i ? "L" : "M"}${s * S} ${S - f(s) * S}`).join("")} />
+                {x !== null && <circle cx={x * S} cy={S - f(x) * S} r={5} fill="currentColor" />}
+              </g>
+            ))}
+          </svg>
+          <figcaption className="pts-alias">Progress over time</figcaption>
+        </figure>
+        <figure>
+          <svg viewBox={`-40 -12 ${W + 52} ${H + 36}`} role="img" aria-label="Speed over time for each easing">
+            {fractions.map((v) => (
+              <g key={v}>
+                <line className="pts-grid" x1={v * W} y1={0} x2={v * W} y2={H} />
+                <text x={v * W} y={H + 18} textAnchor="middle">
+                  {Math.round(v * ms)}ms
+                </text>
+              </g>
+            ))}
+            {[0, 1, 3, 6].map((v) => (
+              <g key={v}>
+                <line className="pts-grid" x1={0} y1={H - (v / vMax) * H} x2={W} y2={H - (v / vMax) * H} />
+                <text x={-6} y={H - (v / vMax) * H + 4} textAnchor="end">
+                  {v}×
+                </text>
+              </g>
+            ))}
+            {easings.map(({ t, f, color }) => (
+              <path
+                key={t.id}
+                className="pts-curve"
+                style={{ color }}
+                d={steps.map((s, i) => `${i ? "L" : "M"}${s * W} ${H - (Math.min(speed(f, s), vMax) / vMax) * H}`).join("")}
+              />
+            ))}
+            {x !== null && <line className="pts-playhead" x1={x * W} y1={0} x2={x * W} y2={H} />}
+          </svg>
+          <figcaption className="pts-alias">Speed over time, 1× = linear</figcaption>
+        </figure>
+      </div>
+      <ul className="pts-curves-legend">
+        {easings.map(({ t, color }) => (
+          <li key={t.id} style={{ color }}>
+            <span className="pts-token-name">{leaf(t.id)}</span> <span className="pts-value">{t.display}</span>
+          </li>
+        ))}
+      </ul>
+    </Block>
+  );
+};
+
+/**
+ * The pairings the duration descriptions name, played on small screens: each sample animates with its duration and
+ * easing token, so it shows what a component built on them would do. Play restarts every sample at once.
+ */
+const IN_USE = [
+  { name: "Hover", duration: "fast", easing: "standard", sample: "pts-use-hover" },
+  { name: "Tooltip", duration: "normal", easing: "enter", sample: "pts-use-tooltip" },
+  { name: "Bottom sheet", duration: "slow", easing: "emphasized", sample: "pts-use-sheet" },
+  { name: "Screen change", duration: "slower", easing: "emphasized", sample: "pts-use-screen" },
+];
+
+export const MotionInUse = () => {
+  const [run, setRun] = useState(0);
+  return (
+    <Block className="pts-use">
+      <pts-button size="sm" onClick={() => setRun((n) => n + 1)}>
+        Play
+      </pts-button>
+      <div className="pts-use-grid">
+        {IN_USE.map((u) => (
+          <figure key={u.name}>
+            <div className="pts-use-stage">
+              <div
+                key={run}
+                className={run ? `${u.sample} pts-use-run` : u.sample}
+                style={{ animationDuration: `var(--motion-duration-${u.duration})`, animationTimingFunction: `var(--motion-easing-${u.easing})` }}
+              >
+                {u.name === "Hover" ? "Button" : u.name === "Tooltip" ? "Tooltip" : <span className="pts-skeleton" />}
+              </div>
+            </div>
+            <figcaption>
+              <span className="pts-token-name">{u.name}</span>
+              <span className="pts-alias">
+                duration/{u.duration} · easing/{u.easing}
+              </span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </Block>
+  );
+};
+
 // ---------- layers ----------
 
 /** The layers as one aligned column, highest on top: reading down goes from front to back */
