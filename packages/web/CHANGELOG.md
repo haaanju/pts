@@ -2,6 +2,12 @@
 
 The changelog of every `@pts/*` package, which share one version (ADR 0014). Entries from 0.9.4 on come from changesets (ADR 0035); earlier ones are the release tag messages.
 
+## 0.9.8
+
+### Patch Changes
+
+- New: `motion/easing/emphasized` (0.5, 0, 0, 1) for dialogs, sheets, and screen changes, and `motion/duration/slower` (600ms) for full-screen transitions. Fix: `motion/duration/normal` is 200ms (was 300) and `motion/duration/slow` 400ms (was 500), the values used for tooltips and for dialogs and sheets. New primitives `easing/emphasized`, `duration/400`, and `duration/600` (ADR 0051).
+
 ## 0.9.7
 
 ### Patch Changes
