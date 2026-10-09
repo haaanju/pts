@@ -2,6 +2,12 @@
 
 The changelog of every `@pts/*` package, which share one version (ADR 0014). Entries from 0.9.4 on come from changesets (ADR 0035); earlier ones are the release tag messages.
 
+## 0.9.9
+
+### Patch Changes
+
+- Fix: `motion/easing/exit`'s description says to leave one duration step shorter than the element entered (a tooltip leaves over `fast`, a sheet over `normal`), and that going back to a screen is a screen change, not an exit (ADR 0051).
+
 ## 0.9.8
 
 ### Patch Changes
