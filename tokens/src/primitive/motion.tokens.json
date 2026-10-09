@@ -28,10 +28,24 @@
         "unit": "ms"
       }
     },
+    "400": {
+      "$type": "duration",
+      "$value": {
+        "value": 400,
+        "unit": "ms"
+      }
+    },
     "500": {
       "$type": "duration",
       "$value": {
         "value": 500,
+        "unit": "ms"
+      }
+    },
+    "600": {
+      "$type": "duration",
+      "$value": {
+        "value": 600,
         "unit": "ms"
       }
     }
@@ -41,6 +55,15 @@
       "$type": "cubicBezier",
       "$value": [
         0.2,
+        0,
+        0,
+        1
+      ]
+    },
+    "emphasized": {
+      "$type": "cubicBezier",
+      "$value": [
+        0.5,
         0,
         0,
         1

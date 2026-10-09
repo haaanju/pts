@@ -1,5 +1,5 @@
 import { Meta } from "@storybook/addon-docs/blocks";
-import { PageHeader, Section, MotionDemo, TokenTable } from "../components";
+import { PageHeader, Section, MotionDemo, MotionInUse, EasingCurves, EasingPreview, TokenTable } from "../components";
 
 <Meta title="Semantic/Motion" />
 
@@ -7,9 +7,17 @@ import { PageHeader, Section, MotionDemo, TokenTable } from "../components";
   Durations and easing curves. Respect prefers-reduced-motion in components that animate.
 </PageHeader>
 
-<Section title="Preview" lead="Hover a track to play it. enter (decelerate) for elements appearing, exit (accelerate) for elements leaving, standard for moving or resizing.">
+<Section title="In use" lead="The pairs the duration descriptions name: fast with standard for hover and press, normal with enter for a tooltip, slow and slower with emphasized for a sheet and a screen change.">
+  <MotionInUse />
+</Section>
+
+<Section title="Curves" lead="enter, standard, and emphasized end the same way, at (0, 1): a long, soft landing. Only x1 differs, how long the motion holds before it goes: 0, 0.2, 0.5. exit has its own curve, for elements leaving.">
+  <EasingCurves />
+</Section>
+
+<Section title="Preview" lead="Hover a track to play it: every duration with every easing.">
   <MotionDemo />
 </Section>
 
 <Section title="Duration" path="motion/duration/*"><TokenTable prefix="motion.duration" /></Section>
-<Section title="Easing" path="motion/easing/*"><TokenTable prefix="motion.easing" /></Section>
+<Section title="Easing" path="motion/easing/*"><TokenTable prefix="motion.easing" preview={(t) => <EasingPreview t={t} />} /></Section>

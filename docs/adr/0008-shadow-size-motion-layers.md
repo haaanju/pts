@@ -1,6 +1,6 @@
 # 0008. Shadow, Size, Breakpoint, Motion, and Z-index Tokens
 
-- Status: accepted (amended by 0024)
+- Status: accepted (amended by 0024, 0051)
 - Date: 2026-09-25
 
 ## What we learned
