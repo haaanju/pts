@@ -62,7 +62,7 @@ docs/progress.md, docs/adr/
 ## Commands
 
 - `npm run check`: `tz check` in `tokens/` (ADR 0021). Terrazzo's built-in rules plus the `pts/*` rules. The rules that compare values check every theme × density × viewport × shape permutation (Terrazzo alone lints the default one); `component-pairs`, `color-hex`, `tier-aliases`, `registered-files`, and `orthogonal-modifiers` check names, files, and the resolver. Errors start with the rule name; the rule file's header says what it enforces.
-  - Built-in rules turned on beyond the recommended ones: `$type` required, a `$description` on every semantic token, srgb colors, text styles at least 12px.
+  - Built-in rules turned on beyond the recommended ones: `$type` required, a `$description` on every semantic token, srgb colors, text styles at least 12px, every intent with the same tokens (`core/required-children`, ADR 0050).
   - `pts/*`: `theme-parity`, `contrast`, `component-pairs`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`, `orthogonal-modifiers`, `component-states`.
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it. Every `pts/*` message gets a case in `tokens/lint/rules.test.ts`, unless it can't be reached (the file says why).
 - `npm test`: breaks each `pts/*` rule on purpose in a copy of `tokens/` and expects `tz check` to report it, so a rule that silently stops reporting fails (ADR 0037); then builds `@pts/web` and checks its output against the resolver: every token in `:root`, every modifier context in its block with every token it changes and none another modifier changes, and every token in `tokens.js`, `tokens.d.ts`, and `tokens.scss` (ADR 0039); each product's CSS and JS the same way at the inputs it fixes, its JS values equal to the resolver's (ADR 0047).
@@ -131,7 +131,7 @@ The DTCG resolver's modifiers. Never `$extensions.mode`.
 
 ### Color
 
-See ADR 0019. Layers first, then what sits on them; each intent repeats the same shape:
+See ADR 0019. Layers first, then what sits on them; each intent repeats the same shape (`npm run check` reports a missing token):
 
 ```
 background                                 the page

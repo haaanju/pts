@@ -8,6 +8,10 @@ import { loadResolver, primitiveGroups } from "./source.ts";
 const resolver = await loadResolver();
 // The semantic properties a text style is made of (CLAUDE.md → Typography)
 const TEXT_PROPERTIES = ["font-family", "font-size", "font-weight", "letter-spacing", "line-height"];
+// The tokens every intent repeats (CLAUDE.md → Color, ADR 0050). core/required-children pools every token a match
+// covers, so one match for all intents would pass while any intent still had the name: one match per intent and part.
+const INTENT_SHAPE = { surface: ["subtle", "base", "strong", "stronger"], content: ["base", "inverse"], border: ["base", "subtle"] };
+const intents = [...new Set(Object.keys(resolver.apply({})).flatMap((id) => (id.startsWith("intent.") ? [id.split(".")[1]] : [])))];
 
 export default defineConfig({
   tokens: ["./src/pts.resolver.json"],
@@ -25,6 +29,14 @@ export default defineConfig({
       "core/colorspace": ["error", { colorSpace: "srgb" }],
       "core/max-gamut": ["error", { gamut: "srgb" }],
       "a11y/min-font-size": ["error", { minSizePx: 12 }],
+      "core/required-children": [
+        "error",
+        {
+          matches: intents.flatMap((intent) =>
+            Object.entries(INTENT_SHAPE).map(([part, requiredTokens]) => ({ match: [`intent.${intent}.${part}.*`], requiredTokens })),
+          ),
+        },
+      ],
       // Off: a11y/min-contrast checks the default theme only (pts/contrast replaces it);
       //      core/duplicate-values flags every alias target, which is the point of the tiers.
 

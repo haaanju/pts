@@ -1,6 +1,6 @@
 # 0021. Terrazzo Lint
 
-- Status: accepted (amended by 0023, 0024, 0038)
+- Status: accepted (amended by 0023, 0024, 0038, 0050)
 - Date: 2026-09-27
 
 ## What we learned
