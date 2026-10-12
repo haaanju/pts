@@ -25,6 +25,12 @@ The docs never depended on it: the deploy job runs only after CI passes on `main
 - **A red commit can land on `main`.** The pre-commit hook runs check and typecheck first; CI reports the rest after the push, and the docs stay on the last passing commit.
 - **The changeset check is a habit, not a gate.** A workspace change pushed straight to `main` skips it, and its release note is missing until someone adds one.
 
+## Later: keep main's history (2026-10-13)
+
+Asked again once colleagues had the public link. Visibility doesn't change the case: only the owner can push (the one collaborator), a fork's pull request runs CI with a read-only token and no secrets, first-time contributors' runs wait for approval, and the Release workflow runs only after CI on a push to `main`. What a pull-request gate would add is still a gate on one person.
+
+One risk had grown: several Claude sessions now push to this repository, and none should ever rewrite or delete `main`. A repository ruleset, "Keep main's history", blocks force pushes and deleting the default branch. It requires no pull request and no status, so direct pushes and the workflow above are unchanged.
+
 ## Implementation notes
 
 - Branch protection on `main` removed in the repository settings.
