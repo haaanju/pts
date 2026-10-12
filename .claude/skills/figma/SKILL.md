@@ -18,10 +18,10 @@ The Figma MCP must be authenticated with the personal account that owns the `pts
 | `Primitive` | one | every primitive, hidden from pickers |
 | `Theme` | `light`, `dark` | the values that change with the theme, plus `always/*` |
 | `Semantic` | one | the semantic tokens that don't change with any modifier, including shadow offsets, blurs, and spreads |
-| `Density` | `relaxed`, `compact` | the density tokens only: `Spacing/padding/*`, `Spacing/gap/within\|between/*`, `Size/size/control/*` |
+| `Density` | `relaxed`, `compact` | the density tokens only: `Spacing/padding/*`, `Spacing/gap/within\|between/*`, `Size/size/control/*`, plus the Figma-only `Spacing/gap/button-inner` |
 | `Viewport` | `narrow`, `wide` | the viewport tokens only: `Typography/font-size\|line-height\|letter-spacing/display/*`, plus the Figma-only `Typography/line-height/display/*-px` |
 | `Shape` | `soft`, `round` | the shape tokens only: `Border/radius/control` (ADR 0048) and `Border/radius/container` (ADR 0049), plus the Figma-only `Border/radius/control-ring` |
-| `Component` | one | the component tokens (`button/*`), each an alias of a `Theme`, `Density`, `Shape`, or `Semantic` variable, so a component follows the frame's modes. Typography composites (`button/<size>/label`) are text styles instead |
+| `Component` | one | the component tokens (`button/*`), each an alias of a `Theme`, `Density`, `Shape`, or `Semantic` variable, so a component follows the frame's modes. Typography composites (`button/<size>/label`) are text styles instead. Plus the Figma-only `button/gap-inner` and `button/<size>/label-inset` |
 
 - `always/*` is the same in both `Theme` modes; it stays in `Theme` so every semantic color is in one collection for designers, while the JSON keeps it in the base set.
 - A new modifier is a new collection holding only its tokens, the same principle.
@@ -41,7 +41,8 @@ The Figma MCP must be authenticated with the personal account that owns the `pts
 - Beside the specimen frame, a component page has a `.Document/Header` instance, the docs `PageHeader` on a `background` fill (an uppercase eyebrow, the title, a lead; no banner or illustration), then one section per set below it, as wide as the header together. The header component lives in the `Document` section of the Overview page.
 - Inside a set's section: rows are `Variant` × `State`, columns `Size` (× `Icon`), with a wider gap between groups and each button centered in its row. A locked `Labels` frame behind the set names each row and column (`text/label-md` for the group, `text/body-sm` with `content/subtle` for the value), inset 64px like the specimen frame. The section fill binds `background`, so it follows the frame's `Theme` mode.
 - Every fill, stroke, size, padding, gap, and radius of a component binds a `Component` variable; the focus ring binds `border/focus` and `focus-ring/width` directly, as the code does.
-- Variant properties follow the spec (ADR 0032): `Variant`, `Size`, `State` (Rest, Hover, Pressed, Disabled, Loading), and `Icon` (None, Start, End, Both), since the icon side pads one step less and a boolean can't change padding. `Focus` is a boolean (the ring layer), `Label` a text property, icons instance-swap properties. Icon-only buttons are a separate set (`Button/Icon-button`).
+- Properties are what a designer chooses, as the code's attributes and slots are; what follows from a choice is built from layers and variables, never a variant (ADR 0052). Button: `Variant`, `Size`, `State` (Rest, Hover, Pressed, Disabled, Loading); `Start icon` and `End icon` booleans with their instance swaps (`↳ Start icon`, `↳ End icon`); `Focus` a boolean (the ring layer); `Label` a text property. Icon-only buttons are a separate set (`Button/Icon-button`), since a square can't come from a boolean.
+- The icon side pads one step less without a variant: the button pads `padding/icon-side`, a `label` frame around the text adds `button/<size>/label-inset` (`padding/base` − `icon-side`) on both sides, and the gap is `button/gap-inner` (the button's gap − the inset). Recompute `Spacing/gap/button-inner` and the insets when a button gap or padding changes; the gap must stay at least the inset (ADR 0052).
 - Build sets with a script, one variant per call (the bridge times out around 30 s), then combine.
 
 ## Styles
