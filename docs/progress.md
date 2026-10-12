@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/remove-lg-button` (ADR 0053): the `lg` button size removed (breaking). Figma is already done; the pull request lands the tokens and code.
+- None.
 
 ## Next
 
