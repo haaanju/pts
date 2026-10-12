@@ -1,6 +1,6 @@
 # 0032. Button
 
-- Status: accepted (amended by 0033, 0034, 0038, 0040, 0048)
+- Status: accepted (amended by 0033, 0034, 0038, 0040, 0048, 0052)
 - Date: 2026-10-02
 
 The spec for the first component, written before the Figma component and the code, one question at a time, then implemented in that order: the tokens, the Figma component, the code.
@@ -59,10 +59,12 @@ Three sizes, one per `size/control/*` step, so a button sits in a row with an in
 | Size | Height (relaxed / compact) | Horizontal padding | Label | Icon | Icon–label gap |
 |---|---|---|---|---|---|
 | `sm` | `size/control/sm` (32 / 28) | `padding/md` (12 / 8) | `text/label-md` (14px) | `size/icon/sm` (16) | `gap/within/sm` (8 / 4) |
-| `md` | `size/control/md` (48 / 40) | `padding/xl` (24 / 20) | `text/label-md` (14px)\* | `size/icon/sm` (16)\* | `gap/within/sm` (8 / 4) |
-| `lg` | `size/control/lg` (56 / 48) | `padding/xl` (24 / 20) | `text/label-lg` (16px, new) | `size/icon/md` (24) | `gap/within/sm` (8 / 4) |
+| `md` | `size/control/md` (48 / 40) | `padding/xl` (24 / 20)† | `text/label-md` (14px)\* | `size/icon/sm` (16)\* | `gap/within/sm` (8 / 4) |
+| `lg` | `size/control/lg` (56 / 48) | `padding/xl` (24 / 20)† | `text/label-lg` (16px, new) | `size/icon/md` (24) | `gap/within/sm` (8 / 4) |
 
 \* *Amended by ADR 0033: md uses `text/label-lg` (16px) and `size/icon/md` (24), like lg, so md and lg differ by height only.*
+
+† *Amended by ADR 0052: `padding/xl` is 20 / 16, so the icon side, `padding/lg`, is one 4px step less, as at sm.*
 
 - **Height is fixed, not padded.** The button's height is the control height and the content is centered in it; there is no vertical padding. Text that wraps is not supported: a label stays on one line.
 - **Horizontal padding uses `padding/*` unchanged**, so `padding/*` needs no split. md and lg share `padding/xl`; lg is larger by height and label.
@@ -221,7 +223,7 @@ Figma (done):
 
 - `text/label-lg` text style (family, size, weight, and letter spacing bound; line height 24px), and `text/label-sm`'s description; a `label-lg` row on the Typography page (42 tokens).
 - A `Component` collection (one mode) with 36 `button/*` variables aliasing `Theme`, `Density`, and `Semantic` variables, with the token descriptions, scopes by property, and `var(--button-…)` code syntax. The three `label` tokens are the `label-md` / `label-lg` text styles.
-- A `Button` page after Overview: a `Button` component set (Variant × Size × State × Icon = 240; `Focus` boolean, `Label` text, `Start icon` / `End icon` instance swaps), an `Icon button` set (60), four placeholder icons, and a specimen frame mirroring the Storybook page plus a Preview of instances in light and dark × relaxed and compact. `Icon` is a variant property rather than a boolean, since the icon side pads one step less and a boolean can't change padding.
+- A `Button` page after Overview: a `Button` component set (Variant × Size × State × Icon = 240; `Focus` boolean, `Label` text, `Start icon` / `End icon` instance swaps), an `Icon button` set (60), four placeholder icons, and a specimen frame mirroring the Storybook page plus a Preview of instances in light and dark × relaxed and compact. `Icon` is a variant property rather than a boolean, since the icon side pads one step less and a boolean can't change padding. (Amended by ADR 0052: `Start icon` and `End icon` booleans, 60 variants.)
 - Checked by screenshot: the sizes, paddings (md 24px, 16px on the icon side), gaps, and the focus ring 2px outside the box; Secondary's outline on a surface; every variant switching with the cell's Theme and Density mode.
 - The Overview page lists the `Component` collection (331 variables in all), 13 text styles, and the Button page.
 
