@@ -2,6 +2,16 @@
 
 The changelog of every `@pts/*` package, which share one version (ADR 0014). Entries from 0.9.4 on come from changesets (ADR 0035); earlier ones are the release tag messages.
 
+## 0.10.0
+
+### Minor Changes
+
+- Breaking: the `lg` button size is removed: `button/lg/*` (height, padding, gap, icon, label) is gone, and `<pts-button size="lg">` falls back to `md`. Use `md`, in relaxed density for a larger button (ADR 0053).
+
+### Patch Changes
+
+- Fix: `padding/xl` is 20px relaxed and 16px compact, from 24 and 20, so the padding steps are 4px apart. md and lg buttons are 8px narrower, and their icon side is one 4px step less, as at sm (ADR 0052).
+
 ## 0.9.9
 
 ### Patch Changes
