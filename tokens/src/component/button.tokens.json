@@ -181,40 +181,6 @@
         "$description": "Label text style of default (md) buttons."
       }
     },
-    "lg": {
-      "height": {
-        "$type": "dimension",
-        "$value": "{size.control.lg}",
-        "$description": "Height of large buttons, and the width of an icon-only one."
-      },
-      "padding": {
-        "base": {
-          "$type": "dimension",
-          "$value": "{padding.xl}",
-          "$description": "Horizontal padding of large buttons on a side without an icon."
-        },
-        "icon-side": {
-          "$type": "dimension",
-          "$value": "{padding.lg}",
-          "$description": "Horizontal padding of large buttons on a side with an icon: one padding step less, since an icon reads heavier than text."
-        }
-      },
-      "gap": {
-        "$type": "dimension",
-        "$value": "{gap.within.sm}",
-        "$description": "Space between the icon and the label of large buttons."
-      },
-      "icon": {
-        "$type": "dimension",
-        "$value": "{size.icon.md}",
-        "$description": "Icon and spinner size of large buttons."
-      },
-      "label": {
-        "$type": "typography",
-        "$value": "{text.label-lg}",
-        "$description": "Label text style of large buttons."
-      }
-    },
     "radius": {
       "$type": "dimension",
       "$value": "{radius.control}",

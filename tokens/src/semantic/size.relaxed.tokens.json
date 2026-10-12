@@ -14,7 +14,7 @@
       "lg": {
         "$type": "dimension",
         "$value": "{dimension.56}",
-        "$description": "Height of large buttons, inputs, and selects, for prominent actions and touch-first layouts."
+        "$description": "Height of large inputs and selects, for prominent fields and touch-first layouts."
       }
     }
   }

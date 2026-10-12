@@ -1,6 +1,6 @@
 # 0033. Button md Label and Icon
 
-- Status: accepted
+- Status: accepted (amended by 0053)
 - Date: 2026-10-03
 
 ## What we learned

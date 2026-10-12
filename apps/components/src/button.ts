@@ -8,7 +8,7 @@ import { css, html, LitElement, type PropertyValues } from "lit";
 import { ifDefined } from "lit/directives/if-defined.js";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
-export type ButtonSize = "sm" | "md" | "lg";
+export type ButtonSize = "sm" | "md";
 export type ButtonType = "button" | "submit" | "reset";
 
 export class PtsButton extends LitElement {
@@ -30,7 +30,7 @@ export class PtsButton extends LitElement {
 
   /** primary: the main action, at most one per group; secondary (default): every other action; ghost: low emphasis; danger: destructive */
   declare variant: ButtonVariant;
-  /** sm, md (default), lg: the height of inputs and selects of the same size */
+  /** sm or md (default): the height of inputs and selects of the same size */
   declare size: ButtonSize;
   /** button (default), submit, or reset. Not submit by default, so a button never submits a form by accident. */
   declare type: ButtonType;
@@ -133,7 +133,7 @@ export class PtsButton extends LitElement {
     :host {
       display: inline-flex;
       vertical-align: middle;
-      /* md, the default size; sm and lg below */
+      /* md, the default size; sm below */
       --_height: var(--button-md-height);
       --_padding: var(--button-md-padding-base);
       --_padding-icon: var(--button-md-padding-icon-side);
@@ -156,15 +156,6 @@ export class PtsButton extends LitElement {
       --_icon: var(--button-sm-icon);
       --_label: var(--button-sm-label);
       --_tracking: var(--button-sm-label-letter-spacing);
-    }
-    :host([size="lg"]) {
-      --_height: var(--button-lg-height);
-      --_padding: var(--button-lg-padding-base);
-      --_padding-icon: var(--button-lg-padding-icon-side);
-      --_gap: var(--button-lg-gap);
-      --_icon: var(--button-lg-icon);
-      --_label: var(--button-lg-label);
-      --_tracking: var(--button-lg-label-letter-spacing);
     }
     :host([variant="primary"]) {
       --_surface: var(--button-primary-surface-rest);

@@ -1,6 +1,6 @@
 # 0032. Button
 
-- Status: accepted (amended by 0033, 0034, 0038, 0040, 0048, 0052)
+- Status: accepted (amended by 0033, 0034, 0038, 0040, 0048, 0052, 0053)
 - Date: 2026-10-02
 
 The spec for the first component, written before the Figma component and the code, one question at a time, then implemented in that order: the tokens, the Figma component, the code.
@@ -60,9 +60,11 @@ Three sizes, one per `size/control/*` step, so a button sits in a row with an in
 |---|---|---|---|---|---|
 | `sm` | `size/control/sm` (32 / 28) | `padding/md` (12 / 8) | `text/label-md` (14px) | `size/icon/sm` (16) | `gap/within/sm` (8 / 4) |
 | `md` | `size/control/md` (48 / 40) | `padding/xl` (24 / 20)† | `text/label-md` (14px)\* | `size/icon/sm` (16)\* | `gap/within/sm` (8 / 4) |
-| `lg` | `size/control/lg` (56 / 48) | `padding/xl` (24 / 20)† | `text/label-lg` (16px, new) | `size/icon/md` (24) | `gap/within/sm` (8 / 4) |
+| `lg`‡ | `size/control/lg` (56 / 48) | `padding/xl` (24 / 20)† | `text/label-lg` (16px, new) | `size/icon/md` (24) | `gap/within/sm` (8 / 4) |
 
 \* *Amended by ADR 0033: md uses `text/label-lg` (16px) and `size/icon/md` (24), like lg, so md and lg differ by height only.*
+
+‡ *Removed by ADR 0053: the button has `sm` and `md` only.*
 
 † *Amended by ADR 0052: `padding/xl` is 20 / 16, so the icon side, `padding/lg`, is one 4px step less, as at sm.*
 
