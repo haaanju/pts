@@ -25,7 +25,7 @@ The Figma MCP must be authenticated with the personal account that owns the `pts
 
 - `always/*` is the same in both `Theme` modes; it stays in `Theme` so every semantic color is in one collection for designers, while the JSON keeps it in the base set.
 - A new modifier is a new collection holding only its tokens, the same principle.
-- `radius/control-ring`: the corners of a control's focus ring, `radius/control` plus `focus-ring/offset` and `width` (12px soft, 9999px round), worked out by hand since Figma can't add variables; the CSS outline follows the control's radius on its own. Every `focus-ring` layer in the Button and Icon button sets binds it. Recompute it when `radius/control` or the focus ring changes.
+- `radius/control-ring`: the corners of a control's focus ring, `radius/control` plus `focus-ring/offset` and `width` (12px soft, 9999px round), worked out by hand since Figma can't add variables; the CSS outline follows the control's radius on its own. Every `focus-ring` layer in the `Button` and `Button/Icon-button` sets binds it. Recompute it when `radius/control` or the focus ring changes.
 - `line-height/display/*-px`: Figma binds line heights as px while the tokens are ratios, so these hold the px line each display step makes (font size × ratio, worked out by hand). The display and heading text styles bind them. `npm run check` can't see Figma: recompute them when a display size or line height changes.
 
 ## Variables
@@ -37,9 +37,11 @@ The Figma MCP must be authenticated with the personal account that owns the `pts
 
 ## Components
 
-- A component set per component, on its own page (`Button`, first after Overview, as in the Storybook sidebar), with its section of placeholder parts (`Icons`) beside it. The page's specimen frame mirrors the Storybook page and adds a Preview section: instances in every theme × density, each cell pinning both modes.
+- A component set per component, on its own page (`Button`, first after Overview, as in the Storybook sidebar). A related set is named under it (`Button/Icon-button`). Placeholder parts the sets use have their own page (`Icons`, after the component pages). The page's specimen frame mirrors the Storybook page and adds a Preview section: instances in every theme × density, each cell pinning both modes.
+- Beside the specimen frame, a component page has a `.Document/Header` instance (category, title, description, and a `.Document/Hero/*` sketch), then one section per set below it, as wide as the header together. The header components live in the `Document` section of the Overview page; a new page adds its own hero there.
+- Inside a set's section: rows are `Variant` × `State`, columns `Size` (× `Icon`), with a wider gap between groups and each button centered in its row. A locked `Labels` frame behind the set names each row and column (`text/label-md` for the group, `text/body-sm` with `content/subtle` for the value). The section fill binds `background`, so it follows the frame's `Theme` mode.
 - Every fill, stroke, size, padding, gap, and radius of a component binds a `Component` variable; the focus ring binds `border/focus` and `focus-ring/width` directly, as the code does.
-- Variant properties follow the spec (ADR 0032): `Variant`, `Size`, `State` (Rest, Hover, Pressed, Disabled, Loading), and `Icon` (None, Start, End, Both), since the icon side pads one step less and a boolean can't change padding. `Focus` is a boolean (the ring layer), `Label` a text property, icons instance-swap properties. Icon-only buttons are a separate set (`Icon button`).
+- Variant properties follow the spec (ADR 0032): `Variant`, `Size`, `State` (Rest, Hover, Pressed, Disabled, Loading), and `Icon` (None, Start, End, Both), since the icon side pads one step less and a boolean can't change padding. `Focus` is a boolean (the ring layer), `Label` a text property, icons instance-swap properties. Icon-only buttons are a separate set (`Button/Icon-button`).
 - Build sets with a script, one variant per call (the bridge times out around 30 s), then combine.
 
 ## Styles
