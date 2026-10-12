@@ -171,9 +171,12 @@ always/        white, black
 
 ## Decisions
 
-Record decisions that change token structure, naming, tooling, or the pipeline as ADRs: `docs/adr/NNNN-kebab-case-title.md`, with the sections of the recent ones.
+Record decisions that change token structure, naming, tooling, or the pipeline as ADRs: `docs/adr/NNNN-kebab-case-title.md`.
+
+- Sections, from 0054 on: `Decision` first, one or two sentences ("Chosen: X, because Y."); `What we learned`, the context with the options considered as a list; `Why it matters`; `Trade-offs`; `Implementation notes`, including what was checked; `Documented in`. They follow MADR (https://adr.github.io/): Decision Outcome, Context and Problem Statement with Considered Options, Consequences, Confirmation, More Information. Earlier ADRs keep their sections.
 
 - Status: `proposed` while under discussion, `accepted` once implemented. When a later ADR changes an accepted one, add `(amended by NNNN)`; `superseded by NNNN` only when it is replaced entirely.
+- An accepted ADR's body doesn't grow: a later change to the decision is a new, short ADR, and the old one only gains the status note. Fixing a mistake or a broken link is fine.
 - A rule that follows from a decision goes where the table above says, not into the ADR alone.
 - An ADR that adds or changes how the repository works also updates its row in `docs/how-it-works.md`, which links rather than restates.
 
@@ -193,7 +196,7 @@ Work continues across chats and machines through the repository only; chat histo
 
 ## Git Convention
 
-- The repository is public (ADR 0043); `main` deploys the docs on https://haaanju.github.io/pts/, after CI passes on it. No pull request is required (ADR 0042); a ruleset only blocks force pushes and deleting `main`. A change to a workspace (`tokens/`, `packages/`, `apps/`) goes on a `feature/xxx` branch and a pull request, so CI and the changeset check run before it lands; a change that touches none (docs, ADRs, agent rules, CI) may go straight to `main`.
+- The repository is public (ADR 0043); `main` deploys the docs on https://haaanju.github.io/pts/, after CI passes on it. No pull request is required (ADR 0042); a ruleset only blocks force pushes and deleting `main` (ADR 0054). A change to a workspace (`tokens/`, `packages/`, `apps/`) goes on a `feature/xxx` branch and a pull request, so CI and the changeset check run before it lands; a change that touches none (docs, ADRs, agent rules, CI) may go straight to `main`.
 - One Semantic Version for every `@pts/*` package (ADR 0014). In `0.x`, breaking changes bump MINOR, new tokens and fixes bump PATCH. Breaking = renaming or removing a token, changing what a name means, or changing the output format or selectors. Adjusting a value within its role is a fix.
 - Every PR that changes a workspace adds a changeset (ADR 0035), written by hand in `.changeset/<kebab-name>.md`: front matter `"@pts/web": patch` (always `@pts/web`; the fixed group bumps the rest), then a summary starting `Breaking:`, `New:`, or `Fix:` whose bump matches the rule above. A change that ships nothing gets an empty one (`npx changeset --empty`). CI enforces it, and compares the tokens with the base (ADR 0040): a removed or renamed token needs `Breaking:`, and an added token or a changed value needs a changeset that releases.
 - Releasing is merging the "Release" PR the Release workflow keeps open; once CI passes on that commit, the workflow tags `vX.Y.Z` and creates the GitHub Release from `packages/web/CHANGELOG.md` (ADR 0041). Never bump versions or tag by hand.
