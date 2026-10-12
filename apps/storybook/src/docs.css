@@ -1267,9 +1267,11 @@ body {
   background: var(--background);
   color: var(--content-base);
 }
+/* Rows are centered in the cell, so the rows of different lengths share one axis */
 .pts-button-row {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: var(--space-300);
 }

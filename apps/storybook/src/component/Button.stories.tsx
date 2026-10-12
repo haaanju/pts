@@ -56,12 +56,12 @@ const Row = ({ children }: { children: ReactNode }) => <div className="pts-butto
 /** Every argument as a control. The only story in the sidebar. */
 export const Playground: Story = { tags: ["dev"] };
 
-/** In each theme and density: every variant on the page and on a surface, the sizes with an icon, and focus, disabled, and loading. */
+/** In each density (rows) and theme (columns): every variant on the page and on a surface, the sizes with an icon, an icon-only button, and disabled, loading, and a trailing icon. */
 export const Preview: Story = {
   render: () => (
     <div className="pts-button-preview">
-      {THEMES.map((theme) =>
-        DENSITIES.map((density) => (
+      {DENSITIES.map((density) =>
+        THEMES.map((theme) => (
           <div key={`${theme}-${density}`} className="pts-button-preview-cell" data-theme={theme} data-density={density}>
             <span className="pts-alias">
               {theme} · {density}
