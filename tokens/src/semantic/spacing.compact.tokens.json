@@ -22,7 +22,7 @@
     },
     "xl": {
       "$type": "dimension",
-      "$value": "{space.500}",
+      "$value": "{space.400}",
       "$description": "Padding inside cards, modals, and other large containers."
     }
   },

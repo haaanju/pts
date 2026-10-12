@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/button-icon-booleans` (ADR 0052): md and lg button gaps to `gap/within/md`, and the Figma Button set on icon booleans (60 variants). Figma is already done; the pull request lands the token change.
+- `feature/button-icon-booleans` (ADR 0052, PR #30): `padding/xl` 20 / 16, and the Figma Button set on icon booleans (60 variants). Figma is already done; the pull request lands the token change. Next, chosen by the owner: remove the `lg` button size (breaking), in its own pull request.
 
 ## Next
 
@@ -24,7 +24,7 @@ Waiting for a reason, not scheduled:
 
 - Six rules from the pipeline audit (ADR 0039) stay unchecked by choice: every top-level group shown on a docs page, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light; and the direction of each surface step (darker in light, lighter in dark, intents on their hue; ADR 0045). The tokens follow all six (checked 2026-10-06), these tokens rarely change, and a break shows on the docs page. Add a check once one breaks.
 - An upstream Terrazzo issue for `core/required-children` (ADR 0050): it pools every token a match covers, so one match per intent and part is needed; `main` still does it (checked 2026-10-09), and #804 doesn't cover it. Not filed yet, by the owner's choice; revisit later. Terrazzo's `CONTRIBUTING.md` asks for an issue before any pull request, on the `bug.yml` template (issues without it are closed). Once a fixed release ships, cut the config to three matches and update ADR 0050.
-- Large containers may need more than `padding/xl` (24px); buttons don't (ADR 0032).
+- Large containers may need more than `padding/xl` (20px since ADR 0052); buttons don't. The answer would be a new role token, not a larger `xl`.
 - A literal-typed `tokens.d.ts` (ADR 0030) waits for a component whose properties take tokens (a Box or Stack); per ADR 0034 that component is added only as a fixture for it.
 - Dark-mode letter spacing: light text on a dark page reads tighter, so fine-tune letter spacing in dark. That makes `letter-spacing` (and the `text/*` composites that use it) theme-dependent: it would move into the theme files, the dark CSS blocks, and the Figma `Theme` collection. Since ADR 0028, text sizes share `letter-spacing/normal` (0), so dark may need per-size text values too. Needs an ADR. Low value for its cost: keep it until dark text visibly needs it.
 

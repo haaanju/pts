@@ -167,7 +167,7 @@
       },
       "gap": {
         "$type": "dimension",
-        "$value": "{gap.within.md}",
+        "$value": "{gap.within.sm}",
         "$description": "Space between the icon and the label of default (md) buttons."
       },
       "icon": {
@@ -201,7 +201,7 @@
       },
       "gap": {
         "$type": "dimension",
-        "$value": "{gap.within.md}",
+        "$value": "{gap.within.sm}",
         "$description": "Space between the icon and the label of large buttons."
       },
       "icon": {

@@ -17,28 +17,34 @@ The owner sketched a way to keep the padding rule with booleans: the button pads
 - without an icon, a side is `icon-side` + inset = `padding/base`;
 - next to an icon, the space is gap-inner + inset = the button's gap.
 
-The inset is `padding/base` − `padding/icon-side`: 4px for `sm` and 8px for `md` and `lg`, the same in both densities. The gap-inner is the button's gap minus the inset. With every gap at `gap/within/sm` (8 / 4), `md` and `lg` in compact needed 4 − 8 = −4px. A variable holding a negative space makes no sense, so `md` and `lg` take the next gap step instead, `gap/within/md` (12 / 8). Then every size's gap-inner is 4px relaxed and 0 compact.
+The inset is `padding/base` − `padding/icon-side`, and the gap-inner is the button's gap minus the inset, so the relation holds only while the gap is at least the inset. It didn't for `md` and `lg`: `padding/xl` (24 / 20) − `padding/lg` (16 / 12) is 8px, more than the compact gap, `gap/within/sm` (4), which left −4px. A variable holding a negative space makes no sense. Two fixes were tried in Figma:
+
+- **A wider gap for `md` and `lg`**, `gap/within/md` (12 / 8): every gap-inner becomes 4 / 0, but the icon moves away from the label, the opposite of what the owner wanted.
+- **A smaller step for `padding/xl`**, adjusted by eye in Figma: the owner set `md`'s label inset to 4px, which keeps the 8 / 4 gap and makes the side without an icon 20 / 16. That is `padding/xl` at 20 / 16.
+
+The second won. `padding/*` was 4, 8, 12, 16, 24 (compact 2, 4, 8, 12, 20); with `xl` at 20 (compact 16) every step is 4px apart, so ADR 0032's "one padding step less" on the icon side is 4px at every size, and the inset is the same everywhere.
 
 ## Why it matters
 
 - **A rule for Figma components: variant and boolean properties are what a designer chooses, as the code's attributes and slots are; what follows from a choice is built from layers and variables.** A new property passes the test "is this an attribute or a slot in code?"
-- **The `Button` set has 60 variants**: Variant × Size × State. `Start icon` and `End icon` are booleans that show the icon layers, next to the instance swaps (`↳ Start icon`, `↳ End icon`). The icon side still pads one step less, measured equal to the old variants in all 60 × 4 arrangements and both densities.
-- **`md` and `lg` buttons space icon and label 12px relaxed and 8px compact**, from 8 and 4. A 24px icon next to 16px text had 4px in compact, which read tight; `sm` keeps 8 / 4 for its 16px icon. A value change within the gap's role: a patch with a `Fix:` changeset (ADR 0014).
+- **The `Button` set has 60 variants**: Variant × Size × State. `Start icon` and `End icon` are booleans that show the icon layers, next to the instance swaps (`↳ Start icon`, `↳ End icon`). The icon side still pads one step less: in all 60 × 4 arrangements and both densities, the label sits at the expected padding (plus the 1px border, which the code's border adds too).
+- **`padding/xl` is 20px relaxed and 16px compact**, from 24 and 20: `md` and `lg` buttons are 8px narrower, and cards, modals, and other large containers pad 4px less. A value change within the role: a patch with a `Fix:` changeset (ADR 0014).
 - **Figma's layers differ from the code**, and the set's description says so: the button pads `icon-side`, the label frame adds the inset, and `button/gap-inner` makes up the gap, where the code pads each side. Dev Mode shows the Figma layers' paddings; the `button/*` tokens are the reference.
 
 ## Trade-offs
 
-- **Five Figma-only variables**: `Spacing/gap/button-inner` in `Density` (`space/100` relaxed, `space/0` compact), and `button/gap-inner` and `button/<size>/label-inset` (`space/100` for sm, `space/200` for md and lg) in `Component`. They alias the scale, so no raw number is kept, but the relation is worked out by hand: a change to a button gap or padding means checking them, and `npm run check` can't see Figma.
-- **The relation holds only while the gap is at least the inset.** A smaller gap, or a larger difference between `padding/base` and `icon-side`, would need a negative gap-inner again: revisit this decision rather than add one.
-- **A wider gap for `md` and `lg`.** Products using those buttons with icons see 4px more between icon and label.
+- **Five Figma-only variables**: `Spacing/gap/button-inner` in `Density` (`space/100` relaxed, `space/0` compact), and `button/gap-inner` and `button/<size>/label-inset` (`space/100` at every size) in `Component`. They alias the scale, so no raw number is kept, but the relation is worked out by hand: a change to a button gap or padding means checking them, and `npm run check` can't see Figma.
+- **The relation holds only while the gap is at least the inset.** A smaller gap, or icon-side more than one 4px step below base, would need a negative gap-inner again: revisit this decision rather than add one.
+- **Large containers pad less.** `progress.md` already asked whether they need more than `padding/xl`; at 20px that question is closer, and the answer would be a new role token, not a larger `xl`.
 
 ## Implementation notes
 
-- `tokens/src/component/button.tokens.json`: `button/md/gap` and `button/lg/gap` alias `{gap.within.md}`. No build, lint, or docs change: the component token tables show the new values.
-- Figma (2026-10-12): the five variables above; `button/md/gap` and `button/lg/gap` alias `Spacing/gap/within/md`. In each of the 60 `Icon=None` variants, the label sits in a `label` frame bound to the size's `label-inset`, and the start and end icon layers, copied from the `Both` variant of the same Variant, Size, and State, show with the booleans; the button pads `padding/icon-side` and gaps `button/gap-inner`. The 15 instances using `Icon=Start` (the Preview, two sketches, a sandbox mock) moved to the booleans before the other 180 variants were deleted. The set's grid has a column per size; the Medium and Large tables show the new gap; Overview: Density 16, Component 40, 345 variables.
+- `tokens/src/semantic/spacing.relaxed.tokens.json`: `padding/xl` → `{space.500}`; `spacing.compact.tokens.json`: `{space.400}` (`pts/density-order`: the next smaller step). No component token changes: `button/md` and `lg` keep `padding/xl` and `padding/lg`, and their gap stays `gap/within/sm`.
+- Figma (2026-10-12): `Spacing/padding/xl` aliases `space/500` and `space/400`; the five variables above. In each of the 60 `Icon=None` variants, the label sits in a `label` frame bound to the size's `label-inset`, and the start and end icon layers, copied from the `Both` variant of the same Variant, Size, and State, show with the booleans; the button pads `padding/icon-side` and gaps `button/gap-inner`. The 15 instances using `Icon=Start` (the Preview, the owner's sketches, a sandbox mock) moved to the booleans before the other 180 variants were deleted. The set's grid has a column per size; the Spacing page's `padding/xl` row and the Medium and Large tables show 20 / 16; Overview: Density 16, Component 40, 345 variables.
+- `docs.css` lays out one docs block with `padding/xl`; it pads 4px less.
 - ADR 0032 is marked `amended by 0052`.
 
 ## Documented in
 
 - `.claude/skills/figma/SKILL.md` — Collections, Components
-- ADR 0032 — amended: the md and lg gap, and the `Icon` variant
+- ADR 0032 — amended: `padding/xl`'s value, and the `Icon` variant

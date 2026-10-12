@@ -59,12 +59,12 @@ Three sizes, one per `size/control/*` step, so a button sits in a row with an in
 | Size | Height (relaxed / compact) | Horizontal padding | Label | Icon | Icon–label gap |
 |---|---|---|---|---|---|
 | `sm` | `size/control/sm` (32 / 28) | `padding/md` (12 / 8) | `text/label-md` (14px) | `size/icon/sm` (16) | `gap/within/sm` (8 / 4) |
-| `md` | `size/control/md` (48 / 40) | `padding/xl` (24 / 20) | `text/label-md` (14px)\* | `size/icon/sm` (16)\* | `gap/within/sm` (8 / 4)† |
-| `lg` | `size/control/lg` (56 / 48) | `padding/xl` (24 / 20) | `text/label-lg` (16px, new) | `size/icon/md` (24) | `gap/within/sm` (8 / 4)† |
+| `md` | `size/control/md` (48 / 40) | `padding/xl` (24 / 20)† | `text/label-md` (14px)\* | `size/icon/sm` (16)\* | `gap/within/sm` (8 / 4) |
+| `lg` | `size/control/lg` (56 / 48) | `padding/xl` (24 / 20)† | `text/label-lg` (16px, new) | `size/icon/md` (24) | `gap/within/sm` (8 / 4) |
 
 \* *Amended by ADR 0033: md uses `text/label-lg` (16px) and `size/icon/md` (24), like lg, so md and lg differ by height only.*
 
-† *Amended by ADR 0052: md and lg use `gap/within/md` (12 / 8).*
+† *Amended by ADR 0052: `padding/xl` is 20 / 16, so the icon side, `padding/lg`, is one 4px step less, as at sm.*
 
 - **Height is fixed, not padded.** The button's height is the control height and the content is centered in it; there is no vertical padding. Text that wraps is not supported: a label stays on one line.
 - **Horizontal padding uses `padding/*` unchanged**, so `padding/*` needs no split. md and lg share `padding/xl`; lg is larger by height and label.
@@ -131,7 +131,7 @@ button/
 | `button/<size>/height` | `size/control/<size>` |
 | `button/sm/padding/base`, `icon-side` | `padding/md`, `padding/sm` |
 | `button/md/padding/base`, `icon-side` and `button/lg/…` | `padding/xl`, `padding/lg` |
-| `button/<size>/gap` | `gap/within/sm` (md and lg: `gap/within/md`, ADR 0052) |
+| `button/<size>/gap` | `gap/within/sm` |
 | `button/sm/icon`, `md/icon`, `lg/icon` | `size/icon/sm`, `sm`, `md` (md: `md`, ADR 0033) |
 | `button/sm/label`, `md/label`, `lg/label` | `text/label-md`, `label-md`, `label-lg` (md: `label-lg`, ADR 0033) |
 | `button/radius` | `radius/md` |
