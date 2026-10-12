@@ -15,7 +15,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## Next
 
-The monorepo comes first; no new components (ADR 0034). Decide the next step with the owner before starting. Left from the plan:
+The monorepo comes first. Decide the next step with the owner before starting; a second component is an open question below. Left from the plan:
 
 - **Next, chosen by the owner (2026-10-09; starts after this week): native platforms, Android first, then iOS**, through a custom Terrazzo plugin (ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver). The goal is an end-to-end demo: change a semantic color, release, and see a dummy app change in the Android emulator and then the iOS simulator. Android: Kotlin for Compose, not XML resources (owner, 2026-10-12): the resolver's permutations as Kotlin objects (`PtsColors.Light` / `Dark`), since resource qualifiers cover only night, not density or shape, and `Dp` / `TextStyle` / shapes can follow later; a dummy Compose app, published to `mavenLocal` first. First slice, no installs needed: the ADR, colors only into one `.kt` file, and an `npm test` check against the resolver. iOS: one `.xcassets` colorset per color holding light and dark. Needs an ADR. The owner's Mac has neither Android Studio nor Xcode (only `~/Library/Android/sdk` with the emulator, platform-tools, build-tools 35, and an android-35 image; no JDK, no `cmdline-tools`, no AVD, checked 2026-10-12). Running the app needs JDK 17+ and `cmdline-tools` (or Android Studio, which bundles both); ask before installing anything.
 - Figma sync stays manual (the `figma` skill).
@@ -31,4 +31,9 @@ Waiting for a reason, not scheduled:
 
 ## Open questions
 
-- None. (Raw values in JS, open since ADR 0030, ship with each product's JS: ADR 0047. A product-independent values file, every permutation in one, is left out until a consumer needs it.)
+- **A second component, and whether before or after Android** (owner, 2026-10-13: thinking it over). Components stay fixtures (ADR 0034): add one for what it tests, not to grow a library. A second one would also test ADR 0052's rule that Figma properties are what a designer chooses. Candidates:
+  - **Checkbox** (suggested first): the first component-specific state (`checked`, ADR 0018), so `pts/component-states` and `pts/component-pairs` meet checked × hover / pressed for the first time.
+  - **Input**: shares `size/control` and `radius/control` with the button and uses `border/focus`, testing that controls line up; brings form and ARIA work that isn't about tokens.
+  - **Card**: the first user of `radius/container`, `surface/subtle`, and `padding/xl`, checking the 20px `padding/xl` (ADR 0052) on a large container; the simplest.
+  - A Box or Stack would instead unlock the literal-typed `tokens.d.ts` (Waiting, above).
+- Settled: raw values in JS, open since ADR 0030, ship with each product's JS (ADR 0047); a product-independent values file, every permutation in one, is left out until a consumer needs it.
