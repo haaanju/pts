@@ -17,7 +17,7 @@ const ChevronDown = glyph("m6 9 6 6 6-6");
 const Close = glyph("M6 6l12 12M18 6 6 18");
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "ghost", "danger"];
-const SIZES: ButtonSize[] = ["sm", "md", "lg"];
+const SIZES: ButtonSize[] = ["sm", "md"];
 const label = (v: string) => v[0].toUpperCase() + v.slice(1);
 
 type Args = {

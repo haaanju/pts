@@ -44,6 +44,7 @@ The Figma MCP must be authenticated with the personal account that owns the `pts
 - Properties are what a designer chooses, as the code's attributes and slots are; what follows from a choice is built from layers and variables, never a variant (ADR 0052). Button: `Variant`, `Size`, `State` (Rest, Hover, Pressed, Disabled, Loading); `Start icon` and `End icon` booleans with their instance swaps (`↳ Start icon`, `↳ End icon`); `Focus` a boolean (the ring layer); `Label` a text property. Icon-only buttons are a separate set (`Button/Icon-button`), since a square can't come from a boolean.
 - The icon side pads one step less without a variant: the button pads `padding/icon-side`, a `label` frame around the text adds `button/<size>/label-inset` (`padding/base` − `icon-side`) on both sides, and the gap is `button/gap-inner` (the button's gap − the inset). Recompute `Spacing/gap/button-inner` and the insets when a button gap or padding changes; the gap must stay at least the inset (ADR 0052).
 - Build sets with a script, one variant per call (the bridge times out around 30 s), then combine.
+- Setting an instance-swap property through the plugin API re-swaps the nested instance and drops its overrides, such as an icon glyph's fill bound to the button's content color. After a script swaps icons, check that each instance's icon fills match its main component.
 
 ## Styles
 

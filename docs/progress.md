@@ -7,11 +7,11 @@ The handoff note between work sessions and machines. Read it before starting; up
 - Releases: Changesets and the Release workflow (ADR 0035); the latest version is in `packages/web/CHANGELOG.md` and the tags. CI and the pre-commit hook run check and typecheck.
 - Public repository (ADR 0043); docs on https://haaanju.github.io/pts/, deployed from `main` after CI passes (ADR 0020). `main` is not protected (ADR 0042): workspace changes go through a pull request so the changeset check runs. The Release workflow runs after CI passes on `main` (ADR 0041); `v0.9.5` was its first full run: release PR with `verify`, tag, GitHub Release.
 - Repository: recreated on 2026-10-03 with the commit author emails rewritten; the same files and tags, new commit hashes. The pull requests before that (#1–#29) are in the private `haaanju/pts-archive`.
-- Figma `pts` file: in line with the tokens through ADR 0052 (variables, styles, specimens, the Button page and component sets, the Icons page; Overview count 345 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
+- Figma `pts` file: in line with the tokens through ADR 0053 (variables, styles, specimens, the Button page and component sets, the Icons page; Overview count 339 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
 ## In flight
 
-- `feature/button-icon-booleans` (ADR 0052, PR #30): `padding/xl` 20 / 16, and the Figma Button set on icon booleans (60 variants). Figma is already done; the pull request lands the token change. Next, chosen by the owner: remove the `lg` button size (breaking), in its own pull request.
+- `feature/remove-lg-button` (ADR 0053): the `lg` button size removed (breaking). Figma is already done; the pull request lands the tokens and code.
 
 ## Next
 

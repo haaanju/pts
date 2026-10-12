@@ -128,7 +128,7 @@ import "@pts/components/button.js"; // defines <pts-button>
 <pts-button label="Close"><svg slot="start" aria-hidden="true">…</svg></pts-button>
 ```
 
-`variant` (`primary`, `secondary`, `ghost`, `danger`), `size` (`sm`, `md`, `lg`), `type`, `disabled`, `loading`, `full-width`, and `label` (the accessible name of an icon-only button). It follows `data-theme`, `data-density`, and `data-shape` like everything else. See the Button page in the docs and ADR 0032.
+`variant` (`primary`, `secondary`, `ghost`, `danger`), `size` (`sm`, `md`), `type`, `disabled`, `loading`, `full-width`, and `label` (the accessible name of an icon-only button). It follows `data-theme`, `data-density`, and `data-shape` like everything else. See the Button page in the docs and ADR 0032.
 
 ## Development
 

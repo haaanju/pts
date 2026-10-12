@@ -196,7 +196,7 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.md}"
       },
-      "$description": "Labels on default (md) and large controls, such as md and lg buttons."
+      "$description": "Labels on default (md) and large controls, such as md buttons."
     },
     "label-md": {
       "$type": "typography",
