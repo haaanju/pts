@@ -24,8 +24,6 @@ export class PtsButton extends LitElement {
     fullWidth: { type: Boolean, reflect: true, attribute: "full-width" },
     label: {},
     hasLabel: { state: true },
-    hasStart: { state: true },
-    hasEnd: { state: true },
   };
 
   /** primary: the main action, at most one per group; secondary (default): every other action; ghost: low emphasis; danger: destructive */
@@ -44,8 +42,6 @@ export class PtsButton extends LitElement {
   declare label: string | undefined;
 
   declare protected hasLabel: boolean;
-  declare protected hasStart: boolean;
-  declare protected hasEnd: boolean;
 
   readonly #internals = this.attachInternals();
   #warned = false;
@@ -59,8 +55,6 @@ export class PtsButton extends LitElement {
     this.loading = false;
     this.fullWidth = false;
     this.hasLabel = true;
-    this.hasStart = false;
-    this.hasEnd = false;
     // Registered first and in the capture phase, so it runs before any listener a page adds to <pts-button>.
     this.addEventListener("click", this.#blockInactive, { capture: true });
   }
@@ -88,15 +82,11 @@ export class PtsButton extends LitElement {
     else if (this.type === "reset") form.reset();
   }
 
-  /** Which slots have content. Runs after the first render too: an empty slot never fires slotchange. */
+  /** Whether the default slot has text. Runs after the first render too: an empty slot never fires slotchange. */
   #syncSlots = () => {
-    const assigned = (name?: string) =>
-      (this.renderRoot.querySelector<HTMLSlotElement>(name ? `slot[name="${name}"]` : "slot:not([name])")?.assignedNodes({ flatten: true }) ?? [])
-        .filter((node) => node.nodeType === Node.ELEMENT_NODE || (node.textContent ?? "").trim() !== "");
-    this.hasStart = assigned("start").length > 0;
-    this.hasEnd = assigned("end").length > 0;
+    const nodes = this.renderRoot.querySelector<HTMLSlotElement>("slot:not([name])")?.assignedNodes({ flatten: true }) ?? [];
     // Text makes a label; a button with only icons is icon-only (square, named by the label attribute)
-    this.hasLabel = assigned().some((node) => (node.textContent ?? "").trim() !== "");
+    this.hasLabel = nodes.some((node) => (node.textContent ?? "").trim() !== "");
   };
 
   protected override firstUpdated() {
@@ -111,19 +101,18 @@ export class PtsButton extends LitElement {
   }
 
   protected override render() {
-    const classes = [this.hasLabel ? "" : "icon-only", this.hasStart ? "has-start" : "", this.hasEnd ? "has-end" : ""].filter(Boolean).join(" ");
     return html`<button
       type="button"
-      class=${classes}
+      class=${this.hasLabel ? "" : "icon-only"}
       aria-label=${ifDefined(this.label)}
       aria-disabled=${this.disabled ? "true" : "false"}
       aria-busy=${this.loading ? "true" : "false"}
       @click=${this.#onClick}
     >
       <span class="content">
-        <slot name="start" @slotchange=${this.#syncSlots}></slot>
-        <slot @slotchange=${this.#syncSlots}></slot>
-        <slot name="end" @slotchange=${this.#syncSlots}></slot>
+        <slot name="start"></slot>
+        <span class="label"><slot @slotchange=${this.#syncSlots}></slot></span>
+        <slot name="end"></slot>
       </span>
       ${this.loading ? html`<svg class="spinner" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" pathLength="100" /></svg>` : null}
     </button>`;
@@ -204,8 +193,9 @@ export class PtsButton extends LitElement {
       justify-content: center;
       height: var(--_height);
       margin: 0;
-      /* the height comes from the control size; the label is centered, with no vertical padding */
-      padding: 0 var(--_padding);
+      /* the height comes from the control size; the label is centered, with no vertical padding.
+         The sides pad the icon-side step; the label adds the rest (ADR 0055) */
+      padding: 0 var(--_padding-icon);
       border: var(--button-border-width) solid var(--_border);
       border-radius: var(--button-radius);
       background: var(--_surface);
@@ -219,16 +209,12 @@ export class PtsButton extends LitElement {
       transition-duration: var(--motion-duration-fast);
       transition-timing-function: var(--motion-easing-standard);
     }
-    /* the icon side pads one padding step less, since an icon reads heavier than text */
-    button.has-start {
-      padding-inline-start: var(--_padding-icon);
-    }
-    button.has-end {
-      padding-inline-end: var(--_padding-icon);
-    }
     button.icon-only {
       width: var(--_height);
       padding: 0;
+    }
+    button.icon-only .label {
+      display: none;
     }
     :host(:not([disabled]):not([loading])) button:hover {
       background: var(--_surface-hover);
@@ -250,10 +236,18 @@ export class PtsButton extends LitElement {
       outline-offset: var(--focus-ring-offset);
     }
 
+    /* The layers of the Figma component (ADR 0055): the icon side pads one padding step less, since an icon reads
+       heavier than text, without knowing which side has an icon. The button pads padding/icon-side, the label adds
+       the difference on both sides, and the gap gives it back next to an icon. It needs gap >= the difference
+       (pts/icon-side-padding): a negative gap is invalid and would be dropped without a warning. */
     .content {
       display: inline-flex;
       align-items: center;
-      gap: var(--_gap);
+      gap: calc(var(--_gap) - (var(--_padding) - var(--_padding-icon)));
+    }
+    .label {
+      display: inline-flex;
+      padding-inline: calc(var(--_padding) - var(--_padding-icon));
     }
     /* loading keeps the content in place, transparent rather than hidden, so the width holds and it stays the accessible name */
     :host([loading]) .content {

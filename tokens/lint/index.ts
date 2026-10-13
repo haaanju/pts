@@ -7,6 +7,7 @@ import componentStates from "./rules/component-states.ts";
 import contrast from "./rules/contrast.ts";
 import densityOrder from "./rules/density-order.ts";
 import gapOrder from "./rules/gap-order.ts";
+import iconSidePadding from "./rules/icon-side-padding.ts";
 import lineHeightGrid from "./rules/line-height-grid.ts";
 import minFontSize from "./rules/min-font-size.ts";
 import orthogonalModifiers from "./rules/orthogonal-modifiers.ts";
@@ -34,6 +35,7 @@ export default function pts(): Plugin {
       "pts/tier-aliases": tierAliases,
       "pts/registered-files": registeredFiles,
       "pts/orthogonal-modifiers": orthogonalModifiers,
+      "pts/icon-side-padding": iconSidePadding,
     }),
   };
 }

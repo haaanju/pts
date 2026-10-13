@@ -187,6 +187,18 @@ const cases: Case[] = [
     expect: [["pts/component-states", "button.primary.surface.rest and button.primary.surface.hover resolve to the same value"]],
   },
 
+  // pts/icon-side-padding
+  {
+    name: "an icon side that pads more than the base side",
+    mutate: (c) => c.value(BUTTON, "button.sm.padding.icon-side", "{padding.lg}"),
+    expect: [["pts/icon-side-padding", "button.sm.padding.icon-side (16px) is larger than button.sm.padding.base (12px)"]],
+  },
+  {
+    name: "a gap smaller than the difference between the sides",
+    mutate: (c) => c.value(BUTTON, "button.md.padding.icon-side", "{padding.sm}"),
+    expect: [["pts/icon-side-padding", "button.md.gap (8px) is smaller than padding.base - padding.icon-side (12px)"]],
+  },
+
   // pts/visible-steps
   {
     name: "two surface steps with the same color",

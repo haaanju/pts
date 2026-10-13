@@ -16,6 +16,7 @@ Fixtures for the component tier, not a published library (ADR 0034): a component
 - **No `::part()`** until a real need appears: page CSS can't change a component outside its spec.
 - **Attributes take named values, not tokens** (`variant`, `size`). Reactive properties use `static properties` with `declare`d fields, so there are no decorators and no build step beyond `tsc`.
 - **Disabled stays focusable** (`aria-disabled`, clicks stopped at the host); a loading state keeps the element's width.
+- **The layers match the Figma component** (ADR 0055): a value Figma builds from layers is built the same way here, with `calc()` from the component's tokens where no token holds it, so Dev Mode and the code agree.
 
 ## Build and types
 
