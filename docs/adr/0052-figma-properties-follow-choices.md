@@ -1,6 +1,6 @@
 # 0052. Figma Properties Follow the Designer's Choices
 
-- Status: accepted
+- Status: accepted (amended by 0055)
 - Date: 2026-10-12
 
 ## What we learned

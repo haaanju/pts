@@ -52,6 +52,7 @@ export default defineConfig({
       "pts/type-scale": ["error", { order: ["xs", "sm", "md", "lg", "xl"], contrastZones: ["display"], minRatio: 1.5 }],
       "pts/line-height-grid": ["error", { gridPx: 4 }],
       "pts/color-hex": "error",
+      "pts/icon-side-padding": "error", // the button and its Figma set share one structure (ADR 0055)
       "pts/tier-aliases": [
         "error",
         {
