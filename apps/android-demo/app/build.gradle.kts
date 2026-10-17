@@ -8,6 +8,17 @@ plugins {
 // The library at the version this checkout releases (ADR 0058): publish it to mavenLocal first
 val ptsVersion = (JsonSlurper().parse(file("../../../packages/android/package.json")) as Map<*, *>)["version"] as String
 
+// What's new on the Home screen (ADR 0061): this version's entries in the shared changelog, so they never go stale,
+// and the date of its tag, when the tag is here (CI's shallow checkout has none)
+val changelog = file("../../../packages/web/CHANGELOG.md").readText()
+val releaseNotes = Regex("""(?ms)^## ${Regex.escape(ptsVersion)}\s*$(.*?)(?=^## |\z)""").find(changelog)?.groupValues?.get(1).orEmpty()
+    .lines().filter { it.startsWith("- ") }.map { it.removePrefix("- ") }
+val releaseDate = providers.exec {
+    commandLine("git", "log", "-1", "--format=%cs", "v$ptsVersion")
+    isIgnoreExitValue = true
+}.standardOutput.asText.get().trim()
+fun javaString(s: String) = "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
+
 android {
     namespace = "io.github.haaanju.pts.demo"
     compileSdk = 37
@@ -19,6 +30,8 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "PTS_VERSION", "\"$ptsVersion\"")
+        buildConfigField("String[]", "RELEASE_NOTES", releaseNotes.joinToString(", ", "new String[]{", "}") { javaString(it) })
+        buildConfigField("String", "RELEASE_DATE", if (releaseDate.isEmpty()) "null" else javaString(releaseDate))
     }
 
     buildFeatures {

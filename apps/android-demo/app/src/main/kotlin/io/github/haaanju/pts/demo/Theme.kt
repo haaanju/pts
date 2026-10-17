@@ -95,19 +95,23 @@ fun colorScheme(c: PtsColors, dark: Boolean): ColorScheme {
     )
 }
 
-/** Material's type scale from the text styles. Material has 15 slots and Plain 13 styles, so some share one. */
+/**
+ * Material's type scale from the text styles. Material has 15 slots and Plain 13 styles, so some share one. Page titles
+ * (headlineMedium, a large top app bar) take heading-lg, as the docs' page titles do. A list item's headline and
+ * supporting text (bodyLarge, bodyMedium) share body-md: stacked levels are the same size or 1.5x apart (ADR 0023).
+ */
 fun typography(t: PtsTypography) = Typography(
     displayLarge = t.displayLg,
     displayMedium = t.displayMd,
     displaySmall = t.headingLg,
     headlineLarge = t.headingLg,
-    headlineMedium = t.headingMd,
+    headlineMedium = t.headingLg,
     headlineSmall = t.headingSm,
     titleLarge = t.headingSm,
     titleMedium = t.labelLg,
     titleSmall = t.labelMd,
     bodyLarge = t.bodyMd,
-    bodyMedium = t.bodySm,
+    bodyMedium = t.bodyMd,
     bodySmall = t.caption,
     labelLarge = t.labelLg,
     labelMedium = t.labelMd,

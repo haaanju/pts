@@ -14,7 +14,9 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
@@ -22,7 +24,8 @@ import androidx.compose.ui.Modifier
 @Composable
 fun SettingsScreen(modes: Modes, onModes: (Modes) -> Unit) {
     val p = LocalPlain.current
-    Scaffold(topBar = { TopAppBar(title = { Text("Settings") }) }) { padding ->
+    val bar = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    Scaffold(Modifier.nestedScroll(bar.nestedScrollConnection), topBar = { LargeTopAppBar(title = { Text("Settings") }, scrollBehavior = bar) }) { padding ->
         LazyColumn(contentPadding = padding) {
             item { SectionTitle("Appearance", Modifier.padding(top = p.spacing.gapWithinMd, bottom = p.spacing.gapWithinSm)) }
             item {

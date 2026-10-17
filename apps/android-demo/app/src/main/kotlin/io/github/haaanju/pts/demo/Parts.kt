@@ -51,7 +51,7 @@ fun BottomSpace() = Spacer(Modifier.height(LocalPlain.current.spacing.gapSection
 @Composable
 fun SectionTitle(text: String, modifier: Modifier = Modifier) {
     val p = LocalPlain.current
-    Text(text, modifier.padding(horizontal = p.spacing.paddingLg), style = p.type.headingSm, color = p.colors.contentBase)
+    Text(text, modifier.padding(horizontal = p.spacing.paddingLg), style = p.type.headingMd, color = p.colors.contentBase)
 }
 
 enum class Status(val label: String) { Overdue("Overdue"), DueSoon("Due soon"), InReview("In review"), Done("Done"), New("New") }
