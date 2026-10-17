@@ -3,6 +3,7 @@ package io.github.haaanju.pts.demo
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -41,6 +42,10 @@ fun ModeBar(modes: Modes, onModes: (Modes) -> Unit) {
         FilterChip(modes.round, { onModes(modes.copy(round = !modes.round)) }, { Text("Round") })
     }
 }
+
+/** The end of a scrolling screen: room before the navigation bar, so the last element doesn't sit on it */
+@Composable
+fun BottomSpace() = Spacer(Modifier.height(LocalPlain.current.spacing.gapSectionMd))
 
 /** A section title on a screen */
 @Composable

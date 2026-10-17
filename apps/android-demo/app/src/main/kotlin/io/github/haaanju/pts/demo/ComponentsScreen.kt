@@ -69,7 +69,7 @@ fun ComponentsScreen(modes: Modes, onModes: (Modes) -> Unit) {
     val scope = rememberCoroutineScope()
     var dialog by remember { mutableStateOf(false) }
     Scaffold(topBar = { TopAppBar(title = { Text("Components") }) }, snackbarHost = { SnackbarHost(snackbar) }) { padding ->
-        LazyColumn(contentPadding = padding, verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinLg)) {
+        LazyColumn(contentPadding = padding, verticalArrangement = Arrangement.spacedBy(p.spacing.gapBetweenMd)) {
             item { ModeBar(modes, onModes) }
             item {
                 Group("Buttons") {
@@ -131,7 +131,7 @@ fun ComponentsScreen(modes: Modes, onModes: (Modes) -> Unit) {
             item {
                 var value by remember { mutableFloatStateOf(0.4f) }
                 var text by remember { mutableStateOf("Checkout redesign") }
-                Column(Modifier.padding(horizontal = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
+                Column(Modifier.padding(horizontal = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd)) {
                     Text("Inputs", style = p.type.headingSm, color = p.colors.contentBase)
                     OutlinedTextField(text, { text = it }, Modifier.fillMaxWidth(), label = { Text("Project name") }, supportingText = { Text("Shown on the board and in search") })
                     Slider(value, { value = it })
@@ -144,7 +144,7 @@ fun ComponentsScreen(modes: Modes, onModes: (Modes) -> Unit) {
                 }
             }
             item {
-                Column(Modifier.padding(horizontal = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
+                Column(Modifier.padding(horizontal = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd)) {
                     Text("Cards", style = p.type.headingSm, color = p.colors.contentBase)
                     Card(Modifier.fillMaxWidth()) { CardText("Card", "surface/subtle, radius/container") }
                     OutlinedCard(Modifier.fillMaxWidth()) { CardText("Outlined card", "background with border/subtle") }
@@ -157,6 +157,7 @@ fun ComponentsScreen(modes: Modes, onModes: (Modes) -> Unit) {
                     OutlinedButton({ scope.launch { snackbar.showSnackbar("Project archived", "Undo") } }, Modifier.control(), shape = controlShape(), contentPadding = controlPadding()) { Text("Show snackbar") }
                 }
             }
+            item { BottomSpace() }
         }
     }
     if (dialog) {
@@ -174,12 +175,12 @@ fun ComponentsScreen(modes: Modes, onModes: (Modes) -> Unit) {
 @Composable
 private fun Group(title: String, content: @Composable () -> Unit) {
     val p = LocalPlain.current
-    Column(verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
+    Column(verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd)) {
         SectionTitle(title)
         FlowRow(
             Modifier.padding(horizontal = p.spacing.paddingLg),
-            horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm),
-            verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm),
+            horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd),
+            verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd),
             itemVerticalAlignment = Alignment.CenterVertically,
         ) { content() }
     }
@@ -188,8 +189,9 @@ private fun Group(title: String, content: @Composable () -> Unit) {
 @Composable
 private fun CardText(title: String, detail: String) {
     val p = LocalPlain.current
-    Column(Modifier.padding(p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinXs)) {
-        Text(title, style = p.type.labelLg)
-        Text(detail, style = p.type.bodySm)
+    Column(Modifier.padding(p.spacing.paddingXl), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
+        // Explicit colors: surface/subtle is also surfaceVariant, so Material would pick onSurfaceVariant for the title
+        Text(title, style = p.type.labelLg, color = p.colors.contentBase)
+        Text(detail, style = p.type.bodySm, color = p.colors.contentSubtle)
     }
 }

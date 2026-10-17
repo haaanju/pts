@@ -17,8 +17,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class Destination(val label: String, val icon: ImageVector) {
     Home("Home", Icons.Filled.Home),
-    Components("Components", Icons.Filled.Build),
     Tokens("Tokens", Icons.AutoMirrored.Filled.List),
+    Components("Components", Icons.Filled.Build),
     Settings("Settings", Icons.Filled.Settings),
 }
 

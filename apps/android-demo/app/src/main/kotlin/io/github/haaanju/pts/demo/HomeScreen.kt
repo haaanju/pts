@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
@@ -25,7 +23,6 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -72,23 +69,13 @@ fun HomeScreen() {
                 scrollBehavior = scroll,
             )
         },
-        floatingActionButton = {
-            // The main action: Plain's inverse fill, not Material's primaryContainer
-            ExtendedFloatingActionButton(
-                onClick = {},
-                icon = { Icon(Icons.Filled.Add, null) },
-                text = { Text("New project") },
-                containerColor = p.colors.inverseBase,
-                contentColor = p.colors.contentInverseBase,
-            )
-        },
     ) { padding ->
         LazyColumn(
             contentPadding = padding,
-            verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd),
+            verticalArrangement = Arrangement.spacedBy(p.spacing.gapBetweenSm),
         ) {
             item {
-                Column(Modifier.padding(horizontal = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinXs)) {
+                Column(Modifier.padding(horizontal = p.spacing.paddingLg, vertical = p.spacing.gapWithinSm), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
                     Text("Good morning", style = p.type.headingMd, color = p.colors.contentBase)
                     Text("7 projects, 2 need your attention today.", style = p.type.bodyMd, color = p.colors.contentSubtle)
                 }
@@ -96,7 +83,7 @@ fun HomeScreen() {
             item { Banner() }
             item { Summary() }
             item {
-                Row(Modifier.fillMaxWidth().padding(top = p.spacing.gapWithinSm), verticalAlignment = Alignment.CenterVertically) {
+                Row(Modifier.fillMaxWidth().padding(top = p.spacing.gapWithinLg), verticalAlignment = Alignment.CenterVertically) {
                     SectionTitle("Recent", Modifier.weight(1f))
                     TextButton({}, Modifier.padding(end = p.spacing.paddingSm)) { Text("See all") }
                 }
@@ -110,7 +97,7 @@ fun HomeScreen() {
                 )
                 HorizontalDivider(Modifier.padding(start = p.spacing.paddingLg))
             }
-            item { Spacer(Modifier.height(p.spacing.gapSectionLg)) } // room above the floating button
+            item { BottomSpace() }
         }
     }
 }
@@ -118,7 +105,7 @@ fun HomeScreen() {
 @Composable
 private fun Initials(name: String) {
     val p = LocalPlain.current
-    Box(Modifier.size(p.spacing.sizeControlSm + p.spacing.space200).background(p.colors.surfaceStrong, CircleShape), contentAlignment = Alignment.Center) {
+    Box(Modifier.size(p.spacing.sizeControlMd).background(p.colors.surfaceStrong, CircleShape), contentAlignment = Alignment.Center) {
         Text(name.split(" ").take(2).joinToString("") { it.take(1).uppercase() }, style = p.type.labelMd, color = p.colors.contentBase)
     }
 }
@@ -132,11 +119,11 @@ private fun Banner() {
             .padding(horizontal = p.spacing.paddingLg)
             .fillMaxWidth()
             .background(p.colors.intentInfoSurfaceSubtle, RoundedCornerShape(p.border.radiusContainer))
-            .padding(p.spacing.paddingMd),
-        horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm),
+            .padding(p.spacing.paddingLg),
+        horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd),
     ) {
         Icon(Icons.Filled.Info, null, tint = p.colors.intentInfoContentBase)
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinXs)) {
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
             Text("Tokens 0.10 are out", style = p.type.labelLg, color = p.colors.intentInfoContentBase)
             Text("Spacing, corners, and type now reach Android too.", style = p.type.bodySm, color = p.colors.intentInfoContentBase)
         }
@@ -148,9 +135,9 @@ private fun Banner() {
 private fun Summary() {
     val p = LocalPlain.current
     Card(Modifier.padding(horizontal = p.spacing.paddingLg).fillMaxWidth()) {
-        Row(Modifier.padding(p.spacing.paddingLg), horizontalArrangement = Arrangement.spacedBy(p.spacing.gapBetweenSm)) {
+        Row(Modifier.padding(p.spacing.paddingXl), horizontalArrangement = Arrangement.spacedBy(p.spacing.gapBetweenSm)) {
             listOf("Open" to "12", "Due soon" to "03", "Done" to "28").forEach { (label, value) ->
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinXs)) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
                     Text(value, style = p.type.headingMd.copy(fontFamily = PtsFonts.mono), color = p.colors.contentBase)
                     Text(label, style = p.type.bodySm, color = p.colors.contentSubtle)
                 }
