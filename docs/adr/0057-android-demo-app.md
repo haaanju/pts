@@ -1,6 +1,6 @@
 # 0057. Android Demo App
 
-- Status: accepted (amended by 0058)
+- Status: accepted (amended by 0058, 0060)
 - Date: 2026-10-17
 
 ## Decision

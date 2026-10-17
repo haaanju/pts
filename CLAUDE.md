@@ -46,11 +46,13 @@ tokens/                     @pts/tokens (private)
   src/semantic/<category>[.<context>].tokens.json
   src/component/<component>.tokens.json
 packages/web/               @pts/web: dist/ tokens.css, tokens.js + .d.ts, tokens.scss, products/ (ADR 0047); fonts/
-packages/android/           @pts/android: dist/Pts{Colors,Spacing,Border,Typography,Fonts}.kt and res/font/ for Jetpack Compose,
-                            from plugin-compose.ts and build-fonts.ts (ADR 0056, 0059); also a Gradle
+packages/android/           @pts/android: dist/kotlin/Pts{Colors,Spacing,Border,Typography,Fonts}.kt and dist/res/font/ for
+                            Jetpack Compose, from plugin-compose.ts and build-fonts.ts (ADR 0056, 0059); dist/catalog/ for the
+                            demo (ADR 0060); also a Gradle
                             library, io.github.haaanju.pts:pts-android, published to mavenLocal (ADR 0058)
 apps/components/            @pts/components: Lit web components testing the component tier, src/ → dist/ (<pts-button>)
-apps/android-demo/          a Compose app (Gradle, not an npm workspace) that depends on pts-android and shows it (ADR 0057)
+apps/android-demo/          a Compose app (Gradle, not an npm workspace): Material 3 themed from pts-android, with Home, Components,
+                            Tokens, and Settings tabs (ADR 0057, 0060)
 apps/storybook/             @pts/storybook: token docs
 docs/progress.md, docs/adr/
 .claude/                    settings.json (SessionStart hooks), rules/, skills/

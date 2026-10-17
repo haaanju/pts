@@ -3,8 +3,10 @@
 // for each context of a modifier and writes one Kotlin value per context, one class per modifier:
 //   class PtsColors(val background: Color, ...)        PtsColors.Light, PtsColors.Dark
 //   class PtsSpacing(val paddingMd: Dp, ...)           PtsSpacing.Relaxed, PtsSpacing.Compact
-// plus PtsFonts, the bundled font families the typography refers to. Kotlin names are the token path in lower camel
-// case (content.inverse.base -> contentInverseBase), without a prefix the class drops (text.body-md -> bodyMd).
+// plus PtsFonts, the bundled font families the typography refers to, all in kotlin/ (the library's sources). Kotlin
+// names are the token path in lower camel case (content.inverse.base -> contentInverseBase), without a prefix the
+// class drops (text.body-md -> bodyMd). With a catalog option it also writes catalog/PtsCatalog.kt: each token's path,
+// description, and alias per context, for the demo app's token pages (ADR 0060); the library doesn't ship it.
 import type { Plugin } from "@terrazzo/parser";
 import type { Family } from "./fonts.ts";
 
@@ -27,7 +29,7 @@ export type Group = {
   doc: string;
 };
 
-type Options = { packageName: string; groups: Group[]; families: Family[] };
+type Options = { packageName: string; groups: Group[]; families: Family[]; catalog?: { packageName: string } };
 
 export const kotlinName = (id: string, dropPrefix = "") =>
   (dropPrefix && id.startsWith(dropPrefix) ? id.slice(dropPrefix.length) : id)
@@ -85,7 +87,11 @@ const types: Record<Kind, { type: string; imports: string[] }> = {
   },
 };
 
-export default function compose({ packageName, groups, families }: Options): Plugin {
+// A Kotlin string literal: JSON's escapes, plus $, which Kotlin reads as a template
+const str = (s: string) => JSON.stringify(s).replaceAll("$", "\\$");
+const slashes = (id: string) => id.replaceAll(".", "/");
+
+export default function compose({ packageName, groups, families, catalog }: Options): Plugin {
   return {
     name: "pts-compose",
     async build({ resolver, outputFile }) {
@@ -107,7 +113,7 @@ export default function compose({ packageName, groups, families }: Options): Plu
           })
           .join("\n\n");
         outputFile(
-          group.filename,
+          `kotlin/${group.filename}`,
           `${HEADER}
 
 package ${packageName}
@@ -138,7 +144,7 @@ ${values}
           )
           .join("\n");
       outputFile(
-        "PtsFonts.kt",
+        "kotlin/PtsFonts.kt",
         `${HEADER}
 
 package ${packageName}
@@ -151,6 +157,54 @@ import androidx.compose.ui.text.font.FontWeight
 /** The font families of Plain, bundled with the library (OFL; dist/licenses). PtsTypography uses them. */
 object PtsFonts {
 ${families.map((f) => `    /** ${f.family}${f.variable ? ", one variable font" : ""}. */\n    val ${f.property} = FontFamily(\n${fontEntries(f)}\n    )`).join("\n\n")}
+}
+`,
+      );
+
+      if (!catalog) return;
+      // PtsCatalog: per group, each token's path, description, its alias in every context (the first token it
+      // points to, e.g. color/neutral/950), and a getter from the class, for pages that list tokens like the docs
+      const lists = groups.map((group) => {
+        const contexts = Object.keys(resolver.source.modifiers?.[group.modifier]?.contexts ?? {});
+        const sets = contexts.map((context) => resolver.apply({ [group.modifier]: context }));
+        const { type } = types[group.kind];
+        const entries = group.include
+          .map((id) => {
+            const aliases = sets.map((tokens) => {
+              const alias = tokens[id]?.aliasChain?.[0];
+              return str(alias ? slashes(alias) : "");
+            });
+            return `            Entry(${str(slashes(id))}, ${str(sets[0][id]?.$description ?? "")}, listOf(${aliases.join(", ")})) { it.${kotlinName(id, group.dropPrefix)} },`;
+          })
+          .join("\n");
+        const name = group.className.replace(/^Pts/, "").replace(/^./, (c) => c.toLowerCase());
+        return `    /** ${group.className}, by ${group.modifier}: ${contexts.join(", ")} */
+    val ${name} = Group(
+        ${str(group.modifier)},
+        listOf(${contexts.map((c) => `${str(c)} to ${group.className}.${pascal(c)}`).join(", ")}),
+        listOf<Entry<${group.className}, ${type}>>(
+${entries}
+        ),
+    )`;
+      });
+      const imports = [...new Set(groups.flatMap((g) => types[g.kind].imports.filter((i) => !i.endsWith(".dp") && !i.endsWith(".sp") && !i.endsWith("FontWeight"))))];
+      outputFile(
+        "catalog/PtsCatalog.kt",
+        `${HEADER}
+
+package ${catalog.packageName}
+
+${[...imports, ...groups.map((g) => `${packageName}.${g.className}`)].sort().map((i) => `import ${i}`).join("\n")}
+
+/** Every token the classes hold, with what the docs show next to it: its path, description, and alias. For the demo app. */
+object PtsCatalog {
+    /** A token: its path (content/inverse/base), description, alias in each context, and its value in a set */
+    class Entry<S, V>(val path: String, val description: String, val aliases: List<String>, val get: (S) -> V)
+
+    /** A class's contexts, in order, and its tokens */
+    class Group<S, V>(val modifier: String, val contexts: List<Pair<String, S>>, val entries: List<Entry<S, V>>)
+
+${lists.join("\n\n")}
 }
 `,
       );
