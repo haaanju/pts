@@ -46,9 +46,10 @@ tokens/                     @pts/tokens (private)
   src/semantic/<category>[.<context>].tokens.json
   src/component/<component>.tokens.json
 packages/web/               @pts/web: dist/ tokens.css, tokens.js + .d.ts, tokens.scss, products/ (ADR 0047); fonts/
-packages/android/           @pts/android: dist/PtsColors.kt for Jetpack Compose, from plugin-compose.ts (ADR 0056)
+packages/android/           @pts/android: dist/PtsColors.kt for Jetpack Compose, from plugin-compose.ts (ADR 0056); also a Gradle
+                            library, io.github.haaanju.pts:pts-android, published to mavenLocal (ADR 0058)
 apps/components/            @pts/components: Lit web components testing the component tier, src/ → dist/ (<pts-button>)
-apps/android-demo/          a Compose app (Gradle, not an npm workspace) that compiles PtsColors.kt and shows it (ADR 0057)
+apps/android-demo/          a Compose app (Gradle, not an npm workspace) that depends on pts-android and shows it (ADR 0057)
 apps/storybook/             @pts/storybook: token docs
 docs/progress.md, docs/adr/
 .claude/                    settings.json (SessionStart hooks), rules/, skills/
@@ -72,7 +73,7 @@ docs/progress.md, docs/adr/
 - `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/android` → `packages/android/dist/`, `@pts/components` → `apps/components/dist/`).
 - `npm run storybook`: docs dev server (http://localhost:6006), builds `@pts/web` and `@pts/components` first. `npm run build-storybook`: static build.
 - `npm run test-a11y`: builds Storybook, then checks every docs page and story with axe-core (WCAG 2.2 A and AA) in light and dark (ADR 0036). Needs Playwright's Chromium once: `npx playwright install chromium`.
-- The pre-commit hook runs check and typecheck and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus `npm test`, both builds, and `test-a11y` on pushes to `main` and on pull requests, and deploys the docs to GitHub Pages on pushes to `main`.
+- The pre-commit hook runs check and typecheck and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus `npm test`, both builds, and `test-a11y` on pushes to `main` and on pull requests, and in a second job publishes `pts-android` to the runner's `mavenLocal` and builds the demo app against it, so the Kotlin compiles (ADR 0058); and deploys the docs to GitHub Pages on pushes to `main`.
 
 ## Output (`@pts/web`)
 
