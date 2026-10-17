@@ -2,6 +2,15 @@
 
 The changelog of every `@pts/*` package, which share one version (ADR 0014). Entries from 0.9.4 on come from changesets (ADR 0035); earlier ones are the release tag messages.
 
+## 0.10.1
+
+### Patch Changes
+
+- New: `@pts/android`, the Android output: `PtsColors.kt` for Jetpack Compose, with every semantic color and one value per theme (`PtsColors.Light`, `PtsColors.Dark`). Not published yet; a Compose demo app comes next (ADR 0056).
+- Fix: `PtsColors.kt` compiles. A description with `/*` (such as `content/inverse/*`) opened a nested comment inside its KDoc; the Compose plugin now escapes comment markers (ADR 0057).
+- New: `@pts/android` is also an Android library, `io.github.haaanju.pts:pts-android`, published to `mavenLocal` at the shared version; the demo app depends on it, and CI compiles both (ADR 0058).
+- New: `@pts/android` writes `PtsSpacing` (density), `PtsBorder` (shape), and `PtsTypography` (viewport) next to `PtsColors`, and bundles Aspekta and IBM Plex as `PtsFonts`. The library's `minSdk` is now 26 (ADR 0059).
+
 ## 0.10.0
 
 ### Minor Changes
