@@ -1,6 +1,6 @@
 # 0056. Android Colors for Compose
 
-- Status: accepted
+- Status: accepted (amended by 0059)
 - Date: 2026-10-17
 
 ## Decision

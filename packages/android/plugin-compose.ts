@@ -1,40 +1,73 @@
-// A Terrazzo plugin that writes Kotlin for Jetpack Compose (ADR 0056). Terrazzo has no Android plugin, and
+// A Terrazzo plugin that writes Kotlin for Jetpack Compose (ADR 0056, 0059). Terrazzo has no Android plugin, and
 // @terrazzo/plugin-swift reads dark from $extensions.mode, not the resolver (ADR 0022), so this one asks the resolver
-// for each context of a modifier and writes one Kotlin value per context:
-//   class PtsColors(val background: Color, ...)  with  PtsColors.Light, PtsColors.Dark
-// Colors only so far. Kotlin names are the token path in lower camel case (content.inverse.base -> contentInverseBase).
+// for each context of a modifier and writes one Kotlin value per context, one class per modifier:
+//   class PtsColors(val background: Color, ...)        PtsColors.Light, PtsColors.Dark
+//   class PtsSpacing(val paddingMd: Dp, ...)           PtsSpacing.Relaxed, PtsSpacing.Compact
+// plus PtsFonts, the bundled font families the typography refers to. Kotlin names are the token path in lower camel
+// case (content.inverse.base -> contentInverseBase), without a prefix the class drops (text.body-md -> bodyMd).
 import type { Plugin } from "@terrazzo/parser";
+import type { Family } from "./fonts.ts";
 
-type Options = {
-  /** the file written to outDir */
+type Kind = "color" | "dp" | "textStyle";
+
+export type Group = {
+  /** the file written to outDir, e.g. "PtsColors.kt" */
   filename: string;
-  /** the Kotlin package */
-  packageName: string;
   /** the class; its companion object holds one value per context of the modifier */
   className: string;
-  /** the color tokens to write, in this order */
+  /** the token ids to write, in this order */
   include: string[];
   /** the modifier whose contexts become the values, e.g. "theme" */
   modifier: string;
+  /** how a value is written: Color, Dp, or TextStyle */
+  kind: Kind;
+  /** a path prefix the property names drop, e.g. "text." */
+  dropPrefix?: string;
+  /** the class's KDoc */
+  doc: string;
 };
 
-type SrgbColor = { colorSpace: string; components: number[]; alpha?: number };
+type Options = { packageName: string; groups: Group[]; families: Family[] };
 
-export const kotlinName = (id: string) =>
-  id
+export const kotlinName = (id: string, dropPrefix = "") =>
+  (dropPrefix && id.startsWith(dropPrefix) ? id.slice(dropPrefix.length) : id)
     .split(/[.-]/)
     .map((part, i) => (i === 0 ? part : part[0].toUpperCase() + part.slice(1)))
     .join("");
 
 const pascal = (s: string) => s[0].toUpperCase() + s.slice(1);
 const byte = (x: number) => Math.round(Math.min(1, Math.max(0, x)) * 255).toString(16).padStart(2, "0").toUpperCase();
+// a Kotlin number: 16, 0.5, (-1.25) (a negative literal needs parentheses before .sp)
+const num = (n: number) => {
+  const s = String(Math.round(n * 1000) / 1000);
+  return n < 0 ? `(${s})` : s;
+};
+const px = (value: unknown, id: string) => {
+  const v = value as { value?: number; unit?: string };
+  if (typeof v?.value !== "number" || v.unit !== "px") throw new Error(`${id} is not a px dimension`);
+  return v.value;
+};
 
 /** Compose's Color(0xAARRGGBB) for an srgb DTCG color */
 export const kotlinColor = (value: unknown, id: string) => {
-  const c = value as SrgbColor;
+  const c = value as { colorSpace: string; components: number[]; alpha?: number };
   if (c?.colorSpace !== "srgb") throw new Error(`${id} is not an srgb color, so it has no Color(0xAARRGGBB)`);
   const [r, g, b] = c.components;
   return `Color(0x${byte(c.alpha ?? 1)}${byte(r)}${byte(g)}${byte(b)})`;
+};
+
+/** A dimension in dp: a px token is one dp, the unit Android scales by screen density */
+export const kotlinDp = (value: unknown, id: string) => `${num(px(value, id))}.dp`;
+
+/** A typography composite as a TextStyle. Font sizes and letter spacing are sp, so they follow the user's text size;
+ * the line height is the font size times the token's ratio (ADR 0028), also in sp. */
+export const kotlinTextStyle = (value: unknown, id: string, families: Family[]) => {
+  const t = value as { fontFamily: string[] | string; fontSize: unknown; fontWeight: number; letterSpacing: unknown; lineHeight: number };
+  const name = Array.isArray(t.fontFamily) ? t.fontFamily[0] : t.fontFamily;
+  const family = families.find((f) => f.family === name);
+  if (!family) throw new Error(`${id} uses ${name}, which fonts.ts doesn't bundle`);
+  const size = px(t.fontSize, `${id} fontSize`);
+  return `TextStyle(fontFamily = PtsFonts.${family.property}, fontWeight = FontWeight(${t.fontWeight}), fontSize = ${num(size)}.sp, lineHeight = ${num(size * t.lineHeight)}.sp, letterSpacing = ${num(px(t.letterSpacing, `${id} letterSpacing`))}.sp)`;
 };
 
 // Kotlin nests block comments, so a "/*" in a description (content/inverse/*) would open a comment inside the KDoc
@@ -42,33 +75,47 @@ export const kotlinColor = (value: unknown, id: string) => {
 export const kdocText = (text: string) => text.replaceAll("/*", "/&#42;").replaceAll("*/", "&#42;/");
 const kdoc = (text: string | undefined, indent: string) => (text ? `${indent}/** ${kdocText(text)} */\n` : "");
 
-export default function compose({ filename, packageName, className, include, modifier }: Options): Plugin {
+const HEADER = "// Autogenerated from @pts/tokens by packages/android/plugin-compose.ts. Do not edit.";
+const types: Record<Kind, { type: string; imports: string[] }> = {
+  color: { type: "Color", imports: ["androidx.compose.ui.graphics.Color"] },
+  dp: { type: "Dp", imports: ["androidx.compose.ui.unit.Dp", "androidx.compose.ui.unit.dp"] },
+  textStyle: {
+    type: "TextStyle",
+    imports: ["androidx.compose.ui.text.TextStyle", "androidx.compose.ui.text.font.FontWeight", "androidx.compose.ui.unit.sp"],
+  },
+};
+
+export default function compose({ packageName, groups, families }: Options): Plugin {
   return {
     name: "pts-compose",
     async build({ resolver, outputFile }) {
-      const contexts = Object.keys(resolver.source.modifiers?.[modifier]?.contexts ?? {});
-      if (contexts.length === 0) throw new Error(`the resolver has no "${modifier}" modifier`);
-      const sets = contexts.map((context) => ({ context, tokens: resolver.apply({ [modifier]: context }) }));
-      const first = sets[0].tokens;
-      const params = include
-        .map((id) => `${kdoc(first[id]?.$description, "    ")}    val ${kotlinName(id)}: Color,`)
-        .join("\n");
-      const values = sets
-        .map(({ context, tokens }) => {
-          const args = include.map((id) => `            ${kotlinName(id)} = ${kotlinColor(tokens[id]?.$value, id)},`).join("\n");
-          return `        /** Every color in the ${context} ${modifier}. */\n        val ${pascal(context)} = ${className}(\n${args}\n        )`;
-        })
-        .join("\n\n");
-      outputFile(
-        filename,
-        `// Autogenerated from @pts/tokens by packages/android/plugin-compose.ts. Do not edit.
+      for (const group of groups) {
+        const { className, modifier, include, kind, dropPrefix, doc } = group;
+        const contexts = Object.keys(resolver.source.modifiers?.[modifier]?.contexts ?? {});
+        if (contexts.length === 0) throw new Error(`the resolver has no "${modifier}" modifier`);
+        const sets = contexts.map((context) => ({ context, tokens: resolver.apply({ [modifier]: context }) }));
+        const write = (value: unknown, id: string) =>
+          kind === "color" ? kotlinColor(value, id) : kind === "dp" ? kotlinDp(value, id) : kotlinTextStyle(value, id, families);
+        const { type, imports } = types[kind];
+        const params = include
+          .map((id) => `${kdoc(sets[0].tokens[id]?.$description, "    ")}    val ${kotlinName(id, dropPrefix)}: ${type},`)
+          .join("\n");
+        const values = sets
+          .map(({ context, tokens }) => {
+            const args = include.map((id) => `            ${kotlinName(id, dropPrefix)} = ${write(tokens[id]?.$value, id)},`).join("\n");
+            return `        /** Every value in the ${context} ${modifier}. */\n        val ${pascal(context)} = ${className}(\n${args}\n        )`;
+          })
+          .join("\n\n");
+        outputFile(
+          group.filename,
+          `${HEADER}
 
 package ${packageName}
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.Color
+${imports.map((i) => `import ${i}`).join("\n")}
 
-/** The semantic colors of Plain, one value per ${modifier}: ${contexts.map((c) => `${className}.${pascal(c)}`).join(", ")}. */
+/** ${doc} One value per ${modifier}: ${contexts.map((c) => `${className}.${pascal(c)}`).join(", ")}. */
 @Immutable
 class ${className}(
 ${params}
@@ -76,6 +123,34 @@ ${params}
     companion object {
 ${values}
     }
+}
+`,
+        );
+      }
+
+      // PtsFonts: one FontFamily per bundled family, from the font resources build-fonts.ts writes
+      const fontEntries = (f: Family) =>
+        f.files
+          .map((file) =>
+            f.variable
+              ? `        Font(R.font.${file.res}, FontWeight(${file.weight}), variationSettings = FontVariation.Settings(FontVariation.weight(${file.weight}))),`
+              : `        Font(R.font.${file.res}, FontWeight(${file.weight})),`,
+          )
+          .join("\n");
+      outputFile(
+        "PtsFonts.kt",
+        `${HEADER}
+
+package ${packageName}
+
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
+import androidx.compose.ui.text.font.FontWeight
+
+/** The font families of Plain, bundled with the library (OFL; dist/licenses). PtsTypography uses them. */
+object PtsFonts {
+${families.map((f) => `    /** ${f.family}${f.variable ? ", one variable font" : ""}. */\n    val ${f.property} = FontFamily(\n${fontEntries(f)}\n    )`).join("\n\n")}
 }
 `,
       );
