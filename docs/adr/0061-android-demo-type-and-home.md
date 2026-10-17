@@ -1,6 +1,6 @@
 # 0061. Android Demo Type Scale and Home
 
-- Status: accepted
+- Status: accepted (amended by 0062)
 - Date: 2026-10-17
 
 ## Decision

@@ -39,7 +39,7 @@ fun PlainApp(modes: Modes, onModes: (Modes) -> Unit) {
         },
     ) {
         when (current) {
-            Destination.Home -> HomeScreen(onNavigate = { current = it })
+            Destination.Home -> HomeScreen()
             Destination.Components -> ComponentsScreen(modes, onModes)
             Destination.Tokens -> TokensScreen(modes, onModes)
             Destination.Settings -> SettingsScreen(modes, onModes)
