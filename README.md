@@ -12,7 +12,7 @@ Plain is a personal study project: a small design token monorepo built end to en
 |---------|---------------|
 | [`@pts/tokens`](tokens) | The token source (DTCG JSON), the resolver that combines the files and modes, and the lint rules that check them |
 | [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), per-product CSS and JS values (`@pts/web/products/<name>.css`, `.js`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
-| [`@pts/android`](packages/android) | Android output, in progress: Kotlin for Jetpack Compose, the semantic colors as `PtsColors.Light` and `PtsColors.Dark` (`dist/PtsColors.kt`); not published yet |
+| [`@pts/android`](packages/android) | Android output: Kotlin for Jetpack Compose, one class per mode (`PtsColors`, `PtsSpacing`, `PtsBorder`, `PtsTypography`) and the bundled fonts (`PtsFonts`); a Gradle library in `mavenLocal` |
 | [`apps/android-demo`](apps/android-demo) | Not a package: a Compose app (Gradle) that depends on `pts-android` and shows it in the emulator |
 | [`@pts/storybook`](apps/storybook) | Token and component documentation, generated from the token source |
 | [`@pts/components`](apps/components) | Internal, not published: web components (Lit) that test the component tier, `<pts-button>` |
@@ -117,12 +117,14 @@ tokens["surface.subtle"].$value.hex; // "#242424"
 
 The Output/Products page of the [docs](https://haaanju.github.io/pts/) shows both products side by side.
 
-**Android (Compose).** `@pts/android` builds `PtsColors.kt`: a `PtsColors` class with every semantic color, and one value per theme, from Terrazzo's resolver (ADR 0056). Property names are the token path in lower camel case. `packages/android` is also a Gradle library, `io.github.haaanju.pts:pts-android`, at the version every `@pts/*` package shares; it is published to `mavenLocal` only so far (ADR 0058). [`apps/android-demo`](apps/android-demo) is a Compose app that depends on it and shows every intent in light and dark (ADR 0057).
+**Android (Compose).** `@pts/android` builds one Kotlin class per mode, with one value per context, from Terrazzo's resolver (ADR 0056, 0059): `PtsColors` (`Light`, `Dark`: the semantic colors), `PtsSpacing` (`Relaxed`, `Compact`: space, padding, gaps, sizes, in `Dp`), `PtsBorder` (`Soft`, `Round`: radius, strokes, focus ring), and `PtsTypography` (`Narrow`, `Wide`: the text styles as `TextStyle`, with Aspekta and IBM Plex bundled as `PtsFonts`). Property names are the token path in lower camel case. An app picks one value of each, the way `data-*` attributes pick a mode on the web. `packages/android` is also a Gradle library, `io.github.haaanju.pts:pts-android`, at the version every `@pts/*` package shares; it is published to `mavenLocal` only so far (ADR 0058). [`apps/android-demo`](apps/android-demo) is a Compose app that depends on it, with buttons that switch the theme, density, and shape (ADR 0057).
 
 ```kotlin
 val colors = if (isSystemInDarkTheme()) PtsColors.Dark else PtsColors.Light
-Text("Saved", color = colors.contentBase)
-Box(Modifier.background(colors.surfaceSubtle))
+val spacing = PtsSpacing.Relaxed
+val type = PtsTypography.Narrow
+BasicText("Saved", Modifier.padding(spacing.paddingMd), type.bodyMd.copy(color = colors.contentBase))
+Box(Modifier.background(colors.surfaceSubtle, RoundedCornerShape(PtsBorder.Soft.radiusContainer)))
 ```
 
 To run the demo, build the Kotlin and publish the library, then open `apps/android-demo` in Android Studio and run it on an emulator. From a terminal, with Android Studio's JDK:

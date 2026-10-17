@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tz build",
+    "build": "tz build && node build-fonts.ts",
     "pretest": "npm run build --silent",
     "test": "node --test test/output.test.ts",
     "typecheck": "tsc -p ."
@@ -21,6 +21,7 @@
     "@terrazzo/cli": "^2.7.1",
     "@terrazzo/parser": "^2.7.1",
     "@types/node": "^22.20.4",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "wawoff2": "^2.0.1"
   }
 }
