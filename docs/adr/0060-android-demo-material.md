@@ -1,6 +1,6 @@
 # 0060. Android Demo on Material 3
 
-- Status: accepted
+- Status: accepted (amended by 0061)
 - Date: 2026-10-17
 
 ## Decision

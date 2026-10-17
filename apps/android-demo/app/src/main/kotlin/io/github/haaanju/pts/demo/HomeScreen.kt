@@ -6,11 +6,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -21,22 +22,40 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import io.github.haaanju.pts.PtsFonts
+import io.github.haaanju.pts.catalog.PtsCatalog
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import kotlinx.coroutines.delay
 
 private data class Project(val name: String, val detail: String, val status: Status)
 
@@ -50,11 +69,27 @@ private val projects = listOf(
     Project("Notifications", "12 tasks · updated yesterday", Status.InReview),
 )
 
-/** Dummy content, so the tokens show in an app rather than a specimen */
+/** A greeting for the time of day: 05–12 morning, 12–18 afternoon, 18–22 evening, otherwise late */
+fun greeting(time: LocalTime): String = when (time.hour) {
+    in 5..11 -> "Good morning"
+    in 12..17 -> "Good afternoon"
+    in 18..21 -> "Good evening"
+    else -> "Working late"
+}
+
+/** The owner's app: what's new in the tokens, what the app is, the tokens at a glance, then sample project content */
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onNavigate: (Destination) -> Unit) {
     val p = LocalPlain.current
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    // The time, read again every minute, so a greeting left open from the morning doesn't stay "Good morning"
+    var now by remember { mutableStateOf(LocalTime.now()) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(60_000)
+            now = LocalTime.now()
+        }
+    }
     Scaffold(
         Modifier.nestedScroll(scroll.nestedScrollConnection),
         topBar = {
@@ -70,20 +105,22 @@ fun HomeScreen() {
             )
         },
     ) { padding ->
-        LazyColumn(
-            contentPadding = padding,
-            verticalArrangement = Arrangement.spacedBy(p.spacing.gapBetweenSm),
-        ) {
+        LazyColumn(contentPadding = padding, verticalArrangement = Arrangement.spacedBy(p.spacing.gapBetweenMd)) {
             item {
-                Column(Modifier.padding(horizontal = p.spacing.paddingLg, vertical = p.spacing.gapWithinSm), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
-                    Text("Good morning", style = p.type.headingMd, color = p.colors.contentBase)
-                    Text("7 projects, 2 need your attention today.", style = p.type.bodyMd, color = p.colors.contentSubtle)
-                }
+                Text(
+                    "${greeting(now)}, Hanju",
+                    Modifier.padding(horizontal = p.spacing.paddingLg, vertical = p.spacing.gapWithinSm),
+                    style = p.type.displayMd,
+                    color = p.colors.contentBase,
+                )
             }
+            item { WhatsNew(onNavigate) }
+            item { About() }
+            item { AtAGlance() }
             item { Banner() }
             item { Summary() }
             item {
-                Row(Modifier.fillMaxWidth().padding(top = p.spacing.gapWithinLg), verticalAlignment = Alignment.CenterVertically) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     SectionTitle("Recent", Modifier.weight(1f))
                     TextButton({}, Modifier.padding(end = p.spacing.paddingSm)) { Text("See all") }
                 }
@@ -102,6 +139,107 @@ fun HomeScreen() {
     }
 }
 
+/** Code spans (`PtsColors.kt`) in mono, the way the docs set them */
+@Composable
+private fun withCode(text: String): AnnotatedString {
+    val mono = SpanStyle(fontFamily = PtsFonts.mono)
+    return buildAnnotatedString {
+        text.split("`").forEachIndexed { i, part -> if (i % 2 == 1) withStyle(mono) { append(part) } else append(part) }
+    }
+}
+
+/** This version's changelog entries, read at build time (ADR 0061): a New or Fix tag, then the entry's first sentence */
+@Composable
+private fun WhatsNew(onNavigate: (Destination) -> Unit) {
+    val p = LocalPlain.current
+    val date = BuildConfig.RELEASE_DATE?.let { LocalDate.parse(it).format(DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.US)) }
+    Column(Modifier.padding(horizontal = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinLg)) {
+        Column(verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
+            Text("What's new in Plain ${BuildConfig.PTS_VERSION}", style = p.type.headingMd, color = p.colors.contentBase)
+            if (date != null) Text("Released $date", style = p.type.bodyMd, color = p.colors.contentSubtle)
+        }
+        BuildConfig.RELEASE_NOTES.forEach { note ->
+            val kind = note.substringBefore(":", "")
+            val text = note.substringAfter(": ")
+            // The first sentence: the rest is in the changelog
+            val first = Regex("""^.*?\.(?=\s+[A-Z(`]|$)""").find(text)?.value ?: text
+            Row(horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd), verticalAlignment = Alignment.Top) {
+                // A fixed column for the tag, so every entry's text starts at the same line
+                Box(Modifier.width(p.spacing.sizeControlLg)) { ChangeTag(kind) }
+                Text(withCode(first), Modifier.weight(1f), style = p.type.bodyMd, color = p.colors.contentBase)
+            }
+        }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
+            Button({ onNavigate(Destination.Tokens) }, Modifier.control(), shape = controlShape(), contentPadding = controlPadding()) { Text("See the tokens") }
+            OutlinedButton({ onNavigate(Destination.Settings) }, Modifier.control(), shape = controlShape(), contentPadding = controlPadding()) { Text("Settings") }
+        }
+    }
+}
+
+/** New is the discovery intent (new things), Fix the success one, as soft tags */
+@Composable
+private fun ChangeTag(kind: String) {
+    val p = LocalPlain.current
+    val (fill, text) = when (kind) {
+        "New" -> p.colors.intentDiscoverySurfaceSubtle to p.colors.intentDiscoveryContentBase
+        "Fix" -> p.colors.intentSuccessSurfaceSubtle to p.colors.intentSuccessContentBase
+        else -> p.colors.surfaceStrong to p.colors.contentBase
+    }
+    Surface(color = fill, shape = RoundedCornerShape(p.border.radiusFull)) {
+        Text(kind, Modifier.padding(horizontal = p.spacing.paddingSm, vertical = p.spacing.space50), style = p.type.labelSm, color = text)
+    }
+}
+
+@Composable
+private fun About() {
+    val p = LocalPlain.current
+    Column(Modifier.padding(horizontal = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinLg)) {
+        Text("About this app", style = p.type.headingMd, color = p.colors.contentBase)
+        listOf(
+            "Plain is a design token system, built end to end to learn how tokens travel from one JSON source to every platform.",
+            "This app is its Android side. Every color, space, corner, and text style on screen comes from `@pts/android`, which is generated from the same tokens as the web docs.",
+            "Material 3 draws the components; the tokens decide how they look. Change the theme, density, and shape in Settings, and the whole app follows.",
+        ).forEach { Text(withCode(it), style = p.type.bodyMd, color = p.colors.contentBase) }
+    }
+}
+
+/** The tokens the app reads, counted from the catalog, so the numbers follow the tokens */
+@Composable
+private fun AtAGlance() {
+    val p = LocalPlain.current
+    val counts = listOf(
+        PtsCatalog.colors.entries.size to "colors",
+        PtsCatalog.spacing.entries.size to "spacing",
+        PtsCatalog.border.entries.size to "border",
+        PtsCatalog.typography.entries.size to "text styles",
+    )
+    val modes = listOf(PtsCatalog.colors.modifier, PtsCatalog.spacing.modifier, PtsCatalog.border.modifier, PtsCatalog.typography.modifier)
+    Column(Modifier.padding(horizontal = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinLg)) {
+        Text("At a glance", style = p.type.headingMd, color = p.colors.contentBase)
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(p.spacing.paddingXl), verticalArrangement = Arrangement.spacedBy(p.spacing.gapBetweenSm)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd)) {
+                    counts.forEach { (n, label) -> Stat(n.toString(), label, Modifier.weight(1f)) }
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinXs)) {
+                    Text("${modes.size} modes: ${modes.joinToString(", ")}", style = p.type.bodyMd, color = p.colors.contentBase)
+                    Text("@pts/android ${BuildConfig.PTS_VERSION} · Terrazzo · Compose · Material 3", style = p.type.bodyMd, color = p.colors.contentSubtle)
+                }
+            }
+        }
+    }
+}
+
+/** A number in mono (Aspekta has no tabular figures) over its label */
+@Composable
+private fun Stat(value: String, label: String, modifier: Modifier = Modifier) {
+    val p = LocalPlain.current
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinXs)) {
+        Text(value, style = p.type.headingLg.copy(fontFamily = PtsFonts.mono), color = p.colors.contentBase)
+        Text(label, style = p.type.bodyMd, color = p.colors.contentSubtle)
+    }
+}
+
 @Composable
 private fun Initials(name: String) {
     val p = LocalPlain.current
@@ -110,7 +248,7 @@ private fun Initials(name: String) {
     }
 }
 
-/** An info banner: the intent's soft fill, its content color, and a text action */
+/** An info banner: the intent's soft fill and its content color, title and text the same size, told apart by weight */
 @Composable
 private fun Banner() {
     val p = LocalPlain.current
@@ -124,24 +262,19 @@ private fun Banner() {
     ) {
         Icon(Icons.Filled.Info, null, tint = p.colors.intentInfoContentBase)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
-            Text("Tokens 0.10 are out", style = p.type.labelLg, color = p.colors.intentInfoContentBase)
-            Text("Spacing, corners, and type now reach Android too.", style = p.type.bodySm, color = p.colors.intentInfoContentBase)
+            Text("Design review moved to Thursday", style = p.type.labelLg, color = p.colors.intentInfoContentBase)
+            Text("The checkout redesign review is now Thursday at 2 PM.", style = p.type.bodyMd, color = p.colors.intentInfoContentBase)
         }
     }
 }
 
-/** A card of numbers: mono digits line up (Aspekta has no tabular figures) */
+/** A card of project numbers */
 @Composable
 private fun Summary() {
     val p = LocalPlain.current
     Card(Modifier.padding(horizontal = p.spacing.paddingLg).fillMaxWidth()) {
         Row(Modifier.padding(p.spacing.paddingXl), horizontalArrangement = Arrangement.spacedBy(p.spacing.gapBetweenSm)) {
-            listOf("Open" to "12", "Due soon" to "03", "Done" to "28").forEach { (label, value) ->
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
-                    Text(value, style = p.type.headingMd.copy(fontFamily = PtsFonts.mono), color = p.colors.contentBase)
-                    Text(label, style = p.type.bodySm, color = p.colors.contentSubtle)
-                }
-            }
+            listOf("Open" to "12", "Due soon" to "03", "Done" to "28").forEach { (label, value) -> Stat(value, label, Modifier.weight(1f)) }
         }
     }
 }

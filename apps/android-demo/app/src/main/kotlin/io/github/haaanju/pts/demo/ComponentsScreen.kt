@@ -48,7 +48,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -68,7 +70,8 @@ fun ComponentsScreen(modes: Modes, onModes: (Modes) -> Unit) {
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var dialog by remember { mutableStateOf(false) }
-    Scaffold(topBar = { TopAppBar(title = { Text("Components") }) }, snackbarHost = { SnackbarHost(snackbar) }) { padding ->
+    val bar = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    Scaffold(Modifier.nestedScroll(bar.nestedScrollConnection), topBar = { LargeTopAppBar(title = { Text("Components") }, scrollBehavior = bar) }, snackbarHost = { SnackbarHost(snackbar) }) { padding ->
         LazyColumn(contentPadding = padding, verticalArrangement = Arrangement.spacedBy(p.spacing.gapBetweenMd)) {
             item { ModeBar(modes, onModes) }
             item {
@@ -132,7 +135,7 @@ fun ComponentsScreen(modes: Modes, onModes: (Modes) -> Unit) {
                 var value by remember { mutableFloatStateOf(0.4f) }
                 var text by remember { mutableStateOf("Checkout redesign") }
                 Column(Modifier.padding(horizontal = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd)) {
-                    Text("Inputs", style = p.type.headingSm, color = p.colors.contentBase)
+                    Text("Inputs", style = p.type.headingMd, color = p.colors.contentBase)
                     OutlinedTextField(text, { text = it }, Modifier.fillMaxWidth(), label = { Text("Project name") }, supportingText = { Text("Shown on the board and in search") })
                     Slider(value, { value = it })
                 }
@@ -145,7 +148,7 @@ fun ComponentsScreen(modes: Modes, onModes: (Modes) -> Unit) {
             }
             item {
                 Column(Modifier.padding(horizontal = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd)) {
-                    Text("Cards", style = p.type.headingSm, color = p.colors.contentBase)
+                    Text("Cards", style = p.type.headingMd, color = p.colors.contentBase)
                     Card(Modifier.fillMaxWidth()) { CardText("Card", "surface/subtle, radius/container") }
                     OutlinedCard(Modifier.fillMaxWidth()) { CardText("Outlined card", "background with border/subtle") }
                     ElevatedCard(Modifier.fillMaxWidth()) { CardText("Elevated card", "Material's shadow, not Plain's shadow tokens yet") }
@@ -191,7 +194,7 @@ private fun CardText(title: String, detail: String) {
     val p = LocalPlain.current
     Column(Modifier.padding(p.spacing.paddingXl), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
         // Explicit colors: surface/subtle is also surfaceVariant, so Material would pick onSurfaceVariant for the title
-        Text(title, style = p.type.labelLg, color = p.colors.contentBase)
-        Text(detail, style = p.type.bodySm, color = p.colors.contentSubtle)
+        Text(title, style = p.type.headingSm, color = p.colors.contentBase)
+        Text(detail, style = p.type.bodyLg, color = p.colors.contentSubtle)
     }
 }

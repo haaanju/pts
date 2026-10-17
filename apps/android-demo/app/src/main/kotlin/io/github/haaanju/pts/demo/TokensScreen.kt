@@ -23,7 +23,9 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -47,7 +49,8 @@ private val tabs = listOf("Color", "Type", "Spacing", "Border")
 fun TokensScreen(modes: Modes, onModes: (Modes) -> Unit) {
     val p = LocalPlain.current
     var tab by rememberSaveable { mutableIntStateOf(0) }
-    Scaffold(topBar = { TopAppBar(title = { Text("Tokens") }) }) { padding ->
+    val bar = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    Scaffold(Modifier.nestedScroll(bar.nestedScrollConnection), topBar = { LargeTopAppBar(title = { Text("Tokens") }, scrollBehavior = bar) }) { padding ->
         Column(Modifier.padding(padding), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd)) {
             ModeBar(modes, onModes)
             PrimaryTabRow(tab) {
@@ -162,7 +165,7 @@ private fun Header(group: String) {
         horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm),
         verticalAlignment = Alignment.Bottom,
     ) {
-        Text(name, style = p.type.headingSm, color = p.colors.contentBase)
+        Text(name, style = p.type.headingMd, color = p.colors.contentBase)
         Text("$group/*", style = p.type.codeMd, color = p.colors.contentSubtle)
     }
 }
