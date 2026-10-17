@@ -37,7 +37,10 @@ export const kotlinColor = (value: unknown, id: string) => {
   return `Color(0x${byte(c.alpha ?? 1)}${byte(r)}${byte(g)}${byte(b)})`;
 };
 
-const kdoc = (text: string | undefined, indent: string) => (text ? `${indent}/** ${text.replaceAll("*/", "*&#47;")} */\n` : "");
+// Kotlin nests block comments, so a "/*" in a description (content/inverse/*) would open a comment inside the KDoc
+// and leave the file unclosed; "*/" would end it early. KDoc is Markdown, so an entity keeps the text readable.
+export const kdocText = (text: string) => text.replaceAll("/*", "/&#42;").replaceAll("*/", "&#42;/");
+const kdoc = (text: string | undefined, indent: string) => (text ? `${indent}/** ${kdocText(text)} */\n` : "");
 
 export default function compose({ filename, packageName, className, include, modifier }: Options): Plugin {
   return {
