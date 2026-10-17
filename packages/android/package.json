@@ -1,6 +1,6 @@
 {
   "name": "@pts/android",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "private": true,
   "type": "module",
   "description": "Android output of @pts/tokens: Kotlin for Jetpack Compose (the semantic colors so far)",
