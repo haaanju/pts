@@ -12,6 +12,7 @@ Plain is a personal study project: a small design token monorepo built end to en
 |---------|---------------|
 | [`@pts/tokens`](tokens) | The token source (DTCG JSON), the resolver that combines the files and modes, and the lint rules that check them |
 | [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), per-product CSS and JS values (`@pts/web/products/<name>.css`, `.js`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
+| [`@pts/android`](packages/android) | Android output, in progress: Kotlin for Jetpack Compose, the semantic colors as `PtsColors.Light` and `PtsColors.Dark` (`dist/PtsColors.kt`); not published yet |
 | [`@pts/storybook`](apps/storybook) | Token and component documentation, generated from the token source |
 | [`@pts/components`](apps/components) | Internal, not published: web components (Lit) that test the component tier, `<pts-button>` |
 
@@ -115,6 +116,14 @@ tokens["surface.subtle"].$value.hex; // "#242424"
 
 The Output/Products page of the [docs](https://haaanju.github.io/pts/) shows both products side by side.
 
+**Android (Compose).** `@pts/android` builds `PtsColors.kt`: a `PtsColors` class with every semantic color, and one value per theme, from Terrazzo's resolver (ADR 0056). Property names are the token path in lower camel case. It isn't published or compiled here yet; a Compose demo app comes next.
+
+```kotlin
+val colors = if (isSystemInDarkTheme()) PtsColors.Dark else PtsColors.Light
+Text("Saved", color = colors.contentBase)
+Box(Modifier.background(colors.surfaceSubtle))
+```
+
 **Components.** `@pts/components` is not a component library: its web components exist to test the component tokens and show how code consumes them (ADR 0034). Inside this repository, load the fonts and tokens once, then import an element to define it:
 
 ```js
@@ -137,15 +146,15 @@ Requires Node 22.18 or later (see `.nvmrc`).
 ```sh
 npm install              # also installs the pre-commit hook
 npm run storybook        # docs at http://localhost:6006
-npm run build            # build @pts/web and @pts/components
+npm run build            # build @pts/web, @pts/android, and @pts/components
 ```
 
 | Command | What it does |
 |---------|--------------|
 | `npm run check` | Validates the tokens with Terrazzo (`tz check` in `tokens/`): its built-in rules plus the project's `pts/*` rules (value rules in every theme, density, viewport, and shape): contrast, visible states, parity between modes, spacing and type scale order, line heights on the 4px grid, hex values, descriptions, tier rules, unregistered files |
-| `npm test` | Checks that every lint rule still reports what it should, then builds `@pts/web` and checks its output against the tokens |
-| `npm run typecheck` | TypeScript for the lint plugin, the `@pts/web` build config and tests, the components, and Storybook |
-| `npm run build` | Builds `@pts/web` and `@pts/components` |
+| `npm test` | Checks that every lint rule still reports what it should, then builds `@pts/web` and `@pts/android` and checks their output against the tokens |
+| `npm run typecheck` | TypeScript for the lint plugin, the `@pts/web` and `@pts/android` build configs and tests, the components, and Storybook |
+| `npm run build` | Builds `@pts/web`, `@pts/android`, and `@pts/components` |
 | `npm run build-storybook` | Builds the static docs |
 | `npm run test-a11y` | Builds the docs, then checks every page and story with axe-core (WCAG 2.2 A and AA) in light and dark |
 

@@ -46,6 +46,7 @@ tokens/                     @pts/tokens (private)
   src/semantic/<category>[.<context>].tokens.json
   src/component/<component>.tokens.json
 packages/web/               @pts/web: dist/ tokens.css, tokens.js + .d.ts, tokens.scss, products/ (ADR 0047); fonts/
+packages/android/           @pts/android: dist/PtsColors.kt for Jetpack Compose, from plugin-compose.ts (ADR 0056)
 apps/components/            @pts/components: Lit web components testing the component tier, src/ → dist/ (<pts-button>)
 apps/storybook/             @pts/storybook: token docs
 docs/progress.md, docs/adr/
@@ -65,9 +66,9 @@ docs/progress.md, docs/adr/
   - Built-in rules turned on beyond the recommended ones: `$type` required, a `$description` on every semantic token, srgb colors, text styles at least 12px, every intent with the same tokens (`core/required-children`, ADR 0050).
   - `pts/*`: `theme-parity`, `contrast`, `component-pairs`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`, `orthogonal-modifiers`, `component-states`, `icon-side-padding`.
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it. Every `pts/*` message gets a case in `tokens/lint/rules.test.ts`, unless it can't be reached (the file says why).
-- `npm test`: breaks each `pts/*` rule on purpose in a copy of `tokens/` and expects `tz check` to report it, so a rule that silently stops reporting fails (ADR 0037); then builds `@pts/web` and checks its output against the resolver: every token in `:root`, every modifier context in its block with every token it changes and none another modifier changes, and every token in `tokens.js`, `tokens.d.ts`, and `tokens.scss` (ADR 0039); each product's CSS and JS the same way at the inputs it fixes, its JS values equal to the resolver's (ADR 0047).
-- `npm run typecheck`: TypeScript for the lint plugin, the `@pts/web` build config and tests, the components, and Storybook.
-- `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/components` → `apps/components/dist/`).
+- `npm test`: breaks each `pts/*` rule on purpose in a copy of `tokens/` and expects `tz check` to report it, so a rule that silently stops reporting fails (ADR 0037); then builds `@pts/web` and checks its output against the resolver: every token in `:root`, every modifier context in its block with every token it changes and none another modifier changes, and every token in `tokens.js`, `tokens.d.ts`, and `tokens.scss` (ADR 0039); each product's CSS and JS the same way at the inputs it fixes, its JS values equal to the resolver's (ADR 0047); and builds `@pts/android` and checks that `PtsColors.kt` declares every semantic color with each theme's value equal to the resolver's (ADR 0056).
+- `npm run typecheck`: TypeScript for the lint plugin, the `@pts/web` and `@pts/android` build configs and tests, the components, and Storybook.
+- `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/android` → `packages/android/dist/`, `@pts/components` → `apps/components/dist/`).
 - `npm run storybook`: docs dev server (http://localhost:6006), builds `@pts/web` and `@pts/components` first. `npm run build-storybook`: static build.
 - `npm run test-a11y`: builds Storybook, then checks every docs page and story with axe-core (WCAG 2.2 A and AA) in light and dark (ADR 0036). Needs Playwright's Chromium once: `npx playwright install chromium`.
 - The pre-commit hook runs check and typecheck and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus `npm test`, both builds, and `test-a11y` on pushes to `main` and on pull requests, and deploys the docs to GitHub Pages on pushes to `main`.
@@ -192,7 +193,7 @@ Work continues across chats and machines through the repository only; chat histo
 ## Deferred
 
 - Figma sync: Figma is updated by hand (the `figma` skill).
-- Native platforms (iOS, Android): a custom Terrazzo plugin rather than Style Dictionary (ADR 0022).
+- Native platforms: Android has started (`@pts/android`, colors only, ADR 0056); iOS follows, also through a custom Terrazzo plugin rather than Style Dictionary (ADR 0022).
 
 ## Git Convention
 
