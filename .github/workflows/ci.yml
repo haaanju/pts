@@ -35,6 +35,28 @@ jobs:
         with:
           path: apps/storybook/dist
 
+  # The generated Kotlin compiles (ADR 0058): a text test can't see what the compiler does (ADR 0057). Builds
+  # @pts/android, publishes it to the runner's mavenLocal as a library, and builds the demo app against it.
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @pts/android
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6 # also validates the Gradle wrappers
+      - run: ./gradlew publishToMavenLocal
+        working-directory: packages/android
+      - run: ./gradlew assembleDebug
+        working-directory: apps/android-demo
+
   # The docs on GitHub Pages show main (ADR 0020): deployed only after verify passes on a push.
   deploy:
     if: github.event_name == 'push'
