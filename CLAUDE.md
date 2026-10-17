@@ -51,8 +51,8 @@ packages/android/           @pts/android: dist/kotlin/Pts{Colors,Spacing,Border,
                             demo (ADR 0060); also a Gradle
                             library, io.github.haaanju.pts:pts-android, published to mavenLocal (ADR 0058)
 apps/components/            @pts/components: Lit web components testing the component tier, src/ → dist/ (<pts-button>)
-apps/android-demo/          a Compose app (Gradle, not an npm workspace): Material 3 themed from pts-android, with Home, Components,
-                            Tokens, and Settings tabs (ADR 0057, 0060)
+apps/android-demo/          a Compose app (Gradle, not an npm workspace): Material 3 themed from pts-android, with Home, Tokens,
+                            Components, and Settings tabs (ADR 0057, 0060, 0061)
 apps/storybook/             @pts/storybook: token docs
 docs/progress.md, docs/adr/
 .claude/                    settings.json (SessionStart hooks), rules/, skills/
