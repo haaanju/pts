@@ -24,7 +24,7 @@ fun SettingsScreen(modes: Modes, onModes: (Modes) -> Unit) {
     val p = LocalPlain.current
     Scaffold(topBar = { TopAppBar(title = { Text("Settings") }) }) { padding ->
         LazyColumn(contentPadding = padding) {
-            item { SectionTitle("Appearance", Modifier.padding(top = p.spacing.gapWithinSm, bottom = p.spacing.gapWithinXs)) }
+            item { SectionTitle("Appearance", Modifier.padding(top = p.spacing.gapWithinMd, bottom = p.spacing.gapWithinSm)) }
             item {
                 Choice("Theme", "Light and dark colors. System follows the device.", ThemeChoice.entries.map { it.name }, modes.theme.ordinal) {
                     onModes(modes.copy(theme = ThemeChoice.entries[it]))
@@ -40,11 +40,12 @@ fun SettingsScreen(modes: Modes, onModes: (Modes) -> Unit) {
                     onModes(modes.copy(round = it == 1))
                 }
             }
-            item { HorizontalDivider(Modifier.padding(vertical = p.spacing.gapWithinSm)) }
-            item { SectionTitle("About", Modifier.padding(bottom = p.spacing.gapWithinXs)) }
+            item { HorizontalDivider(Modifier.padding(vertical = p.spacing.gapBetweenSm)) }
+            item { SectionTitle("About", Modifier.padding(bottom = p.spacing.gapWithinSm)) }
             item { ListItem(headlineContent = { Text("Tokens") }, supportingContent = { Text("@pts/android ${BuildConfig.PTS_VERSION}") }) }
             item { ListItem(headlineContent = { Text("Source") }, supportingContent = { Text("github.com/haaanju/pts") }) }
             item { ListItem(headlineContent = { Text("Built with") }, supportingContent = { Text("Terrazzo, Jetpack Compose, and Material 3") }) }
+            item { BottomSpace() }
         }
     }
 }
@@ -55,7 +56,7 @@ private fun Choice(title: String, detail: String, options: List<String>, selecte
     ListItem(
         headlineContent = { Text(title) },
         supportingContent = {
-            Column(verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
+            Column(Modifier.padding(top = p.spacing.gapWithinXs), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd)) {
                 Text(detail)
                 SingleChoiceSegmentedButtonRow {
                     options.forEachIndexed { i, label ->

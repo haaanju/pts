@@ -48,7 +48,7 @@ fun TokensScreen(modes: Modes, onModes: (Modes) -> Unit) {
     val p = LocalPlain.current
     var tab by rememberSaveable { mutableIntStateOf(0) }
     Scaffold(topBar = { TopAppBar(title = { Text("Tokens") }) }) { padding ->
-        Column(Modifier.padding(padding), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
+        Column(Modifier.padding(padding), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd)) {
             ModeBar(modes, onModes)
             PrimaryTabRow(tab) {
                 tabs.forEachIndexed { i, label -> Tab(tab == i, { tab = i }, text = { Text(label) }) }
@@ -60,6 +60,7 @@ fun TokensScreen(modes: Modes, onModes: (Modes) -> Unit) {
                     2 -> spacing()
                     else -> border()
                 }
+                item { BottomSpace() }
             }
         }
     }
@@ -99,7 +100,7 @@ private fun LazyListScope.type() {
     items(PtsCatalog.typography.entries) { e ->
         val p = LocalPlain.current
         val style = e.get(p.type)
-        Column(Modifier.padding(horizontal = p.spacing.paddingLg, vertical = p.spacing.paddingMd), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinXs)) {
+        Column(Modifier.padding(horizontal = p.spacing.paddingLg, vertical = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
             Text(e.path, style = p.type.codeMd, color = p.colors.contentSubtle)
             Text(if (e.path.startsWith("text/code")) "val gap = spacing.gapWithinSm" else "Plain tokens on Android", style = style, color = p.colors.contentBase)
             Text(
@@ -157,7 +158,7 @@ private fun Header(group: String) {
     val p = LocalPlain.current
     val name = group.substringAfterLast("/").replaceFirstChar { it.uppercase() }
     Row(
-        Modifier.padding(start = p.spacing.paddingLg, end = p.spacing.paddingLg, top = p.spacing.gapBetweenSm, bottom = p.spacing.gapWithinXs),
+        Modifier.padding(start = p.spacing.paddingLg, end = p.spacing.paddingLg, top = p.spacing.gapBetweenMd, bottom = p.spacing.gapWithinSm),
         horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm),
         verticalAlignment = Alignment.Bottom,
     ) {
@@ -171,8 +172,8 @@ private fun Header(group: String) {
 private fun Row2(sample: @Composable () -> Unit, path: String, value: String, alias: String, description: String, sampleWidth: Dp? = null) {
     val p = LocalPlain.current
     Row(
-        Modifier.fillMaxWidth().padding(horizontal = p.spacing.paddingLg, vertical = p.spacing.paddingSm),
-        horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd),
+        Modifier.fillMaxWidth().padding(horizontal = p.spacing.paddingLg, vertical = p.spacing.paddingMd),
+        horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinLg),
         verticalAlignment = Alignment.Top,
     ) {
         Box(Modifier.width(sampleWidth ?: p.spacing.sizeControlMd), contentAlignment = Alignment.CenterStart) { sample() }
