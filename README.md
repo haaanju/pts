@@ -13,6 +13,7 @@ Plain is a personal study project: a small design token monorepo built end to en
 | [`@pts/tokens`](tokens) | The token source (DTCG JSON), the resolver that combines the files and modes, and the lint rules that check them |
 | [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), per-product CSS and JS values (`@pts/web/products/<name>.css`, `.js`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
 | [`@pts/android`](packages/android) | Android output, in progress: Kotlin for Jetpack Compose, the semantic colors as `PtsColors.Light` and `PtsColors.Dark` (`dist/PtsColors.kt`); not published yet |
+| [`apps/android-demo`](apps/android-demo) | Not a package: a Compose app (Gradle) that compiles `PtsColors.kt` and shows it in the emulator |
 | [`@pts/storybook`](apps/storybook) | Token and component documentation, generated from the token source |
 | [`@pts/components`](apps/components) | Internal, not published: web components (Lit) that test the component tier, `<pts-button>` |
 
@@ -116,13 +117,22 @@ tokens["surface.subtle"].$value.hex; // "#242424"
 
 The Output/Products page of the [docs](https://haaanju.github.io/pts/) shows both products side by side.
 
-**Android (Compose).** `@pts/android` builds `PtsColors.kt`: a `PtsColors` class with every semantic color, and one value per theme, from Terrazzo's resolver (ADR 0056). Property names are the token path in lower camel case. It isn't published or compiled here yet; a Compose demo app comes next.
+**Android (Compose).** `@pts/android` builds `PtsColors.kt`: a `PtsColors` class with every semantic color, and one value per theme, from Terrazzo's resolver (ADR 0056). Property names are the token path in lower camel case. It isn't published yet. [`apps/android-demo`](apps/android-demo) is a Compose app that compiles it and shows every intent in light and dark (ADR 0057).
 
 ```kotlin
 val colors = if (isSystemInDarkTheme()) PtsColors.Dark else PtsColors.Light
 Text("Saved", color = colors.contentBase)
 Box(Modifier.background(colors.surfaceSubtle))
 ```
+
+To run the demo: `npm run build`, then open `apps/android-demo` in Android Studio and run it on an emulator. From a terminal, with Android Studio's JDK:
+
+```sh
+export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+npm run build -w @pts/android && (cd apps/android-demo && ./gradlew installDebug)
+```
+
+A token change shows on the next build and install: the app reads `packages/android/dist/PtsColors.kt` directly.
 
 **Components.** `@pts/components` is not a component library: its web components exist to test the component tokens and show how code consumes them (ADR 0034). Inside this repository, load the fonts and tokens once, then import an element to define it:
 

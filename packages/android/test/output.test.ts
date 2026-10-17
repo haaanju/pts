@@ -54,6 +54,13 @@ for (const theme of themes) {
   });
 }
 
+test("no description opens or closes a comment inside its KDoc (Kotlin nests block comments)", () => {
+  for (const line of kt.split("\n").filter((l) => l.trimStart().startsWith("/**"))) {
+    const inner = line.trim().slice(3, -2);
+    assert.ok(!inner.includes("/*") && !inner.includes("*/"), line.trim());
+  }
+});
+
 test("a color with alpha keeps it: utility.scrim is black at 70% in dark", () => {
   assert.equal(values("dark")[kotlinName("utility.scrim")], "Color(0xB3000000)");
 });

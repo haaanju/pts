@@ -48,6 +48,7 @@ tokens/                     @pts/tokens (private)
 packages/web/               @pts/web: dist/ tokens.css, tokens.js + .d.ts, tokens.scss, products/ (ADR 0047); fonts/
 packages/android/           @pts/android: dist/PtsColors.kt for Jetpack Compose, from plugin-compose.ts (ADR 0056)
 apps/components/            @pts/components: Lit web components testing the component tier, src/ → dist/ (<pts-button>)
+apps/android-demo/          a Compose app (Gradle, not an npm workspace) that compiles PtsColors.kt and shows it (ADR 0057)
 apps/storybook/             @pts/storybook: token docs
 docs/progress.md, docs/adr/
 .claude/                    settings.json (SessionStart hooks), rules/, skills/
