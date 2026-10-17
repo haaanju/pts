@@ -18,10 +18,11 @@ android {
         minSdk = 26 // Aspekta's weight axis (FontVariation) needs Android 8
     }
 
-    // The Kotlin and font resources `npm run build` writes (plugin-compose.ts, build-fonts.ts); run it first
+    // The Kotlin and font resources `npm run build` writes (plugin-compose.ts, build-fonts.ts); run it first.
+    // dist/catalog is the demo app's (ADR 0060), not the library's.
     sourceSets {
         getByName("main") {
-            kotlin.directories += "dist"
+            kotlin.directories += "dist/kotlin"
             res.directories += "dist/res"
         }
     }

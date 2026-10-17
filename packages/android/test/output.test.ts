@@ -12,6 +12,7 @@ import { kotlinName } from "../plugin-compose.ts";
 import { groups } from "../terrazzo.config.ts";
 
 const dist = (file: string) => new URL(`../dist/${file}`, import.meta.url);
+const kotlin = (file: string) => dist(`kotlin/${file}`);
 const resolver = await loadResolver();
 const pascal = (s: string) => s[0].toUpperCase() + s.slice(1);
 const n = (x: number) => {
@@ -35,7 +36,7 @@ test("the groups cover every semantic color, spacing, border, and text style", (
 });
 
 for (const group of groups) {
-  const kt = readFileSync(dist(group.filename), "utf8");
+  const kt = readFileSync(kotlin(group.filename), "utf8");
   const contexts = Object.keys(resolver.source.modifiers?.[group.modifier]?.contexts ?? {});
   const names = group.include.map((id) => kotlinName(id, group.dropPrefix));
 
@@ -66,7 +67,7 @@ for (const group of groups) {
 
 test("a value per modifier context: the colors follow the theme, spacing the density, borders the shape, type the viewport", () => {
   const value = (file: string, ctx: string, name: string) =>
-    readFileSync(dist(file), "utf8").match(new RegExp(`val ${ctx} = [\\s\\S]*?\\n {12}${name} = (.+),`))![1];
+    readFileSync(kotlin(file), "utf8").match(new RegExp(`val ${ctx} = [\\s\\S]*?\\n {12}${name} = (.+),`))![1];
   assert.equal(value("PtsColors.kt", "Dark", "utilityScrim"), "Color(0xB3000000)");
   assert.equal(value("PtsSpacing.kt", "Compact", "paddingMd"), "8.dp");
   assert.equal(value("PtsBorder.kt", "Round", "radiusControl"), "9999.dp");
@@ -74,7 +75,7 @@ test("a value per modifier context: the colors follow the theme, spacing the den
 });
 
 test("PtsFonts has a family for every font the text styles use, and every font file exists", () => {
-  const fonts = readFileSync(dist("PtsFonts.kt"), "utf8");
+  const fonts = readFileSync(kotlin("PtsFonts.kt"), "utf8");
   for (const f of families) {
     assert.match(fonts, new RegExp(`val ${f.property} = FontFamily\\(`));
     for (const file of f.files) {
@@ -84,4 +85,20 @@ test("PtsFonts has a family for every font the text styles use, and every font f
     }
   }
   for (const dir of ["aspekta", "ibm-plex-mono", "ibm-plex-serif"]) assert.ok(existsSync(dist(`licenses/${dir}-LICENSE.txt`)), `${dir} license`);
+});
+
+test("PtsCatalog lists every token of every class, with its path, getter, and an alias per context (the demo's token pages)", () => {
+  const catalog = readFileSync(dist("catalog/PtsCatalog.kt"), "utf8");
+  for (const group of groups) {
+    const contexts = Object.keys(resolver.source.modifiers?.[group.modifier]?.contexts ?? {});
+    const sets = contexts.map((context) => resolver.apply({ [group.modifier]: context }));
+    for (const id of group.include) {
+      const aliases = sets.map((t) => JSON.stringify((t[id].aliasChain?.[0] ?? "").replaceAll(".", "/"))).join(", ");
+      const line = `Entry(${JSON.stringify(id.replaceAll(".", "/"))}, `;
+      const found = catalog.split("\n").find((l) => l.trim().startsWith(line));
+      assert.ok(found, `${group.className}: ${id} is missing`);
+      assert.ok(found.includes(`listOf(${aliases})) { it.${kotlinName(id, group.dropPrefix)} },`), `${id}: ${found.trim()}`);
+    }
+  }
+  assert.ok(!existsSync(kotlin("PtsCatalog.kt")), "the catalog must stay out of the library's sources");
 });

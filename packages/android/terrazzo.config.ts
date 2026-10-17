@@ -51,5 +51,5 @@ export const groups: Group[] = [
 export default defineConfig({
   tokens: [fileURLToPath(RESOLVER)],
   outDir: "./dist/",
-  plugins: [compose({ packageName: "io.github.haaanju.pts", groups, families })],
+  plugins: [compose({ packageName: "io.github.haaanju.pts", groups, families, catalog: { packageName: "io.github.haaanju.pts.catalog" } })],
 });
