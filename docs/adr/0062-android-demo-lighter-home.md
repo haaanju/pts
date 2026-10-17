@@ -18,7 +18,7 @@ ADR 0061's Home read as a document: a 40px greeting, each changelog entry's firs
 
 - The greeting is one step down from 40, `heading-md` (24), the size of the section titles below it: the same size, told apart by its place (ADR 0023). The scale has no step between 24 and 40.
 - Home leads with the version, date, and counts; the reader goes to the changelog for the entries.
-- A full-width divider (`stroke/thin`, `border/base`) and an Examples title separate the real information (greeting, What's new, About, At a glance) from the sample banner, summary, and projects.
+- A divider (`stroke/thin`, `border/subtle`, inset by `padding/lg` like the content) and an Examples title separate the real information (greeting, What's new, About, At a glance) from the sample banner, summary, and projects.
 
 ## Trade-offs
 

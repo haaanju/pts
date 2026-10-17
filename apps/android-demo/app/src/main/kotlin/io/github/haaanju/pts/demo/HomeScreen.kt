@@ -116,9 +116,9 @@ fun HomeScreen() {
             // Everything below is sample content, set apart from the real information above
             item {
                 HorizontalDivider(
-                    Modifier.padding(vertical = p.spacing.gapWithinLg),
+                    Modifier.padding(horizontal = p.spacing.paddingLg, vertical = p.spacing.gapWithinLg),
                     thickness = p.border.strokeThin,
-                    color = p.colors.borderBase,
+                    color = p.colors.borderSubtle,
                 )
             }
             item { SectionTitle("Examples") }
