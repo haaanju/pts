@@ -6,12 +6,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -22,14 +20,12 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -79,7 +75,7 @@ fun greeting(time: LocalTime): String = when (time.hour) {
 
 /** The owner's app: what's new in the tokens, what the app is, the tokens at a glance, then sample project content */
 @Composable
-fun HomeScreen(onNavigate: (Destination) -> Unit) {
+fun HomeScreen() {
     val p = LocalPlain.current
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
     // The time, read again every minute, so a greeting left open from the morning doesn't stay "Good morning"
@@ -110,13 +106,22 @@ fun HomeScreen(onNavigate: (Destination) -> Unit) {
                 Text(
                     "${greeting(now)}, Hanju",
                     Modifier.padding(horizontal = p.spacing.paddingLg, vertical = p.spacing.gapWithinSm),
-                    style = p.type.displayMd,
+                    style = p.type.headingMd,
                     color = p.colors.contentBase,
                 )
             }
-            item { WhatsNew(onNavigate) }
+            item { WhatsNew() }
             item { About() }
             item { AtAGlance() }
+            // Everything below is sample content, set apart from the real information above
+            item {
+                HorizontalDivider(
+                    Modifier.padding(horizontal = p.spacing.paddingLg, vertical = p.spacing.gapWithinLg),
+                    thickness = p.border.strokeThin,
+                    color = p.colors.borderSubtle,
+                )
+            }
+            item { SectionTitle("Examples") }
             item { Banner() }
             item { Summary() }
             item {
@@ -148,9 +153,9 @@ private fun withCode(text: String): AnnotatedString {
     }
 }
 
-/** This version's changelog entries, read at build time (ADR 0061): a New or Fix tag, then the entry's first sentence */
+/** This version's changelog entries, read at build time (ADR 0061), counted by kind: the entries themselves are in the changelog */
 @Composable
-private fun WhatsNew(onNavigate: (Destination) -> Unit) {
+private fun WhatsNew() {
     val p = LocalPlain.current
     val date = BuildConfig.RELEASE_DATE?.let { LocalDate.parse(it).format(DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.US)) }
     Column(Modifier.padding(horizontal = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinLg)) {
@@ -158,35 +163,24 @@ private fun WhatsNew(onNavigate: (Destination) -> Unit) {
             Text("What's new in Plain ${BuildConfig.PTS_VERSION}", style = p.type.headingMd, color = p.colors.contentBase)
             if (date != null) Text("Released $date", style = p.type.bodyMd, color = p.colors.contentSubtle)
         }
-        BuildConfig.RELEASE_NOTES.forEach { note ->
-            val kind = note.substringBefore(":", "")
-            val text = note.substringAfter(": ")
-            // The first sentence: the rest is in the changelog
-            val first = Regex("""^.*?\.(?=\s+[A-Z(`]|$)""").find(text)?.value ?: text
-            Row(horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinMd), verticalAlignment = Alignment.Top) {
-                // A fixed column for the tag, so every entry's text starts at the same line
-                Box(Modifier.width(p.spacing.sizeControlLg)) { ChangeTag(kind) }
-                Text(withCode(first), Modifier.weight(1f), style = p.type.bodyMd, color = p.colors.contentBase)
-            }
-        }
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
-            Button({ onNavigate(Destination.Tokens) }, Modifier.control(), shape = controlShape(), contentPadding = controlPadding()) { Text("See the tokens") }
-            OutlinedButton({ onNavigate(Destination.Settings) }, Modifier.control(), shape = controlShape(), contentPadding = controlPadding()) { Text("Settings") }
+        val kinds = BuildConfig.RELEASE_NOTES.groupingBy { it.substringBefore(":", "") }.eachCount()
+        Row(horizontalArrangement = Arrangement.spacedBy(p.spacing.gapWithinSm)) {
+            kinds.forEach { (kind, count) -> ChangeTag("$count $kind") }
         }
     }
 }
 
 /** New is the discovery intent (new things), Fix the success one, as soft tags */
 @Composable
-private fun ChangeTag(kind: String) {
+private fun ChangeTag(label: String) {
     val p = LocalPlain.current
-    val (fill, text) = when (kind) {
+    val (fill, text) = when (label.substringAfter(" ")) {
         "New" -> p.colors.intentDiscoverySurfaceSubtle to p.colors.intentDiscoveryContentBase
         "Fix" -> p.colors.intentSuccessSurfaceSubtle to p.colors.intentSuccessContentBase
         else -> p.colors.surfaceStrong to p.colors.contentBase
     }
     Surface(color = fill, shape = RoundedCornerShape(p.border.radiusFull)) {
-        Text(kind, Modifier.padding(horizontal = p.spacing.paddingSm, vertical = p.spacing.space50), style = p.type.labelSm, color = text)
+        Text(label, Modifier.padding(horizontal = p.spacing.paddingSm, vertical = p.spacing.space50), style = p.type.labelSm, color = text)
     }
 }
 
@@ -195,11 +189,7 @@ private fun About() {
     val p = LocalPlain.current
     Column(Modifier.padding(horizontal = p.spacing.paddingLg), verticalArrangement = Arrangement.spacedBy(p.spacing.gapWithinLg)) {
         Text("About this app", style = p.type.headingMd, color = p.colors.contentBase)
-        listOf(
-            "Plain is a design token system, built end to end to learn how tokens travel from one JSON source to every platform.",
-            "This app is its Android side. Every color, space, corner, and text style on screen comes from `@pts/android`, which is generated from the same tokens as the web docs.",
-            "Material 3 draws the components; the tokens decide how they look. Change the theme, density, and shape in Settings, and the whole app follows.",
-        ).forEach { Text(withCode(it), style = p.type.bodyMd, color = p.colors.contentBase) }
+        Text(withCode("Material 3 components, styled by the `@pts/android` tokens."), style = p.type.bodyMd, color = p.colors.contentBase)
     }
 }
 
