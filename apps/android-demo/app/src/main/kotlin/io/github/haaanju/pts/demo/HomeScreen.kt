@@ -113,6 +113,15 @@ fun HomeScreen() {
             item { WhatsNew() }
             item { About() }
             item { AtAGlance() }
+            // Everything below is sample content, set apart from the real information above
+            item {
+                HorizontalDivider(
+                    Modifier.padding(vertical = p.spacing.gapWithinLg),
+                    thickness = p.border.strokeThin,
+                    color = p.colors.borderBase,
+                )
+            }
+            item { SectionTitle("Examples") }
             item { Banner() }
             item { Summary() }
             item {

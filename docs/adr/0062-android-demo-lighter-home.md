@@ -5,7 +5,7 @@
 
 ## Decision
 
-Chosen: the greeting in `heading-md` and a What's new section that counts this version's changelog entries by kind, with a one-sentence about text and no buttons, because the owner found the 40px greeting too large and the Home text too detailed.
+Chosen: the greeting in `heading-md` and a What's new section that counts this version's changelog entries by kind, with a one-sentence about text and no buttons, and the sample content set apart under a divider and an Examples title, because the owner found the 40px greeting too large and the Home text too detailed, and the sample content read as real.
 
 ## What we learned
 
@@ -18,6 +18,7 @@ ADR 0061's Home read as a document: a 40px greeting, each changelog entry's firs
 
 - The greeting is one step down from 40, `heading-md` (24), the size of the section titles below it: the same size, told apart by its place (ADR 0023). The scale has no step between 24 and 40.
 - Home leads with the version, date, and counts; the reader goes to the changelog for the entries.
+- A full-width divider (`stroke/thin`, `border/base`) and an Examples title separate the real information (greeting, What's new, About, At a glance) from the sample banner, summary, and projects.
 
 ## Trade-offs
 
@@ -25,8 +26,8 @@ ADR 0061's Home read as a document: a 40px greeting, each changelog entry's firs
 
 ## Implementation notes
 
-- `HomeScreen.kt`: `WhatsNew` groups `BuildConfig.RELEASE_NOTES` by its `New:` / `Fix:` prefix and shows a tag per kind; `About` is "Material 3 components, styled by the `@pts/android` tokens."; `HomeScreen` takes no navigation callback.
-- Checked in the emulator: the greeting at 24, the 0.10.1 tags "3 New" and "1 Fix", no crash.
+- `HomeScreen.kt`: `WhatsNew` groups `BuildConfig.RELEASE_NOTES` by its `New:` / `Fix:` prefix and shows a tag per kind; `About` is "Material 3 components, styled by the `@pts/android` tokens."; `HomeScreen` takes no navigation callback; a `HorizontalDivider` and `SectionTitle("Examples")` follow `AtAGlance`.
+- Checked in the emulator: the greeting at 24, the 0.10.1 tags "3 New" and "1 Fix", the divider and Examples title above the sample content; no crash.
 
 ## Documented in
 
