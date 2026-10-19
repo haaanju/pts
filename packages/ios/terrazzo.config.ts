@@ -5,7 +5,7 @@ import { defineConfig } from "@terrazzo/cli";
 import { files, loadResolver, RESOLVER } from "../../tokens/source.ts";
 import ios, { type DimensionGroup, type Release } from "./plugin-ios.ts";
 
-// The semantic colors (ADR 0064), text styles (ADR 0066), and borders (ADR 0067), in the order the files define them. iOS follows the theme
+// The semantic colors (ADR 0064), text styles (ADR 0066), borders (ADR 0067), and spacing (ADR 0068), in file order. iOS follows the theme
 // only: density, shape, and viewport are fixed (ADR 0063), and the system does the rest.
 const resolver = await loadResolver();
 const tokens = resolver.apply({});
@@ -13,6 +13,11 @@ const semantic = [...new Set(files(resolver).filter((f) => f.tier === "semantic"
 export const colors = semantic.filter((id) => tokens[id]?.$type === "color");
 const pick = (groups: string[]) => semantic.filter((id) => tokens[id]?.$type === "dimension" && groups.includes(id.split(".")[0]));
 export const dimensions: DimensionGroup[] = [
+  {
+    className: "PtsSpacing",
+    include: pick(["space", "padding", "gap", "size"]),
+    doc: "The spacing of Plain, in points, at density relaxed: the space scale, padding, gaps, and icon and control sizes.",
+  },
   { className: "PtsBorder", include: pick(["radius", "stroke", "focus-ring"]), doc: "The corners and strokes of Plain, in points, at shape round: radius, stroke widths, and the focus ring." },
 ];
 export const text = semantic.filter((id) => id.startsWith("text.") && tokens[id]?.$type === "typography");

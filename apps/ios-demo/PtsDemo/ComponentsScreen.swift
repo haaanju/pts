@@ -36,7 +36,7 @@ struct ComponentsScreen: View {
                 .buttonBorderShape(PtsShape.control)
 
                 Section("Icon buttons") {
-                    HStack(spacing: 16) {
+                    HStack(spacing: PtsSpacing.gapWithinLg) {
                         Button("Like", systemImage: "heart") {}.buttonStyle(.bordered)
                         Button("Edit", systemImage: "pencil") {}.primaryButton()
                         Button("Share", systemImage: "square.and.arrow.up") {}.buttonStyle(.glass)
@@ -118,14 +118,14 @@ struct ComponentsScreen: View {
                 Button("Delete", role: .destructive) {}
             }
             .sheet(isPresented: $sheet) {
-                VStack(spacing: 16) {
+                VStack(spacing: PtsSpacing.gapWithinLg) {
                     Card {
                         Text("In a sheet").textStyle(PtsTypography.headingSm).foregroundStyle(PtsColors.contentBase)
                         Text("The card's corners follow the sheet's.").foregroundStyle(PtsColors.contentSubtle)
                     }
                     Button("Done") { sheet = false }.primaryButton().buttonBorderShape(PtsShape.control)
                 }
-                .padding(16)
+                .padding(PtsSpacing.paddingLg)
                 .presentationDetents([.medium])
             }
         }

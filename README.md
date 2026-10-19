@@ -14,7 +14,7 @@ Plain is a personal study project: a small design token monorepo built end to en
 | [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), per-product CSS and JS values (`@pts/web/products/<name>.css`, `.js`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
 | [`@pts/android`](packages/android) | Android output: Kotlin for Jetpack Compose, one class per mode (`PtsColors`, `PtsSpacing`, `PtsBorder`, `PtsTypography`) and the bundled fonts (`PtsFonts`); a Gradle library in `mavenLocal` |
 | [`apps/android-demo`](apps/android-demo) | Not a package: a Compose app (Gradle) that themes Material 3 from `pts-android` and lists its tokens like the docs |
-| [`@pts/ios`](packages/ios) | iOS output, in progress: a Swift package, `Pts`, with the semantic colors as an asset catalog (a light and dark color set each) and `PtsColors`, the text styles at Apple's sizes (`PtsTypography`), the bundled fonts (`PtsFonts`), and the corners (`PtsBorder`, `PtsShape`) |
+| [`@pts/ios`](packages/ios) | iOS output: a Swift package, `Pts`, with the semantic colors as an asset catalog (a light and dark color set each) and `PtsColors`, the text styles at Apple's sizes (`PtsTypography`), the bundled fonts (`PtsFonts`), the spacing (`PtsSpacing`), and the corners (`PtsBorder`, `PtsShape`) |
 | [`apps/ios-demo`](apps/ios-demo) | Not a package: a SwiftUI app (Xcode), the Android demo's tabs with native components, from `packages/ios` as a local Swift package |
 | [`@pts/storybook`](apps/storybook) | Token and component documentation, generated from the token source |
 | [`@pts/components`](apps/components) | Internal, not published: web components (Lit) that test the component tier, `<pts-button>` |
@@ -217,7 +217,7 @@ The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus `
 Deferred for now:
 
 - Syncing the tokens to Figma Variables
-- Native platforms: the rest of iOS, after its colors, type, and corners (Android is shipped, see above)
+- Native platforms: compiling the iOS package in CI (Android is shipped, see above)
 
 ## Licenses
 

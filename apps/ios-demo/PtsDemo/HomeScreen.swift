@@ -34,7 +34,7 @@ struct HomeScreen: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 32) {
+                VStack(alignment: .leading, spacing: PtsSpacing.gapBetweenLg) {
                     // Read again every minute, so a greeting left open from the morning doesn't stay "Good morning"
                     TimelineView(.everyMinute) { context in
                         Text("\(greeting(context.date)), Hanju")
@@ -50,7 +50,7 @@ struct HomeScreen: View {
                     Summary()
                     Recent()
                 }
-                .padding(16)
+                .padding(PtsSpacing.paddingLg)
             }
             .background(PtsColors.background)
             .navigationTitle("Projects")
@@ -68,15 +68,15 @@ struct HomeScreen: View {
 private struct WhatsNew: View {
     var body: some View {
         let kinds = Dictionary(grouping: PtsCatalog.releaseNotes) { $0.components(separatedBy: ":").first ?? "" }
-        VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: PtsSpacing.gapWithinMd) {
+            VStack(alignment: .leading, spacing: PtsSpacing.gapWithinXs) {
                 SectionTitle("What's new in Plain \(PtsCatalog.version)")
                 if let date = PtsCatalog.releaseDate.flatMap({ try? Date($0, strategy: .iso8601.year().month().day()) }) {
                     Text("Released \(date.formatted(date: .long, time: .omitted))")
                         .foregroundStyle(PtsColors.contentSubtle)
                 }
             }
-            HStack(spacing: 8) {
+            HStack(spacing: PtsSpacing.gapWithinSm) {
                 ForEach(kinds.keys.sorted(), id: \.self) { kind in
                     // New is the discovery intent (new things), Fix the success one
                     let (fill, text) = kind == "New" ? (PtsColors.intentDiscoverySurfaceSubtle, PtsColors.intentDiscoveryContentBase)
@@ -91,7 +91,7 @@ private struct WhatsNew: View {
 
 private struct About: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: PtsSpacing.gapWithinMd) {
             SectionTitle("About this app")
             Text("Native SwiftUI components, colored by the `@pts/ios` tokens.")
                 .foregroundStyle(PtsColors.contentBase)
@@ -102,15 +102,16 @@ private struct About: View {
 /// The tokens the app reads, counted from the catalog, so the numbers follow the tokens
 private struct AtAGlance: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: PtsSpacing.gapWithinMd) {
             SectionTitle("At a glance")
             Card {
-                HStack(spacing: 20) {
+                HStack(spacing: PtsSpacing.gapBetweenSm) {
                     Stat(value: "\(PtsCatalog.colors.count)", label: "colors")
-                    Stat(value: "\(PtsCatalog.typography.count)", label: "text styles")
+                    Stat(value: "\(PtsCatalog.typography.count)", label: "type")
+                    Stat(value: "\(PtsCatalog.spacing.count)", label: "spacing")
                     Stat(value: "\(PtsCatalog.border.count)", label: "border")
                 }
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: PtsSpacing.gapWithinXs) {
                     Text("\(PtsCatalog.modifiers.count) mode: \(PtsCatalog.modifiers.joined(separator: ", "))")
                         .foregroundStyle(PtsColors.contentBase)
                     Text("@pts/ios \(PtsCatalog.version) · Terrazzo · SwiftUI")
@@ -124,15 +125,15 @@ private struct AtAGlance: View {
 /// An info banner: the intent's soft fill and its content color, title and text the same size, told apart by weight
 private struct Banner: View {
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
+        HStack(alignment: .firstTextBaseline, spacing: PtsSpacing.gapWithinMd) {
             Image(systemName: "info.circle.fill")
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: PtsSpacing.gapWithinXs) {
                 Text("Design review moved to Thursday").textStyle(PtsTypography.labelLg)
                 Text("The checkout redesign review is now Thursday at 2 PM.").textStyle(PtsTypography.bodyMd)
             }
         }
         .foregroundStyle(PtsColors.intentInfoContentBase)
-        .padding(16)
+        .padding(PtsSpacing.paddingLg)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(PtsColors.intentInfoSurfaceSubtle, in: PtsShape.container)
     }
@@ -142,7 +143,7 @@ private struct Banner: View {
 private struct Summary: View {
     var body: some View {
         Card {
-            HStack(spacing: 20) {
+            HStack(spacing: PtsSpacing.gapBetweenSm) {
                 Stat(value: "12", label: "Open")
                 Stat(value: "03", label: "Due soon")
                 Stat(value: "28", label: "Done")
@@ -153,23 +154,23 @@ private struct Summary: View {
 
 private struct Recent: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: PtsSpacing.gapWithinMd) {
             HStack {
                 SectionTitle("Recent")
                 Button("See all") {}
             }
             VStack(spacing: 0) {
                 ForEach(projects) { project in
-                    HStack(spacing: 12) {
+                    HStack(spacing: PtsSpacing.gapWithinMd) {
                         Initials(name: project.name)
-                        VStack(alignment: .leading, spacing: 2) {
+                        VStack(alignment: .leading, spacing: PtsSpacing.space50) {
                             Text(project.name).textStyle(PtsTypography.labelLg).foregroundStyle(PtsColors.contentBase)
                             Text(project.detail).textStyle(PtsTypography.bodySm).foregroundStyle(PtsColors.contentSubtle)
                         }
                         Spacer()
                         Tag(project.status)
                     }
-                    .padding(.vertical, 12)
+                    .padding(.vertical, PtsSpacing.paddingMd)
                     if project.id != projects.last?.id { Divider().overlay(PtsColors.borderSubtle) }
                 }
             }
@@ -184,7 +185,7 @@ private struct Initials: View {
         Text(name.split(separator: " ").prefix(2).map { $0.prefix(1).uppercased() }.joined())
             .textStyle(PtsTypography.labelMd)
             .foregroundStyle(PtsColors.contentBase)
-            .frame(width: 44, height: 44)
+            .frame(width: PtsSpacing.sizeControlMd, height: PtsSpacing.sizeControlMd)
             .background(PtsColors.surfaceStrong, in: Circle())
     }
 }

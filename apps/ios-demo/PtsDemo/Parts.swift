@@ -1,4 +1,4 @@
-// Small pieces the screens share. Spacing is literal until the package has it (ADR 0063: spacing is the next step).
+// Small pieces the screens share
 import Pts
 import SwiftUI
 
@@ -14,8 +14,8 @@ struct Card<Content: View>: View {
     @ViewBuilder let content: Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) { content }
-            .padding(20)
+        VStack(alignment: .leading, spacing: PtsSpacing.gapWithinMd) { content }
+            .padding(PtsSpacing.paddingXl)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(PtsColors.surfaceSubtle, in: PtsShape.container)
     }
@@ -82,8 +82,8 @@ struct Tag: View {
             .lineLimit(1)
             .fixedSize()
             .foregroundStyle(text)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 2)
+            .padding(.horizontal, PtsSpacing.paddingSm)
+            .padding(.vertical, PtsSpacing.space50)
             .background(fill, in: Capsule())
     }
 }
@@ -94,7 +94,7 @@ struct Stat: View {
     let label: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: PtsSpacing.gapWithinXs) {
             Text(value)
                 .font(.custom("IBM Plex Mono", size: 28, relativeTo: .title).weight(.bold))
                 .foregroundStyle(PtsColors.contentBase)

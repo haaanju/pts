@@ -1,5 +1,5 @@
 // The token pages, like the Storybook docs: token first, then its value in the current theme, the alias it points to,
-// and its description, from PtsCatalog (ADR 0065). Colors, type, and borders so far; spacing follows (ADR 0063).
+// and its description, from PtsCatalog (ADR 0065): the Android demo's pages, Color, Type, Spacing, and Border.
 import Pts
 import PtsCatalog
 import SwiftUI
@@ -30,7 +30,7 @@ struct TokensScreen: View {
         NavigationStack {
             List {
                 Picker("Page", selection: $page) {
-                    ForEach(["Color", "Type", "Border"], id: \.self) { Text($0) }
+                    ForEach(["Color", "Type", "Spacing", "Border"], id: \.self) { Text($0) }
                 }
                 .pickerStyle(.segmented)
                 .listRowBackground(Color.clear)
@@ -43,6 +43,22 @@ struct TokensScreen: View {
                             }
                         } header: {
                             Header(group: section.title)
+                        }
+                    }
+                } else if page == "Spacing" {
+                    // The docs' groups: the scale, padding, each gap family, and each size family
+                    ForEach(["space", "padding", "gap/within", "gap/between", "gap/section", "size/icon", "size/control"], id: \.self) { group in
+                        Section {
+                            ForEach(PtsCatalog.spacing.filter { $0.path.hasPrefix("\(group)/") }) { entry in
+                                // the largest step's length, so every bar keeps its own
+                                DimensionRow(entry: entry, sampleWidth: PtsSpacing.space1600) {
+                                    Rectangle()
+                                        .fill(PtsColors.inverseBase)
+                                        .frame(width: min(entry.value, PtsSpacing.space1600), height: PtsSpacing.space200)
+                                }
+                            }
+                        } header: {
+                            Header(group: group)
                         }
                     }
                 } else if page == "Border" {
@@ -75,7 +91,7 @@ private struct Header: View {
     let group: String
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
+        HStack(alignment: .firstTextBaseline, spacing: PtsSpacing.gapWithinSm) {
             Text((group.split(separator: "/").last ?? "").capitalized)
                 .textStyle(PtsTypography.headingSm)
                 .foregroundStyle(PtsColors.contentBase)
@@ -93,12 +109,12 @@ private struct TokenRow: View {
     let index: Int
 
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
+        HStack(alignment: .top, spacing: PtsSpacing.gapWithinLg) {
             RoundedRectangle(cornerRadius: PtsBorder.radiusMd)
                 .fill(entry.color)
                 .stroke(PtsColors.borderSubtle, lineWidth: PtsBorder.strokeThin)
-                .frame(width: 44, height: 44)
-            VStack(alignment: .leading, spacing: 4) {
+                .frame(width: PtsSpacing.sizeControlMd, height: PtsSpacing.sizeControlMd)
+            VStack(alignment: .leading, spacing: PtsSpacing.gapWithinXs) {
                 Text(entry.path)
                     .textStyle(PtsTypography.codeMd)
                     .foregroundStyle(PtsColors.contentBase)
@@ -112,7 +128,7 @@ private struct TokenRow: View {
                 }
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, PtsSpacing.paddingXs)
     }
 }
 
@@ -122,7 +138,7 @@ private struct TypeRow: View {
     let entry: PtsCatalog.TypeEntry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: PtsSpacing.gapWithinSm) {
             Text(entry.path)
                 .textStyle(PtsTypography.codeMd)
                 .foregroundStyle(PtsColors.contentSubtle)
@@ -133,19 +149,20 @@ private struct TypeRow: View {
                 .textStyle(PtsTypography.codeMd)
                 .foregroundStyle(PtsColors.contentSubtle)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, PtsSpacing.paddingXs)
     }
 }
 
 /// A dimension like the docs' tables: the sample, then the path, value, alias, and description
 struct DimensionRow<Sample: View>: View {
     let entry: PtsCatalog.DimensionEntry
+    var sampleWidth = PtsSpacing.sizeControlMd
     @ViewBuilder let sample: Sample
 
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
-            sample.frame(width: 44, alignment: .leading)
-            VStack(alignment: .leading, spacing: 4) {
+        HStack(alignment: .top, spacing: PtsSpacing.gapWithinLg) {
+            sample.frame(width: sampleWidth, alignment: .leading)
+            VStack(alignment: .leading, spacing: PtsSpacing.gapWithinXs) {
                 Text(entry.path)
                     .textStyle(PtsTypography.codeMd)
                     .foregroundStyle(PtsColors.contentBase)
@@ -159,7 +176,7 @@ struct DimensionRow<Sample: View>: View {
                 }
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, PtsSpacing.paddingXs)
     }
 
     private func points(_ value: CGFloat) -> String {
@@ -173,10 +190,10 @@ private struct BorderSample: View {
     let value: CGFloat
 
     var body: some View {
-        let shape = RoundedRectangle(cornerRadius: group == "radius" ? min(value, 22) : PtsBorder.radiusMd)
+        let shape = RoundedRectangle(cornerRadius: group == "radius" ? min(value, PtsSpacing.sizeControlMd / 2) : PtsBorder.radiusMd)
         shape
             .fill(PtsColors.surfaceSubtle)
             .stroke(PtsColors.borderBase, lineWidth: group == "radius" ? PtsBorder.strokeThin : value)
-            .frame(width: 44, height: 44)
+            .frame(width: PtsSpacing.sizeControlMd, height: PtsSpacing.sizeControlMd)
     }
 }
