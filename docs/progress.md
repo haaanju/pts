@@ -11,8 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/ios-corners`: iOS corners (ADR 0067), pull request #48.
-- `feature/ios-spacing`, on top of it (worktree `.claude/worktrees/ios-colors`): iOS spacing (ADR 0068).
+- `feature/ios-spacing` (worktree `.claude/worktrees/ios-colors`): iOS spacing (ADR 0068).
 
 ## Next
 
