@@ -11,8 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/ios-type`: iOS type (ADR 0066), pull request #47.
-- `feature/ios-corners`, on top of it (worktree `.claude/worktrees/ios-colors`): iOS corners (ADR 0067).
+- `feature/ios-corners` (worktree `.claude/worktrees/ios-colors`): iOS corners (ADR 0067).
 
 ## Next
 
