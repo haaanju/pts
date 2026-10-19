@@ -117,7 +117,7 @@ tokens["surface.subtle"].$value.hex; // "#242424"
 
 The Output/Products page of the [docs](https://haaanju.github.io/pts/) shows both products side by side.
 
-**Android (Compose).** `@pts/android` builds one Kotlin class per mode, with one value per context, from Terrazzo's resolver (ADR 0056, 0059): `PtsColors` (`Light`, `Dark`: the semantic colors), `PtsSpacing` (`Relaxed`, `Compact`: space, padding, gaps, sizes, in `Dp`), `PtsBorder` (`Soft`, `Round`: radius, strokes, focus ring), and `PtsTypography` (`Narrow`, `Wide`: the text styles as `TextStyle`, with Aspekta and IBM Plex bundled as `PtsFonts`). Property names are the token path in lower camel case. An app picks one value of each, the way `data-*` attributes pick a mode on the web. `packages/android` is also a Gradle library, `io.github.haaanju.pts:pts-android`, at the version every `@pts/*` package shares; it is published to `mavenLocal` only so far (ADR 0058). [`apps/android-demo`](apps/android-demo) is a Compose app that depends on it: Material 3's own components, themed from the tokens, in four tabs, Home (a greeting, this version's changelog, what the app is, the tokens at a glance, and sample content), Tokens (the docs' token tables), Components, and Settings (theme, density, and shape) (ADR 0057, 0060, 0061).
+**Android (Compose).** `@pts/android` builds one Kotlin class per mode, with one value per context, from Terrazzo's resolver (ADR 0056, 0059): `PtsColors` (`Light`, `Dark`: the semantic colors), `PtsSpacing` (`Relaxed`, `Compact`: space, padding, gaps, sizes, in `Dp`), `PtsBorder` (`Soft`, `Round`: radius, strokes, focus ring), and `PtsTypography` (`Narrow`, `Wide`: the text styles as `TextStyle`, with Aspekta and IBM Plex bundled as `PtsFonts`). Property names are the token path in lower camel case. An app picks one value of each, the way `data-*` attributes pick a mode on the web. `packages/android` is also a Gradle library, `io.github.haaanju.pts:pts-android`, at the version every `@pts/*` package shares; it is published to `mavenLocal` only so far (ADR 0058). [`apps/android-demo`](apps/android-demo) is a Compose app that depends on it: Material 3's own components, themed from the tokens, in four tabs, Home (a greeting, what's new in this version with its entries counted by kind, what the app is, the tokens at a glance, and sample content under a divider), Tokens (the docs' token tables), Components, and Settings (theme, density, and shape) (ADR 0057, 0060, 0061).
 
 ```kotlin
 val colors = if (isSystemInDarkTheme()) PtsColors.Dark else PtsColors.Light
@@ -152,6 +152,15 @@ import "@pts/components/button.js"; // defines <pts-button>
 ```
 
 `variant` (`primary`, `secondary`, `ghost`, `danger`), `size` (`sm`, `md`), `type`, `disabled`, `loading`, `full-width`, and `label` (the accessible name of an icon-only button). It follows `data-theme`, `data-density`, and `data-shape` like everything else. See the Button page in the docs and ADR 0032.
+
+## Try it
+
+```sh
+npm install
+npm run build
+```
+
+Then open `apps/android-demo` in Android Studio and run it on an emulator; the demo needs one. The Android steps are in the Android (Compose) paragraph under [Usage](#usage).
 
 ## Development
 
@@ -191,7 +200,7 @@ The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus `
 Deferred for now:
 
 - Syncing the tokens to Figma Variables
-- Native platforms (iOS, Android)
+- Native platforms: iOS (Android is shipped, see above)
 
 ## Licenses
 

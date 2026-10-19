@@ -173,6 +173,7 @@ always/        white, black
 
 - Storybook follows the tokens: the docs data reloads on save; `tokens.css` and the UI themes are built at startup, so restart `npm run storybook` to see a token change in them (ADR 0046).
 - Figma doesn't: load the `figma` skill and bring it in line.
+- Android follows on the next build (`npm run build`); the demo app shows it after a publish to `mavenLocal` (README, Android section).
 - Add a changeset: the change type (breaking, new, fix) decides the next version; see Git Convention.
 
 ## Decisions

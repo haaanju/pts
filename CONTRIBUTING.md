@@ -96,8 +96,8 @@ CI runs these on every push to `main` and every pull request; open a failed run 
 | Check | Catches |
 |---|---|
 | `npm run check` | Every token rule, in every theme, density, viewport, and shape: Terrazzo's built-in rules (valid DTCG values, kebab-case names, `$type`, aliases pointing at nothing, srgb colors, a `$description` on every semantic token) and the 14 `pts/*` rules (contrast, visible states, mode parity, scale order, tiers, and more). What each `pts/*` rule enforces is in the header of its file in [`tokens/lint/rules/`](tokens/lint/rules) |
-| `npm run typecheck`, `npm run build`, `npm run build-storybook` | Changes that break the CSS output or the docs |
-| `npm test` | A change to a check (`tokens/lint/`) that stops it reporting what it should; a build that drops a token or a mode from `tokens.css`, `tokens.js`, or `tokens.scss` |
+| `npm run typecheck`, `npm run build`, `npm run build-storybook` | Changes that break the CSS or Kotlin output, or the docs |
+| `npm test` | A change to a check (`tokens/lint/`) that stops it reporting what it should; a build that drops a token or a mode from `tokens.css`, `tokens.js`, `tokens.scss`, or the Kotlin classes in `@pts/android` |
 
 Messages start with the rule that failed, then name the theme or file and the token:
 
