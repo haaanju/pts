@@ -1,6 +1,6 @@
 # 0070. iOS: Apple's Defaults Where the Tokens Differed
 
-- Status: accepted
+- Status: accepted (amended by 0072)
 - Date: 2026-10-20
 
 ## Decision

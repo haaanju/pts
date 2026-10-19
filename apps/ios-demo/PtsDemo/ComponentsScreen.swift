@@ -21,7 +21,7 @@ struct ComponentsScreen: View {
                 Section("Buttons") {
                     HStack {
                         Button("Primary") {}.primaryButton()
-                        Button("Secondary") {}.buttonStyle(.bordered)
+                        Button("Secondary") {}.secondaryButton()
                         Button("Ghost") {}.buttonStyle(.borderless)
                     }
                     HStack {
@@ -29,18 +29,18 @@ struct ComponentsScreen: View {
                         Button("Disabled") {}.primaryButton().disabled(true)
                     }
                     HStack {
-                        Button("Glass") {}.buttonStyle(.glass)
-                        Button("Glass prominent") {}.buttonStyle(.glassProminent).foregroundStyle(PtsColors.intentInfoContentInverse)
+                        Button("Glass") {}.glassButton()
+                        Button("Glass prominent") {}.glassButton(prominent: true)
                     }
                 }
                 .buttonBorderShape(PtsShape.control)
 
                 Section("Icon buttons") {
                     HStack(spacing: PtsSpacing.gapWithinLg) {
-                        Button("Like", systemImage: "heart") {}.buttonStyle(.bordered)
+                        Button("Like", systemImage: "heart") {}.secondaryButton()
                         Button("Edit", systemImage: "pencil") {}.primaryButton()
-                        Button("Share", systemImage: "square.and.arrow.up") {}.buttonStyle(.glass)
-                        Button("Add", systemImage: "plus") {}.buttonStyle(.glassProminent).foregroundStyle(PtsColors.intentInfoContentInverse)
+                        Button("Share", systemImage: "square.and.arrow.up") {}.glassButton()
+                        Button("Add", systemImage: "plus") {}.glassButton(prominent: true)
                     }
                     .labelStyle(.iconOnly)
                     .buttonBorderShape(.circle)
