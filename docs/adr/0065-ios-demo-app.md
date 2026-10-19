@@ -1,6 +1,6 @@
 # 0065. An iOS Demo App
 
-- Status: accepted
+- Status: accepted (amended by 0070)
 - Date: 2026-10-19
 
 ## Decision

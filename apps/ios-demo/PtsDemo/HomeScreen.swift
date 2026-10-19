@@ -52,7 +52,6 @@ struct HomeScreen: View {
                 }
                 .padding(PtsSpacing.paddingLg)
             }
-            .background(PtsColors.background)
             .navigationTitle("Projects")
             .toolbar {
                 ToolbarItemGroup {

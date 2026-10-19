@@ -5,9 +5,9 @@
 //   Pts/PtsColors.swift     public enum PtsColors { public static let contentInverseBase = Color(.contentInverseBase) }
 // The asset names are the token path in lower camel case, so Xcode's generated asset symbols (.contentInverseBase)
 // are the Swift names; PtsColors makes them public, since a package's generated symbols are internal.
-// PtsTypography holds a text style per text/* token (ADR 0066): its family and weight, at the size of the iOS text
-// style its $extensions name, scaled as Apple scales that style, so Dynamic Type follows; and its letter spacing, at
-// the same share of the size as the token's. PtsFonts registers the bundled files (build-fonts.ts writes them).
+// PtsTypography holds a text style per text/* token (ADR 0066, 0070): the token's family and weight, at the size and
+// leading of the iOS text style its $extensions name, scaled as Apple scales that style, so Dynamic Type follows; no
+// tracking, as Apple adds none to a custom font. PtsFonts registers the bundled files (build-fonts.ts writes them).
 // Each dimension group is an enum of CGFloat points, one per token (PtsBorder, ADR 0067); PtsShape gives the shapes
 // ADR 0063 chose from them: capsule controls and concentric containers.
 // With a catalog option it also writes catalog/PtsCatalog.swift: each token's path, description, and what the docs
@@ -42,35 +42,33 @@ type Options = {
   catalog?: Release;
 };
 
-/** Apple's text styles at the default text size (Large), in points: the sizes Dynamic Type scales from */
-export const APPLE_SIZES: Record<string, number> = {
-  largeTitle: 34,
-  title: 28,
-  title2: 22,
-  title3: 20,
-  headline: 17,
-  body: 17,
-  callout: 16,
-  subheadline: 15,
-  footnote: 13,
-  caption: 12,
-  caption2: 11,
+/** Apple's text styles at the default text size (Large): size and leading in points, which Dynamic Type scales */
+export const APPLE_STYLES: Record<string, { size: number; leading: number }> = {
+  largeTitle: { size: 34, leading: 41 },
+  title: { size: 28, leading: 34 },
+  title2: { size: 22, leading: 28 },
+  title3: { size: 20, leading: 25 },
+  headline: { size: 17, leading: 22 },
+  body: { size: 17, leading: 22 },
+  callout: { size: 16, leading: 21 },
+  subheadline: { size: 15, leading: 20 },
+  footnote: { size: 13, leading: 18 },
+  caption: { size: 12, leading: 16 },
+  caption2: { size: 11, leading: 13 },
 };
 
-type Typography = { fontFamily: string[] | string; fontSize: { value: number }; fontWeight: number; letterSpacing: { value: number } };
+type Typography = { fontFamily: string[] | string; fontWeight: number };
 
-/** A text style on iOS: the bundled family, Apple's size for its text style, the token's weight, and its tracking */
+/** A text style on iOS: the token's family and weight, at the size and leading of Apple's text style it names */
 export const textStyle = (token: { $value: unknown; $extensions?: Record<string, any> }, id: string, families: Record<string, string>, key: string) => {
   const t = token.$value as Typography;
   const name = Array.isArray(t.fontFamily) ? t.fontFamily[0] : t.fontFamily;
   const family = families[name];
   if (!family) throw new Error(`${id} uses ${name}, which the package doesn't bundle`);
   const style = token.$extensions?.[key]?.ios?.textStyle as string;
-  const size = APPLE_SIZES[style];
-  if (!size) throw new Error(`${id} names no iOS text style`);
-  // the token's letter spacing as a share of its own size, at Apple's size: -1.25px at 64px is -0.66pt at 34pt
-  const tracking = Math.round((t.letterSpacing.value / t.fontSize.value) * size * 100) / 100;
-  return { family, style, size, weight: t.fontWeight, tracking };
+  const apple = APPLE_STYLES[style];
+  if (!apple) throw new Error(`${id} names no iOS text style`);
+  return { family, style, ...apple, weight: t.fontWeight };
 };
 
 export const swiftName = (id: string) =>
@@ -194,29 +192,45 @@ import CoreText
 import SwiftUI
 import UIKit
 
-/// A text style of Plain: a bundled family and weight at the size of the iOS text style it follows, scaled by Dynamic
-/// Type as Apple scales that style, and its letter spacing. Set it with \`.textStyle(_:)\`; register the fonts first
-/// (\`PtsFonts.register()\`).
+/// A text style of Plain: a bundled family at the token's weight, at the size and leading of the iOS text style it
+/// follows, scaled by Dynamic Type as Apple scales that style, and a step bolder with Bold Text. Set it with
+/// \`.textStyle(_:)\`; register the fonts first (\`PtsFonts.register()\`).
 public struct PtsTextStyle: Sendable {
     public let family: String
-    /// The size at the default text size (Large), Apple's for \`textStyle\`
+    /// Size and leading at the default text size (Large), Apple's for \`textStyle\`
     public let size: CGFloat
+    public let leading: CGFloat
     public let textStyle: Font.TextStyle
     /// The weight, 100–900: a position on a variable font's weight axis, or the face of a static family
     public let weight: CGFloat
-    public let tracking: CGFloat
 
-    /// The font at a Dynamic Type size. Built from Core Text, since SwiftUI's \`.weight(_:)\` doesn't move a variable
-    /// font's weight axis.
-    public func font(for dynamicTypeSize: DynamicTypeSize = .large) -> Font {
-        let traits = UITraitCollection(preferredContentSizeCategory: UIContentSizeCategory(dynamicTypeSize))
-        let scaled = UIFontMetrics(forTextStyle: uiTextStyle).scaledValue(for: size, compatibleWith: traits)
+    /// The Core Text font at a Dynamic Type size, 200 heavier with Bold Text (regular to semibold, as Apple's text
+    /// styles go). Built from Core Text, since SwiftUI's \`.weight(_:)\` doesn't move a variable font's weight axis.
+    public func ctFont(for dynamicTypeSize: DynamicTypeSize = .large, legibilityWeight: LegibilityWeight? = nil) -> CTFont {
+        let weight = legibilityWeight == .bold ? min(weight + 200, 900) : weight
         let attributes: [CFString: Any] = [
             kCTFontFamilyNameAttribute: family,
             kCTFontTraitsAttribute: [kCTFontWeightTrait: Self.weightTrait(weight)],
             kCTFontVariationAttribute: [0x7767_6874: weight], // 'wght'
         ]
-        return Font(CTFontCreateWithFontDescriptor(CTFontDescriptorCreateWithAttributes(attributes as CFDictionary), scaled, nil))
+        return CTFontCreateWithFontDescriptor(CTFontDescriptorCreateWithAttributes(attributes as CFDictionary), scaled(size, dynamicTypeSize), nil)
+    }
+
+    /// The SwiftUI font at a Dynamic Type size and legibility weight
+    public func font(for dynamicTypeSize: DynamicTypeSize = .large, legibilityWeight: LegibilityWeight? = nil) -> Font {
+        Font(ctFont(for: dynamicTypeSize, legibilityWeight: legibilityWeight))
+    }
+
+    /// The space to add between lines so they sit Apple's leading apart: SwiftUI sets line spacing, not line height
+    public func lineSpacing(for dynamicTypeSize: DynamicTypeSize = .large, legibilityWeight: LegibilityWeight? = nil) -> CGFloat {
+        let font = ctFont(for: dynamicTypeSize, legibilityWeight: legibilityWeight)
+        let height = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font)
+        return max(0, scaled(leading, dynamicTypeSize) - height)
+    }
+
+    private func scaled(_ value: CGFloat, _ dynamicTypeSize: DynamicTypeSize) -> CGFloat {
+        let traits = UITraitCollection(preferredContentSizeCategory: UIContentSizeCategory(dynamicTypeSize))
+        return UIFontMetrics(forTextStyle: uiTextStyle).scaledValue(for: value, compatibleWith: traits)
     }
 
     // Core Text's weight trait for a 100–900 weight, so a static family picks its face: regular 0, bold 0.4
@@ -242,12 +256,12 @@ public struct PtsTextStyle: Sendable {
     }
 }
 
-/// The text styles of Plain. Sizes are Apple's for each style's iOS text style, not the web's (ADR 0066).
+/// The text styles of Plain: the tokens' families and weights at Apple's sizes and leading (ADR 0066, 0070).
 public enum PtsTypography {
 ${styles
-  .map(({ id, family, style, size, weight, tracking }) => {
+  .map(({ id, family, style, size, leading, weight }) => {
     const doc = light[id]?.$description;
-    return `${doc ? `    /// ${doc} iOS: ${style}, ${size}pt.\n` : ""}    public static let ${swiftName(id.replace(/^text\./, ""))} = PtsTextStyle(family: ${str(family)}, size: ${size}, textStyle: .${style}, weight: ${weight}, tracking: ${tracking})`;
+    return `${doc ? `    /// ${doc} iOS: ${style}, ${size}/${leading}pt.\n` : ""}    public static let ${swiftName(id.replace(/^text\./, ""))} = PtsTextStyle(family: ${str(family)}, size: ${size}, leading: ${leading}, textStyle: .${style}, weight: ${weight})`;
   })
   .join("\n\n")}
 }
@@ -255,14 +269,17 @@ ${styles
 private struct TextStyleModifier: ViewModifier {
     let style: PtsTextStyle
     @Environment(\\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\\.legibilityWeight) private var legibilityWeight
 
     func body(content: Content) -> some View {
-        content.font(style.font(for: dynamicTypeSize)).tracking(style.tracking)
+        content
+            .font(style.font(for: dynamicTypeSize, legibilityWeight: legibilityWeight))
+            .lineSpacing(style.lineSpacing(for: dynamicTypeSize, legibilityWeight: legibilityWeight))
     }
 }
 
 extension View {
-    /// Sets a Plain text style: its font at the current Dynamic Type size, and its letter spacing
+    /// Sets a Plain text style: its font and line spacing at the current Dynamic Type size and Bold Text setting
     public func textStyle(_ style: PtsTextStyle) -> some View {
         modifier(TextStyleModifier(style: style))
     }
@@ -310,9 +327,9 @@ public enum PtsFonts {
         return `    public static let ${name}: [DimensionEntry] = [\n${entries}\n    ]`;
       });
       const typeEntries = styles
-        .map(({ id, family, style, size, weight, tracking }) => {
+        .map(({ id, family, style, size, leading, weight }) => {
           const name = swiftName(id.replace(/^text\./, ""));
-          return `        TypeEntry(path: ${str(slashes(id))}, description: ${str(light[id]?.$description ?? "")}, detail: ${str(`${style} · ${size}pt · ${family} ${weight} · ${tracking}`)}, style: PtsTypography.${name}),`;
+          return `        TypeEntry(path: ${str(slashes(id))}, description: ${str(light[id]?.$description ?? "")}, detail: ${str(`${style} · ${size}/${leading}pt · ${family} ${weight}`)}, style: PtsTypography.${name}),`;
         })
         .join("\n");
       outputFile(
@@ -343,7 +360,7 @@ public enum PtsCatalog {
         public var id: String { path }
     }
 
-    /// A text style: its path, description, and its iOS text style, size, family, weight, and tracking
+    /// A text style: its path, description, and its iOS text style, size and leading, family, and weight
     public struct TypeEntry: Identifiable, Sendable {
         public let path: String
         public let description: String

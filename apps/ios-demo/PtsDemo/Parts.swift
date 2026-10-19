@@ -2,13 +2,6 @@
 import Pts
 import SwiftUI
 
-/// The theme setting: the system's, or one fixed for the app
-enum ThemeChoice: String, CaseIterable, Identifiable {
-    case system = "System", light = "Light", dark = "Dark"
-    var id: String { rawValue }
-    var scheme: ColorScheme? { self == .light ? .light : self == .dark ? .dark : nil }
-}
-
 /// A card: surface/subtle, in the container shape: concentric corners, never less round than radius/container
 struct Card<Content: View>: View {
     @ViewBuilder let content: Content
@@ -35,10 +28,10 @@ struct SectionTitle: View {
 }
 
 extension View {
-    /// The primary button: the accent fill (inverse/base) with content/inverse/base on it, the pair pts/contrast checks.
-    /// SwiftUI would write white, which fails on dark mode's light inverse/base.
+    /// The primary button: the accent fill (intent/info/surface/base) with its content/inverse on it, the pair
+    /// pts/contrast checks. SwiftUI would write white, which fails on dark mode's light blue.
     func primaryButton() -> some View {
-        buttonStyle(.borderedProminent).foregroundStyle(PtsColors.contentInverseBase)
+        buttonStyle(.borderedProminent).foregroundStyle(PtsColors.intentInfoContentInverse)
     }
 
     /// The danger button: the danger intent's surface/base with its content/inverse

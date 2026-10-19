@@ -1,6 +1,6 @@
 # 0063. Native iOS Styles Mapped from the Tokens
 
-- Status: accepted
+- Status: accepted (amended by 0070)
 - Date: 2026-10-19
 
 ## Decision
