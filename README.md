@@ -156,11 +156,14 @@ import "@pts/components/button.js"; // defines <pts-button>
 ## Try it
 
 ```sh
+export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+export ANDROID_HOME="$HOME/Library/Android/sdk"
 npm install
 npm run build
+(cd packages/android && ./gradlew publishToMavenLocal)
 ```
 
-Then open `apps/android-demo` in Android Studio and run it on an emulator; the demo needs one. The Android steps are in the Android (Compose) paragraph under [Usage](#usage).
+Then open `apps/android-demo` in Android Studio and run it on an emulator. The demo reads the library from `mavenLocal`, so publish it first, as above. The two exports are for macOS with Android Studio installed; the Gradle steps need both.
 
 ## Development
 
