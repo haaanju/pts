@@ -38,7 +38,7 @@ struct HomeScreen: View {
                     // Read again every minute, so a greeting left open from the morning doesn't stay "Good morning"
                     TimelineView(.everyMinute) { context in
                         Text("\(greeting(context.date)), Hanju")
-                            .font(.title2.bold())
+                            .textStyle(PtsTypography.headingMd)
                             .foregroundStyle(PtsColors.contentBase)
                     }
                     WhatsNew()
@@ -105,7 +105,10 @@ private struct AtAGlance: View {
         VStack(alignment: .leading, spacing: 12) {
             SectionTitle("At a glance")
             Card {
-                HStack { Stat(value: "\(PtsCatalog.colors.count)", label: "colors") }
+                HStack(spacing: 20) {
+                    Stat(value: "\(PtsCatalog.colors.count)", label: "colors")
+                    Stat(value: "\(PtsCatalog.typography.count)", label: "text styles")
+                }
                 VStack(alignment: .leading, spacing: 4) {
                     Text("\(PtsCatalog.modifiers.count) mode: \(PtsCatalog.modifiers.joined(separator: ", "))")
                         .foregroundStyle(PtsColors.contentBase)
@@ -123,8 +126,8 @@ private struct Banner: View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
             Image(systemName: "info.circle.fill")
             VStack(alignment: .leading, spacing: 4) {
-                Text("Design review moved to Thursday").fontWeight(.semibold)
-                Text("The checkout redesign review is now Thursday at 2 PM.")
+                Text("Design review moved to Thursday").textStyle(PtsTypography.labelLg)
+                Text("The checkout redesign review is now Thursday at 2 PM.").textStyle(PtsTypography.bodyMd)
             }
         }
         .foregroundStyle(PtsColors.intentInfoContentBase)
@@ -159,8 +162,8 @@ private struct Recent: View {
                     HStack(spacing: 12) {
                         Initials(name: project.name)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(project.name).foregroundStyle(PtsColors.contentBase)
-                            Text(project.detail).font(.subheadline).foregroundStyle(PtsColors.contentSubtle)
+                            Text(project.name).textStyle(PtsTypography.labelLg).foregroundStyle(PtsColors.contentBase)
+                            Text(project.detail).textStyle(PtsTypography.bodySm).foregroundStyle(PtsColors.contentSubtle)
                         }
                         Spacer()
                         Tag(project.status)
@@ -178,7 +181,7 @@ private struct Initials: View {
 
     var body: some View {
         Text(name.split(separator: " ").prefix(2).map { $0.prefix(1).uppercased() }.joined())
-            .font(.subheadline.weight(.medium))
+            .textStyle(PtsTypography.labelMd)
             .foregroundStyle(PtsColors.contentBase)
             .frame(width: 44, height: 44)
             .background(PtsColors.surfaceStrong, in: Circle())

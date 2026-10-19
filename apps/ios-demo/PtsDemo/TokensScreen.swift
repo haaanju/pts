@@ -1,11 +1,12 @@
 // The token pages, like the Storybook docs: token first, then its value in the current theme, the alias it points to,
-// and its description, from PtsCatalog (ADR 0065). Only colors so far; type, spacing, and corners follow (ADR 0063).
+// and its description, from PtsCatalog (ADR 0065). Colors and type so far; spacing and corners follow (ADR 0063).
 import Pts
 import PtsCatalog
 import SwiftUI
 
 struct TokensScreen: View {
     @Environment(\.colorScheme) private var scheme
+    @State private var page = "Color"
 
     /// The groups of the docs' Color page, in its order: intent/danger/surface/base → intent/danger; always/* last
     private var sections: [(title: String, entries: [PtsCatalog.Entry])] {
@@ -28,13 +29,29 @@ struct TokensScreen: View {
         let index = scheme == .dark ? 1 : 0
         NavigationStack {
             List {
-                ForEach(sections, id: \.title) { section in
+                Picker("Page", selection: $page) {
+                    ForEach(["Color", "Type"], id: \.self) { Text($0) }
+                }
+                .pickerStyle(.segmented)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
+                if page == "Color" {
+                    ForEach(sections, id: \.title) { section in
+                        Section {
+                            ForEach(section.entries) { entry in
+                                TokenRow(entry: entry, index: index)
+                            }
+                        } header: {
+                            Header(group: section.title)
+                        }
+                    }
+                } else {
                     Section {
-                        ForEach(section.entries) { entry in
-                            TokenRow(entry: entry, index: index)
+                        ForEach(PtsCatalog.typography) { entry in
+                            TypeRow(entry: entry)
                         }
                     } header: {
-                        Header(group: section.title)
+                        Header(group: "text")
                     }
                 }
             }
@@ -50,10 +67,10 @@ private struct Header: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             Text((group.split(separator: "/").last ?? "").capitalized)
-                .font(.headline)
+                .textStyle(PtsTypography.headingSm)
                 .foregroundStyle(PtsColors.contentBase)
             Text("\(group)/*")
-                .font(.footnote.monospaced())
+                .textStyle(PtsTypography.codeMd)
                 .foregroundStyle(PtsColors.contentSubtle)
         }
         .textCase(nil)
@@ -73,17 +90,38 @@ private struct TokenRow: View {
                 .frame(width: 44, height: 44)
             VStack(alignment: .leading, spacing: 4) {
                 Text(entry.path)
-                    .font(.subheadline.monospaced())
+                    .textStyle(PtsTypography.codeMd)
                     .foregroundStyle(PtsColors.contentBase)
                 Text(entry.aliases[index].isEmpty ? entry.hex[index] : "\(entry.hex[index])  → \(entry.aliases[index])")
-                    .font(.footnote.monospaced())
+                    .textStyle(PtsTypography.codeMd)
                     .foregroundStyle(PtsColors.contentSubtle)
                 if !entry.description.isEmpty {
                     Text(entry.description)
-                        .font(.footnote)
+                        .textStyle(PtsTypography.bodySm)
                         .foregroundStyle(PtsColors.contentSubtle)
                 }
             }
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+/// A text style like the docs' type specimens: its path, a sample in the style, then its iOS text style, size, family,
+/// weight, and tracking
+private struct TypeRow: View {
+    let entry: PtsCatalog.TypeEntry
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(entry.path)
+                .textStyle(PtsTypography.codeMd)
+                .foregroundStyle(PtsColors.contentSubtle)
+            Text(entry.path.hasPrefix("text/code") ? "let gap = 8" : "Plain tokens on iOS")
+                .textStyle(entry.style)
+                .foregroundStyle(PtsColors.contentBase)
+            Text(entry.detail)
+                .textStyle(PtsTypography.codeMd)
+                .foregroundStyle(PtsColors.contentSubtle)
         }
         .padding(.vertical, 4)
     }

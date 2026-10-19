@@ -1,14 +1,15 @@
-// Contract tests for the @pts/ios output (ADR 0064): every semantic color has a color set whose light and dark values
-// equal the resolver's at the inputs iOS fixes, and PtsColors names each one once. The expectations come from
+// Contract tests for the @pts/ios output (ADR 0064, 0066): every semantic color has a color set whose light and dark
+// values equal the resolver's at the inputs iOS fixes, and PtsColors names each one once; every text style is in
+// PtsTypography at Apple's size for its iOS text style, with its family, weight, and tracking, and its font is bundled. The expectations come from
 // Terrazzo's resolver (tokens/source.ts) and the token's own hex, written out here apart from the plugin, so a
 // formatting bug in the plugin fails. The Swift is compiled by `npm run compile -w @pts/ios`, which needs Xcode.
 // `npm test` builds first (pretest).
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { loadResolver } from "../../../tokens/source.ts";
 import { swiftName } from "../plugin-ios.ts";
-import { colors, fixed } from "../terrazzo.config.ts";
+import { colors, families, fixed, key, text } from "../terrazzo.config.ts";
 
 const dist = (file: string) => new URL(`../dist/Pts/${file}`, import.meta.url);
 const resolver = await loadResolver();
@@ -70,4 +71,47 @@ test("PtsColors makes every color set public, by its generated asset symbol", ()
   const declared = [...swift.matchAll(/^ {4}public static let (\w+) = Color\(\.(\w+)\)$/gm)];
   assert.deepEqual(declared.map((m) => m[1]), names);
   assert.ok(declared.every((m) => m[1] === m[2]), "a name differs from its asset symbol");
+});
+
+// Apple's text styles at the default text size (Large), from the Human Interface Guidelines' type tables
+const apple: Record<string, number> = { largeTitle: 34, title: 28, title2: 22, title3: 20, headline: 17, body: 17, callout: 16, subheadline: 15, footnote: 13, caption: 12, caption2: 11 };
+
+test("PtsTypography holds every text style at Apple's size for its iOS text style, with its family, weight, and tracking", () => {
+  const swift = readFileSync(dist("PtsTypography.swift"), "utf8");
+  const tokens = resolver.apply({ ...fixed, theme: "light" });
+  const declared = [...swift.matchAll(/^ {4}public static let (\w+) = PtsTextStyle\((.+)\)$/gm)];
+  assert.deepEqual(declared.map((m) => m[1]), text.map((id) => swiftName(id.slice("text.".length))));
+  text.forEach((id, i) => {
+    const t = tokens[id] as any;
+    const style = t.$extensions[key].ios.textStyle;
+    const size = apple[style];
+    const tracking = Math.round((t.$value.letterSpacing.value / t.$value.fontSize.value) * size * 100) / 100;
+    const family = (families as Record<string, string>)[t.$value.fontFamily[0]];
+    assert.equal(declared[i][2], `family: "${family}", size: ${size}, textStyle: .${style}, weight: ${t.$value.fontWeight}, tracking: ${tracking}`, id);
+  });
+});
+
+test("a display style keeps its letter spacing's share of the size: display-lg is -1.25px at 64px, -0.66pt at 34pt", () => {
+  const swift = readFileSync(dist("PtsTypography.swift"), "utf8");
+  assert.match(swift, /displayLg = PtsTextStyle\(family: "Aspekta Variable", size: 34, textStyle: \.largeTitle, weight: 700, tracking: -0\.66\)/);
+});
+
+test("every family the text styles use is bundled, with its license", () => {
+  const tokens = resolver.apply({ ...fixed, theme: "light" });
+  const used = new Set(text.map((id) => (tokens[id]!.$value as any).fontFamily[0]));
+  const files: Record<string, string> = { Aspekta: "aspekta.ttf", "IBM Plex Mono": "ibm_plex_mono_regular.ttf", "IBM Plex Serif": "ibm_plex_serif_regular.ttf" };
+  for (const family of used) {
+    assert.ok(family in families, `${family} has no registered name`);
+    const ttf = readFileSync(dist(`Fonts/${files[family]}`));
+    assert.equal(ttf.readUInt32BE(0), 0x00010000, `${files[family]} is not TrueType`);
+  }
+  for (const dir of ["aspekta", "ibm-plex-mono", "ibm-plex-serif"]) assert.ok(existsSync(new URL(`../dist/licenses/${dir}-LICENSE.txt`, import.meta.url)), `${dir} license`);
+});
+
+test("PtsCatalog lists every text style, by its PtsTypography name", () => {
+  const catalog = readFileSync(new URL("../dist/catalog/PtsCatalog.swift", import.meta.url), "utf8");
+  for (const id of text) {
+    const line = catalog.split("\n").find((l) => l.trim().startsWith(`TypeEntry(path: ${JSON.stringify(id.replaceAll(".", "/"))},`));
+    assert.ok(line?.trim().endsWith(`style: PtsTypography.${swiftName(id.slice("text.".length))}),`), `${id}: ${line?.trim()}`);
+  }
 });
