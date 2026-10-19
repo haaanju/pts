@@ -11,8 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/ios-spacing`: iOS spacing (ADR 0068), pull request #49.
-- `feature/ios-ci`, on top of it (worktree `.claude/worktrees/ios-colors`): the macOS CI job (ADR 0069).
+- None.
 
 ## Next
 
