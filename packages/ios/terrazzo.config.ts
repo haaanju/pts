@@ -5,14 +5,17 @@ import { defineConfig } from "@terrazzo/cli";
 import { files, loadResolver, RESOLVER } from "../../tokens/source.ts";
 import ios, { type Release } from "./plugin-ios.ts";
 
-// The semantic colors (ADR 0064), in the order the files define them. iOS follows the theme only: density, shape, and
-// viewport are fixed (ADR 0063), and the system does the rest.
+// The semantic colors (ADR 0064) and text styles (ADR 0066), in the order the files define them. iOS follows the theme
+// only: density, shape, and viewport are fixed (ADR 0063), and the system does the rest.
 const resolver = await loadResolver();
 const tokens = resolver.apply({});
-export const colors = [...new Set(files(resolver).filter((f) => f.tier === "semantic").flatMap((f) => Object.keys(f.tokens)))].filter(
-  (id) => tokens[id]?.$type === "color",
-);
+const semantic = [...new Set(files(resolver).filter((f) => f.tier === "semantic").flatMap((f) => Object.keys(f.tokens)))];
+export const colors = semantic.filter((id) => tokens[id]?.$type === "color");
+export const text = semantic.filter((id) => id.startsWith("text.") && tokens[id]?.$type === "typography");
 export const fixed = { density: "relaxed", shape: "round", viewport: "narrow" };
+// The family each font stack starts with → the family its bundled file registers (build-fonts.ts writes the files)
+export const families = { Aspekta: "Aspekta Variable", "IBM Plex Mono": "IBM Plex Mono", "IBM Plex Serif": "IBM Plex Serif" };
+export const key = "io.github.haaanju.pts";
 
 // What's new on the demo's Home screen, as on Android (ADR 0061): this version's entries in the shared changelog, so
 // they never go stale, and the date of its tag, when the tag is here (a shallow checkout has none)
@@ -31,5 +34,5 @@ export const release: Release = { version, date, notes: section.split("\n").filt
 export default defineConfig({
   tokens: [fileURLToPath(RESOLVER)],
   outDir: "./dist/",
-  plugins: [ios({ colors, fixed, catalog: release })],
+  plugins: [ios({ colors, text, families, key, fixed, catalog: release })],
 });

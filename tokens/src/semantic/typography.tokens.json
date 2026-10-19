@@ -108,7 +108,14 @@
         "letterSpacing": "{letter-spacing.display.xl}",
         "lineHeight": "{line-height.display.xl}"
       },
-      "$description": "The largest display style, for hero headlines."
+      "$description": "The largest display style, for hero headlines.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "largeTitle"
+          }
+        }
+      }
     },
     "display-md": {
       "$type": "typography",
@@ -119,7 +126,14 @@
         "letterSpacing": "{letter-spacing.display.lg}",
         "lineHeight": "{line-height.display.lg}"
       },
-      "$description": "Display style for page-level headlines."
+      "$description": "Display style for page-level headlines.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "title"
+          }
+        }
+      }
     },
     "heading-lg": {
       "$type": "typography",
@@ -130,7 +144,14 @@
         "letterSpacing": "{letter-spacing.display.md}",
         "lineHeight": "{line-height.display.md}"
       },
-      "$description": "Page titles."
+      "$description": "Page titles.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "title"
+          }
+        }
+      }
     },
     "heading-md": {
       "$type": "typography",
@@ -141,7 +162,14 @@
         "letterSpacing": "{letter-spacing.display.sm}",
         "lineHeight": "{line-height.display.sm}"
       },
-      "$description": "Section headings."
+      "$description": "Section headings.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "title2"
+          }
+        }
+      }
     },
     "heading-sm": {
       "$type": "typography",
@@ -152,7 +180,14 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.lg}"
       },
-      "$description": "Subsection headings and card titles. The same size as body-lg, set apart by weight, so the two pair as title and subtitle."
+      "$description": "Subsection headings and card titles. The same size as body-lg, set apart by weight, so the two pair as title and subtitle.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "title3"
+          }
+        }
+      }
     },
     "body-lg": {
       "$type": "typography",
@@ -163,7 +198,14 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.lg}"
       },
-      "$description": "Lead paragraphs, introductory text, and subtitles under heading-sm."
+      "$description": "Lead paragraphs, introductory text, and subtitles under heading-sm.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "title3"
+          }
+        }
+      }
     },
     "body-md": {
       "$type": "typography",
@@ -174,7 +216,14 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.md}"
       },
-      "$description": "Default body text."
+      "$description": "Default body text.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "callout"
+          }
+        }
+      }
     },
     "body-sm": {
       "$type": "typography",
@@ -185,7 +234,14 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.sm}"
       },
-      "$description": "Secondary body text: supporting descriptions, table cells, and dense UI."
+      "$description": "Secondary body text: supporting descriptions, table cells, and dense UI.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "subheadline"
+          }
+        }
+      }
     },
     "label-lg": {
       "$type": "typography",
@@ -196,7 +252,14 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.md}"
       },
-      "$description": "Labels on default (md) and large controls, such as md buttons."
+      "$description": "Labels on default (md) and large controls, such as md buttons.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "callout"
+          }
+        }
+      }
     },
     "label-md": {
       "$type": "typography",
@@ -207,7 +270,14 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.sm}"
       },
-      "$description": "Labels on small controls, such as sm buttons, and on tabs and menu items."
+      "$description": "Labels on small controls, such as sm buttons, and on tabs and menu items.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "subheadline"
+          }
+        }
+      }
     },
     "label-sm": {
       "$type": "typography",
@@ -218,7 +288,14 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.xs}"
       },
-      "$description": "Labels on badges, tags, and other elements smaller than a control."
+      "$description": "Labels on badges, tags, and other elements smaller than a control.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "caption"
+          }
+        }
+      }
     },
     "caption": {
       "$type": "typography",
@@ -229,7 +306,14 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.xs}"
       },
-      "$description": "Helper text, timestamps, and footnotes."
+      "$description": "Helper text, timestamps, and footnotes.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "caption"
+          }
+        }
+      }
     },
     "code-md": {
       "$type": "typography",
@@ -240,7 +324,14 @@
         "letterSpacing": "{letter-spacing.normal}",
         "lineHeight": "{line-height.text.sm}"
       },
-      "$description": "Inline code and code blocks."
+      "$description": "Inline code and code blocks.",
+      "$extensions": {
+        "io.github.haaanju.pts": {
+          "ios": {
+            "textStyle": "subheadline"
+          }
+        }
+      }
     }
   }
 }

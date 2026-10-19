@@ -8,6 +8,7 @@ import contrast from "./rules/contrast.ts";
 import densityOrder from "./rules/density-order.ts";
 import gapOrder from "./rules/gap-order.ts";
 import iconSidePadding from "./rules/icon-side-padding.ts";
+import iosTextStyle from "./rules/ios-text-style.ts";
 import lineHeightGrid from "./rules/line-height-grid.ts";
 import minFontSize from "./rules/min-font-size.ts";
 import orthogonalModifiers from "./rules/orthogonal-modifiers.ts";
@@ -36,6 +37,7 @@ export default function pts(): Plugin {
       "pts/registered-files": registeredFiles,
       "pts/orthogonal-modifiers": orthogonalModifiers,
       "pts/icon-side-padding": iconSidePadding,
+      "pts/ios-text-style": iosTextStyle,
     }),
   };
 }

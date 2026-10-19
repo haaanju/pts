@@ -53,6 +53,15 @@ export default defineConfig({
       "pts/line-height-grid": ["error", { gridPx: 4 }],
       "pts/color-hex": "error",
       "pts/icon-side-padding": "error", // the button and its Figma set share one structure (ADR 0055)
+      // iOS (ADR 0066): Apple's text styles, which give each typography token its size and Dynamic Type scaling
+      "pts/ios-text-style": [
+        "error",
+        {
+          prefix: "text.",
+          key: "io.github.haaanju.pts",
+          styles: ["largeTitle", "title", "title2", "title3", "headline", "body", "callout", "subheadline", "footnote", "caption", "caption2"],
+        },
+      ],
       "pts/tier-aliases": [
         "error",
         {

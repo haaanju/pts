@@ -1,5 +1,5 @@
-// Small pieces the screens share. Type, spacing, and the corner radius are literals until the package has them
-// (ADR 0063: type, corners, and spacing are the next steps).
+// Small pieces the screens share. Spacing and the corner radius are literals until the package has them
+// (ADR 0063: corners and spacing are the next steps).
 import Pts
 import SwiftUI
 
@@ -29,7 +29,7 @@ struct SectionTitle: View {
 
     var body: some View {
         Text(text)
-            .font(.title3.bold())
+            .textStyle(PtsTypography.headingMd)
             .foregroundStyle(PtsColors.contentBase)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -79,7 +79,7 @@ struct Tag: View {
 
     var body: some View {
         Text(label)
-            .font(.footnote.weight(.medium))
+            .textStyle(PtsTypography.labelSm)
             .lineLimit(1)
             .fixedSize()
             .foregroundStyle(text)
@@ -89,7 +89,7 @@ struct Tag: View {
     }
 }
 
-/// A number in mono over its label: monospaced digits line up
+/// A number in mono over its label: Aspekta has no tabular figures, so digits line up in IBM Plex Mono
 struct Stat: View {
     let value: String
     let label: String
@@ -97,9 +97,10 @@ struct Stat: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(value)
-                .font(.title.bold().monospaced())
+                .font(.custom("IBM Plex Mono", size: 28, relativeTo: .title).weight(.bold))
                 .foregroundStyle(PtsColors.contentBase)
             Text(label)
+                .textStyle(PtsTypography.bodyMd)
                 .foregroundStyle(PtsColors.contentSubtle)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -3,14 +3,14 @@
   "version": "0.10.1",
   "private": true,
   "type": "module",
-  "description": "iOS output of @pts/tokens: a Swift package with the semantic colors as an asset catalog",
+  "description": "iOS output of @pts/tokens: a Swift package with the semantic colors as an asset catalog, the text styles, and the fonts",
   "license": "MIT",
   "files": [
     "dist",
     "Package.swift"
   ],
   "scripts": {
-    "build": "tz build",
+    "build": "tz build && node build-fonts.ts",
     "pretest": "npm run build --silent",
     "test": "node --test test/output.test.ts",
     "compile": "npm run build --silent && xcodebuild -scheme Pts -destination 'generic/platform=iOS Simulator' -quiet build",
@@ -23,6 +23,7 @@
     "@terrazzo/cli": "^2.7.1",
     "@terrazzo/parser": "^2.7.1",
     "@types/node": "^22.20.4",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "wawoff2": "^2.0.1"
   }
 }

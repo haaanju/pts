@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "PtsCatalog", targets: ["PtsCatalog"]),
     ],
     targets: [
-        .target(name: "Pts", path: "dist/Pts"),
+        .target(name: "Pts", path: "dist/Pts", resources: [.copy("Fonts")]),
         .target(name: "PtsCatalog", dependencies: ["Pts"], path: "dist/catalog"),
     ]
 )

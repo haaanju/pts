@@ -89,7 +89,7 @@ struct ComponentsScreen: View {
 
                 Section("Cards") {
                     Card {
-                        Text("Card").font(.headline).foregroundStyle(PtsColors.contentBase)
+                        Text("Card").textStyle(PtsTypography.headingSm).foregroundStyle(PtsColors.contentBase)
                         Text("surface/subtle, concentric corners").foregroundStyle(PtsColors.contentSubtle)
                     }
                     .listRowBackground(Color.clear)
@@ -120,7 +120,7 @@ struct ComponentsScreen: View {
             .sheet(isPresented: $sheet) {
                 VStack(spacing: 16) {
                     Card {
-                        Text("In a sheet").font(.headline).foregroundStyle(PtsColors.contentBase)
+                        Text("In a sheet").textStyle(PtsTypography.headingSm).foregroundStyle(PtsColors.contentBase)
                         Text("The card's corners follow the sheet's.").foregroundStyle(PtsColors.contentSubtle)
                     }
                     Button("Done") { sheet = false }.primaryButton().buttonBorderShape(.capsule)

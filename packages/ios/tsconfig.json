@@ -13,5 +13,5 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["terrazzo.config.ts", "plugin-ios.ts", "test"]
+  "include": ["terrazzo.config.ts", "plugin-ios.ts", "build-fonts.ts", "wawoff2.d.ts", "test"]
 }

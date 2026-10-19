@@ -199,6 +199,18 @@ const cases: Case[] = [
     expect: [["pts/icon-side-padding", "button.md.gap (8px) is smaller than padding.base - padding.icon-side (12px)"]],
   },
 
+  // pts/ios-text-style
+  {
+    name: "a text style with no iOS text style",
+    mutate: (c) => c.set(TYPOGRAPHY, "text.caption", ({ $extensions, ...token }) => token),
+    expect: [["pts/ios-text-style", "text.caption names no iOS text style"]],
+  },
+  {
+    name: "a text style naming one iOS doesn't have",
+    mutate: (c) => c.set(TYPOGRAPHY, "text.caption", (token) => ({ ...token, $extensions: { "io.github.haaanju.pts": { ios: { textStyle: "small" } } } })),
+    expect: [["pts/ios-text-style", "text.caption: small is not an iOS text style"]],
+  },
+
   // pts/visible-steps
   {
     name: "two surface steps with the same color",
