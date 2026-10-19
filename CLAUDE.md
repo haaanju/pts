@@ -81,10 +81,10 @@ docs/progress.md, docs/adr/
 - `npm test`: breaks each `pts/*` rule on purpose in a copy of `tokens/` and expects `tz check` to report it, so a rule that silently stops reporting fails (ADR 0037); then builds `@pts/web` and checks its output against the resolver: every token in `:root`, every modifier context in its block with every token it changes and none another modifier changes, and every token in `tokens.js`, `tokens.d.ts`, and `tokens.scss` (ADR 0039); each product's CSS and JS the same way at the inputs it fixes, its JS values equal to the resolver's (ADR 0047); and builds `@pts/android` and checks that each class (`PtsColors`, `PtsSpacing`, `PtsBorder`, `PtsTypography`) declares every token of its group with each context's value equal to the resolver's, and that every bundled font exists (ADR 0056, 0059); and builds `@pts/ios` and checks a color set per semantic color, its light and dark values equal to the resolver's, each named in `PtsColors`, every text style in `PtsTypography` at Apple's size for its iOS text style, its font bundled, and every spacing and border token in `PtsSpacing` and `PtsBorder` (ADR 0064, 0066–0068).
 - `npm run typecheck`: TypeScript for the lint plugin, the `@pts/web`, `@pts/android`, and `@pts/ios` build configs and tests, the components, and Storybook.
 - `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/android` → `packages/android/dist/`, `@pts/ios` → `packages/ios/dist/`, `@pts/components` → `apps/components/dist/`).
-- `npm run compile -w @pts/ios`: builds `@pts/ios` and compiles the Swift package for the iOS Simulator with `xcodebuild`; needs Xcode, so it isn't in `npm test` or CI yet.
+- `npm run compile -w @pts/ios`: builds `@pts/ios` and compiles the Swift package for the iOS Simulator with `xcodebuild`; needs Xcode, so it isn't in `npm test`, and CI runs it on macOS (ADR 0069).
 - `npm run storybook`: docs dev server (http://localhost:6006), builds `@pts/web` and `@pts/components` first. `npm run build-storybook`: static build.
 - `npm run test-a11y`: builds Storybook, then checks every docs page and story with axe-core (WCAG 2.2 A and AA) in light and dark (ADR 0036). Needs Playwright's Chromium once: `npx playwright install chromium`.
-- The pre-commit hook runs check and typecheck and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus `npm test`, both builds, and `test-a11y` on pushes to `main` and on pull requests, and in a second job publishes `pts-android` to the runner's `mavenLocal` and builds the demo app against it, so the Kotlin compiles (ADR 0058); and deploys the docs to GitHub Pages on pushes to `main`.
+- The pre-commit hook runs check and typecheck and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus `npm test`, both builds, and `test-a11y` on pushes to `main` and on pull requests, and in a second job publishes `pts-android` to the runner's `mavenLocal` and builds the demo app against it, so the Kotlin compiles (ADR 0058), and in a third, on macOS, compiles `@pts/ios` and the iOS demo with Xcode (ADR 0069); and deploys the docs to GitHub Pages on pushes to `main`.
 
 ## Output (`@pts/web`)
 
@@ -207,7 +207,7 @@ Work continues across chats and machines through the repository only; chat histo
 ## Deferred
 
 - Figma sync: Figma is updated by hand (the `figma` skill).
-- Native platforms: Android has colors, spacing, borders, and type (`@pts/android`, ADR 0056, 0059); iOS has colors, type, corners, and spacing (`@pts/ios`, ADR 0064, 0066–0068) and a SwiftUI demo (ADR 0065); a macOS CI job follows (ADR 0063).
+- Native platforms: Android has colors, spacing, borders, and type (`@pts/android`, ADR 0056, 0059); iOS has colors, type, corners, and spacing (`@pts/ios`, ADR 0063–0069), a SwiftUI demo, and a macOS CI job. Left for both, waiting for a use: motion, elevation, component tokens, and publishing beyond a local build.
 
 ## Git Convention
 
