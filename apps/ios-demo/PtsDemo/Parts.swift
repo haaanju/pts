@@ -1,5 +1,4 @@
-// Small pieces the screens share. Spacing and the corner radius are literals until the package has them
-// (ADR 0063: corners and spacing are the next steps).
+// Small pieces the screens share. Spacing is literal until the package has it (ADR 0063: spacing is the next step).
 import Pts
 import SwiftUI
 
@@ -10,7 +9,7 @@ enum ThemeChoice: String, CaseIterable, Identifiable {
     var scheme: ColorScheme? { self == .light ? .light : self == .dark ? .dark : nil }
 }
 
-/// A card: surface/subtle, with concentric corners no less round than radius/container (32pt with shape round)
+/// A card: surface/subtle, in the container shape: concentric corners, never less round than radius/container
 struct Card<Content: View>: View {
     @ViewBuilder let content: Content
 
@@ -18,7 +17,7 @@ struct Card<Content: View>: View {
         VStack(alignment: .leading, spacing: 12) { content }
             .padding(20)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(PtsColors.surfaceSubtle, in: ConcentricRectangle(corners: .concentric(minimum: .fixed(32)), isUniform: true))
+            .background(PtsColors.surfaceSubtle, in: PtsShape.container)
     }
 }
 

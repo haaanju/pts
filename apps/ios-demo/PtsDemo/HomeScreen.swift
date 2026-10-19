@@ -108,6 +108,7 @@ private struct AtAGlance: View {
                 HStack(spacing: 20) {
                     Stat(value: "\(PtsCatalog.colors.count)", label: "colors")
                     Stat(value: "\(PtsCatalog.typography.count)", label: "text styles")
+                    Stat(value: "\(PtsCatalog.border.count)", label: "border")
                 }
                 VStack(alignment: .leading, spacing: 4) {
                     Text("\(PtsCatalog.modifiers.count) mode: \(PtsCatalog.modifiers.joined(separator: ", "))")
@@ -133,7 +134,7 @@ private struct Banner: View {
         .foregroundStyle(PtsColors.intentInfoContentBase)
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(PtsColors.intentInfoSurfaceSubtle, in: ConcentricRectangle(corners: .concentric(minimum: .fixed(32)), isUniform: true))
+        .background(PtsColors.intentInfoSurfaceSubtle, in: PtsShape.container)
     }
 }
 

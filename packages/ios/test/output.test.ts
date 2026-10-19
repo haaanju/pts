@@ -1,6 +1,7 @@
 // Contract tests for the @pts/ios output (ADR 0064, 0066): every semantic color has a color set whose light and dark
 // values equal the resolver's at the inputs iOS fixes, and PtsColors names each one once; every text style is in
-// PtsTypography at Apple's size for its iOS text style, with its family, weight, and tracking, and its font is bundled. The expectations come from
+// PtsTypography at Apple's size for its iOS text style, with its family, weight, and tracking, and its font is bundled;
+// every border token is in PtsBorder in points, and PtsShape follows radius/control and radius/container (ADR 0067). The expectations come from
 // Terrazzo's resolver (tokens/source.ts) and the token's own hex, written out here apart from the plugin, so a
 // formatting bug in the plugin fails. The Swift is compiled by `npm run compile -w @pts/ios`, which needs Xcode.
 // `npm test` builds first (pretest).
@@ -9,7 +10,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { loadResolver } from "../../../tokens/source.ts";
 import { swiftName } from "../plugin-ios.ts";
-import { colors, families, fixed, key, text } from "../terrazzo.config.ts";
+import { colors, dimensions, families, fixed, key, text } from "../terrazzo.config.ts";
 
 const dist = (file: string) => new URL(`../dist/Pts/${file}`, import.meta.url);
 const resolver = await loadResolver();
@@ -113,5 +114,37 @@ test("PtsCatalog lists every text style, by its PtsTypography name", () => {
   for (const id of text) {
     const line = catalog.split("\n").find((l) => l.trim().startsWith(`TypeEntry(path: ${JSON.stringify(id.replaceAll(".", "/"))},`));
     assert.ok(line?.trim().endsWith(`style: PtsTypography.${swiftName(id.slice("text.".length))}),`), `${id}: ${line?.trim()}`);
+  }
+});
+
+test("the dimension groups cover every semantic border token", () => {
+  assert.deepEqual(Object.fromEntries(dimensions.map((g) => [g.className, g.include.length])), { PtsBorder: 15 });
+});
+
+for (const group of dimensions) {
+  test(`${group.className} holds every token once, in points, as the resolver resolves it at the fixed inputs`, () => {
+    const swift = readFileSync(dist(`${group.className}.swift`), "utf8");
+    const tokens = resolver.apply({ ...fixed, theme: "light" });
+    const declared = [...swift.matchAll(/^ {4}public static let (\w+): CGFloat = (.+)$/gm)].map((m) => [m[1], m[2]]);
+    assert.deepEqual(declared, group.include.map((id) => [swiftName(id), String((tokens[id]!.$value as any).value)]));
+  });
+}
+
+test("PtsShape: controls are capsules (radius/control is radius/full at shape round), containers concentric with radius/container as the minimum", () => {
+  const swift = readFileSync(dist("PtsShape.swift"), "utf8");
+  assert.match(swift, /public static var control: ButtonBorderShape \{ \.capsule \}/);
+  assert.match(swift, /ConcentricRectangle\(corners: \.concentric\(minimum: \.fixed\(PtsBorder\.radiusContainer\)\), isUniform: true\)/);
+  assert.match(readFileSync(dist("PtsBorder.swift"), "utf8"), /public static let radiusContainer: CGFloat = 32$/m);
+});
+
+test("PtsCatalog lists every dimension with its path and alias, by its constant", () => {
+  const catalog = readFileSync(new URL("../dist/catalog/PtsCatalog.swift", import.meta.url), "utf8");
+  const tokens = resolver.apply({ ...fixed, theme: "light" });
+  for (const group of dimensions) {
+    for (const id of group.include) {
+      const alias = (tokens[id]!.aliasChain?.[0] ?? "").replaceAll(".", "/");
+      const line = catalog.split("\n").find((l) => l.trim().startsWith(`DimensionEntry(path: ${JSON.stringify(id.replaceAll(".", "/"))},`));
+      assert.ok(line?.trim().endsWith(`alias: ${JSON.stringify(alias)}, value: ${group.className}.${swiftName(id)}),`), `${id}: ${line?.trim()}`);
+    }
   }
 });

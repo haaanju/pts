@@ -33,7 +33,7 @@ struct ComponentsScreen: View {
                         Button("Glass prominent") {}.buttonStyle(.glassProminent).foregroundStyle(PtsColors.contentInverseBase)
                     }
                 }
-                .buttonBorderShape(.capsule)
+                .buttonBorderShape(PtsShape.control)
 
                 Section("Icon buttons") {
                     HStack(spacing: 16) {
@@ -123,7 +123,7 @@ struct ComponentsScreen: View {
                         Text("In a sheet").textStyle(PtsTypography.headingSm).foregroundStyle(PtsColors.contentBase)
                         Text("The card's corners follow the sheet's.").foregroundStyle(PtsColors.contentSubtle)
                     }
-                    Button("Done") { sheet = false }.primaryButton().buttonBorderShape(.capsule)
+                    Button("Done") { sheet = false }.primaryButton().buttonBorderShape(PtsShape.control)
                 }
                 .padding(16)
                 .presentationDetents([.medium])
