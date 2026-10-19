@@ -1,6 +1,6 @@
 // The demo app of @pts/ios (ADR 0063, 0065, 0066, 0070): native SwiftUI components, colored and set in type from the
-// tokens, in the four tabs of the Android demo. The accent is intent/info/surface/base, and the backgrounds and the
-// appearance are the system's (ADR 0070).
+// tokens, in the four tabs of the Android demo. The accent, for text-only controls, is intent/info/surface/base;
+// buttons with a shape are inverse/base (ADR 0072); the backgrounds and the appearance are the system's (ADR 0070).
 import Pts
 import SwiftUI
 import UIKit

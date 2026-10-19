@@ -28,10 +28,29 @@ struct SectionTitle: View {
 }
 
 extension View {
-    /// The primary button: the accent fill (intent/info/surface/base) with its content/inverse on it, the pair
-    /// pts/contrast checks. SwiftUI would write white, which fails on dark mode's light blue.
+    // Buttons with a shape keep the web's colors: inverse/base, as the HIG has a primary action color its background
+    // (ADR 0072). Text-only ones (borderless, links, menus) keep the accent, so they don't read as text.
+
+    /// The primary button: inverse/base with content/inverse/base on it, the pair pts/contrast checks. SwiftUI would
+    /// write white, which fails on dark mode's light inverse/base.
     func primaryButton() -> some View {
-        buttonStyle(.borderedProminent).foregroundStyle(PtsColors.intentInfoContentInverse)
+        buttonStyle(.borderedProminent).tint(PtsColors.inverseBase).foregroundStyle(PtsColors.contentInverseBase)
+    }
+
+    /// The secondary button: the bordered style's soft fill of inverse/base, its label inverse/base
+    func secondaryButton() -> some View {
+        buttonStyle(.bordered).tint(PtsColors.inverseBase)
+    }
+
+    /// The glass buttons: Liquid Glass, tinted inverse/base when prominent, as the primary button
+    func glassButton(prominent: Bool = false) -> some View {
+        Group {
+            if prominent {
+                buttonStyle(.glassProminent).tint(PtsColors.inverseBase).foregroundStyle(PtsColors.contentInverseBase)
+            } else {
+                buttonStyle(.glass).tint(PtsColors.inverseBase)
+            }
+        }
     }
 
     /// The danger button: the danger intent's surface/base with its content/inverse
