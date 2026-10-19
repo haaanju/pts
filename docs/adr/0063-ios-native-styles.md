@@ -5,7 +5,7 @@
 
 ## Decision
 
-Chosen: native SwiftUI and UIKit components wherever Apple provides one, with the tokens connected only where the native component takes a value: asset-catalog color sets per theme, the container radius, and Aspekta under Dynamic Type's text styles. Everything else is left to iOS, because the owner chose native components wherever possible (2026-10-18), and Apple sets more constraints than Android.
+Chosen: native SwiftUI and UIKit components wherever Apple provides one, with the tokens connected only where the native component takes a value: asset-catalog color sets per theme, the container radius as the floor of concentric corners, and Aspekta under Dynamic Type's text styles. Everything else is left to iOS, because the owner chose native components wherever possible (2026-10-18), and Apple sets more constraints than Android.
 
 ## What we learned
 
@@ -20,7 +20,8 @@ The owner settled the approach on 2026-10-18. The decisions under Why it matters
 ## Why it matters
 
 - **Colors**: `AccentColor` is `inverse/base`, the same fill as the primary button. List and Form backgrounds stay the system colors, which adapt to the system's own grouped backgrounds. Increase Contrast has no token set, so it is out of scope for now.
-- **Shape**: no shape modifier on iOS (owner, 2026-10-19: buttons are fully round, as Liquid Glass draws them). The plugin fixes shape to `round`, so `radius/control` is `radius/full` and buttons use `.buttonBorderShape(.capsule)`; `radius/container` is `radius/2xl` (32pt), the radius for cards.
+- **Shape**: no shape modifier on iOS (owner, 2026-10-19: buttons are fully round, as Liquid Glass draws them). The plugin fixes shape to `round`, so `radius/control` is `radius/full` and buttons use `.buttonBorderShape(.capsule)`; `radius/container` is `radius/2xl` (32pt).
+- **Corners** (owner, 2026-10-19: concentric, since that is how iOS rounds containers): cards and other containers use iOS 26's concentric corners, `ConcentricRectangle(corners: .concentric(minimum: 32))` with `radius/container` as the minimum, so a card follows the corner of what holds it (the screen, a sheet) and never gets less round than the token.
 - **Density and size**: no density on iOS (owner, 2026-10-19: not worth the complexity). The plugin fixes density to `relaxed`, so `size/control/md` is 48pt and every control height meets the 44pt target. `size/control` applies to custom controls only, since native controls size themselves (`.controlSize`).
 - **Spacing**: `padding` and `gap` stay fixed pt and do not follow Dynamic Type. Text does.
 - **Type**: display letter spacing uses the token values at every size. Aspekta has no automatic tracking, so the token is what gives the display sizes their spacing.
@@ -37,7 +38,7 @@ The owner settled the approach on 2026-10-18. The decisions under Why it matters
 ## Implementation notes
 
 - **Liquid Glass**: no opt-out. An Apple Frameworks Engineer's answer on the developer forums (July 2026), quoting the documentation: "The system ignores this key when you build for iOS 27 or later", and with the Xcode 27 SDK `UIDesignRequiresCompatibility` is ignored "even if your app's deployment target is set to the 26 releases or earlier"; with the Xcode 26 SDK it is still honored ([thread](https://developer.apple.com/forums/thread/838637)). The demo builds with Xcode 27, so native components take Liquid Glass as they ship; no token covers it.
-- **Corners**: cards and other containers use `radius/container` (32pt) as a fixed radius. iOS 26's concentric corners (`ConcentricRectangle`, `Edge.Corner.Style.concentric`; [Apple docs](https://developer.apple.com/documentation/swiftui/concentricrectangle.md)) would instead round a card from its own container's corner and inset; the demo shows both before choosing.
+- **Concentric corners**: `ConcentricRectangle` takes its radius from the nearest container shape (set with `containerShape(_:)`) minus the distance to it, falling to 0 when the inset is larger than the container's radius; the minimum keeps the token's 32pt then ([Apple docs](https://developer.apple.com/documentation/swiftui/concentricrectangle.md)). The demo checks a card on the screen and inside a sheet.
 - **Not built yet.** The package, its tests (values equal to the resolver's, and a compile), and a SwiftUI demo follow this ADR. A macOS CI job is planned after them.
 - **Study list**: the HIG (Color, Typography, Layout, Materials, Dark Mode, Accessibility, and the components used), the WWDC25 Liquid Glass sessions, WWDC26 "What's new in SwiftUI", and Apple Design Resources.
 
