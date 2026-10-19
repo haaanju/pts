@@ -21,13 +21,13 @@ The owner settled the approach on 2026-10-18. The decisions under Why it matters
 
 - **Colors**: `AccentColor` is `inverse/base`, the same fill as the primary button. List and Form backgrounds stay the system colors, which adapt to the system's own grouped backgrounds. Increase Contrast has no token set, so it is out of scope for now.
 - **Shape**: `soft` maps to `.roundedRectangle(radius: 8)` and `round` to `.capsule`, through `.buttonBorderShape`, matching `radius/control`.
-- **Density and size**: `size/control` and compact density apply to custom controls only, since native controls size themselves (`.controlSize`). A custom control keeps a 44pt hit area, so the 40pt compact height gets padding around it.
+- **Density and size**: no density on iOS (owner, 2026-10-19: not worth the complexity). The plugin fixes density to `relaxed`, so `size/control/md` is 48pt and every control height meets the 44pt target. `size/control` applies to custom controls only, since native controls size themselves (`.controlSize`).
 - **Spacing**: `padding` and `gap` stay fixed pt and do not follow Dynamic Type. Text does.
 - **Type**: display letter spacing uses the token values at every size. Aspekta has no automatic tracking, so the token is what gives the display sizes their spacing.
 - **Motion and shadows**: not used on iOS. The tokens stay on the web and Android.
 - **Button states**: a native button draws its own pressed state; the tokens give only the resting colors.
 - **Lint**: shared rules run for every platform in `npm run check`. Web and Android keep `min-font-size`, `line-height-grid`, and `type-scale`, which Apple's sizes break (11pt, a 22pt line height, 17/15/13). iOS adds rules such as every `text/*` having a valid text style, so a shared token change can't break iOS unseen.
-- **No viewport on iOS**: the plugin fixes viewport to `narrow` (as products fix modifiers, ADR 0047) and writes no breakpoints. Size classes and Dynamic Type handle the layout.
+- **No viewport on iOS**: the plugin fixes viewport to `narrow` (as products fix modifiers, ADR 0047; density likewise, above) and writes no breakpoints. Size classes and Dynamic Type handle the layout.
 
 ## Trade-offs
 
