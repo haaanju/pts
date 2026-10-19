@@ -51,10 +51,13 @@ packages/android/           @pts/android: dist/kotlin/Pts{Colors,Spacing,Border,
                             demo (ADR 0060); also a Gradle
                             library, io.github.haaanju.pts:pts-android, published to mavenLocal (ADR 0058)
 packages/ios/               @pts/ios: dist/Pts/ Colors.xcassets (a light and dark color set per semantic color) and
-                            PtsColors.swift, from plugin-ios.ts; Package.swift makes it the Swift package Pts (ADR 0063, 0064)
+                            PtsColors.swift, from plugin-ios.ts; Package.swift makes it the Swift package Pts (ADR 0063, 0064);
+                            dist/catalog/ is the PtsCatalog product, for the demo (ADR 0065)
 apps/components/            @pts/components: Lit web components testing the component tier, src/ → dist/ (<pts-button>)
 apps/android-demo/          a Compose app (Gradle, not an npm workspace): Material 3 themed from pts-android, with Home, Tokens,
                             Components, and Settings tabs (ADR 0057, 0060, 0061)
+apps/ios-demo/              a SwiftUI app (Xcode, not an npm workspace) on packages/ios as a local Swift package, with Home,
+                            Tokens, Components, and Settings tabs like the Android demo (ADR 0065)
 apps/storybook/             @pts/storybook: token docs
 docs/progress.md, docs/adr/
 .claude/                    settings.json (SessionStart hooks), rules/, skills/
@@ -176,7 +179,7 @@ always/        white, black
 
 - Storybook follows the tokens: the docs data reloads on save; `tokens.css` and the UI themes are built at startup, so restart `npm run storybook` to see a token change in them (ADR 0046).
 - Figma doesn't: load the `figma` skill and bring it in line.
-- Android follows on the next build (`npm run build`); the demo app shows it after a publish to `mavenLocal` (README, Android section). iOS follows on the next build too.
+- Android follows on the next build (`npm run build`); the demo app shows it after a publish to `mavenLocal` (README, Android section). iOS follows on the next build too, and the demo app on its next run from Xcode (README, iOS section).
 - Add a changeset: the change type (breaking, new, fix) decides the next version; see Git Convention.
 
 ## Decisions

@@ -1,6 +1,6 @@
 # 0064. iOS Colors as an Asset Catalog in a Swift Package
 
-- Status: accepted
+- Status: accepted (amended by 0065)
 - Date: 2026-10-19
 
 ## Decision

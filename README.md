@@ -15,6 +15,7 @@ Plain is a personal study project: a small design token monorepo built end to en
 | [`@pts/android`](packages/android) | Android output: Kotlin for Jetpack Compose, one class per mode (`PtsColors`, `PtsSpacing`, `PtsBorder`, `PtsTypography`) and the bundled fonts (`PtsFonts`); a Gradle library in `mavenLocal` |
 | [`apps/android-demo`](apps/android-demo) | Not a package: a Compose app (Gradle) that themes Material 3 from `pts-android` and lists its tokens like the docs |
 | [`@pts/ios`](packages/ios) | iOS output, in progress: a Swift package, `Pts`, with the semantic colors as an asset catalog (a light and dark color set each) and `PtsColors` |
+| [`apps/ios-demo`](apps/ios-demo) | Not a package: a SwiftUI app (Xcode), the Android demo's tabs with native components, from `packages/ios` as a local Swift package |
 | [`@pts/storybook`](apps/storybook) | Token and component documentation, generated from the token source |
 | [`@pts/components`](apps/components) | Internal, not published: web components (Lit) that test the component tier, `<pts-button>` |
 
@@ -165,6 +166,17 @@ npm run build
 ```
 
 Then open `apps/android-demo` in Android Studio and run it on an emulator. The demo reads the library from `mavenLocal`, so publish it first, as above. The two exports are for macOS with Android Studio installed; the Gradle steps need both.
+
+## iOS - try it
+
+```sh
+sudo xcode-select -s /Applications/Xcode.app   # once, if xcode-select points at the Command Line Tools
+npm install
+npm run build
+open apps/ios-demo/PtsDemo.xcodeproj
+```
+
+Then pick an iPhone simulator in Xcode and run. The demo depends on `packages/ios` as a local Swift package, so a token change shows after `npm run build` and another run. It needs Xcode 26 or later, for iOS 26.
 
 ## Development
 
