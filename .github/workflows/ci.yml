@@ -57,6 +57,22 @@ jobs:
       - run: ./gradlew assembleDebug
         working-directory: apps/android-demo
 
+  # The generated Swift compiles (ADR 0069), which only Xcode on macOS can check: builds @pts/ios, compiles the package
+  # for the iOS Simulator, and builds the demo app against it. Needs Xcode 26 or later (iOS 26, Swift tools 6.2).
+  ios:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: xcodebuild -version
+      - run: npm run compile -w @pts/ios
+      - run: xcodebuild -project PtsDemo.xcodeproj -scheme PtsDemo -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO -quiet build
+        working-directory: apps/ios-demo
+
   # The docs on GitHub Pages show main (ADR 0020): deployed only after verify passes on a push.
   deploy:
     if: github.event_name == 'push'

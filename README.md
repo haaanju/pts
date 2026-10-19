@@ -200,7 +200,7 @@ npm run build            # build @pts/web, @pts/android, @pts/ios, and @pts/comp
 
 **Working across machines.** Everything needed to continue lives in the repository. On a new machine: clone, `nvm use`, `npm install`. Pull before starting and push before switching. [`docs/progress.md`](docs/progress.md) records where work left off.
 
-The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus `npm test`, both builds, and the docs accessibility check on every push to `main` and every pull request, and checks each pull request's changeset.
+The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus `npm test`, both builds, and the docs accessibility check on every push to `main` and every pull request, compiles the Kotlin and, on macOS, the Swift, and checks each pull request's changeset.
 
 **Changing tokens.** Edit the JSON in `tokens/src/` directly, color included, then run `npm run check`. It enforces contrast, visible states, the tier rules, and a description on every semantic token. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full flow.
 
@@ -217,7 +217,6 @@ The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus `
 Deferred for now:
 
 - Syncing the tokens to Figma Variables
-- Native platforms: compiling the iOS package in CI (Android is shipped, see above)
 
 ## Licenses
 
