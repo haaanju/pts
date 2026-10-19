@@ -1,7 +1,8 @@
 // Contract tests for the @pts/ios output (ADR 0064, 0066): every semantic color has a color set whose light and dark
 // values equal the resolver's at the inputs iOS fixes, and PtsColors names each one once; every text style is in
 // PtsTypography at Apple's size for its iOS text style, with its family, weight, and tracking, and its font is bundled;
-// every border token is in PtsBorder in points, and PtsShape follows radius/control and radius/container (ADR 0067). The expectations come from
+// every spacing and border token is in PtsSpacing or PtsBorder in points (ADR 0067, 0068), and PtsShape follows
+// radius/control and radius/container. The expectations come from
 // Terrazzo's resolver (tokens/source.ts) and the token's own hex, written out here apart from the plugin, so a
 // formatting bug in the plugin fails. The Swift is compiled by `npm run compile -w @pts/ios`, which needs Xcode.
 // `npm test` builds first (pretest).
@@ -117,8 +118,8 @@ test("PtsCatalog lists every text style, by its PtsTypography name", () => {
   }
 });
 
-test("the dimension groups cover every semantic border token", () => {
-  assert.deepEqual(Object.fromEntries(dimensions.map((g) => [g.className, g.include.length])), { PtsBorder: 15 });
+test("the dimension groups cover every semantic spacing and border token", () => {
+  assert.deepEqual(Object.fromEntries(dimensions.map((g) => [g.className, g.include.length])), { PtsSpacing: 34, PtsBorder: 15 });
 });
 
 for (const group of dimensions) {
@@ -146,5 +147,13 @@ test("PtsCatalog lists every dimension with its path and alias, by its constant"
       const line = catalog.split("\n").find((l) => l.trim().startsWith(`DimensionEntry(path: ${JSON.stringify(id.replaceAll(".", "/"))},`));
       assert.ok(line?.trim().endsWith(`alias: ${JSON.stringify(alias)}, value: ${group.className}.${swiftName(id)}),`), `${id}: ${line?.trim()}`);
     }
+  }
+});
+
+test("PtsSpacing is at density relaxed: padding/md is 12pt, size/control/md 48pt, every control height at least 44pt", () => {
+  const swift = readFileSync(dist("PtsSpacing.swift"), "utf8");
+  assert.match(swift, /public static let paddingMd: CGFloat = 12$/m);
+  for (const m of swift.matchAll(/public static let sizeControl(\w+): CGFloat = (\d+)$/gm)) {
+    if (m[1] !== "Sm") assert.ok(Number(m[2]) >= 44, `sizeControl${m[1]} is ${m[2]}pt, below Apple's 44pt target`);
   }
 });
