@@ -220,7 +220,7 @@
       "$extensions": {
         "io.github.haaanju.pts": {
           "ios": {
-            "textStyle": "callout"
+            "textStyle": "body"
           }
         }
       }
@@ -256,7 +256,7 @@
       "$extensions": {
         "io.github.haaanju.pts": {
           "ios": {
-            "textStyle": "callout"
+            "textStyle": "body"
           }
         }
       }
@@ -310,7 +310,7 @@
       "$extensions": {
         "io.github.haaanju.pts": {
           "ios": {
-            "textStyle": "caption"
+            "textStyle": "footnote"
           }
         }
       }

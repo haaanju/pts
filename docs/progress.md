@@ -17,7 +17,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 The monorepo comes first. Decide the next step with the owner before starting; a second component is an open question below. Left from the plan:
 
-- **Native platforms: Android and iOS are built**, each a custom Terrazzo plugin (ADR 0022). Android: Kotlin for Compose in `pts-android` (`mavenLocal`), a Material 3 demo with Home, Tokens, Components, and Settings tabs (ADR 0056–0062). iOS, native first (ADR 0063): the Swift package `Pts` with color sets, Aspekta at Apple's text style sizes, corners, and spacing, only the theme varying, and a SwiftUI demo with the same tabs (ADR 0064–0068); CI compiles both (ADR 0058, 0069). On the owner's Mac: Android Studio's JDK and the AVD `Medium_Phone_API_37.0`; Xcode 27.1 with the iOS 27 simulators, which has no Simulator app, so run the iOS demo from Xcode. Left for both, waiting for a use: motion, elevation, component tokens, and publishing (Maven Central; a Swift package at the repository root). Not yet seen on iOS: the demo's alert, dialog, and sheet (they need a tap).
+- **Native platforms: Android and iOS are built**, each a custom Terrazzo plugin (ADR 0022). Android: Kotlin for Compose in `pts-android` (`mavenLocal`), a Material 3 demo with Home, Tokens, Components, and Settings tabs (ADR 0056–0062). iOS, native first (ADR 0063): the Swift package `Pts` with color sets, Aspekta at Apple's text style sizes, corners, and spacing, only the theme varying, and a SwiftUI demo with the same tabs (ADR 0064–0068); CI compiles both (ADR 0058, 0069). On the owner's Mac: Android Studio's JDK and the AVD `Medium_Phone_API_37.0`; Xcode 27.1 with the iOS 27 simulators, which has no Simulator app, so run the iOS demo from Xcode. Left for both, waiting for a use: motion, elevation, component tokens, and publishing (Maven Central; a Swift package at the repository root). The iOS work was checked against the HIG and brought in line (ADR 0070): Apple's text sizes by role, a blue accent, the system's appearance and backgrounds, Bold Text. Not yet seen on iOS: the demo's alert, dialog, and sheet (they need a tap).
 - Figma sync stays manual (the `figma` skill).
 
 Waiting for a reason, not scheduled:
@@ -31,6 +31,7 @@ Waiting for a reason, not scheduled:
 
 ## Open questions
 
+- **Increase Contrast on iOS** ([ADR 0071](adr/0071-increase-contrast.md), proposed): derive the high-contrast colors from the token steps, or a `contrast` modifier, or leave it out. Recommended: derived; the step map is the open part.
 - **A second component, and whether before or after Android** (owner, 2026-10-13: thinking it over). Components stay fixtures (ADR 0034): add one for what it tests, not to grow a library. A second one would also test ADR 0052's rule that Figma properties are what a designer chooses. Candidates:
   - **Checkbox** (suggested first): the first component-specific state (`checked`, ADR 0018), so `pts/component-states` and `pts/component-pairs` meet checked × hover / pressed for the first time.
   - **Input**: shares `size/control` and `radius/control` with the button and uses `border/focus`, testing that controls line up; brings form and ARIA work that isn't about tokens.

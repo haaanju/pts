@@ -1,6 +1,6 @@
 // Contract tests for the @pts/ios output (ADR 0064, 0066): every semantic color has a color set whose light and dark
 // values equal the resolver's at the inputs iOS fixes, and PtsColors names each one once; every text style is in
-// PtsTypography at Apple's size for its iOS text style, with its family, weight, and tracking, and its font is bundled;
+// PtsTypography at Apple's size and leading for its iOS text style, with its family and weight, and its font is bundled;
 // every spacing and border token is in PtsSpacing or PtsBorder in points (ADR 0067, 0068), and PtsShape follows
 // radius/control and radius/container. The expectations come from
 // Terrazzo's resolver (tokens/source.ts) and the token's own hex, written out here apart from the plugin, so a
@@ -75,10 +75,13 @@ test("PtsColors makes every color set public, by its generated asset symbol", ()
   assert.ok(declared.every((m) => m[1] === m[2]), "a name differs from its asset symbol");
 });
 
-// Apple's text styles at the default text size (Large), from the Human Interface Guidelines' type tables
-const apple: Record<string, number> = { largeTitle: 34, title: 28, title2: 22, title3: 20, headline: 17, body: 17, callout: 16, subheadline: 15, footnote: 13, caption: 12, caption2: 11 };
+// Apple's text styles at the default text size (Large), size/leading in points, from the Human Interface Guidelines
+const apple: Record<string, [number, number]> = {
+  largeTitle: [34, 41], title: [28, 34], title2: [22, 28], title3: [20, 25], headline: [17, 22], body: [17, 22],
+  callout: [16, 21], subheadline: [15, 20], footnote: [13, 18], caption: [12, 16], caption2: [11, 13],
+};
 
-test("PtsTypography holds every text style at Apple's size for its iOS text style, with its family, weight, and tracking", () => {
+test("PtsTypography holds every text style at Apple's size and leading for its iOS text style, with its family and weight", () => {
   const swift = readFileSync(dist("PtsTypography.swift"), "utf8");
   const tokens = resolver.apply({ ...fixed, theme: "light" });
   const declared = [...swift.matchAll(/^ {4}public static let (\w+) = PtsTextStyle\((.+)\)$/gm)];
@@ -86,16 +89,16 @@ test("PtsTypography holds every text style at Apple's size for its iOS text styl
   text.forEach((id, i) => {
     const t = tokens[id] as any;
     const style = t.$extensions[key].ios.textStyle;
-    const size = apple[style];
-    const tracking = Math.round((t.$value.letterSpacing.value / t.$value.fontSize.value) * size * 100) / 100;
+    const [size, leading] = apple[style];
     const family = (families as Record<string, string>)[t.$value.fontFamily[0]];
-    assert.equal(declared[i][2], `family: "${family}", size: ${size}, textStyle: .${style}, weight: ${t.$value.fontWeight}, tracking: ${tracking}`, id);
+    assert.equal(declared[i][2], `family: "${family}", size: ${size}, leading: ${leading}, textStyle: .${style}, weight: ${t.$value.fontWeight}`, id);
   });
 });
 
-test("a display style keeps its letter spacing's share of the size: display-lg is -1.25px at 64px, -0.66pt at 34pt", () => {
+test("body text is Apple's Body, 17/22pt, in the token's weight, and no style sets tracking (ADR 0070)", () => {
   const swift = readFileSync(dist("PtsTypography.swift"), "utf8");
-  assert.match(swift, /displayLg = PtsTextStyle\(family: "Aspekta Variable", size: 34, textStyle: \.largeTitle, weight: 700, tracking: -0\.66\)/);
+  assert.match(swift, /bodyMd = PtsTextStyle\(family: "Aspekta Variable", size: 17, leading: 22, textStyle: \.body, weight: 400\)/);
+  assert.ok(!swift.includes(".tracking("), "a text style sets tracking");
 });
 
 test("every family the text styles use is bundled, with its license", () => {

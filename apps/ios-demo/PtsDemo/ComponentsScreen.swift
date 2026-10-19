@@ -30,7 +30,7 @@ struct ComponentsScreen: View {
                     }
                     HStack {
                         Button("Glass") {}.buttonStyle(.glass)
-                        Button("Glass prominent") {}.buttonStyle(.glassProminent).foregroundStyle(PtsColors.contentInverseBase)
+                        Button("Glass prominent") {}.buttonStyle(.glassProminent).foregroundStyle(PtsColors.intentInfoContentInverse)
                     }
                 }
                 .buttonBorderShape(PtsShape.control)
@@ -40,7 +40,7 @@ struct ComponentsScreen: View {
                         Button("Like", systemImage: "heart") {}.buttonStyle(.bordered)
                         Button("Edit", systemImage: "pencil") {}.primaryButton()
                         Button("Share", systemImage: "square.and.arrow.up") {}.buttonStyle(.glass)
-                        Button("Add", systemImage: "plus") {}.buttonStyle(.glassProminent).foregroundStyle(PtsColors.contentInverseBase)
+                        Button("Add", systemImage: "plus") {}.buttonStyle(.glassProminent).foregroundStyle(PtsColors.intentInfoContentInverse)
                     }
                     .labelStyle(.iconOnly)
                     .buttonBorderShape(.circle)
