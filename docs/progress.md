@@ -26,13 +26,17 @@ The monorepo comes first. Decide the next step with the owner before starting; a
     - **Platform knowledge goes in `$extensions`**, the DTCG format's place for team data (reverse-domain key, e.g. `"io.github.haaanju.pts": { "ios": { "textStyle": "title" } }`), with one resolver. The ADR must tell it apart from the `$extensions.mode` ban, which is about modes. Rejected: a `platform` modifier (it and viewport both change display sizes, against Terrazzo's orthogonality advice and `pts/orthogonal-modifiers`; 48 permutations, `ios × wide` among them), and one resolver per platform (neither [Terrazzo's resolver guide](https://terrazzo.app/docs/guides/resolvers/), which has one resolver with inputs set in plugin options, nor the DTCG resolver spec mentions it).
     - **No viewport on iOS**: the plugin fixes viewport to `narrow` (as products fix modifiers, ADR 0047) and writes no breakpoints; size classes (compact, regular, by window) and Dynamic Type do that job.
     - **Lint by platform, run together**: shared rules for all; web and Android keep `min-font-size`, `line-height-grid`, and `type-scale` (Apple's sizes break all three: 11pt, 22 line height, 17/15/13); new iOS rules (every `text/*` has a valid `textStyle`, maybe 44pt targets). All run in `npm run check`, so a shared token change can't break iOS unseen.
-  - **Open, for the study session** (a kitchen-sink app of native components shows which tokens take effect where; the table settles each category as system, token, or unused on iOS):
-    - Colors: which token is `AccentColor` (leaning `inverse/base`); List and Form backgrounds, system or `surface`; Increase Contrast, which no token set covers.
-    - Shape: `.buttonBorderShape` maps soft and round (`.roundedRectangle(radius: 8)`, `.capsule`); iOS 26 concentric corners against `radius/container`.
-    - Density and `size/control`: native controls size themselves (`.controlSize`), so `size/control` may serve custom controls only; the 44pt target (compact `md` is 40); whether spacing follows Dynamic Type (`@ScaledMetric`).
-    - The component tier (Button): native buttons draw their own pressed states. Motion (iOS uses springs) and shadows (materials, Liquid Glass): likely unused.
-    - Display letter spacing for Aspekta at Apple's sizes (it has no automatic tracking).
+  - **Decided with the owner (2026-10-19)**, to confirm in the study session and record in the ADR:
+    - Colors: `AccentColor` is `inverse/base`; List and Form backgrounds are the system colors; Increase Contrast is left out for now, noted in the ADR (no token set covers it).
+    - Shape: `soft` maps to `.roundedRectangle(radius: 8)` and `round` to `.capsule` through `.buttonBorderShape`.
+    - Density and `size/control`: `size/control` and compact density apply to custom controls only; native controls keep `.controlSize`. Custom controls keep a 44pt hit area, so the 40pt compact height gets padding around it.
+    - Spacing (`padding`, `gap`) stays fixed pt and does not follow Dynamic Type; only text does.
+    - Display letter spacing uses the token values as they are, at every size.
+    - Motion and shadows are not used on iOS (recorded in the docs, not built).
+    - The component tier: a native button draws its own pressed state; the tokens give only the rest colors.
+  - **Still open, for the study session** (a kitchen-sink app of native components confirms each category as system, token, or unused):
     - Liquid Glass: refined in iOS 27; Xcode 27 reportedly ignores the opt-out (unofficial; check Apple's release notes).
+    - iOS 26 concentric corners against `radius/container`.
   - **Study list**: the HIG (Foundations: Color, Typography, Layout, Materials, Dark Mode, Accessibility; the Components used), the WWDC25 Liquid Glass sessions, WWDC26 "What's new in SwiftUI", and Apple Design Resources (the iOS Figma kit). The `apple-hig` skill has the HIG for iOS 27. Then: the ADR, the package and its tests (`swift build`, values equal to the resolver's), a SwiftUI demo like Android's, and a macOS CI job.
 - Figma sync stays manual (the `figma` skill).
 
