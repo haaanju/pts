@@ -3,14 +3,18 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "@terrazzo/cli";
 import { files, loadResolver, RESOLVER } from "../../tokens/source.ts";
-import ios, { type Release } from "./plugin-ios.ts";
+import ios, { type DimensionGroup, type Release } from "./plugin-ios.ts";
 
-// The semantic colors (ADR 0064) and text styles (ADR 0066), in the order the files define them. iOS follows the theme
+// The semantic colors (ADR 0064), text styles (ADR 0066), and borders (ADR 0067), in the order the files define them. iOS follows the theme
 // only: density, shape, and viewport are fixed (ADR 0063), and the system does the rest.
 const resolver = await loadResolver();
 const tokens = resolver.apply({});
 const semantic = [...new Set(files(resolver).filter((f) => f.tier === "semantic").flatMap((f) => Object.keys(f.tokens)))];
 export const colors = semantic.filter((id) => tokens[id]?.$type === "color");
+const pick = (groups: string[]) => semantic.filter((id) => tokens[id]?.$type === "dimension" && groups.includes(id.split(".")[0]));
+export const dimensions: DimensionGroup[] = [
+  { className: "PtsBorder", include: pick(["radius", "stroke", "focus-ring"]), doc: "The corners and strokes of Plain, in points, at shape round: radius, stroke widths, and the focus ring." },
+];
 export const text = semantic.filter((id) => id.startsWith("text.") && tokens[id]?.$type === "typography");
 export const fixed = { density: "relaxed", shape: "round", viewport: "narrow" };
 // The family each font stack starts with → the family its bundled file registers (build-fonts.ts writes the files)
@@ -34,5 +38,5 @@ export const release: Release = { version, date, notes: section.split("\n").filt
 export default defineConfig({
   tokens: [fileURLToPath(RESOLVER)],
   outDir: "./dist/",
-  plugins: [ios({ colors, text, families, key, fixed, catalog: release })],
+  plugins: [ios({ colors, dimensions, text, families, key, fixed, catalog: release })],
 });

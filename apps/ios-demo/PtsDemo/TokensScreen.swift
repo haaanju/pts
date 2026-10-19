@@ -1,12 +1,12 @@
 // The token pages, like the Storybook docs: token first, then its value in the current theme, the alias it points to,
-// and its description, from PtsCatalog (ADR 0065). Colors and type so far; spacing and corners follow (ADR 0063).
+// and its description, from PtsCatalog (ADR 0065). Colors, type, and borders so far; spacing follows (ADR 0063).
 import Pts
 import PtsCatalog
 import SwiftUI
 
 struct TokensScreen: View {
     @Environment(\.colorScheme) private var scheme
-    @State private var page = "Color"
+    @AppStorage("tokensPage") private var page = "Color" // kept like the tab; `-tokensPage Border` opens one
 
     /// The groups of the docs' Color page, in its order: intent/danger/surface/base → intent/danger; always/* last
     private var sections: [(title: String, entries: [PtsCatalog.Entry])] {
@@ -30,7 +30,7 @@ struct TokensScreen: View {
         NavigationStack {
             List {
                 Picker("Page", selection: $page) {
-                    ForEach(["Color", "Type"], id: \.self) { Text($0) }
+                    ForEach(["Color", "Type", "Border"], id: \.self) { Text($0) }
                 }
                 .pickerStyle(.segmented)
                 .listRowBackground(Color.clear)
@@ -43,6 +43,16 @@ struct TokensScreen: View {
                             }
                         } header: {
                             Header(group: section.title)
+                        }
+                    }
+                } else if page == "Border" {
+                    ForEach(["radius", "stroke", "focus-ring"], id: \.self) { group in
+                        Section {
+                            ForEach(PtsCatalog.border.filter { $0.path.hasPrefix("\(group)/") }) { entry in
+                                DimensionRow(entry: entry) { BorderSample(group: group, value: entry.value) }
+                            }
+                        } header: {
+                            Header(group: group)
                         }
                     }
                 } else {
@@ -84,9 +94,9 @@ private struct TokenRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: PtsBorder.radiusMd)
                 .fill(entry.color)
-                .stroke(PtsColors.borderSubtle)
+                .stroke(PtsColors.borderSubtle, lineWidth: PtsBorder.strokeThin)
                 .frame(width: 44, height: 44)
             VStack(alignment: .leading, spacing: 4) {
                 Text(entry.path)
@@ -124,5 +134,49 @@ private struct TypeRow: View {
                 .foregroundStyle(PtsColors.contentSubtle)
         }
         .padding(.vertical, 4)
+    }
+}
+
+/// A dimension like the docs' tables: the sample, then the path, value, alias, and description
+struct DimensionRow<Sample: View>: View {
+    let entry: PtsCatalog.DimensionEntry
+    @ViewBuilder let sample: Sample
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 16) {
+            sample.frame(width: 44, alignment: .leading)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.path)
+                    .textStyle(PtsTypography.codeMd)
+                    .foregroundStyle(PtsColors.contentBase)
+                Text(entry.alias.isEmpty ? "\(points(entry.value))" : "\(points(entry.value))  → \(entry.alias)")
+                    .textStyle(PtsTypography.codeMd)
+                    .foregroundStyle(PtsColors.contentSubtle)
+                if !entry.description.isEmpty {
+                    Text(entry.description)
+                        .textStyle(PtsTypography.bodySm)
+                        .foregroundStyle(PtsColors.contentSubtle)
+                }
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
+    private func points(_ value: CGFloat) -> String {
+        value.rounded() == value ? "\(Int(value))pt" : "\(value)pt"
+    }
+}
+
+/// A radius on a square, or a stroke width around one
+private struct BorderSample: View {
+    let group: String
+    let value: CGFloat
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: group == "radius" ? min(value, 22) : PtsBorder.radiusMd)
+        shape
+            .fill(PtsColors.surfaceSubtle)
+            .stroke(PtsColors.borderBase, lineWidth: group == "radius" ? PtsBorder.strokeThin : value)
+            .frame(width: 44, height: 44)
     }
 }
