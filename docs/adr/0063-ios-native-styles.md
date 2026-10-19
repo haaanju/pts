@@ -1,0 +1,46 @@
+# 0063. Native iOS Styles Mapped from the Tokens
+
+- Status: proposed
+- Date: 2026-10-19
+
+## Decision
+
+Chosen: native SwiftUI and UIKit components wherever Apple provides one, with the tokens connected only where the native component takes a value: asset-catalog color sets per theme, the button shape from `shape`, and Aspekta under Dynamic Type's text styles. Everything else is left to iOS, because Apple's own rules set more constraints than the Android work did, and a demo should show what a native app does with the tokens, not a copy of the web.
+
+## What we learned
+
+The owner settled the approach on 2026-10-18 and the decisions below on 2026-10-19, after the study session on Apple's sources (the list in Implementation notes). Options considered for the connection:
+
+- **`@terrazzo/plugin-swift` as is**: it emits colors only, reads dark from `token.mode`, which our resolver leaves at `.`, so it writes the light values only. It stays the reference for the color set JSON.
+- **A custom plugin writing color sets from `resolver.apply` per theme**: chosen for colors. An asset catalog holds light and dark per color, which fits, since colors change with the theme only (`pts/orthogonal-modifiers`).
+- **A `platform` modifier**: rejected. Like viewport, it changes display sizes, against Terrazzo's advice to keep modifiers orthogonal and `pts/orthogonal-modifiers`; it would make 48 permutations, `ios × wide` among them.
+- **One resolver per platform**: rejected. Terrazzo's resolver guide describes one resolver with its inputs set in the plugin options, and the DTCG resolver spec has no per-platform split either.
+- **Platform data in `$extensions`**: chosen for the iOS text style each `text/*` follows, under a reverse-domain key (`"io.github.haaanju.pts"`). This is team data, not a mode, so it does not break the `$extensions.mode` rule.
+
+## Why it matters
+
+- **Colors**: `AccentColor` is `inverse/base`, the same fill as the primary button. List and Form backgrounds stay the system colors, which adapt to the system's own grouped backgrounds. Increase Contrast has no token set, so it is out of scope for now.
+- **Shape**: `soft` maps to `.roundedRectangle(radius: 8)` and `round` to `.capsule`, through `.buttonBorderShape`, matching `radius/control`.
+- **Density and size**: `size/control` and compact density apply to custom controls only, since native controls size themselves (`.controlSize`). A custom control keeps a 44pt hit area, so the 40pt compact height gets padding around it.
+- **Spacing**: `padding` and `gap` stay fixed pt and do not follow Dynamic Type. Text does.
+- **Type**: display letter spacing uses the token values at every size. Aspekta has no automatic tracking, so the token is what gives the display sizes their spacing.
+- **Motion and shadows**: not used on iOS. The tokens stay on the web and Android.
+- **Button states**: a native button draws its own pressed state; the tokens give only the resting colors.
+- **Lint**: shared rules run for every platform in `npm run check`. Web and Android keep `min-font-size`, `line-height-grid`, and `type-scale`, which Apple's sizes break (11pt, a 22pt line height, 17/15/13). iOS adds rules such as every `text/*` having a valid text style, so a shared token change can't break iOS unseen.
+- **No viewport on iOS**: the plugin fixes viewport to `narrow` (as products fix modifiers, ADR 0047) and writes no breakpoints. Size classes and Dynamic Type handle the layout.
+
+## Trade-offs
+
+- **Native first means fewer token values reach the screen.** A reader sees iOS's own sizes and shapes, and the tokens show only where the native component accepts them. That is the point of the demo, but a change to, for example, spacing won't appear in iOS at all.
+- **A custom plugin is more code than the reference plugin**, and the color set JSON must be kept in step with Xcode's asset format.
+
+## Implementation notes
+
+- **Liquid Glass**: chosen, no opt-out. Apple's developer forums say the `UIDesignRequiresCompatibility` key is ignored when an app is built with the iOS 27 SDK, even with a deployment target of 26 or earlier; the key still works for builds with the Xcode 26 SDK ([Apple Developer Forums](https://developer.apple.com/forums/thread/838637)). Native components take Liquid Glass as they ship; no token covers it. Confirm against Apple's Xcode 27 release notes before the build, since the forum post is the only source checked.
+- **Concentric corners**: chosen, nested rounding follows the container. A container that holds controls uses `concentric(minimum:)` with `radius/container` as the minimum, so an inner button's corner stays concentric with the card's; a container with no inner controls keeps `radius/container` as a fixed radius. This uses `ConcentricRectangle` and `Edge.Corner.Style` from iOS 26 ([Apple docs](https://developer.apple.com/documentation/swiftui/concentricrectangle.md)). The Human Interface Guidelines page was not read directly.
+- **Not built yet.** The package, its tests (`swift build`, values equal to the resolver's), and a SwiftUI demo follow this ADR. A macOS CI job is planned after them.
+- **Study sources**: the HIG (Color, Typography, Layout, Materials, Dark Mode, Accessibility, and the components used), the WWDC25 Liquid Glass sessions, WWDC26 "What's new in SwiftUI", and Apple Design Resources.
+
+## Documented in
+
+- [`docs/progress.md`](../progress.md), the iOS item (the open questions and the next steps).
