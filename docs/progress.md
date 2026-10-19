@@ -11,8 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/ios-colors`: ADR 0063's corrections and the iOS colors (ADR 0064), pull request #44.
-- `feature/ios-demo`, on top of it (worktree `.claude/worktrees/ios-colors`): the iOS demo app (ADR 0065); its pull request follows #44.
+- `feature/ios-demo` (worktree `.claude/worktrees/ios-colors`): the iOS demo app (ADR 0065).
 
 ## Next
 
@@ -20,7 +19,7 @@ The monorepo comes first. Decide the next step with the owner before starting; a
 
 - **Next, chosen by the owner (2026-10-09; starts after this week): native platforms, Android first, then iOS**, through a custom Terrazzo plugin (ADR 0022: `@terrazzo/plugin-swift` 0.3.3 emits colors only and reads dark from `$extensions.mode`, not the resolver). The goal is an end-to-end demo: change a semantic color, release, and see a dummy app change in the Android emulator and then the iOS simulator. Android: Kotlin for Compose, not XML resources (owner, 2026-10-12): the resolver's permutations as Kotlin objects (`PtsColors.Light` / `Dark`), since resource qualifiers cover only night, not density or shape, and `Dp` / `TextStyle` / shapes can follow later; a dummy Compose app, published to `mavenLocal` first. Done: `@pts/android` writes `PtsColors.kt` (ADR 0056), and `apps/android-demo` compiles it and shows it in the emulator; a token change showed after one build (ADR 0057). Android Studio is installed (2026-10-17): its JDK (25) builds from the terminal, and the AVD `Medium_Phone_API_37.0` runs the app. `pts-android` is a Gradle library in `mavenLocal`, which the app depends on, and CI compiles both (ADR 0058). Spacing, borders, type, and fonts followed (ADR 0059). The demo is a Material 3 app themed from the tokens, with Home, Tokens, Components, and Settings tabs (ADR 0060); Home shows this version's release (its changelog entries counted, read at build time) above the sample content, and the type follows ADR 0023 (ADR 0061, 0062). Left for Android, waiting for a use: motion, elevation, component tokens, and publishing beyond `mavenLocal` (GitHub Packages or Maven Central). Next native step: iOS, below.
 - **iOS, native first** ([ADR 0063](adr/0063-ios-native-styles.md), proposed until its steps are built): colors, a SwiftUI demo, type, corners, spacing, then a macOS CI job, a pull request each. Xcode 27.1 is selected (2026-10-19), with the iOS 27 simulators. Done: colors (`@pts/ios`, ADR 0064), compiled with `npm run compile -w @pts/ios`.
-  - Done: the demo (`apps/ios-demo`, ADR 0065), seen in light and dark in the simulator. Not yet seen: a card in the sheet (tap Sheet). **Next: type.**
+  - Done: the demo (`apps/ios-demo`, ADR 0065), the Android demo's tabs, seen in light and dark in the simulator. Not yet seen: the alert, dialog, and sheet (they need a tap). **Next: type.**
   - **Notes for type**: `Font.custom(_:size:relativeTo:)` ([custom fonts guide](https://developer.apple.com/documentation/swiftui/applying-custom-fonts-to-text)); Apple's default sizes (body 17/22 …) are Apple's values, not tokens, and the tokens only say which iOS text style each `text/*` follows, in `$extensions`; fonts in a package register in code (`CTFontManagerRegisterFontsForURL`); SwiftUI sets line spacing, not line height.
 - Figma sync stays manual (the `figma` skill).
 

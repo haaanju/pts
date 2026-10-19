@@ -1,102 +1,186 @@
-// One screen of native components in the token colors. Type, spacing, and the corner radius are literals until the
-// package has them (ADR 0063: type, corners, and spacing are the next steps).
+// The owner's app, as on Android (ADR 0061, 0062): a greeting, what's new in the tokens, what the app is, the tokens
+// at a glance, then sample project content set apart under Examples.
 import Pts
+import PtsCatalog
 import SwiftUI
 
-struct HomeScreen: View {
-    @State private var showsSheet = false
+private struct Project: Identifiable {
+    let name: String
+    let detail: String
+    let status: Status
+    var id: String { name }
+}
 
+private let projects = [
+    Project(name: "Checkout redesign", detail: "8 tasks · updated 2h ago", status: .overdue),
+    Project(name: "Onboarding flow", detail: "Kickoff on Monday", status: .new),
+    Project(name: "Settings revamp", detail: "Due Friday · 3 tasks left", status: .dueSoon),
+    Project(name: "Dark mode audit", detail: "Waiting on 2 reviewers", status: .inReview),
+    Project(name: "Design tokens v1", detail: "Shipped 3 days ago", status: .done),
+    Project(name: "Search results", detail: "Shipped last week", status: .done),
+]
+
+/// A greeting for the time of day: 05–12 morning, 12–18 afternoon, 18–22 evening, otherwise late
+private func greeting(_ date: Date) -> String {
+    switch Calendar.current.component(.hour, from: date) {
+    case 5..<12: "Good morning"
+    case 12..<18: "Good afternoon"
+    case 18..<22: "Good evening"
+    default: "Working late"
+    }
+}
+
+struct HomeScreen: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    Card("Text") {
-                        Text("content/base, for body text and headings.")
+                VStack(alignment: .leading, spacing: 32) {
+                    // Read again every minute, so a greeting left open from the morning doesn't stay "Good morning"
+                    TimelineView(.everyMinute) { context in
+                        Text("\(greeting(context.date)), Hanju")
+                            .font(.title2.bold())
                             .foregroundStyle(PtsColors.contentBase)
-                        Text("content/subtle, for secondary text.")
-                            .foregroundStyle(PtsColors.contentSubtle)
                     }
-                    Card("Buttons") {
-                        HStack {
-                            Button("Primary") {}
-                                .buttonStyle(.borderedProminent)
-                                .foregroundStyle(PtsColors.contentInverseBase)
-                            Button("Secondary") {}
-                                .buttonStyle(.bordered)
-                        }
-                        Button("Delete", role: .destructive) {}
-                            .buttonStyle(.borderedProminent)
-                            .tint(PtsColors.intentDangerSurfaceBase)
-                            .foregroundStyle(PtsColors.intentDangerContentInverse)
-                    }
-                    .buttonBorderShape(.capsule)
-                    Card("Intents") {
-                        ForEach(Intent.all) { intent in
-                            Text(intent.name)
-                                .font(.subheadline)
-                                .foregroundStyle(intent.content)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(intent.surface, in: Capsule())
-                                .overlay(Capsule().stroke(intent.border))
-                        }
-                    }
+                    WhatsNew()
+                    About()
+                    AtAGlance()
+                    Divider().overlay(PtsColors.borderSubtle)
+                    SectionTitle("Examples")
+                    Banner()
+                    Summary()
+                    Recent()
                 }
                 .padding(16)
             }
             .background(PtsColors.background)
-            .navigationTitle("Plain")
+            .navigationTitle("Projects")
             .toolbar {
-                Button("Sheet") { showsSheet = true }
+                ToolbarItemGroup {
+                    Button("Search", systemImage: "magnifyingglass") {}
+                    Button("Notifications", systemImage: "bell") {}
+                }
             }
-            .sheet(isPresented: $showsSheet) {
-                Card("In a sheet") {
-                    Text("The card's corners follow the sheet's.")
+        }
+    }
+}
+
+/// This version's changelog entries, read at build time, counted by kind: the entries themselves are in the changelog
+private struct WhatsNew: View {
+    var body: some View {
+        let kinds = Dictionary(grouping: PtsCatalog.releaseNotes) { $0.components(separatedBy: ":").first ?? "" }
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                SectionTitle("What's new in Plain \(PtsCatalog.version)")
+                if let date = PtsCatalog.releaseDate.flatMap({ try? Date($0, strategy: .iso8601.year().month().day()) }) {
+                    Text("Released \(date.formatted(date: .long, time: .omitted))")
                         .foregroundStyle(PtsColors.contentSubtle)
                 }
-                .padding(16)
-                .presentationDetents([.medium])
+            }
+            HStack(spacing: 8) {
+                ForEach(kinds.keys.sorted(), id: \.self) { kind in
+                    // New is the discovery intent (new things), Fix the success one
+                    let (fill, text) = kind == "New" ? (PtsColors.intentDiscoverySurfaceSubtle, PtsColors.intentDiscoveryContentBase)
+                        : kind == "Fix" ? (PtsColors.intentSuccessSurfaceSubtle, PtsColors.intentSuccessContentBase)
+                        : (PtsColors.surfaceStrong, PtsColors.contentBase)
+                    Tag("\(kinds[kind]!.count) \(kind)", fill: fill, text: text)
+                }
             }
         }
     }
 }
 
-/// A card: surface/subtle, with concentric corners no less round than radius/container (32pt with shape round).
-struct Card<Content: View>: View {
-    let title: String
-    @ViewBuilder let content: Content
-
-    init(_ title: String, @ViewBuilder content: () -> Content) {
-        self.title = title
-        self.content = content()
-    }
-
+private struct About: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(.headline)
+            SectionTitle("About this app")
+            Text("Native SwiftUI components, colored by the `@pts/ios` tokens.")
                 .foregroundStyle(PtsColors.contentBase)
-            content
         }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(PtsColors.surfaceSubtle, in: ConcentricRectangle(corners: .concentric(minimum: .fixed(32)), isUniform: true))
     }
 }
 
-/// An intent's soft badge: its surface/subtle, content/base on it, and border/subtle.
-struct Intent: Identifiable {
-    let name: String
-    let surface: Color
-    let content: Color
-    let border: Color
-    var id: String { name }
+/// The tokens the app reads, counted from the catalog, so the numbers follow the tokens
+private struct AtAGlance: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionTitle("At a glance")
+            Card {
+                HStack { Stat(value: "\(PtsCatalog.colors.count)", label: "colors") }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("\(PtsCatalog.modifiers.count) mode: \(PtsCatalog.modifiers.joined(separator: ", "))")
+                        .foregroundStyle(PtsColors.contentBase)
+                    Text("@pts/ios \(PtsCatalog.version) · Terrazzo · SwiftUI")
+                        .foregroundStyle(PtsColors.contentSubtle)
+                }
+            }
+        }
+    }
+}
 
-    static let all = [
-        Intent(name: "Danger", surface: PtsColors.intentDangerSurfaceSubtle, content: PtsColors.intentDangerContentBase, border: PtsColors.intentDangerBorderSubtle),
-        Intent(name: "Warning", surface: PtsColors.intentWarningSurfaceSubtle, content: PtsColors.intentWarningContentBase, border: PtsColors.intentWarningBorderSubtle),
-        Intent(name: "Success", surface: PtsColors.intentSuccessSurfaceSubtle, content: PtsColors.intentSuccessContentBase, border: PtsColors.intentSuccessBorderSubtle),
-        Intent(name: "Info", surface: PtsColors.intentInfoSurfaceSubtle, content: PtsColors.intentInfoContentBase, border: PtsColors.intentInfoBorderSubtle),
-        Intent(name: "Discovery", surface: PtsColors.intentDiscoverySurfaceSubtle, content: PtsColors.intentDiscoveryContentBase, border: PtsColors.intentDiscoveryBorderSubtle),
-    ]
+/// An info banner: the intent's soft fill and its content color, title and text the same size, told apart by weight
+private struct Banner: View {
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            Image(systemName: "info.circle.fill")
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Design review moved to Thursday").fontWeight(.semibold)
+                Text("The checkout redesign review is now Thursday at 2 PM.")
+            }
+        }
+        .foregroundStyle(PtsColors.intentInfoContentBase)
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(PtsColors.intentInfoSurfaceSubtle, in: ConcentricRectangle(corners: .concentric(minimum: .fixed(32)), isUniform: true))
+    }
+}
+
+/// A card of project numbers
+private struct Summary: View {
+    var body: some View {
+        Card {
+            HStack(spacing: 20) {
+                Stat(value: "12", label: "Open")
+                Stat(value: "03", label: "Due soon")
+                Stat(value: "28", label: "Done")
+            }
+        }
+    }
+}
+
+private struct Recent: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                SectionTitle("Recent")
+                Button("See all") {}
+            }
+            VStack(spacing: 0) {
+                ForEach(projects) { project in
+                    HStack(spacing: 12) {
+                        Initials(name: project.name)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(project.name).foregroundStyle(PtsColors.contentBase)
+                            Text(project.detail).font(.subheadline).foregroundStyle(PtsColors.contentSubtle)
+                        }
+                        Spacer()
+                        Tag(project.status)
+                    }
+                    .padding(.vertical, 12)
+                    if project.id != projects.last?.id { Divider().overlay(PtsColors.borderSubtle) }
+                }
+            }
+        }
+    }
+}
+
+private struct Initials: View {
+    let name: String
+
+    var body: some View {
+        Text(name.split(separator: " ").prefix(2).map { $0.prefix(1).uppercased() }.joined())
+            .font(.subheadline.weight(.medium))
+            .foregroundStyle(PtsColors.contentBase)
+            .frame(width: 44, height: 44)
+            .background(PtsColors.surfaceStrong, in: Circle())
+    }
 }

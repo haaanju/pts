@@ -50,6 +50,21 @@ test("a dark value differs where the theme changes it: utility.scrim is 50% blac
   assert.deepEqual(set.colors.map((c: any) => c.color.components.alpha), ["0.500", "0.700"]);
 });
 
+test("PtsCatalog lists every color with its path, alias and hex per theme, and this version (the demo's pages)", () => {
+  const catalog = readFileSync(new URL("../dist/catalog/PtsCatalog.swift", import.meta.url), "utf8");
+  const [light, dark] = ["light", "dark"].map((theme) => resolver.apply({ ...fixed, theme }));
+  const hex = ({ hex, alpha = 1 }: any) => `${hex.toUpperCase()}${alpha < 1 ? ` · ${Math.round(alpha * 100)}%` : ""}`;
+  colors.forEach((id, i) => {
+    const pair = (a: string, b: string) => `[${JSON.stringify(a)}, ${JSON.stringify(b)}]`;
+    const alias = (t: typeof light) => (t[id].aliasChain?.[0] ?? "").replaceAll(".", "/");
+    const line = catalog.split("\n").find((l) => l.trim().startsWith(`Entry(path: ${JSON.stringify(id.replaceAll(".", "/"))},`));
+    assert.ok(line, `${id} is missing`);
+    assert.ok(line.includes(`aliases: ${pair(alias(light), alias(dark))}, hex: ${pair(hex(light[id].$value), hex(dark[id].$value))}, color: PtsColors.${names[i]})`), line.trim());
+  });
+  const version = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).version;
+  assert.ok(catalog.includes(`public static let version = "${version}"`));
+});
+
 test("PtsColors makes every color set public, by its generated asset symbol", () => {
   const swift = readFileSync(dist("PtsColors.swift"), "utf8");
   const declared = [...swift.matchAll(/^ {4}public static let (\w+) = Color\(\.(\w+)\)$/gm)];

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A10000000000000000000001 /* Pts in Frameworks */ = {isa = PBXBuildFile; productRef = A10000000000000000000002 /* Pts */; };
+		A10000000000000000000014 /* PtsCatalog in Frameworks */ = {isa = PBXBuildFile; productRef = A10000000000000000000015 /* PtsCatalog */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000001 /* Pts in Frameworks */,
+				A10000000000000000000014 /* PtsCatalog in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,6 +69,7 @@
 			name = PtsDemo;
 			packageProductDependencies = (
 				A10000000000000000000002 /* Pts */,
+				A10000000000000000000015 /* PtsCatalog */,
 			);
 			productName = PtsDemo;
 			productReference = A10000000000000000000003 /* PtsDemo.app */;
@@ -228,6 +231,10 @@
 		A10000000000000000000002 /* Pts */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Pts;
+		};
+		A10000000000000000000015 /* PtsCatalog */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PtsCatalog;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

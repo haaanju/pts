@@ -5,6 +5,13 @@ import PackageDescription
 let package = Package(
     name: "Pts",
     platforms: [.iOS(.v26)],
-    products: [.library(name: "Pts", targets: ["Pts"])],
-    targets: [.target(name: "Pts", path: "dist/Pts")]
+    products: [
+        .library(name: "Pts", targets: ["Pts"]),
+        // Every color with its path, description, and alias, and this version's release: for the demo app (ADR 0065)
+        .library(name: "PtsCatalog", targets: ["PtsCatalog"]),
+    ],
+    targets: [
+        .target(name: "Pts", path: "dist/Pts"),
+        .target(name: "PtsCatalog", dependencies: ["Pts"], path: "dist/catalog"),
+    ]
 )
