@@ -6,5 +6,9 @@
 node_modules/
 dist/
 
+# Swift (packages/ios)
+.swiftpm/
+.build/
+
 # OS
 .DS_Store

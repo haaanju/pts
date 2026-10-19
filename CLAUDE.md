@@ -50,6 +50,8 @@ packages/android/           @pts/android: dist/kotlin/Pts{Colors,Spacing,Border,
                             Jetpack Compose, from plugin-compose.ts and build-fonts.ts (ADR 0056, 0059); dist/catalog/ for the
                             demo (ADR 0060); also a Gradle
                             library, io.github.haaanju.pts:pts-android, published to mavenLocal (ADR 0058)
+packages/ios/               @pts/ios: dist/Pts/ Colors.xcassets (a light and dark color set per semantic color) and
+                            PtsColors.swift, from plugin-ios.ts; Package.swift makes it the Swift package Pts (ADR 0063, 0064)
 apps/components/            @pts/components: Lit web components testing the component tier, src/ → dist/ (<pts-button>)
 apps/android-demo/          a Compose app (Gradle, not an npm workspace): Material 3 themed from pts-android, with Home, Tokens,
                             Components, and Settings tabs (ADR 0057, 0060, 0061)
@@ -71,9 +73,10 @@ docs/progress.md, docs/adr/
   - Built-in rules turned on beyond the recommended ones: `$type` required, a `$description` on every semantic token, srgb colors, text styles at least 12px, every intent with the same tokens (`core/required-children`, ADR 0050).
   - `pts/*`: `theme-parity`, `contrast`, `component-pairs`, `visible-steps`, `density-order`, `gap-order`, `min-font-size`, `type-scale`, `line-height-grid`, `color-hex`, `tier-aliases`, `registered-files`, `orthogonal-modifiers`, `component-states`, `icon-side-padding`.
   - A new check goes to a built-in rule if one fits; otherwise a new `pts/*` rule file whose header says why no built-in rule does it. Every `pts/*` message gets a case in `tokens/lint/rules.test.ts`, unless it can't be reached (the file says why).
-- `npm test`: breaks each `pts/*` rule on purpose in a copy of `tokens/` and expects `tz check` to report it, so a rule that silently stops reporting fails (ADR 0037); then builds `@pts/web` and checks its output against the resolver: every token in `:root`, every modifier context in its block with every token it changes and none another modifier changes, and every token in `tokens.js`, `tokens.d.ts`, and `tokens.scss` (ADR 0039); each product's CSS and JS the same way at the inputs it fixes, its JS values equal to the resolver's (ADR 0047); and builds `@pts/android` and checks that each class (`PtsColors`, `PtsSpacing`, `PtsBorder`, `PtsTypography`) declares every token of its group with each context's value equal to the resolver's, and that every bundled font exists (ADR 0056, 0059).
-- `npm run typecheck`: TypeScript for the lint plugin, the `@pts/web` and `@pts/android` build configs and tests, the components, and Storybook.
-- `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/android` → `packages/android/dist/`, `@pts/components` → `apps/components/dist/`).
+- `npm test`: breaks each `pts/*` rule on purpose in a copy of `tokens/` and expects `tz check` to report it, so a rule that silently stops reporting fails (ADR 0037); then builds `@pts/web` and checks its output against the resolver: every token in `:root`, every modifier context in its block with every token it changes and none another modifier changes, and every token in `tokens.js`, `tokens.d.ts`, and `tokens.scss` (ADR 0039); each product's CSS and JS the same way at the inputs it fixes, its JS values equal to the resolver's (ADR 0047); and builds `@pts/android` and checks that each class (`PtsColors`, `PtsSpacing`, `PtsBorder`, `PtsTypography`) declares every token of its group with each context's value equal to the resolver's, and that every bundled font exists (ADR 0056, 0059); and builds `@pts/ios` and checks a color set per semantic color, its light and dark values equal to the resolver's, each named in `PtsColors` (ADR 0064).
+- `npm run typecheck`: TypeScript for the lint plugin, the `@pts/web`, `@pts/android`, and `@pts/ios` build configs and tests, the components, and Storybook.
+- `npm run build`: every workspace (`@pts/web` → `packages/web/dist/`, `@pts/android` → `packages/android/dist/`, `@pts/ios` → `packages/ios/dist/`, `@pts/components` → `apps/components/dist/`).
+- `npm run compile -w @pts/ios`: builds `@pts/ios` and compiles the Swift package for the iOS Simulator with `xcodebuild`; needs Xcode, so it isn't in `npm test` or CI yet.
 - `npm run storybook`: docs dev server (http://localhost:6006), builds `@pts/web` and `@pts/components` first. `npm run build-storybook`: static build.
 - `npm run test-a11y`: builds Storybook, then checks every docs page and story with axe-core (WCAG 2.2 A and AA) in light and dark (ADR 0036). Needs Playwright's Chromium once: `npx playwright install chromium`.
 - The pre-commit hook runs check and typecheck and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus `npm test`, both builds, and `test-a11y` on pushes to `main` and on pull requests, and in a second job publishes `pts-android` to the runner's `mavenLocal` and builds the demo app against it, so the Kotlin compiles (ADR 0058); and deploys the docs to GitHub Pages on pushes to `main`.
@@ -173,7 +176,7 @@ always/        white, black
 
 - Storybook follows the tokens: the docs data reloads on save; `tokens.css` and the UI themes are built at startup, so restart `npm run storybook` to see a token change in them (ADR 0046).
 - Figma doesn't: load the `figma` skill and bring it in line.
-- Android follows on the next build (`npm run build`); the demo app shows it after a publish to `mavenLocal` (README, Android section).
+- Android follows on the next build (`npm run build`); the demo app shows it after a publish to `mavenLocal` (README, Android section). iOS follows on the next build too.
 - Add a changeset: the change type (breaking, new, fix) decides the next version; see Git Convention.
 
 ## Decisions
@@ -199,7 +202,7 @@ Work continues across chats and machines through the repository only; chat histo
 ## Deferred
 
 - Figma sync: Figma is updated by hand (the `figma` skill).
-- Native platforms: Android has colors, spacing, borders, and type (`@pts/android`, ADR 0056, 0059); iOS follows, also through a custom Terrazzo plugin rather than Style Dictionary (ADR 0022).
+- Native platforms: Android has colors, spacing, borders, and type (`@pts/android`, ADR 0056, 0059); iOS has colors (`@pts/ios`, ADR 0064); type, corners, spacing, a SwiftUI demo, and a macOS CI job follow (ADR 0063).
 
 ## Git Convention
 
