@@ -14,6 +14,7 @@ Plain is a personal study project: a small design token monorepo built end to en
 | [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), per-product CSS and JS values (`@pts/web/products/<name>.css`, `.js`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
 | [`@pts/android`](packages/android) | Android output: Kotlin for Jetpack Compose, one class per mode (`PtsColors`, `PtsSpacing`, `PtsBorder`, `PtsTypography`) and the bundled fonts (`PtsFonts`); a Gradle library in `mavenLocal` |
 | [`apps/android-demo`](apps/android-demo) | Not a package: a Compose app (Gradle) that themes Material 3 from `pts-android` and lists its tokens like the docs |
+| [`@pts/ios`](packages/ios) | iOS output, in progress: a Swift package, `Pts`, with the semantic colors as an asset catalog (a light and dark color set each) and `PtsColors` |
 | [`@pts/storybook`](apps/storybook) | Token and component documentation, generated from the token source |
 | [`@pts/components`](apps/components) | Internal, not published: web components (Lit) that test the component tier, `<pts-button>` |
 
@@ -172,15 +173,16 @@ Requires Node 22.18 or later (see `.nvmrc`).
 ```sh
 npm install              # also installs the pre-commit hook
 npm run storybook        # docs at http://localhost:6006
-npm run build            # build @pts/web, @pts/android, and @pts/components
+npm run build            # build @pts/web, @pts/android, @pts/ios, and @pts/components
 ```
 
 | Command | What it does |
 |---------|--------------|
 | `npm run check` | Validates the tokens with Terrazzo (`tz check` in `tokens/`): its built-in rules plus the project's `pts/*` rules (value rules in every theme, density, viewport, and shape): contrast, visible states, parity between modes, spacing and type scale order, line heights on the 4px grid, hex values, descriptions, tier rules, unregistered files |
-| `npm test` | Checks that every lint rule still reports what it should, then builds `@pts/web` and `@pts/android` and checks their output against the tokens |
-| `npm run typecheck` | TypeScript for the lint plugin, the `@pts/web` and `@pts/android` build configs and tests, the components, and Storybook |
-| `npm run build` | Builds `@pts/web`, `@pts/android`, and `@pts/components` |
+| `npm test` | Checks that every lint rule still reports what it should, then builds `@pts/web`, `@pts/android`, and `@pts/ios` and checks their output against the tokens |
+| `npm run typecheck` | TypeScript for the lint plugin, the `@pts/web`, `@pts/android`, and `@pts/ios` build configs and tests, the components, and Storybook |
+| `npm run build` | Builds `@pts/web`, `@pts/android`, `@pts/ios`, and `@pts/components` |
+| `npm run compile -w @pts/ios` | Builds `@pts/ios` and compiles its Swift package for the iOS Simulator (needs Xcode) |
 | `npm run build-storybook` | Builds the static docs |
 | `npm run test-a11y` | Builds the docs, then checks every page and story with axe-core (WCAG 2.2 A and AA) in light and dark |
 
@@ -203,7 +205,7 @@ The pre-commit hook runs `check` and `typecheck`. CI runs the same checks plus `
 Deferred for now:
 
 - Syncing the tokens to Figma Variables
-- Native platforms: iOS (Android is shipped, see above)
+- Native platforms: the rest of iOS, after its colors (Android is shipped, see above)
 
 ## Licenses
 
