@@ -153,7 +153,7 @@ import "@pts/components/button.js"; // defines <pts-button>
 
 `variant` (`primary`, `secondary`, `ghost`, `danger`), `size` (`sm`, `md`), `type`, `disabled`, `loading`, `full-width`, and `label` (the accessible name of an icon-only button). It follows `data-theme`, `data-density`, and `data-shape` like everything else. See the Button page in the docs and ADR 0032.
 
-## Try it
+## Android - try it
 
 ```sh
 export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
