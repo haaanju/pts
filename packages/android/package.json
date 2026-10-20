@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tz build && node build-fonts.ts",
+    "build": "rm -rf dist && tz build --quiet && node build-fonts.ts",
     "pretest": "npm run build --silent",
     "test": "node --test test/output.test.ts",
     "typecheck": "tsc -p ."

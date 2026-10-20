@@ -15,8 +15,8 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "typecheck": "tsc -p ."
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && node scripts/summary.ts",
+    "typecheck": "tsc -p . && tsc -p scripts"
   },
   "dependencies": {
     "@pts/web": "*",

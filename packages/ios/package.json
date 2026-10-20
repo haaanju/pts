@@ -10,7 +10,7 @@
     "Package.swift"
   ],
   "scripts": {
-    "build": "tz build && node build-fonts.ts",
+    "build": "rm -rf dist && tz build --quiet && node build-fonts.ts",
     "pretest": "npm run build --silent",
     "test": "node --test test/output.test.ts",
     "compile": "npm run build --silent && xcodebuild -scheme Pts -destination 'generic/platform=iOS Simulator' -quiet build",

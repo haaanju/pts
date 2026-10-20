@@ -6,6 +6,7 @@ import cssInJs from "@terrazzo/plugin-css-in-js";
 import js from "@terrazzo/plugin-js";
 import sass from "@terrazzo/plugin-sass";
 import { files, loadResolver, modifierTokens, RESOLVER } from "../../tokens/source.ts";
+import summary, { names, type Entry } from "../../tokens/summary.ts";
 import { products } from "./products.ts";
 
 // Which tokens each modifier block repeats, asked of Terrazzo's resolver for the same files the build reads (ADR 0038).
@@ -120,5 +121,21 @@ export default defineConfig({
       css({ filename: `products/${name}.css`, legacyHex: true, permutations: blocks(fixed) }),
       js({ filename: `products/${name}.js`, contexts: contexts(fixed), properties: ["$type", "$value"] }),
     ]),
+    // What the build wrote (ADR 0074): the shared files with their sizes (a .js's, not its .d.ts's: what a page loads),
+    // then each product with the inputs it fixes and its files' sizes
+    summary(new URL("./", import.meta.url), (files, size) => {
+      const sized = (dir: string, list: string[]) => names(list).map((name): Entry => [name, size(dir + name.split(" ")[0])]);
+      const fixes = (fixed: Record<string, string>) => Object.entries(fixed).map(([m, c]) => `${m} ${c}`).join(", ");
+      return [
+        ["", sized("", files.filter((f) => !f.includes("/")))],
+        [
+          "products/",
+          Object.entries(products).flatMap(([name, fixed]): Entry[] => [
+            [name, fixes(fixed)],
+            ...sized("products/", files.filter((f) => f.startsWith(`products/${name}.`))).map(([file, detail]): Entry => [`  ${file.replace(name, "")}`, detail]),
+          ]),
+        ],
+      ];
+    }),
   ],
 });

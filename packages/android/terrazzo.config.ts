@@ -1,6 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "@terrazzo/cli";
 import { files, loadResolver, RESOLVER } from "../../tokens/source.ts";
+import summary, { counted, type Entry } from "../../tokens/summary.ts";
 import { families } from "./fonts.ts";
 import compose, { type Group } from "./plugin-compose.ts";
 
@@ -51,5 +52,15 @@ export const groups: Group[] = [
 export default defineConfig({
   tokens: [fileURLToPath(RESOLVER)],
   outDir: "./dist/",
-  plugins: [compose({ packageName: "io.github.haaanju.pts", groups, families, catalog: { packageName: "io.github.haaanju.pts.catalog" } })],
+  plugins: [
+    compose({ packageName: "io.github.haaanju.pts", groups, families, catalog: { packageName: "io.github.haaanju.pts.catalog" } }),
+    // What the build wrote (ADR 0074): each class with its token count; build-fonts.ts adds the fonts
+    summary(new URL("./", import.meta.url), (files) => {
+      const counts = { ...Object.fromEntries(groups.map((g) => [g.className, g.include.length])), PtsFonts: families.length };
+      return [
+        ["kotlin/", counted(files.filter((f) => f.startsWith("kotlin/")), counts)],
+        ["catalog/", counted(files.filter((f) => f.startsWith("catalog/")), {}).map((name): Entry => [String(name), "demo app only"])],
+      ];
+    }),
+  ],
 });

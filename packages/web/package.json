@@ -24,7 +24,7 @@
     "./fonts.css": "./fonts/fonts.css"
   },
   "scripts": {
-    "build": "tz build",
+    "build": "rm -rf dist && tz build --quiet",
     "pretest": "npm run build --silent",
     "test": "node --test test/output.test.ts",
     "typecheck": "tsc -p ."
