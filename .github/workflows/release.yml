@@ -7,7 +7,7 @@ name: Release
 # (once that PR is merged, or after a failed run), tags vX.Y.Z and creates the release. The changesets
 # output can't decide this: an empty changeset counts as pending.
 # The release PR runs no CI (it is opened with the workflow token), so this workflow verifies its
-# commit and reports the result as `verify`, the check main requires.
+# commit and reports the result on it as the `verify` status.
 
 on:
   workflow_run:

@@ -1,6 +1,6 @@
-// Docs density and shape (ADR 0025, 0048), the modifiers set by an attribute on any element, in the same pattern as
-// the color theme in theme.ts: a global set by the toolbar toggle, saved in localStorage, and ?globals=density:compact
-// (or shape:round) in the URL. The preview sets data-density and data-shape on <html>.
+// Docs theme, density, and shape (ADR 0025, 0048), the modifiers set by an attribute on any element: a global set by
+// the toolbar toggle, saved in localStorage, and ?globals=theme:dark (or density:compact, shape:round) in the URL. The
+// preview sets data-theme, data-density, and data-shape on <html>; the theme also picks the UI theme (theme.ts).
 
 export type AttributeMode<Context extends string = string> = {
   /** the global, named after the modifier */
@@ -39,6 +39,7 @@ const attributeMode = <Context extends string>(global: string, contexts: readonl
   };
 };
 
+export const theme = attributeMode("theme", ["light", "dark"], "light");
 export const density = attributeMode("density", ["relaxed", "compact"], "relaxed");
 export const shape = attributeMode("shape", ["soft", "round"], "soft");
-export const ATTRIBUTE_MODES: AttributeMode[] = [density, shape];
+export const ATTRIBUTE_MODES: AttributeMode[] = [theme, density, shape];

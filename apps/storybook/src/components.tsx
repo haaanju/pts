@@ -367,13 +367,14 @@ export const TokenTable = ({ prefix, preview }: { prefix: string; preview?: Prev
 /** A hue's ramp (hue="red"), or listed colors that are not a group of their own (ids={["color.white", "color.black"]}) */
 export const Palette = ({ hue, ids }: { hue?: string; ids?: string[] }) => {
   const steps = ids ? ids.map((id) => token(id)) : group(`color.${hue}`);
+  const [white, black] = [token("color.white"), token("color.black")];
   return (
     <Block className="pts-palette">
       <div className="pts-ramp">
         {steps.map((t) => {
           const opaque = (t.resolved.alpha ?? 1) === 1;
-          const onWhite = opaque ? contrast(t.resolved.hex, "#ffffff") : 0;
-          const onBlack = opaque ? contrast(t.resolved.hex, "#000000") : 0;
+          const onWhite = opaque ? contrast(t, white) : 0;
+          const onBlack = opaque ? contrast(t, black) : 0;
           const alpha = t.resolved.alpha ?? 1;
           const labelColor = opaque ? (onBlack >= onWhite ? "#000000" : "#ffffff") : alpha >= 0.5 ? "#ffffff" : "#000000";
           return (
@@ -391,8 +392,8 @@ export const Palette = ({ hue, ids }: { hue?: string; ids?: string[] }) => {
               <span className="pts-value">{t.display}</span>
               {opaque && (
                 <>
-                  <span className="pts-alias">W {contrast(t.resolved.hex, "#ffffff").toFixed(1)}</span>
-                  <span className="pts-alias">B {contrast(t.resolved.hex, "#000000").toFixed(1)}</span>
+                  <span className="pts-alias">W {contrast(t, white).toFixed(1)}</span>
+                  <span className="pts-alias">B {contrast(t, black).toFixed(1)}</span>
                 </>
               )}
             </div>
@@ -417,7 +418,7 @@ const bgLabel = (id: string) => id.replace(/^intent\.[^.]+\./, "");
  * content on its first paired background, borders as an outline, fills as a chip.
  */
 const colorPreview = (t: TokenInfo, theme: Theme) => {
-  const checks = pairsOf(t.id).map(({ bg, min }) => ({ bg: token(bg, theme), min, ratio: contrast(t.resolved.hex, token(bg, theme).resolved.hex) }));
+  const checks = pairsOf(t.id).map(({ bg, min }) => ({ bg: token(bg, theme), min, ratio: contrast(t, token(bg, theme)) }));
   const worst = [...checks].sort((a, b) => a.ratio / a.min - b.ratio / b.min)[0];
   const kind = property(t.id);
   const sample =

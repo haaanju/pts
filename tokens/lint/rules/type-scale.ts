@@ -6,6 +6,7 @@
 // only.
 import type { LintRule } from "@terrazzo/parser";
 import { loadResolver, permutations } from "../../source.ts";
+import { reportOnce } from "../shared.ts";
 
 type Options = {
   /** step names in ascending order */
@@ -28,14 +29,7 @@ const rule: LintRule<"UNKNOWN_STEP" | "NOT_ASCENDING" | "TOO_CLOSE" | "DUPLICATE
   },
   defaultOptions: { order: ["xs", "sm", "md", "lg", "xl"], contrastZones: ["display"], minRatio: 1.5 },
   async create({ options, report }) {
-    // the same problem shows up in every permutation that shares the values: report it once
-    const seen = new Set<string>();
-    const once = (key: string, send: () => void) => {
-      if (!seen.has(key)) {
-        seen.add(key);
-        send();
-      }
-    };
+    const once = reportOnce();
     const equal = new Map<string, { a: string; b: string; size: number }>();
     const apart = new Set<string>();
 

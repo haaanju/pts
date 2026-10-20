@@ -3,26 +3,26 @@ import { CircleHollowIcon, CollapseIcon, ExpandIcon, MoonIcon, StopAltHollowIcon
 import React, { useEffect, type ReactNode } from "react";
 import { IconButton } from "storybook/internal/components";
 import { addons, types, useGlobals, useStorybookApi } from "storybook/manager-api";
-import { density, shape, type AttributeMode } from "./attributes";
-import { resolveMode, saveMode, THEME_GLOBAL, themeFor, type Mode } from "./theme";
+import { density, shape, theme, type AttributeMode } from "./attributes";
+import { themeFor } from "./theme";
 
 const ADDON_ID = "pts/theme";
 
-addons.setConfig({ theme: themeFor(resolveMode(undefined)) });
+addons.setConfig({ theme: themeFor(theme.resolve(undefined)) });
 
 const ThemeToggle = () => {
   const [globals, updateGlobals] = useGlobals();
   const api = useStorybookApi();
-  const mode = resolveMode(globals[THEME_GLOBAL]);
+  const mode = theme.resolve(globals[theme.global]);
 
   useEffect(() => {
     api.setOptions({ theme: themeFor(mode) });
   }, [api, mode]);
 
-  const next: Mode = mode === "dark" ? "light" : "dark";
+  const next = theme.next(mode);
   const toggle = () => {
-    saveMode(next);
-    updateGlobals({ [THEME_GLOBAL]: next });
+    theme.save(next);
+    updateGlobals({ [theme.global]: next });
   };
 
   return (

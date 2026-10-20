@@ -4,15 +4,14 @@ import { addons } from "storybook/preview-api";
 import "@pts/web/fonts.css";
 import "@pts/web/tokens.css";
 import "../src/docs.css";
-import { ATTRIBUTE_MODES, density, shape } from "./attributes";
-import { light, resolveMode, THEME_GLOBAL } from "./theme";
+import { ATTRIBUTE_MODES, density, shape, theme } from "./attributes";
+import { light } from "./theme";
 
 // The docs follow the theme toggle (manager.tsx) through a global. Setting data-theme on <html>
 // switches every token variable; an explicit value also stops the OS color scheme from overriding it.
-// The theme global is left unset by default so the saved choice can apply (see resolveMode).
+// The theme global is left unset by default so the saved choice can apply (see attributes.ts).
 // Density and shape work the same way through data-density and data-shape (ADR 0025, 0048).
 const apply = (globals: Record<string, unknown>) => {
-  document.documentElement.dataset.theme = resolveMode(globals[THEME_GLOBAL]);
   for (const mode of ATTRIBUTE_MODES) document.documentElement.dataset[mode.global] = mode.resolve(globals[mode.global]);
 };
 apply({});
@@ -26,7 +25,7 @@ const preview: Preview = {
   // Declared (so ?globals=theme:dark is accepted) but without a default or toolbar menu:
   // the toggle in manager.tsx is the UI, and an unset value falls back to the saved choice.
   globalTypes: {
-    [THEME_GLOBAL]: { description: "Docs color theme (light | dark)" },
+    [theme.global]: { description: "Docs color theme (light | dark)" },
     [density.global]: { description: "Docs density (relaxed | compact)" },
     [shape.global]: { description: "Docs shape (soft | round)" },
   },

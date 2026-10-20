@@ -6,11 +6,7 @@
 // Why not built-in: no built-in rule compares tokens with each other, and the relation matters only to this structure.
 import type { LintRule } from "@terrazzo/parser";
 import { loadResolver, permutations } from "../../source.ts";
-
-const px = (value: unknown) => {
-  const v = value as { value?: number; unit?: string } | undefined;
-  return v && typeof v.value === "number" && v.unit === "px" ? v.value : undefined;
-};
+import { px } from "../shared.ts";
 
 const rule: LintRule<"SIDE_LARGER" | "GAP_SMALLER"> = {
   meta: {
@@ -27,7 +23,7 @@ const rule: LintRule<"SIDE_LARGER" | "GAP_SMALLER"> = {
     const reported = new Set<string>(); // once per message and component size, not per permutation
     for (const perm of permutations(resolver)) {
       if (!perm.tokens) continue;
-      const label = Object.entries(perm.input).map(([k, v]) => `${k}=${v}`).join(", ") || "default";
+      const { label } = perm;
       for (const id of Object.keys(perm.tokens).filter((id) => id.endsWith(".padding.icon-side"))) {
         const prefix = id.slice(0, -".padding.icon-side".length);
         const [side, base, gap] = [id, `${prefix}.padding.base`, `${prefix}.gap`].map((t) => px(perm.tokens![t]?.$value));
