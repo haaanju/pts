@@ -1,6 +1,7 @@
 // A Terrazzo plugin that writes a Swift package's sources for iOS (ADR 0063, 0064). @terrazzo/plugin-swift writes
 // color sets too, but reads dark from token.mode, which the resolver leaves at "." (ADR 0063), so this one asks the
-// resolver for each theme at the inputs iOS fixes, and writes the same color set JSON with a light and a dark value:
+// resolver for each theme at the inputs iOS fixes, and writes the same color set JSON with a light and a dark value, and
+// for Increase Contrast the values of the next step of the color's ladder (ADR 0071):
 //   Pts/Colors.xcassets/contentInverseBase.colorset/Contents.json
 //   Pts/PtsColors.swift     public enum PtsColors { public static let contentInverseBase = Color(.contentInverseBase) }
 // The asset names are the token path in lower camel case, so Xcode's generated asset symbols (.contentInverseBase)
@@ -28,6 +29,8 @@ export type DimensionGroup = {
 type Options = {
   /** the semantic color ids to write, in this order */
   colors: string[];
+  /** Increase Contrast: a color id → the color whose light and dark values it takes then (ADR 0071) */
+  contrast: Record<string, string>;
   /** the dimension groups, each an enum of points */
   dimensions: DimensionGroup[];
   /** the text style ids (text.*) to write, in this order */
@@ -106,7 +109,7 @@ export const points = (value: unknown, id: string) => {
   return v.value;
 };
 
-export default function ios({ colors, dimensions, text, families, key, fixed, catalog }: Options): Plugin {
+export default function ios({ colors, contrast, dimensions, text, families, key, fixed, catalog }: Options): Plugin {
   return {
     name: "pts-ios",
     async build({ resolver, outputFile }) {
@@ -115,13 +118,22 @@ export default function ios({ colors, dimensions, text, families, key, fixed, ca
 
       outputFile(`${CATALOG}/Contents.json`, json({ info: { author: "xcode", version: 1 } }));
       for (const id of colors) {
-        const color = (tokens: typeof light) => ({ "color-space": "srgb", components: components(tokens[id]?.$value, id) });
+        const color = (tokens: typeof light, from = id) => ({ "color-space": "srgb", components: components(tokens[from]?.$value, from) });
+        const inDark = { appearance: "luminosity", value: "dark" };
+        const inHigh = { appearance: "contrast", value: "high" };
+        const stronger = contrast[id];
         outputFile(
           `${CATALOG}/${swiftName(id)}.colorset/Contents.json`,
           json({
             colors: [
               { color: color(light), idiom: "universal" },
-              { appearances: [{ appearance: "luminosity", value: "dark" }], color: color(dark), idiom: "universal" },
+              { appearances: [inDark], color: color(dark), idiom: "universal" },
+              ...(stronger
+                ? [
+                    { appearances: [inHigh], color: color(light, stronger), idiom: "universal" },
+                    { appearances: [inDark, inHigh], color: color(dark, stronger), idiom: "universal" },
+                  ]
+                : []),
             ],
             info: { author: "xcode", version: 1 },
           }),
@@ -140,8 +152,8 @@ export default function ios({ colors, dimensions, text, families, key, fixed, ca
 
 import SwiftUI
 
-/// The semantic colors of Plain. Each one is a color set with a light and a dark value, so it follows the system's
-/// appearance by itself.
+/// The semantic colors of Plain. Each one is a color set with a light and a dark value, and a stronger one for Increase
+/// Contrast where its ladder has a next step, so it follows the system's appearance by itself.
 public enum PtsColors {
 ${properties}
 }
