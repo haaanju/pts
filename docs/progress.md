@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/audit-cleanup`: fixes from a whole-repository audit (2026-10-20), which found no bug in the outputs: stale comments and ADR notes, the changeset check failing instead of skipping when it can't read the base, and duplicates merged (lint helpers in `tokens/lint/shared.ts`, one `contrastRatio` in `pairs.ts` for the lint and the docs badges, the docs theme on `attributeMode`). Merge once CI passes; the docs badges' second decimal moves to the lint's (no pass or fail changes). Not audited closely: the demo apps' screens, `docs.css`, the ADR bodies.
+- None.
 
 ## Next
 
@@ -21,6 +21,8 @@ The monorepo comes first. Decide the next step with the owner before starting; a
 - Figma sync stays manual (the `figma` skill).
 
 Waiting for a reason, not scheduled:
+
+- A whole-repository audit (2026-10-20, #55) found no bug in the outputs; it read the token pipeline, lint, builds, CI, Storybook code, and the guides, but not closely the demo apps' screens, `docs.css`, or the ADR bodies. Audit those next time.
 
 - Six rules from the pipeline audit (ADR 0039) stay unchecked by choice: every top-level group shown on a docs page, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light; and the direction of each surface step (darker in light, lighter in dark, intents on their hue; ADR 0045). The tokens follow all six (checked 2026-10-06), these tokens rarely change, and a break shows on the docs page. Add a check once one breaks.
 - An upstream Terrazzo issue for `core/required-children` (ADR 0050): it pools every token a match covers, so one match per intent and part is needed; `main` still does it (checked 2026-10-09), and #804 doesn't cover it. Not filed yet, by the owner's choice; revisit later. Terrazzo's `CONTRIBUTING.md` asks for an issue before any pull request, on the `bug.yml` template (issues without it are closed). Once a fixed release ships, cut the config to three matches and update ADR 0050.
