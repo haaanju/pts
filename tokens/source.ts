@@ -3,7 +3,7 @@
 // nothing here resolves one.
 //   loadResolver()      Terrazzo's resolver for pts.resolver.json, parsed once
 //   parseSource()       a fresh parse with the given plugins, for a build of its own (the Storybook docs)
-//   permutations(r)     every theme × density × viewport input with its tokens (resolver.apply)
+//   permutations(r)     every theme × density × viewport × shape input with its tokens (resolver.apply)
 //   files(r)            each registered file's tokens as written, with its tier (its folder). The trees are Terrazzo's
 //                       own copy of the files (resolver.source); a resolved token no longer says which file it came from
 //   modifierTokens(r)   the token ids a modifier's contexts define (resolver.apply with that modifier only)
@@ -18,7 +18,7 @@ export const RESOLVER = new URL("pts.resolver.json", SRC);
 type Ref = { $ref: string };
 type Tree = Record<string, any>;
 export type RawToken = { $type?: string; $value: unknown; $description?: string };
-/** layer: the resolver set (base) or modifier (theme, density, viewport) that lists the file */
+/** layer: the resolver set (base) or modifier (theme, density, viewport, shape) that lists the file */
 export type SourceFile = { path: string; tier: string; layer: string; tokens: Record<string, RawToken> };
 export type Permutation = { label: string; input: Record<string, string>; tokens?: TokenNormalizedSet; error?: string };
 

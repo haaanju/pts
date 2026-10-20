@@ -5,6 +5,7 @@
 // permutation only, and the viewport changes both (ADR 0029).
 import type { LintRule } from "@terrazzo/parser";
 import { loadResolver, permutations } from "../../source.ts";
+import { reportOnce } from "../shared.ts";
 
 type Options = { gridPx: number };
 type Dimension = { value: number; unit: string };
@@ -21,14 +22,7 @@ const rule: LintRule<"MISSING" | "UNPAIRED" | "OFF_GRID" | "STYLE_MISMATCH", Opt
   },
   defaultOptions: { gridPx: 4 },
   async create({ options, report }) {
-    // the same problem shows up in every permutation that shares the values: report it once
-    const seen = new Set<string>();
-    const once = (key: string, send: () => void) => {
-      if (!seen.has(key)) {
-        seen.add(key);
-        send();
-      }
-    };
+    const once = reportOnce();
     for (const { label, tokens } of permutations(await loadResolver())) {
       if (!tokens) continue; // reported by pts/theme-parity
       const steps = (group: string) => new Set(Object.keys(tokens).filter((id) => id.startsWith(`${group}.`)).map((id) => id.slice(group.length + 1)));

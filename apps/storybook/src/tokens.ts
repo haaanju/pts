@@ -1,7 +1,7 @@
 // The docs' data layer: every token per permutation (theme × density × viewport × shape) as Terrazzo resolves it,
 // built by scripts/docs-tokens.ts from the current token files (ADR 0038). Nothing here resolves an alias.
 import data from "virtual:pts-tokens";
-import { contrastPairs, isExempt as isExemptSemantic } from "../../../tokens/lint/pairs.ts";
+import { contrastPairs, contrastRatio, isExempt as isExemptSemantic } from "../../../tokens/lint/pairs.ts";
 
 export type Theme = "light" | "dark";
 export const THEMES: Theme[] = ["light", "dark"];
@@ -138,19 +138,10 @@ export const isShaped = (prefix: string) => group(prefix).some((t) => t.css !== 
 /** Last path segment, e.g. "intent.danger.surface.strong" → "strong" */
 export const leaf = (id: string) => id.slice(id.lastIndexOf(".") + 1);
 
-// ---- contrast (WCAG 2.x) — same rules as the pts/contrast lint rule ----
+// ---- contrast (WCAG 2.x) — the pairs and the ratio of the pts/contrast lint rule (pairs.ts) ----
 
-const luminance = (hex: string) => {
-  const [r, g, b] = [1, 3, 5]
-    .map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
-    .map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-};
-
-export const contrast = (a: string, b: string) => {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return (hi + 0.05) / (lo + 0.05);
-};
+/** The contrast of two tokens' resolved colors, as npm run check computes it */
+export const contrast = (a: TokenInfo, b: TokenInfo) => contrastRatio(a.resolved, b.resolved);
 
 const pairs = contrastPairs(Object.keys(at("light", "relaxed", "narrow")));
 

@@ -1,13 +1,11 @@
 // pts/contrast: every color pair meets WCAG contrast (4.5:1 text, 3:1 UI) in every theme.
 // Why not built-in: a11y/min-contrast checks the default theme only and needs every pair listed by hand.
 // Here the pairs come from the token names (pairs.ts, ADR 0019), shared with the Storybook contrast badges.
-// The ratio is computed the way a11y/min-contrast does it: tokenToColor + contrastWCAG21.
+// The ratio is contrastRatio (pairs.ts), computed the way a11y/min-contrast does it.
 // Pairs exist only for names that follow the color grammar (CLAUDE.md → Color), so a semantic color in no pair that
 // isn't exempt (UNCHECKED) is never checked at all: status/error/content/base would ship unchecked.
 import type { ColorTokenNormalized, LintRule } from "@terrazzo/parser";
-import { tokenToColor } from "@terrazzo/token-tools";
-import { contrastWCAG21 } from "colorjs.io/fn";
-import { contrastPairs, isExempt } from "../pairs.ts";
+import { contrastPairs, contrastRatio, isExempt } from "../pairs.ts";
 import { files, loadResolver, permutations } from "../../source.ts";
 
 const NO_BACKGROUND = " (no background)";
@@ -51,7 +49,7 @@ const rule: LintRule<"INSUFFICIENT" | "MISSING" | "UNKNOWN_CONTENT" | "TRANSLUCE
           report({ messageId: "TRANSLUCENT", data: { theme, id: translucent.id, alpha: translucent.$value.alpha } });
           continue;
         }
-        const ratio = contrastWCAG21(tokenToColor(a.$value), tokenToColor(b.$value));
+        const ratio = contrastRatio(a.$value, b.$value);
         if (ratio < min) report({ messageId: "INSUFFICIENT", data: { theme, fg, bg, ratio: ratio.toFixed(2), min } });
       }
     }

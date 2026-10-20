@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- None.
+- `feature/audit-cleanup`: fixes from a whole-repository audit (2026-10-20), which found no bug in the outputs: stale comments and ADR notes, the changeset check failing instead of skipping when it can't read the base, and duplicates merged (lint helpers in `tokens/lint/shared.ts`, one `contrastRatio` in `pairs.ts` for the lint and the docs badges, the docs theme on `attributeMode`). Merge once CI passes; the docs badges' second decimal moves to the lint's (no pass or fail changes). Not audited closely: the demo apps' screens, `docs.css`, the ADR bodies.
 
 ## Next
 

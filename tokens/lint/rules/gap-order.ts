@@ -5,15 +5,11 @@
 // permutation only.
 import type { LintRule } from "@terrazzo/parser";
 import { loadResolver, permutations } from "../../source.ts";
+import { px } from "../shared.ts";
 
 type Options = {
   /** token groups from the smallest family to the largest, e.g. ["gap.within", "gap.between", "gap.section"] */
   order: string[];
-};
-
-const px = (value: unknown) => {
-  const v = value as { value?: number; unit?: string } | undefined;
-  return v && typeof v.value === "number" && v.unit === "px" ? v.value : undefined;
 };
 
 const rule: LintRule<"OVERLAP", Options> = {

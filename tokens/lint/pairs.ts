@@ -1,6 +1,13 @@
-// Color pairing rules (ADR 0019), derived from token names alone.
-// Shared by the pts/contrast and pts/visible-steps lint rules and the Storybook docs, so both test the same pairs.
+// Color pairing rules (ADR 0019), derived from token names alone, and the ratio they are checked with.
+// Shared by the pts/contrast and pts/visible-steps lint rules and the Storybook docs, so both test the same pairs and
+// show the same ratios.
 // Ids are dot paths without the tier, e.g. "intent.danger.content.inverse".
+import type { ColorTokenNormalized } from "@terrazzo/parser";
+import { tokenToColor } from "@terrazzo/token-tools";
+import { contrastWCAG21 } from "colorjs.io/fn";
+
+/** The WCAG 2.1 contrast of two colors, computed the way a11y/min-contrast does it: tokenToColor + contrastWCAG21 */
+export const contrastRatio = (a: ColorTokenNormalized["$value"], b: ColorTokenNormalized["$value"]) => contrastWCAG21(tokenToColor(a), tokenToColor(b));
 
 export const TEXT = 4.5; // WCAG 1.4.3
 export const UI = 3; // WCAG 1.4.11

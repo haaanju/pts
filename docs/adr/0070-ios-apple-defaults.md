@@ -20,7 +20,7 @@ A review against the HIG (the `apple-hig` skill: Typography, Color, Dark Mode, A
 - **An appearance setting in the app**: the HIG says not to offer one; the demo had copied Android's.
 - **Bold Text**: the HIG asks custom fonts to respond to it; the text styles ignored `legibilityWeight`.
 - **Custom page backgrounds**: the HIG prefers the system's, which switch to elevated in sheets and popovers in dark mode; Home painted `background`.
-- **Increase Contrast** has no token set: ADR 0071 (proposed) weighs the options.
+- **Increase Contrast** has no token set: ADR 0071 weighs the options.
 
 ## Why it matters
 

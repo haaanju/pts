@@ -5,6 +5,7 @@
 // across modifier contexts. Options name the modifier and its two contexts, so they are visible in the config.
 import type { LintRule } from "@terrazzo/parser";
 import { loadResolver, modifierTokens, permutations } from "../../source.ts";
+import { px } from "../shared.ts";
 
 type Options = {
   /** the resolver modifier, e.g. "density" */
@@ -13,11 +14,6 @@ type Options = {
   tighter: string;
   /** the context it is compared with, e.g. "relaxed" */
   looser: string;
-};
-
-const px = (value: unknown) => {
-  const v = value as { value?: number; unit?: string } | undefined;
-  return v && typeof v.value === "number" && v.unit === "px" ? v.value : undefined;
 };
 
 // The scale an alias points into: the px tokens of the target's top-level group, smallest first
