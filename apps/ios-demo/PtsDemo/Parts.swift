@@ -28,27 +28,26 @@ struct SectionTitle: View {
 }
 
 extension View {
-    // Buttons with a shape keep the web's colors: inverse/base, as the HIG has a primary action color its background
-    // (ADR 0072). Text-only ones (borderless, links, menus) keep the accent, so they don't read as text.
+    // The buttons take the app's tint, inverse/base (ADR 0073)
 
     /// The primary button: inverse/base with content/inverse/base on it, the pair pts/contrast checks. SwiftUI would
     /// write white, which fails on dark mode's light inverse/base.
     func primaryButton() -> some View {
-        buttonStyle(.borderedProminent).tint(PtsColors.inverseBase).foregroundStyle(PtsColors.contentInverseBase)
+        buttonStyle(.borderedProminent).foregroundStyle(PtsColors.contentInverseBase)
     }
 
     /// The secondary button: the bordered style's soft fill of inverse/base, its label inverse/base
     func secondaryButton() -> some View {
-        buttonStyle(.bordered).tint(PtsColors.inverseBase)
+        buttonStyle(.bordered)
     }
 
     /// The glass buttons: Liquid Glass, tinted inverse/base when prominent, as the primary button
     func glassButton(prominent: Bool = false) -> some View {
         Group {
             if prominent {
-                buttonStyle(.glassProminent).tint(PtsColors.inverseBase).foregroundStyle(PtsColors.contentInverseBase)
+                buttonStyle(.glassProminent).foregroundStyle(PtsColors.contentInverseBase)
             } else {
-                buttonStyle(.glass).tint(PtsColors.inverseBase)
+                buttonStyle(.glass)
             }
         }
     }
