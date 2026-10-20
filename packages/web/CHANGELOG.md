@@ -2,6 +2,21 @@
 
 The changelog of every `@pts/*` package, which share one version (ADR 0014). Entries from 0.9.4 on come from changesets (ADR 0035); earlier ones are the release tag messages.
 
+## 0.11.0
+
+### Minor Changes
+
+- Breaking: iOS text follows Apple's text styles by role (body-md and label-lg are Body, 17pt; caption is Footnote) at Apple's size and leading, with the tokens' families and weights and no tracking; `PtsTextStyle` loses `tracking`, gains `leading`, and responds to Bold Text (ADR 0070).
+
+### Patch Changes
+
+- New: `@pts/ios`, a Swift package (`Pts`) with the semantic colors as an asset catalog, a color set per color holding its light and dark value, and `PtsColors`, which names each one for SwiftUI (ADR 0064).
+- New: iOS corners in `@pts/ios`: `PtsBorder`, every radius, stroke, and focus-ring token in points, and `PtsShape`, capsule controls and concentric containers no less round than `radius/container` (ADR 0067).
+- New: `PtsCatalog`, a second product of the `@pts/ios` Swift package: every color with its path, description, and alias and hex per theme, and this version's release, for the iOS demo app (ADR 0065).
+- New: `@pts/ios` color sets hold an increased-contrast value, light and dark, for each color with a stronger step in its ladder: `content/subtle` takes `content/base`, `surface/subtle` `surface/strong`, and so on (ADR 0071).
+- New: iOS spacing in `@pts/ios`: `PtsSpacing`, the space scale, padding, gaps, and icon and control sizes in points at density relaxed (ADR 0068).
+- New: iOS type in `@pts/ios`: `PtsTypography`, every text style in Aspekta or IBM Plex at the size of the iOS text style it names in `$extensions` (new on each `text/*` token), scaled by Dynamic Type, and `PtsFonts`, the bundled fonts; a lint rule, `pts/ios-text-style`, checks every text style names one (ADR 0066).
+
 ## 0.10.1
 
 ### Patch Changes
