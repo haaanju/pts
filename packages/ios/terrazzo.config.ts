@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "@terrazzo/cli";
 import { files, loadResolver, RESOLVER } from "../../tokens/source.ts";
+import summary, { count, counted, type Entry } from "../../tokens/summary.ts";
 import ios, { type DimensionGroup, type Release } from "./plugin-ios.ts";
 
 // The semantic colors (ADR 0064), text styles (ADR 0066), borders (ADR 0067), and spacing (ADR 0068), in file order. iOS follows the theme
@@ -58,5 +59,23 @@ export const release: Release = { version, date, notes: section.split("\n").filt
 export default defineConfig({
   tokens: [fileURLToPath(RESOLVER)],
   outDir: "./dist/",
-  plugins: [ios({ colors, contrast, dimensions, text, families, key, fixed, catalog: release })],
+  plugins: [
+    ios({ colors, contrast, dimensions, text, families, key, fixed, catalog: release }),
+    // What the build wrote (ADR 0074): the color sets, then each Swift file with its token count; build-fonts.ts adds
+    // the fonts
+    summary(new URL("./", import.meta.url), (files) => {
+      const counts = {
+        PtsColors: colors.length,
+        PtsTypography: text.length,
+        PtsFonts: new Set(Object.values(families)).size,
+        ...Object.fromEntries(dimensions.map((d) => [d.className, d.include.length])),
+      };
+      const sets = files.filter((f) => f.endsWith(".colorset/Contents.json")).length;
+      const swift = (dir: string) => files.filter((f) => f.startsWith(dir) && f.endsWith(".swift"));
+      return [
+        ["Pts/", [["Colors.xcassets", `${count(sets)} color sets, ${count(Object.keys(contrast).length)} with Increase Contrast`], ...counted(swift("Pts/"), counts)]],
+        ["catalog/", counted(swift("catalog/"), {}).map((name): Entry => [String(name), "demo app only"])],
+      ];
+    }),
+  ],
 });

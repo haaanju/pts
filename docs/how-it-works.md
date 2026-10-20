@@ -58,6 +58,7 @@ Three parts that may be the most interesting to look at:
 | JS/TS and SCSS hold `var(--…)` references, not values | Every mode keeps working through the CSS; the JS adds names, autocomplete, and typo errors | [0030](adr/0030-js-and-scss-outputs.md) |
 | Per-product outputs: a product is a fixed set of modifier inputs ([`products.ts`](../packages/web/products.ts); two example products fix the density and the shape), built into its own CSS (no blocks for what it fixes) and JS with resolved values | One source serves products that differ by a fixed choice, without changing the resolver; code that can't read a CSS variable gets real values | [0047](adr/0047-per-product-outputs.md), [0048](adr/0048-shape-modifier.md) |
 | Fonts shipped with the tokens | The type tokens name fonts; the package that names them provides them | [0013](adr/0013-self-hosted-aspekta.md), [0016](adr/0016-platform-packages.md) |
+| Each build prints what it wrote, folder by folder with each class's token count ([`tokens/summary.ts`](../tokens/summary.ts)), and empties its `dist/` first | Terrazzo's own line counts the tokens it read, the same on every platform; a file a build stopped writing would otherwise stay | [0074](adr/0074-build-summary.md) |
 
 ## Accessibility
 

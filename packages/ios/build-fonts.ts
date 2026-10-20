@@ -3,6 +3,7 @@
 // `npm run build` after tz build. The licenses travel with the files (OFL), into dist/licenses.
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { decompress } from "wawoff2";
+import { count, print } from "../../tokens/summary.ts";
 import { families } from "../android/fonts.ts";
 
 const web = new URL("../web/fonts/", import.meta.url);
@@ -21,4 +22,5 @@ for (const family of families) {
   const dir = family.files[0].src.split("/")[0];
   copyFileSync(new URL(`${dir}/LICENSE.txt`, web), new URL(`${dir}-LICENSE.txt`, licenses));
 }
-console.log(`fonts: ${done.size} TrueType files in dist/Pts/Fonts`);
+// The rest of the build summary (ADR 0074), after Terrazzo's line
+console.log(print([["Pts/Fonts/", [`${count(done.size)} TrueType`]]]));

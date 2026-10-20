@@ -193,7 +193,7 @@ npm run build            # build @pts/web, @pts/android, @pts/ios, and @pts/comp
 | `npm run check` | Validates the tokens with Terrazzo (`tz check` in `tokens/`): its built-in rules plus the project's `pts/*` rules (value rules in every theme, density, viewport, and shape): contrast, visible states, parity between modes, spacing and type scale order, line heights on the 4px grid, hex values, descriptions, tier rules, unregistered files |
 | `npm test` | Checks that every lint rule still reports what it should, then builds `@pts/web`, `@pts/android`, and `@pts/ios` and checks their output against the tokens |
 | `npm run typecheck` | TypeScript for the lint plugin, the `@pts/web`, `@pts/android`, and `@pts/ios` build configs and tests, the components, and Storybook |
-| `npm run build` | Builds `@pts/web`, `@pts/android`, `@pts/ios`, and `@pts/components` |
+| `npm run build` | Builds `@pts/web`, `@pts/android`, `@pts/ios`, and `@pts/components`, each printing what it wrote and where |
 | `npm run compile -w @pts/ios` | Builds `@pts/ios` and compiles its Swift package for the iOS Simulator (needs Xcode) |
 | `npm run build-storybook` | Builds the static docs |
 | `npm run test-a11y` | Builds the docs, then checks every page and story with axe-core (WCAG 2.2 A and AA) in light and dark |

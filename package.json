@@ -13,7 +13,7 @@
     "check": "npm run check --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present --silent",
     "storybook": "npm run storybook -w @pts/storybook",
     "build-storybook": "npm run build-storybook -w @pts/storybook",
     "test-a11y": "npm run build-storybook && npm run test-a11y -w @pts/storybook",
