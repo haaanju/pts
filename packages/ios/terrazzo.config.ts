@@ -11,6 +11,21 @@ const resolver = await loadResolver();
 const tokens = resolver.apply({});
 const semantic = [...new Set(files(resolver).filter((f) => f.tier === "semantic").flatMap((f) => Object.keys(f.tokens)))];
 export const colors = semantic.filter((id) => tokens[id]?.$type === "color");
+// Increase Contrast (ADR 0071): a color takes the next step of its own ladder, one further from the background
+// (content/subtle → content/base, surface/subtle → surface/strong, inverse/base → inverse/strong), so each pair it forms
+// is one pts/contrast already checks. An intent's surface/subtle stays: its content/base is checked on it alone.
+// disabled, utility, and always are outside the pairs; the strongest step of each ladder has nothing further.
+const STEPS = ["subtle", "base", "strong", "stronger"];
+export const contrast: Record<string, string> = Object.fromEntries(
+  colors.flatMap((id) => {
+    if (/^(disabled|utility|always)\./.test(id) || /^intent\.[\w-]+\.surface\.subtle$/.test(id)) return [];
+    const parts = id.split(".");
+    const step = STEPS.indexOf(parts.at(-1)!);
+    if (step < 0) return [];
+    const next = STEPS.slice(step + 1).map((s) => [...parts.slice(0, -1), s].join(".")).find((n) => colors.includes(n));
+    return next ? [[id, next]] : [];
+  }),
+);
 const pick = (groups: string[]) => semantic.filter((id) => tokens[id]?.$type === "dimension" && groups.includes(id.split(".")[0]));
 export const dimensions: DimensionGroup[] = [
   {
@@ -43,5 +58,5 @@ export const release: Release = { version, date, notes: section.split("\n").filt
 export default defineConfig({
   tokens: [fileURLToPath(RESOLVER)],
   outDir: "./dist/",
-  plugins: [ios({ colors, dimensions, text, families, key, fixed, catalog: release })],
+  plugins: [ios({ colors, contrast, dimensions, text, families, key, fixed, catalog: release })],
 });

@@ -1,6 +1,6 @@
 // Contract tests for the @pts/ios output (ADR 0064, 0066): every semantic color has a color set whose light and dark
-// values equal the resolver's at the inputs iOS fixes, and PtsColors names each one once; every text style is in
-// PtsTypography at Apple's size and leading for its iOS text style, with its family and weight, and its font is bundled;
+// values equal the resolver's at the inputs iOS fixes, its high-contrast values the next step's (ADR 0071), and PtsColors
+// names each one once; every text style is in PtsTypography at Apple's size and leading for its iOS text style, with its family and weight, and its font is bundled;
 // every spacing and border token is in PtsSpacing or PtsBorder in points (ADR 0067, 0068), and PtsShape follows
 // radius/control and radius/container. The expectations come from
 // Terrazzo's resolver (tokens/source.ts) and the token's own hex, written out here apart from the plugin, so a
@@ -11,7 +11,8 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { loadResolver } from "../../../tokens/source.ts";
 import { swiftName } from "../plugin-ios.ts";
-import { colors, dimensions, families, fixed, key, text } from "../terrazzo.config.ts";
+import { contrastPairs } from "../../../tokens/lint/pairs.ts";
+import { colors, contrast, dimensions, families, fixed, key, text } from "../terrazzo.config.ts";
 
 const dist = (file: string) => new URL(`../dist/Pts/${file}`, import.meta.url);
 const resolver = await loadResolver();
@@ -41,9 +42,42 @@ for (const theme of ["light", "dark"]) {
     const tokens = resolver.apply({ ...fixed, theme });
     colors.forEach((id, i) => {
       const set = JSON.parse(readFileSync(dist(`Colors.xcassets/${names[i]}.colorset/Contents.json`), "utf8"));
-      const entry = set.colors.find((c: any) => (theme === "dark") === Boolean(c.appearances?.some((a: any) => a.value === "dark")));
+      const entry = set.colors.find((c: any) => !c.appearances?.some((a: any) => a.appearance === "contrast") && (theme === "dark") === Boolean(c.appearances?.some((a: any) => a.value === "dark")));
       assert.equal(entry.color["color-space"], "srgb", id);
       assert.deepEqual(entry.color.components, expected(tokens[id].$value as any), `${id} in ${theme}`);
+    });
+  });
+}
+
+test("Increase Contrast takes the next step of a color's ladder, and leaves soft intent fills and the strongest steps (ADR 0071)", () => {
+  assert.equal(contrast["content.subtle"], "content.base");
+  assert.equal(contrast["content.inverse.subtle"], "content.inverse.base");
+  assert.equal(contrast["surface.subtle"], "surface.strong");
+  assert.equal(contrast["inverse.base"], "inverse.strong");
+  assert.equal(contrast["border.subtle"], "border.base");
+  assert.equal(contrast["intent.danger.surface.base"], "intent.danger.surface.strong");
+  assert.equal(contrast["intent.danger.border.subtle"], "intent.danger.border.base");
+  for (const id of ["content.base", "surface.stronger", "border.base", "intent.danger.surface.subtle", "intent.danger.content.base", "disabled.content", "utility.scrim", "always.white"]) {
+    assert.ok(!(id in contrast), `${id} changes at high contrast`);
+  }
+});
+
+test("every pair pts/contrast checks is, at high contrast, a pair it checks too", () => {
+  const checked = contrastPairs(colors);
+  const keys = new Set(checked.map(([fg, bg]) => `${fg} on ${bg}`));
+  const high = (id: string) => contrast[id] ?? id;
+  for (const [fg, bg] of checked) assert.ok(keys.has(`${high(fg)} on ${high(bg)}`), `${fg} on ${bg} becomes ${high(fg)} on ${high(bg)}`);
+});
+
+for (const theme of ["light", "dark"]) {
+  test(`each color set's high-contrast ${theme} value is the resolver's for its next step, and only a color that changes has one`, () => {
+    const tokens = resolver.apply({ ...fixed, theme });
+    colors.forEach((id, i) => {
+      const set = JSON.parse(readFileSync(dist(`Colors.xcassets/${names[i]}.colorset/Contents.json`), "utf8"));
+      const high = set.colors.filter((c: any) => c.appearances?.some((a: any) => a.appearance === "contrast" && a.value === "high"));
+      if (!(id in contrast)) return assert.equal(high.length, 0, id);
+      const entry = high.find((c: any) => (theme === "dark") === c.appearances.some((a: any) => a.value === "dark"));
+      assert.deepEqual(entry.color.components, expected(tokens[contrast[id]].$value as any), `${id} at high contrast in ${theme}`);
     });
   });
 }
