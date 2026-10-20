@@ -96,15 +96,16 @@ struct ComponentsScreen: View {
                     .listRowInsets(EdgeInsets())
                 }
 
+                // The tint is the text color's near twin, so each text-only control here carries a glyph too (ADR 0073)
                 Section("Menus and dialogs") {
-                    Menu("Actions") {
+                    Menu("Actions", systemImage: "ellipsis.circle") {
                         Button("Duplicate", systemImage: "plus.square.on.square") {}
                         Button("Archive", systemImage: "archivebox") {}
                         Button("Delete", systemImage: "trash", role: .destructive) {}
                     }
-                    Button("Open alert") { alert = true }
-                    Button("Open confirmation") { confirm = true }
-                    Button("Open sheet") { sheet = true }
+                    Button("Open alert", systemImage: "exclamationmark.bubble") { alert = true }
+                    Button("Open confirmation", systemImage: "list.bullet.rectangle") { confirm = true }
+                    Button("Open sheet", systemImage: "rectangle.bottomhalf.inset.filled") { sheet = true }
                 }
             }
             .navigationTitle("Components")

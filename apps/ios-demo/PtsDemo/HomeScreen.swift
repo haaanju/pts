@@ -156,7 +156,13 @@ private struct Recent: View {
         VStack(alignment: .leading, spacing: PtsSpacing.gapWithinMd) {
             HStack {
                 SectionTitle("Recent")
-                Button("See all") {}
+                // A chevron, so the text-only button doesn't read as text in the accent, the text color's near twin
+                Button {} label: {
+                    HStack(spacing: PtsSpacing.gapWithinXs) {
+                        Text("See all")
+                        Image(systemName: "chevron.right")
+                    }
+                }
             }
             VStack(spacing: 0) {
                 ForEach(projects) { project in

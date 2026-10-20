@@ -1,6 +1,6 @@
 # 0072. iOS Buttons Keep inverse/base
 
-- Status: accepted
+- Status: superseded by 0073
 - Date: 2026-10-20
 
 ## Decision

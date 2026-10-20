@@ -10,7 +10,10 @@ struct SettingsScreen: View {
                 Section {
                     LabeledContent("Tokens", value: "@pts/ios \(PtsCatalog.version)")
                     LabeledContent("Source") {
-                        Link("github.com/haaanju/pts", destination: URL(string: "https://github.com/haaanju/pts")!)
+                        // Underlined: the accent is the text color's near twin (ADR 0073)
+                        Link(destination: URL(string: "https://github.com/haaanju/pts")!) {
+                            Text("github.com/haaanju/pts").underline()
+                        }
                     }
                     LabeledContent("Built with", value: "Terrazzo and SwiftUI")
                 } header: {
