@@ -22,6 +22,7 @@ Each fact has one home; elsewhere, link to it (ADR 0031).
 | Figma rules and procedures | `.claude/skills/figma/` | the `figma` skill, before any Figma work |
 | Session handoff: state, in flight, next | `docs/progress.md` | printed at session start |
 | Why a decision was made | `docs/adr/` | on demand |
+| A plan for later, not scheduled | `docs/plans/` | on demand; becomes ADRs when started |
 | Token values | `tokens/src/**/*.tokens.json` | on demand; this file gives representative values only |
 | What each check enforces, and why | the header of each `tokens/lint/rules/*.ts` | on demand |
 | Human guides | `README.md` (usage), `CONTRIBUTING.md` (changing tokens), `docs/how-it-works.md` (a map of the repository, for colleagues) | on demand |
