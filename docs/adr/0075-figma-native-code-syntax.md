@@ -34,6 +34,7 @@ On iOS each class is an `enum` of static members, so `PtsColors.surfaceSubtle` i
 
 - Checked: the 109 Kotlin properties of `PtsColors`, `PtsSpacing`, and `PtsBorder` and the 109 Swift static members of the same classes have the same names.
 - Set on 2026-10-28 with a one-off `figma_execute` script (`figma-console-mcp`, Desktop Bridge 1.41.5): each `Theme`, `Semantic`, `Density`, and `Shape` variable's token path (the name without its docs folder) in lower camel case, matched against the property lists of the built Kotlin; a variable with no match got none. A dry run first matched all 109 properties, each to one variable. Read back: 109 variables carry both syntaxes (`Theme` 60, `Semantic` 32, `Density` 15, `Shape` 2), the Android and iOS property the same on each, and the WEB syntax unchanged. `Primitive`, `Component`, `Viewport`, and the Figma-only variables (`radius/control-ring`, `gap/button-inner`, the `*-px` line heights, the shadow parts) have none.
+- Seen in Dev Mode on 2026-10-28, on a frame bound to `surface/subtle`, `space/200`, `space/50`, and `radius/full`: the SwiftUI code reads `.background(PtsColors.surfaceSubtle)`, `.padding(.horizontal, PtsSpacing.space200)`, and `.cornerRadius(PtsBorder.radiusFull)`, and the Compose code `.background(color = colors.surfaceSubtle, shape = RoundedCornerShape(size = border.radiusFull))` and `.padding(start = spacing.space200, top = spacing.space50, …)`. A size no variable binds (a hug frame's width) stays a number.
 
 ## Documented in
 
