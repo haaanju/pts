@@ -7,11 +7,11 @@ The handoff note between work sessions and machines. Read it before starting; up
 - Releases: Changesets and the Release workflow (ADR 0035); the latest version is in `packages/web/CHANGELOG.md` and the tags. CI and the pre-commit hook run check and typecheck.
 - Public repository (ADR 0043); docs on https://haaanju.github.io/pts/, deployed from `main` after CI passes (ADR 0020). `main` requires no pull request (ADR 0042; a ruleset blocks force pushes and deletion only, ADR 0054): workspace changes go through a pull request so the changeset check runs. The Release workflow runs after CI passes on `main` (ADR 0041); `v0.9.5` was its first full run: release PR with `verify`, tag, GitHub Release.
 - Repository: recreated on 2026-10-03 with the commit author emails rewritten; the same files and tags, new commit hashes. The pull requests before that (#1–#29) are in the private `haaanju/pts-archive`.
-- Figma `pts` file: in line with the tokens through ADR 0055 (variables, styles, specimens, the Button page and component sets, the Icons page; Overview count 340 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
+- Figma `pts` file: in line with the tokens through ADR 0055 (variables with WEB, ANDROID, and iOS code syntax, ADR 0075; styles, specimens, the Button page and component sets, the Icons page; Overview count 340 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
 ## In flight
 
-- **Figma code syntax for Android and iOS** (ADR 0075, proposed): the rule (`figma` skill), the ADR, and the README are on `main`; setting the code syntax on the 109 variables in Figma waits for the Figma MCP, which didn't connect on 2026-10-28. Then record the result in the ADR's implementation notes and accept it.
+Nothing.
 
 ## Next
 
@@ -30,7 +30,7 @@ Waiting for a reason, not scheduled:
 - Dark-mode letter spacing: light text on a dark page reads tighter, so fine-tune letter spacing in dark. That makes `letter-spacing` (and the `text/*` composites that use it) theme-dependent: it would move into the theme files, the dark CSS blocks, and the Figma `Theme` collection. Since ADR 0028, text sizes share `letter-spacing/normal` (0), so dark may need per-size text values too. Needs an ADR. Low value for its cost: keep it until dark text visibly needs it.
 - Scheduled releases (owner, 2026-10-12): releasing stays merging the Release PR by hand, since releases are rare and the native demo needs one on demand. To learn it later, a GitHub Actions `schedule` workflow that merges the Release PR, not a Claude Code routine. It must merge with a PAT or a GitHub App token: a push by `GITHUB_TOKEN` starts no CI, so the Release workflow (ADR 0041) wouldn't tag. Cron runs in UTC and can be late, and GitHub turns scheduled workflows off after 60 days without activity in a public repository. Needs an ADR.
 - Figma Code Connect (owner, 2026-10-28: wants to try it): maps the Figma `Button` sets to `<pts-button>`, so Dev Mode (and Figma's MCP server) shows the component's real code instead of generated CSS. Blocked by the plan: Code Connect needs an Organization or Enterprise plan with a Full or Dev seat, and the `pts` file is on Pro (checked 2026-10-28). Needs an ADR when it starts.
-- Figma's own MCP server (owner, 2026-10-28: wants to try it): open beta, on a Dev or Full seat from the Pro plan up, desktop app or remote. It hands an agent the selection with its variables' names and code syntax, so it gains from the ANDROID and iOS code syntax (In flight). Compare it with `figma-console-mcp`, which the `figma` skill uses now.
+- Figma's own MCP server (owner, 2026-10-28: wants to try it): open beta, on a Dev or Full seat from the Pro plan up, desktop app or remote. It hands an agent the selection with its variables' names and code syntax, so it gains from the ANDROID and iOS code syntax (ADR 0075). Compare it with `figma-console-mcp`, which the `figma` skill uses now.
 
 ## Open questions
 
