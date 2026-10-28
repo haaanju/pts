@@ -124,9 +124,10 @@ The Output/Products page of the [docs](https://haaanju.github.io/pts/) shows bot
 ```kotlin
 val colors = if (isSystemInDarkTheme()) PtsColors.Dark else PtsColors.Light
 val spacing = PtsSpacing.Relaxed
+val border = PtsBorder.Soft
 val type = PtsTypography.Narrow
 BasicText("Saved", Modifier.padding(spacing.paddingMd), type.bodyMd.copy(color = colors.contentBase))
-Box(Modifier.background(colors.surfaceSubtle, RoundedCornerShape(PtsBorder.Soft.radiusContainer)))
+Box(Modifier.background(colors.surfaceSubtle, RoundedCornerShape(border.radiusContainer)))
 ```
 
 To run the demo, build the Kotlin and publish the library, then open `apps/android-demo` in Android Studio and run it on an emulator. From a terminal, with Android Studio's JDK:
