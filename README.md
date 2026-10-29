@@ -221,6 +221,6 @@ Deferred for now:
 
 ## Licenses
 
-The fonts in `@pts/web` are licensed under the SIL Open Font License 1.1; each font folder in [`packages/web/fonts/`](packages/web/fonts) includes its license. They are shipped unmodified.
+The fonts in `@pts/web` are licensed under the SIL Open Font License 1.1; each font folder in [`packages/web/fonts/`](packages/web/fonts) includes its license. They are shipped unmodified. `@pts/android` and `@pts/ios` bundle the TrueType files of the same releases, also unmodified, from [`packages/android/fonts/`](packages/android/fonts) (ADR 0076).
 
 The rest of the repository is licensed under the [MIT License](LICENSE).

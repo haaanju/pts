@@ -1,6 +1,6 @@
 # 0066. iOS Type: Aspekta at Apple's Text Style Sizes
 
-- Status: accepted (amended by 0070)
+- Status: accepted (amended by 0070, 0076)
 - Date: 2026-10-20
 
 ## Decision

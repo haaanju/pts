@@ -49,7 +49,7 @@ tokens/                     @pts/tokens (private)
 packages/web/               @pts/web: dist/ tokens.css, tokens.js + .d.ts, tokens.scss, products/ (ADR 0047); fonts/
 packages/android/           @pts/android: dist/kotlin/Pts{Colors,Spacing,Border,Typography,Fonts}.kt and dist/res/font/ for
                             Jetpack Compose, from plugin-compose.ts and build-fonts.ts (ADR 0056, 0059); dist/catalog/ for the
-                            demo (ADR 0060); also a Gradle
+                            demo (ADR 0060); fonts/, upstream's TrueType files, copied unchanged (ADR 0076); also a Gradle
                             library, io.github.haaanju.pts:pts-android, published to mavenLocal (ADR 0058)
 packages/ios/               @pts/ios: dist/Pts/ Colors.xcassets (a light and dark color set per semantic color, stronger for Increase Contrast) and
                             PtsColors.swift, PtsTypography.swift, PtsFonts.swift and Fonts/, PtsSpacing.swift, PtsBorder.swift,

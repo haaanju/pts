@@ -135,14 +135,20 @@ test("body text is Apple's Body, 17/22pt, in the token's weight, and no style se
   assert.ok(!swift.includes(".tracking("), "a text style sets tracking");
 });
 
-test("every family the text styles use is bundled, with its license", () => {
+test("every family the text styles use is bundled, as upstream's file unchanged (ADR 0076), with its license", () => {
   const tokens = resolver.apply({ ...fixed, theme: "light" });
   const used = new Set(text.map((id) => (tokens[id]!.$value as any).fontFamily[0]));
-  const files: Record<string, string> = { Aspekta: "aspekta.ttf", "IBM Plex Mono": "ibm_plex_mono_regular.ttf", "IBM Plex Serif": "ibm_plex_serif_regular.ttf" };
+  const files: Record<string, [string, string]> = {
+    Aspekta: ["aspekta.ttf", "aspekta/AspektaVF.ttf"],
+    "IBM Plex Mono": ["ibm_plex_mono_regular.ttf", "ibm-plex-mono/IBMPlexMono-Regular.ttf"],
+    "IBM Plex Serif": ["ibm_plex_serif_regular.ttf", "ibm-plex-serif/IBMPlexSerif-Regular.ttf"],
+  };
   for (const family of used) {
     assert.ok(family in families, `${family} has no registered name`);
-    const ttf = readFileSync(dist(`Fonts/${files[family]}`));
-    assert.equal(ttf.readUInt32BE(0), 0x00010000, `${files[family]} is not TrueType`);
+    const [file, src] = files[family]!;
+    const ttf = readFileSync(dist(`Fonts/${file}`));
+    assert.equal(ttf.readUInt32BE(0), 0x00010000, `${file} is not TrueType`);
+    assert.ok(ttf.equals(readFileSync(new URL(`../../android/fonts/${src}`, import.meta.url))), `${file} differs from upstream's ${src}`);
   }
   for (const dir of ["aspekta", "ibm-plex-mono", "ibm-plex-serif"]) assert.ok(existsSync(new URL(`../dist/licenses/${dir}-LICENSE.txt`, import.meta.url)), `${dir} license`);
 });
