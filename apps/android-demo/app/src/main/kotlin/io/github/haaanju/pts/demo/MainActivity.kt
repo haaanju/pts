@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
 import io.github.haaanju.pts.PtsBorder
 import io.github.haaanju.pts.PtsColors
+import io.github.haaanju.pts.PtsComponentColors
 import io.github.haaanju.pts.PtsSpacing
 import io.github.haaanju.pts.PtsTypography
 
@@ -42,6 +43,7 @@ class MainActivity : ComponentActivity() {
             val wide = LocalConfiguration.current.screenWidthDp >= 768 // breakpoint/md
             val plain = Plain(
                 colors = if (dark) PtsColors.Dark else PtsColors.Light,
+                components = if (dark) PtsComponentColors.Dark else PtsComponentColors.Light,
                 spacing = if (compact) PtsSpacing.Compact else PtsSpacing.Relaxed,
                 border = if (round) PtsBorder.Round else PtsBorder.Soft,
                 type = if (wide) PtsTypography.Wide else PtsTypography.Narrow,

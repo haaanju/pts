@@ -27,6 +27,10 @@ export const contrast: Record<string, string> = Object.fromEntries(
     return next ? [[id, next]] : [];
   }),
 );
+// The component colors (ADR 0078): native controls draw the rest of a component, so only its colors reach iOS
+export const componentColors = [...new Set(files(resolver).filter((f) => f.tier === "component").flatMap((f) => Object.keys(f.tokens)))].filter(
+  (id) => tokens[id]?.$type === "color",
+);
 const pick = (groups: string[]) => semantic.filter((id) => tokens[id]?.$type === "dimension" && groups.includes(id.split(".")[0]));
 export const dimensions: DimensionGroup[] = [
   {
@@ -60,20 +64,22 @@ export default defineConfig({
   tokens: [fileURLToPath(RESOLVER)],
   outDir: "./dist/",
   plugins: [
-    ios({ colors, contrast, dimensions, text, families, key, fixed, catalog: release }),
+    ios({ colors, contrast, componentColors, dimensions, text, families, key, fixed, catalog: release }),
     // What the build wrote (ADR 0074): the color sets, then each Swift file with its token count; build-fonts.ts adds
     // the fonts
     summary(new URL("./", import.meta.url), (files) => {
       const counts = {
         PtsColors: colors.length,
+        PtsComponentColors: componentColors.length,
         PtsTypography: text.length,
         PtsFonts: new Set(Object.values(families)).size,
         ...Object.fromEntries(dimensions.map((d) => [d.className, d.include.length])),
       };
       const sets = files.filter((f) => f.endsWith(".colorset/Contents.json")).length;
+      const high = Object.keys(contrast).length + componentColors.filter((id) => tokens[id]?.aliasChain?.[0]! in contrast).length;
       const swift = (dir: string) => files.filter((f) => f.startsWith(dir) && f.endsWith(".swift"));
       return [
-        ["Pts/", [["Colors.xcassets", `${count(sets)} color sets, ${count(Object.keys(contrast).length)} with Increase Contrast`], ...counted(swift("Pts/"), counts)]],
+        ["Pts/", [["Colors.xcassets", `${count(sets)} color sets, ${count(high)} with Increase Contrast`], ...counted(swift("Pts/"), counts)]],
         ["catalog/", counted(swift("catalog/"), {}).map((name): Entry => [String(name), "demo app only"])],
       ];
     }),

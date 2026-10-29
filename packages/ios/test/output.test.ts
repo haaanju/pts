@@ -12,7 +12,7 @@ import { test } from "node:test";
 import { loadResolver } from "../../../tokens/source.ts";
 import { swiftName } from "../plugin-ios.ts";
 import { contrastPairs } from "../../../tokens/lint/pairs.ts";
-import { colors, contrast, dimensions, families, fixed, key, text } from "../terrazzo.config.ts";
+import { colors, componentColors, contrast, dimensions, families, fixed, key, text } from "../terrazzo.config.ts";
 
 const dist = (file: string) => new URL(`../dist/Pts/${file}`, import.meta.url);
 const resolver = await loadResolver();
@@ -32,9 +32,34 @@ test("every semantic color, each with its own name", () => {
   assert.equal(new Set(names).size, names.length, "two tokens map to the same Swift name");
 });
 
-test("the catalog holds a color set per color, and nothing else", () => {
+test("the catalog holds a color set per semantic and component color, and nothing else", () => {
   const sets = readdirSync(dist("Colors.xcassets")).filter((f) => f.endsWith(".colorset"));
-  assert.deepEqual(sets.sort(), names.map((n) => `${n}.colorset`).sort());
+  assert.deepEqual(sets.sort(), [...names, ...componentColors.map(swiftName)].map((n) => `${n}.colorset`).sort());
+});
+
+test("every component color, each a color set with the values of the semantic color it aliases, stronger at high contrast when that one is (ADR 0078)", () => {
+  assert.equal(componentColors.length, 34);
+  for (const theme of ["light", "dark"]) {
+    const tokens = resolver.apply({ ...fixed, theme });
+    for (const id of componentColors) {
+      const set = JSON.parse(readFileSync(dist(`Colors.xcassets/${swiftName(id)}.colorset/Contents.json`), "utf8"));
+      const isDark = (c: any) => Boolean(c.appearances?.some((a: any) => a.value === "dark"));
+      const isHigh = (c: any) => Boolean(c.appearances?.some((a: any) => a.appearance === "contrast"));
+      const base = set.colors.find((c: any) => !isHigh(c) && isDark(c) === (theme === "dark"));
+      assert.deepEqual(base.color.components, expected(tokens[id].$value as any), `${id} in ${theme}`);
+      const next = contrast[tokens[id].aliasChain![0]];
+      const high = set.colors.find((c: any) => isHigh(c) && isDark(c) === (theme === "dark"));
+      if (!next) assert.equal(high, undefined, `${id} changes at high contrast`);
+      else assert.deepEqual(high.color.components, expected(tokens[next].$value as any), `${id} at high contrast in ${theme}`);
+    }
+  }
+});
+
+test("PtsComponentColors makes every component color set public, by its generated asset symbol", () => {
+  const swift = readFileSync(dist("PtsComponentColors.swift"), "utf8");
+  const declared = [...swift.matchAll(/^ {4}public static let (\w+) = Color\(\.(\w+)\)$/gm)];
+  assert.deepEqual(declared.map((m) => m[1]), componentColors.map(swiftName));
+  assert.ok(declared.every((m) => m[1] === m[2]), "a name differs from its asset symbol");
 });
 
 for (const theme of ["light", "dark"]) {

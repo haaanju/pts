@@ -4,6 +4,8 @@
 // for Increase Contrast the values of the next step of the color's ladder (ADR 0071):
 //   Pts/Colors.xcassets/contentInverseBase.colorset/Contents.json
 //   Pts/PtsColors.swift     public enum PtsColors { public static let contentInverseBase = Color(.contentInverseBase) }
+// The component colors (ADR 0078) are color sets too, in PtsComponentColors; at Increase Contrast each takes the next
+// step of the semantic color it aliases, so it changes with that color.
 // The asset names are the token path in lower camel case, so Xcode's generated asset symbols (.contentInverseBase)
 // are the Swift names; PtsColors makes them public, since a package's generated symbols are internal.
 // PtsTypography holds a text style per text/* token (ADR 0066, 0070): the token's family and weight, at the size and
@@ -31,6 +33,8 @@ type Options = {
   colors: string[];
   /** Increase Contrast: a color id → the color whose light and dark values it takes then (ADR 0071) */
   contrast: Record<string, string>;
+  /** the component color ids to write, in this order, each aliasing a semantic color (ADR 0078) */
+  componentColors: string[];
   /** the dimension groups, each an enum of points */
   dimensions: DimensionGroup[];
   /** the text style ids (text.*) to write, in this order */
@@ -109,7 +113,7 @@ export const points = (value: unknown, id: string) => {
   return v.value;
 };
 
-export default function ios({ colors, contrast, dimensions, text, families, key, fixed, catalog }: Options): Plugin {
+export default function ios({ colors, contrast, componentColors, dimensions, text, families, key, fixed, catalog }: Options): Plugin {
   return {
     name: "pts-ios",
     async build({ resolver, outputFile }) {
@@ -117,11 +121,13 @@ export default function ios({ colors, contrast, dimensions, text, families, key,
       const dark = resolver.apply({ ...fixed, theme: "dark" });
 
       outputFile(`${CATALOG}/Contents.json`, json({ info: { author: "xcode", version: 1 } }));
-      for (const id of colors) {
+      // a component color changes at high contrast with the semantic color it aliases
+      const high = (id: string) => contrast[id] ?? contrast[light[id]?.aliasChain?.[0] ?? ""];
+      for (const id of [...colors, ...componentColors]) {
         const color = (tokens: typeof light, from = id) => ({ "color-space": "srgb", components: components(tokens[from]?.$value, from) });
         const inDark = { appearance: "luminosity", value: "dark" };
         const inHigh = { appearance: "contrast", value: "high" };
-        const stronger = contrast[id];
+        const stronger = high(id);
         outputFile(
           `${CATALOG}/${swiftName(id)}.colorset/Contents.json`,
           json({
@@ -140,12 +146,13 @@ export default function ios({ colors, contrast, dimensions, text, families, key,
         );
       }
 
-      const properties = colors
-        .map((id) => {
-          const doc = light[id]?.$description;
-          return `${doc ? `    /// ${doc}\n` : ""}    public static let ${swiftName(id)} = Color(.${swiftName(id)})`;
-        })
-        .join("\n\n");
+      const properties = (ids: string[]) =>
+        ids
+          .map((id) => {
+            const doc = light[id]?.$description;
+            return `${doc ? `    /// ${doc}\n` : ""}    public static let ${swiftName(id)} = Color(.${swiftName(id)})`;
+          })
+          .join("\n\n");
       outputFile(
         "Pts/PtsColors.swift",
         `${HEADER}
@@ -155,7 +162,20 @@ import SwiftUI
 /// The semantic colors of Plain. Each one is a color set with a light and a dark value, and a stronger one for Increase
 /// Contrast where its ladder has a next step, so it follows the system's appearance by itself.
 public enum PtsColors {
-${properties}
+${properties(colors)}
+}
+`,
+      );
+      outputFile(
+        "Pts/PtsComponentColors.swift",
+        `${HEADER}
+
+import SwiftUI
+
+/// The component colors of Plain: what one component draws, per variant and state. Each one is a color set like
+/// PtsColors', with the values of the semantic color it aliases, stronger for Increase Contrast when that one is.
+public enum PtsComponentColors {
+${properties(componentColors)}
 }
 `,
       );
