@@ -74,7 +74,7 @@ test("a value per modifier context: the colors follow the theme, spacing the den
   assert.match(value("PtsTypography.kt", "Wide", "displayLg"), /fontSize = 104\.sp/);
 });
 
-test("PtsFonts has a family for every font the text styles use, and every font file exists", () => {
+test("PtsFonts has a family for every font the text styles use, and every font file is upstream's, unchanged (ADR 0076)", () => {
   const fonts = readFileSync(kotlin("PtsFonts.kt"), "utf8");
   for (const f of families) {
     assert.match(fonts, new RegExp(`val ${f.property} = FontFamily\\(`));
@@ -82,6 +82,7 @@ test("PtsFonts has a family for every font the text styles use, and every font f
       assert.ok(fonts.includes(`R.font.${file.res}`), `${f.property} misses ${file.res}`);
       const ttf = readFileSync(dist(`res/font/${file.res}.ttf`));
       assert.equal(ttf.readUInt32BE(0), 0x00010000, `${file.res}.ttf is not TrueType`);
+      assert.ok(ttf.equals(readFileSync(new URL(`../fonts/${file.src}`, import.meta.url))), `${file.res}.ttf differs from fonts/${file.src}`);
     }
   }
   for (const dir of ["aspekta", "ibm-plex-mono", "ibm-plex-serif"]) assert.ok(existsSync(dist(`licenses/${dir}-LICENSE.txt`)), `${dir} license`);

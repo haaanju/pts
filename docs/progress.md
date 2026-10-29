@@ -19,7 +19,7 @@ The monorepo comes first. Decide the next step with the owner before starting; a
 
 - **Native platforms: Android and iOS are built**, each a custom Terrazzo plugin (ADR 0022). Android: Kotlin for Compose in `pts-android` (`mavenLocal`), a Material 3 demo with Home, Tokens, Components, and Settings tabs (ADR 0056–0062). iOS, native first (ADR 0063): the Swift package `Pts` with color sets, Aspekta at Apple's text style sizes, corners, and spacing, only the theme varying, and a SwiftUI demo with the same tabs (ADR 0064–0068); CI compiles both (ADR 0058, 0069). On the owner's Mac: Android Studio's JDK and the AVD `Medium_Phone_API_37.0`; Xcode 27.1 with the iOS 27 simulators, which has no Simulator app, so run the iOS demo from Xcode. Left for both, waiting for a use: motion, elevation, component tokens, and publishing (Maven Central; a Swift package at the repository root). The iOS work was checked against the HIG and brought in line (ADR 0070): Apple's text sizes by role, the accent inverse/base, black and white as on the web, with an underline or a glyph on text-only controls (ADR 0073), the system's appearance and backgrounds, Bold Text, and Increase Contrast from the token steps (ADR 0071).
 - Code is the source and Figma one consumer among the platforms (owner, 2026-10-28): reached from a release, never read back. For now Figma is kept in line by hand (the `figma` skill).
-- Publishing to every consumer (npm, Maven Central, a Swift package repository, Figma) is planned but not scheduled: [`docs/plans/automated-delivery.md`](plans/automated-delivery.md). Its first step, the font licenses, is the open question below.
+- Publishing to every consumer (npm, Maven Central, a Swift package repository, Figma) is planned but not scheduled: [`docs/plans/automated-delivery.md`](plans/automated-delivery.md). Its first step, the font licenses, is done: the native packages bundle upstream's TrueType files (ADR 0076).
 
 Waiting for a reason, not scheduled:
 
@@ -34,7 +34,6 @@ Waiting for a reason, not scheduled:
 
 ## Open questions
 
-- **Font conversion and the Reserved Font Names** (found 2026-10-21, not decided): ADR 0013 says Aspekta (and Plex, `.claude/rules/web.md`) ship unmodified, since converting would require renaming the family, but `@pts/android` and `@pts/ios` decompress the WOFF2 files to TrueType under the same names (ADR 0059, 0066). Whether a lossless WOFF2 decompression counts as a modification under the OFL is unchecked. If upstream publishes TTF files, bundling those instead would settle it.
 - **A second component, and whether before or after Android** (owner, 2026-10-13: thinking it over). Components stay fixtures (ADR 0034): add one for what it tests, not to grow a library. A second one would also test ADR 0052's rule that Figma properties are what a designer chooses. Candidates:
   - **Checkbox** (suggested first): the first component-specific state (`checked`, ADR 0018), so `pts/component-states` and `pts/component-pairs` meet checked × hover / pressed for the first time.
   - **Input**: shares `size/control` and `radius/control` with the button and uses `border/focus`, testing that controls line up; brings form and ARIA work that isn't about tokens.

@@ -1,6 +1,6 @@
 # 0059. Android Spacing, Borders, and Type
 
-- Status: accepted
+- Status: accepted (amended by 0076)
 - Date: 2026-10-17
 
 ## Decision

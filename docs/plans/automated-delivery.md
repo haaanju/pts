@@ -22,7 +22,7 @@ The Release workflow tags `vX.Y.Z` and creates the GitHub Release after CI passe
 
 ### 0. Font licenses (blocks 2 and 3)
 
-`@pts/android` and `@pts/ios` bundle TrueType files decompressed from the WOFF2 files, under the same family names (ADR 0059, 0066). Whether that is a modification under the OFL is open (`docs/progress.md`, Open questions). A local build distributes nothing; a public package does. Settle it first: bundle upstream TTF files if Aspekta and IBM Plex publish them, or confirm that a lossless decompression isn't a modification. The web package ships the WOFF2 files unmodified (ADR 0013), so step 1 doesn't wait for this.
+Done (ADR 0076): the OFL counts a format change as a modification, so `@pts/android` and `@pts/ios` now bundle upstream's TrueType files unchanged instead of decompressing the WOFF2 files.
 
 ### 1. Web → npm
 
