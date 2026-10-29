@@ -30,9 +30,9 @@ const expected: Record<string, (value: any) => string> = {
   },
 };
 
-test("the groups cover every semantic color, spacing, border, and text style", () => {
+test("the groups cover every semantic color, spacing, border, and text style, and every component color", () => {
   const count = Object.fromEntries(groups.map((g) => [g.className, g.include.length]));
-  assert.deepEqual(count, { PtsColors: 60, PtsSpacing: 34, PtsBorder: 15, PtsTypography: 13 });
+  assert.deepEqual(count, { PtsColors: 60, PtsSpacing: 34, PtsBorder: 15, PtsTypography: 13, PtsComponentColors: 34 });
 });
 
 for (const group of groups) {
@@ -72,6 +72,7 @@ test("a value per modifier context: the colors follow the theme, spacing the den
   assert.equal(value("PtsSpacing.kt", "Compact", "paddingMd"), "8.dp");
   assert.equal(value("PtsBorder.kt", "Round", "radiusControl"), "9999.dp");
   assert.match(value("PtsTypography.kt", "Wide", "displayLg"), /fontSize = 104\.sp/);
+  assert.equal(value("PtsComponentColors.kt", "Dark", "switchOnSurfaceRest"), "Color(0xFFE8E8E8)");
 });
 
 test("PtsFonts has a family for every font the text styles use, and every font file is upstream's, unchanged (ADR 0076)", () => {

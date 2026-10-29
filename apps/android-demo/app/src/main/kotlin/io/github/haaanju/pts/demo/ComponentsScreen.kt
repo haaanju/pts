@@ -111,7 +111,9 @@ fun ComponentsScreen(modes: Modes, onModes: (Modes) -> Unit) {
                 var checked by remember { mutableStateOf(true) }
                 var radio by remember { mutableIntStateOf(0) }
                 Group("Selection") {
-                    Switch(on, { on = it })
+                    Switch(on, { on = it }, colors = switchColors(p.components))
+                    Switch(false, null, enabled = false, colors = switchColors(p.components))
+                    Switch(true, null, enabled = false, colors = switchColors(p.components))
                     Checkbox(checked, { checked = it })
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(radio == 0, { radio = 0 })

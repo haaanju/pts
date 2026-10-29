@@ -6,11 +6,13 @@ import { families } from "./fonts.ts";
 import compose, { type Group } from "./plugin-compose.ts";
 
 // The semantic tokens (ADR 0056, 0059): what product code uses, in the order the files define them, one class per
-// modifier that changes them. Primitives stay reference for defining tokens; component tokens follow when a Compose
-// component needs them; motion, elevation, z-index, and breakpoints wait for a use on Android.
+// modifier that changes them; and the component colors (ADR 0078), what a component draws, for an app to hand to
+// Material's components. Component sizes stay on the web, since Material's components have their own. Primitives stay
+// reference for defining tokens; motion, elevation, z-index, and breakpoints wait for a use on Android.
 const resolver = await loadResolver();
 const tokens = resolver.apply({});
 const semantic = [...new Set(files(resolver).filter((f) => f.tier === "semantic").flatMap((f) => Object.keys(f.tokens)))];
+const component = [...new Set(files(resolver).filter((f) => f.tier === "component").flatMap((f) => Object.keys(f.tokens)))];
 const pick = (type: string, groups: string[]) => semantic.filter((id) => tokens[id]?.$type === type && groups.includes(id.split(".")[0]));
 
 export const groups: Group[] = [
@@ -46,6 +48,14 @@ export const groups: Group[] = [
     kind: "textStyle",
     dropPrefix: "text.",
     doc: "The text styles of Plain. Narrow is a phone; wide starts at breakpoint/md (768dp), a tablet.",
+  },
+  {
+    filename: "PtsComponentColors.kt",
+    className: "PtsComponentColors",
+    include: component.filter((id) => tokens[id]?.$type === "color"),
+    modifier: "theme",
+    kind: "color",
+    doc: "The component colors of Plain: what one component draws, per variant and state, each a semantic color.",
   },
 ];
 

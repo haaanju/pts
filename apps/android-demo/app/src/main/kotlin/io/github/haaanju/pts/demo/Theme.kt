@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -14,6 +15,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import io.github.haaanju.pts.PtsBorder
 import io.github.haaanju.pts.PtsColors
+import io.github.haaanju.pts.PtsComponentColors
 import io.github.haaanju.pts.PtsSpacing
 import io.github.haaanju.pts.PtsTypography
 
@@ -29,7 +31,14 @@ data class Modes(val theme: ThemeChoice = ThemeChoice.System, val compact: Boole
 
 /** The token sets a screen reads, picked once from the modes */
 @Immutable
-class Plain(val colors: PtsColors, val spacing: PtsSpacing, val border: PtsBorder, val type: PtsTypography, val dark: Boolean)
+class Plain(
+    val colors: PtsColors,
+    val components: PtsComponentColors,
+    val spacing: PtsSpacing,
+    val border: PtsBorder,
+    val type: PtsTypography,
+    val dark: Boolean,
+)
 
 val LocalPlain = staticCompositionLocalOf<Plain> { error("PlainTheme is missing") }
 
@@ -125,4 +134,25 @@ fun shapes(b: PtsBorder) = Shapes(
     medium = RoundedCornerShape(b.radiusContainer), // cards
     large = RoundedCornerShape(b.radiusLg), // menus and popovers keep radius/lg
     extraLarge = RoundedCornerShape(b.radiusContainer), // dialogs and sheets
+)
+
+/**
+ * Material's Switch from the switch colors (ADR 0078): the track and thumb on and off, the off track's outline, and
+ * the disabled colors, which Plain keeps apart for on and off. Material draws hover and pressed as its own state layer
+ * over these, so the hover and pressed tracks go unused here.
+ */
+@Composable
+fun switchColors(c: PtsComponentColors) = SwitchDefaults.colors(
+    checkedThumbColor = c.switchOnContent,
+    checkedTrackColor = c.switchOnSurfaceRest,
+    checkedBorderColor = Color.Transparent,
+    uncheckedThumbColor = c.switchOffContent,
+    uncheckedTrackColor = c.switchOffSurfaceRest,
+    uncheckedBorderColor = c.switchOffBorder,
+    disabledCheckedThumbColor = c.switchDisabledOnContent,
+    disabledCheckedTrackColor = c.switchDisabledOnSurface,
+    disabledCheckedBorderColor = Color.Transparent,
+    disabledUncheckedThumbColor = c.switchDisabledOffContent,
+    disabledUncheckedTrackColor = c.switchDisabledOffSurface,
+    disabledUncheckedBorderColor = c.switchDisabledOffBorder,
 )

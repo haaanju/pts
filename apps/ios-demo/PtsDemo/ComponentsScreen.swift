@@ -56,7 +56,8 @@ struct ComponentsScreen: View {
                 }
 
                 Section("Selection") {
-                    // The system's green: iOS draws a white knob, which dark mode's light inverse/base can't carry
+                    // The system's green, not PtsComponentColors.switchOnSurfaceRest: iOS draws a white knob, which that
+                    // color can't carry in dark mode, where inverse/base is light (ADR 0078)
                     Toggle("Notifications", isOn: $notifications)
                         .tint(Color(.systemGreen))
                     Picker("Period", selection: $period) {
