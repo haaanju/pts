@@ -1,0 +1,139 @@
+{
+  "switch": {
+    "off": {
+      "surface": {
+        "rest": {
+          "$type": "color",
+          "$value": "{surface.subtle}",
+          "$description": "Track of a switch that is off."
+        },
+        "hover": {
+          "$type": "color",
+          "$value": "{surface.strong}",
+          "$description": "Track of a switch that is off, on hover."
+        },
+        "pressed": {
+          "$type": "color",
+          "$value": "{surface.stronger}",
+          "$description": "Track of a switch that is off, while pressed."
+        }
+      },
+      "content": {
+        "$type": "color",
+        "$value": "{content.subtle}",
+        "$description": "Thumb of a switch that is off, in every state but disabled."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{border.base}",
+        "$description": "Outline of the track of a switch that is off, so the control is visible on the page and on a surface."
+      }
+    },
+    "on": {
+      "surface": {
+        "rest": {
+          "$type": "color",
+          "$value": "{inverse.base}",
+          "$description": "Track of a switch that is on: the inverse fill, as on a primary button."
+        },
+        "hover": {
+          "$type": "color",
+          "$value": "{inverse.strong}",
+          "$description": "Track of a switch that is on, on hover."
+        },
+        "pressed": {
+          "$type": "color",
+          "$value": "{inverse.stronger}",
+          "$description": "Track of a switch that is on, while pressed."
+        }
+      },
+      "content": {
+        "$type": "color",
+        "$value": "{content.inverse.base}",
+        "$description": "Thumb of a switch that is on, in every state but disabled."
+      }
+    },
+    "disabled": {
+      "off": {
+        "surface": {
+          "$type": "color",
+          "$value": "{disabled.surface}",
+          "$description": "Track of a disabled switch that is off."
+        },
+        "content": {
+          "$type": "color",
+          "$value": "{disabled.content}",
+          "$description": "Thumb of a disabled switch that is off."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{disabled.border}",
+          "$description": "Outline of the track of a disabled switch that is off."
+        }
+      },
+      "on": {
+        "surface": {
+          "$type": "color",
+          "$value": "{disabled.content}",
+          "$description": "Track of a disabled switch that is on: filled, so on still reads apart from off."
+        },
+        "content": {
+          "$type": "color",
+          "$value": "{disabled.surface}",
+          "$description": "Thumb of a disabled switch that is on."
+        }
+      }
+    },
+    "label": {
+      "content": {
+        "$type": "color",
+        "$value": "{content.base}",
+        "$description": "Label of a switch. Disabled, it takes switch/disabled/off/content."
+      },
+      "text": {
+        "$type": "typography",
+        "$value": "{text.body-md}",
+        "$description": "Label text style of a switch."
+      }
+    },
+    "track": {
+      "width": {
+        "$type": "dimension",
+        "$value": "{space.1200}",
+        "$description": "Width of a switch's track."
+      },
+      "height": {
+        "$type": "dimension",
+        "$value": "{space.600}",
+        "$description": "Height of a switch's track, also the smallest target WCAG 2.5.8 allows; the label adds to the target."
+      }
+    },
+    "thumb": {
+      "size": {
+        "$type": "dimension",
+        "$value": "{space.400}",
+        "$description": "Width and height of a switch's thumb."
+      },
+      "inset": {
+        "$type": "dimension",
+        "$value": "{space.100}",
+        "$description": "Space between the thumb and the track's edge: (track height − thumb size) ÷ 2."
+      }
+    },
+    "gap": {
+      "$type": "dimension",
+      "$value": "{gap.within.md}",
+      "$description": "Space between a switch's label and its track."
+    },
+    "radius": {
+      "$type": "dimension",
+      "$value": "{radius.full}",
+      "$description": "Corner radius of a switch's track and thumb: a pill in every shape, as the native switches on Android and iOS are."
+    },
+    "border-width": {
+      "$type": "dimension",
+      "$value": "{stroke.thin}",
+      "$description": "Outline width of a switch's track, reserved as a transparent border when it is on, so the box is the same."
+    }
+  }
+}

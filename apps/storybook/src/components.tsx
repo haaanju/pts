@@ -92,6 +92,16 @@ type Category = { title: string; path: string; description: string; preview: Rea
 
 const COMPONENT_PAGES: Category[] = [
   { title: "Button", path: "component-button", description: "Variants, sizes, and states", preview: <span className="pts-card-button">Button</span> },
+  {
+    title: "Switch",
+    path: "component-switch",
+    description: "On and off, with their states",
+    preview: (
+      <span className="pts-card-switch">
+        <span />
+      </span>
+    ),
+  },
 ];
 
 const SEMANTIC_PAGES: Category[] = [

@@ -105,7 +105,8 @@ type Case = {
 // same permutation, so a pair's tokens always exist there.
 const cases: Case[] = [
   // pts/theme-parity
-  { name: "a token missing from one theme", mutate: (c) => c.remove(DARK, "content.subtle"), expect: [["pts/theme-parity", "content.subtle is in"]] },
+  // content.inverse.subtle: a token no other token aliases, so the theme still resolves without it
+  { name: "a token missing from one theme", mutate: (c) => c.remove(DARK, "content.inverse.subtle"), expect: [["pts/theme-parity", "content.inverse.subtle is in"]] },
   {
     name: "a description that differs between themes",
     mutate: (c) => c.set(DARK, "content.base", (t) => ({ ...t, $description: "Something else." })),

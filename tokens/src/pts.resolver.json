@@ -43,6 +43,9 @@
         },
         {
           "$ref": "component/button.tokens.json"
+        },
+        {
+          "$ref": "component/switch.tokens.json"
         }
       ]
     }

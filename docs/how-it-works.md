@@ -66,7 +66,7 @@ Three parts that may be the most interesting to look at:
 - **Exemptions in one place.** Colors are exempt by name in `pairs.ts`: `disabled/*` (inactive), `border/subtle` (decorative), `utility/*` (translucent), and `always/*` (on images). Any other translucent color in a pair is an error, and a semantic color that is in no pair and not exempt is reported too; the docs check reads the same function and marks those samples, so nothing else can be excluded ([ADR 0036](adr/0036-docs-accessibility-check.md)).
 - **No size below 12px**, and hover and pressed always visible against their resting fill and against disabled (`min-font-size`, `visible-steps`; [ADR 0023](adr/0023-font-size-minimum.md)).
 - **The docs are checked too.** axe-core runs on every docs page and story in light and dark in CI; Storybook's own tools check stories only ([ADR 0036](adr/0036-docs-accessibility-check.md)).
-- **Components as fixtures.** One web component, `<pts-button>`, tests the component tier the way product code would use it: a real `<button>` inside, disabled that stays focusable (`aria-disabled`), form association ([ADR 0032](adr/0032-button.md), [0034](adr/0034-components-as-token-fixtures.md)).
+- **Components as fixtures.** Two web components, `<pts-button>` and `<pts-switch>`, test the component tier the way product code would use it: a real `<button>` or `<input role="switch">` inside, disabled that stays focusable (`aria-disabled`), form association ([ADR 0032](adr/0032-button.md), [0034](adr/0034-components-as-token-fixtures.md), [0077](adr/0077-switch.md)).
 
 ## Documentation
 

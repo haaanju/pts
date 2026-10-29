@@ -521,6 +521,24 @@ body {
   color: var(--button-primary-content);
   font: var(--button-md-label);
 }
+/* a switch that is on, drawn from its tokens: the card is a link, so it can't hold a real control */
+.pts-card-switch {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: var(--switch-track-width);
+  height: var(--switch-track-height);
+  padding: var(--switch-thumb-inset);
+  border-radius: var(--switch-radius);
+  background: var(--switch-on-surface-rest);
+}
+.pts-card-switch span {
+  width: var(--switch-thumb-size);
+  height: var(--switch-thumb-size);
+  border-radius: var(--switch-radius);
+  background: var(--switch-on-content);
+}
 .pts-card-size {
   width: 24px;
   height: 24px;
@@ -1279,6 +1297,15 @@ body {
   padding: var(--space-400);
   border-radius: var(--radius-md);
   background: var(--surface-subtle);
+}
+/* Component/Switch: settings rows, each switch given the row's width so its track sits at the end */
+.pts-switch-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-300);
+}
+.pts-switch-rows pts-switch {
+  display: flex;
 }
 /* Output/Products: a small layout spaced only by density tokens and rounded by the container radius, so each
    product's cell shows its density and shape */

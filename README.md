@@ -17,7 +17,7 @@ Plain is a personal study project: a small design token monorepo built end to en
 | [`@pts/ios`](packages/ios) | iOS output: a Swift package, `Pts`, with the semantic colors as an asset catalog (a light and dark color set each, with stronger values for Increase Contrast) and `PtsColors`, the text styles at Apple's sizes (`PtsTypography`), the bundled fonts (`PtsFonts`), the spacing (`PtsSpacing`), and the corners (`PtsBorder`, `PtsShape`) |
 | [`apps/ios-demo`](apps/ios-demo) | Not a package: a SwiftUI app (Xcode), the Android demo's tabs with native components, from `packages/ios` as a local Swift package |
 | [`@pts/storybook`](apps/storybook) | Token and component documentation, generated from the token source |
-| [`@pts/components`](apps/components) | Internal, not published: web components (Lit) that test the component tier, `<pts-button>` |
+| [`@pts/components`](apps/components) | Internal, not published: web components (Lit) that test the component tier, `<pts-button>` and `<pts-switch>` |
 
 The source lives in `tokens/`, shippable outputs in `packages/` (one package per platform), and the docs and test fixtures in `apps/`.
 
@@ -147,14 +147,16 @@ A token change shows after the same three steps: publishing again replaces the s
 import "@pts/web/fonts.css";
 import "@pts/web/tokens.css";
 import "@pts/components/button.js"; // defines <pts-button>
+import "@pts/components/switch.js"; // defines <pts-switch>
 ```
 
 ```html
 <pts-button variant="primary" type="submit">Save</pts-button>
 <pts-button label="Close"><svg slot="start" aria-hidden="true">…</svg></pts-button>
+<pts-switch name="notifications" checked>Notifications</pts-switch>
 ```
 
-`variant` (`primary`, `secondary`, `ghost`, `danger`), `size` (`sm`, `md`), `type`, `disabled`, `loading`, `full-width`, and `label` (the accessible name of an icon-only button). It follows `data-theme`, `data-density`, and `data-shape` like everything else. See the Button page in the docs and ADR 0032.
+`variant` (`primary`, `secondary`, `ghost`, `danger`), `size` (`sm`, `md`), `type`, `disabled`, `loading`, `full-width`, and `label` (the accessible name of an icon-only button). It follows `data-theme`, `data-density`, and `data-shape` like everything else. See the Button page in the docs and ADR 0032. `<pts-switch>` takes `checked`, `disabled`, `name`, `value`, and `label`, and fires `change`; see the Switch page and ADR 0077.
 
 ## Android - try it
 

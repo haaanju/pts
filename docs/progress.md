@@ -7,15 +7,15 @@ The handoff note between work sessions and machines. Read it before starting; up
 - Releases: Changesets and the Release workflow (ADR 0035); the latest version is in `packages/web/CHANGELOG.md` and the tags. CI and the pre-commit hook run check and typecheck.
 - Public repository (ADR 0043); docs on https://haaanju.github.io/pts/, deployed from `main` after CI passes (ADR 0020). `main` requires no pull request (ADR 0042; a ruleset blocks force pushes and deletion only, ADR 0054): workspace changes go through a pull request so the changeset check runs. The Release workflow runs after CI passes on `main` (ADR 0041); `v0.9.5` was its first full run: release PR with `verify`, tag, GitHub Release.
 - Repository: recreated on 2026-10-03 with the commit author emails rewritten; the same files and tags, new commit hashes. The pull requests before that (#1–#29) are in the private `haaanju/pts-archive`.
-- Figma `pts` file: in line with the tokens through ADR 0055 (variables with WEB, ANDROID, and iOS code syntax, ADR 0075; styles, specimens, the Button page and component sets, the Icons page; Overview count 340 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
+- Figma `pts` file: in line with the tokens through ADR 0077 (variables with WEB, ANDROID, and iOS code syntax, ADR 0075; styles, specimens, the Button and Switch pages and component sets, the Icons page; Overview count 362 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
 ## In flight
 
-Nothing.
+- `feature/native-component-tokens`: the component tier on Android and iOS, starting with the Switch (ADR 0078); `<pts-switch>` and the Figma Switch page landed with ADR 0077.
 
 ## Next
 
-The monorepo comes first. Decide the next step with the owner before starting; a second component is an open question below. Left from the plan:
+The monorepo comes first. Decide the next step with the owner before starting. Left from the plan:
 
 - **Native platforms: Android and iOS are built**, each a custom Terrazzo plugin (ADR 0022). Android: Kotlin for Compose in `pts-android` (`mavenLocal`), a Material 3 demo with Home, Tokens, Components, and Settings tabs (ADR 0056–0062). iOS, native first (ADR 0063): the Swift package `Pts` with color sets, Aspekta at Apple's text style sizes, corners, and spacing, only the theme varying, and a SwiftUI demo with the same tabs (ADR 0064–0068); CI compiles both (ADR 0058, 0069). On the owner's Mac: Android Studio's JDK and the AVD `Medium_Phone_API_37.0`; Xcode 27.1 with the iOS 27 simulators, which has no Simulator app, so run the iOS demo from Xcode. Left for both, waiting for a use: motion, elevation, component tokens, and publishing (Maven Central; a Swift package at the repository root). The iOS work was checked against the HIG and brought in line (ADR 0070): Apple's text sizes by role, the accent inverse/base, black and white as on the web, with an underline or a glyph on text-only controls (ADR 0073), the system's appearance and backgrounds, Bold Text, and Increase Contrast from the token steps (ADR 0071).
 - Code is the source and Figma one consumer among the platforms (owner, 2026-10-28): reached from a release, never read back. For now Figma is kept in line by hand (the `figma` skill).
@@ -34,9 +34,4 @@ Waiting for a reason, not scheduled:
 
 ## Open questions
 
-- **A second component, and whether before or after Android** (owner, 2026-10-13: thinking it over). Components stay fixtures (ADR 0034): add one for what it tests, not to grow a library. A second one would also test ADR 0052's rule that Figma properties are what a designer chooses. Candidates:
-  - **Checkbox** (suggested first): the first component-specific state (`checked`, ADR 0018), so `pts/component-states` and `pts/component-pairs` meet checked × hover / pressed for the first time.
-  - **Input**: shares `size/control` and `radius/control` with the button and uses `border/focus`, testing that controls line up; brings form and ARIA work that isn't about tokens.
-  - **Card**: the first user of `radius/container`, `surface/subtle`, and `padding/xl`, checking the 20px `padding/xl` (ADR 0052) on a large container; the simplest.
-  - A Box or Stack would instead unlock the literal-typed `tokens.d.ts` (Waiting, above).
 - Settled: raw values in JS, open since ADR 0030, ship with each product's JS (ADR 0047); a product-independent values file, every permutation in one, is left out until a consumer needs it.

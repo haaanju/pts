@@ -6,11 +6,11 @@ paths:
 
 # @pts/components
 
-Fixtures for the component tier, not a published library (ADR 0034): a component is added only when the tier needs a test it doesn't have. They are written with Lit as web components, one file per element in `src/` (`button.ts` defines `<pts-button>`), each a subpath export (`@pts/components/button.js`). The spec of each lives in its ADR (Button: ADR 0032); the code follows it.
+Fixtures for the component tier, not a published library (ADR 0034): a component is added only when the tier needs a test it doesn't have. They are written with Lit as web components, one file per element in `src/` (`button.ts` defines `<pts-button>`), each a subpath export (`@pts/components/button.js`). The spec of each lives in its ADR (Button: ADR 0032; Switch: ADR 0077); the code follows it.
 
 ## Code
 
-- **A real native element inside the shadow root** does the keyboard, role, and screen-reader work (`<button>` in `<pts-button>`). The host adds only what the native element can't do from inside a shadow root: form association (`static formAssociated`, `ElementInternals`), `delegatesFocus`, and the states the spec adds.
+- **A real native element inside the shadow root** does the keyboard, role, and screen-reader work (`<button>` in `<pts-button>`, `<input type="checkbox" role="switch">` in `<pts-switch>`). The host adds only what the native element can't do from inside a shadow root: form association (`static formAssociated`, `ElementInternals`), `delegatesFocus`, and the states the spec adds.
 - **Styles read component tokens only**: the element's own `<component>/*` variables, plus `border/focus`, `focus-ring/*`, and `motion/*`, which are shared by every focusable or animated element. Never a semantic color or size directly: if a value is missing, add a component token (aliasing a semantic one) first.
 - **Variant, size, and state attributes on the host set private variables** (`--_surface`, `--_height`, …) that the inner element reads. They are declared on the host, which sits inside the page's `[data-theme]` / `[data-density]` subtree, so modes resolve correctly.
 - **No `::part()`** until a real need appears: page CSS can't change a component outside its spec.

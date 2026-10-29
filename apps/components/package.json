@@ -3,7 +3,7 @@
   "version": "0.11.0",
   "private": true,
   "type": "module",
-  "description": "Web components built on the @pts/web tokens: <pts-button>",
+  "description": "Web components built on the @pts/web tokens: <pts-button>, <pts-switch>",
   "license": "MIT",
   "files": [
     "dist"
@@ -12,6 +12,10 @@
     "./button.js": {
       "types": "./dist/button.d.ts",
       "default": "./dist/button.js"
+    },
+    "./switch.js": {
+      "types": "./dist/switch.d.ts",
+      "default": "./dist/switch.js"
     }
   },
   "scripts": {

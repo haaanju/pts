@@ -1,0 +1,70 @@
+import { Controls, Meta, Source, Story } from "@storybook/addon-docs/blocks";
+import { PageHeader, Section, ColorTable, TokenTable } from "../components";
+import * as SwitchStories from "./Switch.stories";
+
+<Meta of={SwitchStories} />
+
+<PageHeader eyebrow="Component" title="Switch" groups={["switch"]}>
+  What a switch uses, on and off, per state. Every token aliases a semantic token, so the switch follows the theme and
+  density with the rest of the page. The component is `<pts-switch>` from `@pts/components`.
+</PageHeader>
+
+<Section title="Preview" lead="Switch in each theme and density. Each cell sets data-theme and data-density; the switch follows through its switch/* variables. The gap to the label follows the density; the track keeps its size.">
+  <Story of={SwitchStories.Preview} />
+</Section>
+
+<Section title="Usage" lead="A web component, so it works in any framework. Load the fonts and tokens once, then import the element to define it.">
+  <Source
+    language="js"
+    dark
+    code={`// app entry (with a bundler)
+import "@pts/web/fonts.css";
+import "@pts/web/tokens.css";
+import "@pts/components/switch.js"; // defines <pts-switch>`}
+  />
+  <Source
+    language="html"
+    dark
+    code={`<pts-switch name="notifications" checked>Notifications</pts-switch>
+<pts-switch label="Wi-Fi"></pts-switch>
+<pts-switch disabled>Location</pts-switch>`}
+  />
+
+  - The label comes first and the track after it. Given a width, the switch puts its track at the end, as in a settings row.
+  - `checked` turns it on; the attribute is the starting state, which a form reset returns to. Clicking the label or the track, or Space, toggles it and fires `change`.
+  - The element is form-associated: with a `name`, the form submits `value` (`on` by default) while it is on, and nothing while off.
+  - `disabled` ignores clicks and keys but stays focusable (`aria-disabled`).
+  - A switch with no text needs `label`, its accessible name.
+</Section>
+
+<Section title="Playground" lead="Every attribute as a control.">
+  <Story of={SwitchStories.Playground} />
+  <div className="pts-scroll">
+    <Controls of={SwitchStories.Playground} />
+  </div>
+</Section>
+
+<Section title="Off" path="switch/off/*" lead="The resting track, outlined so the control shows on the page and on a surface, with a dark thumb.">
+  <ColorTable prefix="switch.off" />
+</Section>
+<Section title="On" path="switch/on/*" lead="The inverse fill, as on a primary button, with a light thumb.">
+  <ColorTable prefix="switch.on" />
+</Section>
+<Section title="Disabled" path="switch/disabled/*" lead="Off keeps its outline; on stays filled, so the two still read apart.">
+  <ColorTable prefix="switch.disabled" />
+</Section>
+<Section title="Label" path="switch/label/*" lead="The text before the track. Disabled, it takes the disabled thumb's color.">
+  <ColorTable prefix="switch.label.content" />
+  <TokenTable prefix="switch.label.text" />
+</Section>
+
+<Section title="Size" path="switch/track/*, switch/thumb/*, switch/gap" lead="One size, the same in both densities: a 48 × 24 track, which meets the 24px minimum target of WCAG 2.5.8 on its own. Only the gap to the label follows the density.">
+  <TokenTable prefix="switch.track" />
+  <TokenTable prefix="switch.thumb" />
+  <TokenTable prefix="switch.gap" />
+</Section>
+
+<Section title="Shape" path="switch/radius, switch/border-width" lead="A pill in every shape, as the native switches on Android and iOS are. On reserves the border width as a transparent border, so on and off have the same box.">
+  <TokenTable prefix="switch.radius" />
+  <TokenTable prefix="switch.border-width" />
+</Section>

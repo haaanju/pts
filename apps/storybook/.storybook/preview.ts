@@ -38,7 +38,7 @@ const preview: Preview = {
     },
     options: {
       storySort: {
-        order: ["Overview", "Component", ["Button"], "Semantic", ["Color", "Typography", "Spacing", "Border", "Elevation", "Size", "Motion", "Layout"], "Primitive", ["Palette", "Scales"], "Output", ["Products"]],
+        order: ["Overview", "Component", ["Button", "Switch"], "Semantic", ["Color", "Typography", "Spacing", "Border", "Elevation", "Size", "Motion", "Layout"], "Primitive", ["Palette", "Scales"], "Output", ["Products"]],
       },
     },
   },
