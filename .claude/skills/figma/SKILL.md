@@ -9,7 +9,9 @@ Figma is one consumer of the tokens. The JSON is the source of truth; nothing sy
 
 ## Access
 
-The Figma MCP must be authenticated with the personal account that owns the `pts` file; a work account only has view access. To switch, clear the figma server's authentication in `/mcp` and reconnect.
+Each Figma MCP server must be authenticated with the personal account that owns the `pts` file; a work account only has view access. To switch, clear the server's authentication in `/mcp` and reconnect.
+
+Two servers: `figma-console-mcp` makes every change (variables, styles, components, specimens); Figma's own server (`figma`) only reads, to see what an agent gets from a selection, such as the code syntax (ADR 0075). Never write to the file from both.
 
 ## Collections
 
