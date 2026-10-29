@@ -109,7 +109,8 @@ switch/
 - `apps/components/src/switch.ts`; the package exports `./switch.js`.
 - Storybook: `Component/Switch` (Preview, Usage, Playground; Off, On, Disabled, Label, Size, Shape), a Switch card on the Overview, the sidebar order, and JSX types in `elements.d.ts`.
 - Checked in Chromium: the track is 48 × 24 and the thumb 16 × 16 at 4px, 24px further when on; clicking the label or the track and Space toggle it and fire `change`; disabled never toggles, never reaches a click listener, and stays focusable; a form submits `n=on` for a checked switch named `n` and nothing for one that's off, and a reset returns each to its attribute; the accessibility tree has `switch "Notifications" [checked]`. `npm run test-a11y`: no violations on the Switch page and stories in light and dark.
-- Figma: see below.
+- Figma: 22 `switch/*` variables in `Component` (the label's text style is `text/body-md`), aliasing `Theme`, `Density`, and `Semantic` variables, with the token descriptions, scopes by property, and `var(--switch-…)` code syntax. A `Switch` page after Button: the `.Document/Header`, a `Switch` set of 8 variants (`Checked` × `State`; `Label`, `↳ Label`, and `Focus` properties) with a locked `Labels` frame, and a specimen frame mirroring the docs page (Preview in light and dark × relaxed and compact, Off, On, Disabled, Label, Size, Shape) with the docs' hex values and badges. The Overview lists the page and 362 variables (`Component` 57).
+- Checked by screenshot in Figma: the track 48 × 24 with the thumb 4px in, at the start off and the end on; the focus ring 2px outside at 2px wide; every cell switching with its Theme and Density mode, the label gap 12 relaxed and 8 compact.
 
 ## Documented in
 
