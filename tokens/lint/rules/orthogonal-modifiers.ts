@@ -4,7 +4,7 @@
 // ([data-theme] inside [data-density] or the other way round). A token two modifiers define would take the value of
 // whichever selector is nearer in the page, not the one the resolver's order gives, so the CSS and the docs (which
 // take the resolver's) would disagree. Terrazzo's resolver reports this as `orthogonal: false`; this rule names the
-// tokens, from what Terrazzo says each modifier defines. The scope (CLAUDE.md → Modifiers) keeps a modifier from
+// tokens, from what Terrazzo says each modifier defines. The scope (.claude/rules/tokens.md → Modifiers) keeps a modifier from
 // growing past its role: a size in the theme files, a text size in the density files.
 // Why not built-in: no built-in rule looks at the resolver's modifiers.
 import type { LintRule } from "@terrazzo/parser";

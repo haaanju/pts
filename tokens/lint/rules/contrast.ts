@@ -2,7 +2,7 @@
 // Why not built-in: a11y/min-contrast checks the default theme only and needs every pair listed by hand.
 // Here the pairs come from the token names (pairs.ts, ADR 0019), shared with the Storybook contrast badges.
 // The ratio is contrastRatio (pairs.ts), computed the way a11y/min-contrast does it.
-// Pairs exist only for names that follow the color grammar (CLAUDE.md → Color), so a semantic color in no pair that
+// Pairs exist only for names that follow the color grammar (.claude/rules/tokens.md → Color), so a semantic color in no pair that
 // isn't exempt (UNCHECKED) is never checked at all: status/error/content/base would ship unchecked.
 import type { ColorTokenNormalized, LintRule } from "@terrazzo/parser";
 import { contrastPairs, contrastRatio, isExempt } from "../pairs.ts";
@@ -18,7 +18,7 @@ const rule: LintRule<"INSUFFICIENT" | "MISSING" | "UNKNOWN_CONTENT" | "TRANSLUCE
       MISSING: "{{theme}}: {{fg}} is checked against {{bg}}, which does not exist",
       UNKNOWN_CONTENT: "{{fg}} is not a level (base, subtle) or inverse, so there is no background to check it against",
       TRANSLUCENT: "{{theme}}: {{id}} is translucent (alpha {{alpha}}) and cannot be contrast-checked",
-      UNCHECKED: "{{id}} is in no contrast pair and not exempt, so nothing checks it; name it by the color grammar (CLAUDE.md → Color)",
+      UNCHECKED: "{{id}} is in no contrast pair and not exempt, so nothing checks it; name it by the color grammar (.claude/rules/tokens.md → Color)",
     },
   },
   defaultOptions: {},

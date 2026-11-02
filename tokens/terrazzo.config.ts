@@ -6,9 +6,9 @@ import pts from "./lint/index.ts";
 import { loadResolver, primitiveGroups } from "./source.ts";
 
 const resolver = await loadResolver();
-// The semantic properties a text style is made of (CLAUDE.md → Typography)
+// The semantic properties a text style is made of (.claude/rules/tokens.md → Typography)
 const TEXT_PROPERTIES = ["font-family", "font-size", "font-weight", "letter-spacing", "line-height"];
-// The tokens every intent repeats (CLAUDE.md → Color, ADR 0050). core/required-children pools every token a match
+// The tokens every intent repeats (.claude/rules/tokens.md → Color, ADR 0050). core/required-children pools every token a match
 // covers, so one match for all intents would pass while any intent still had the name: one match per intent and part.
 const INTENT_SHAPE = { surface: ["subtle", "base", "strong", "stronger"], content: ["base", "inverse"], border: ["base", "subtle"] };
 const intents = [...new Set(Object.keys(resolver.apply({})).flatMap((id) => (id.startsWith("intent.") ? [id.split(".")[1]] : [])))];

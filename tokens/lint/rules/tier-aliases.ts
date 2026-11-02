@@ -1,5 +1,5 @@
 // pts/tier-aliases: semantic tokens alias primitives, and component tokens alias semantic tokens
-// (CLAUDE.md → Token Rules → Tiers, ADR 0032).
+// (.claude/rules/tokens.md → Tiers, ADR 0032).
 // Why not built-in: Terrazzo has no notion of tiers. The tier is the token's folder (primitive/, semantic/, or
 // component/), which a merged token no longer knows, so this rule reads the files.
 // Options name the documented exceptions, so they are visible in the config: groups that hold raw values, and role

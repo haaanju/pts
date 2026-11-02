@@ -1,5 +1,5 @@
 // pts/component-states: in the component tier, a property that changes with state names every state, rest included,
-// and its states resolve to different values in every permutation (CLAUDE.md → Component tier, ADR 0032, 0040).
+// and its states resolve to different values in every permutation (.claude/rules/tokens.md → Component tier, ADR 0032, 0040).
 // Options name the states and the documented exceptions: Ghost's fill is transparent at rest, and no transparent
 // token exists to alias (ADR 0032), so button/ghost/surface has no rest.
 // Why not built-in: Terrazzo has no notion of states. pts/visible-steps checks the semantic ladders, but a component

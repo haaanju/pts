@@ -75,7 +75,7 @@ You don't need to work out `components` by hand: change the `hex`, run the check
 
 Dimensions are px objects: `{ "value": 16, "unit": "px" }`.
 
-The full naming and structure rules are in [`CLAUDE.md`](CLAUDE.md) (Token Rules), the Figma conventions in [`.claude/skills/figma/`](.claude/skills/figma/SKILL.md), and the reasons in the ADRs in [`docs/adr/`](docs/adr).
+The full naming and structure rules are in [`.claude/rules/tokens.md`](.claude/rules/tokens.md), the Figma conventions in [`.claude/skills/figma/`](.claude/skills/figma/SKILL.md), and the reasons in the ADRs in [`docs/adr/`](docs/adr).
 
 ## Common changes
 
