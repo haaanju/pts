@@ -211,7 +211,7 @@ The pre-commit hook runs `check`, `typecheck`, and the ADR length check. CI runs
 
 - **How it works**: [`docs/how-it-works.md`](docs/how-it-works.md) maps each part of the repository (structure, checks, accessibility, outputs, docs, releases) to where it lives and the ADR behind it.
 - **Architecture decisions** are recorded in [`docs/adr/`](docs/adr).
-- **Token naming and authoring rules** live in [`CLAUDE.md`](CLAUDE.md), which also guides the AI assistant used on this project. Rules for one area are in [`.claude/rules/`](.claude/rules) (Storybook docs, the web build) and [`.claude/skills/figma/`](.claude/skills/figma) (the Figma file); see [ADR 0031](docs/adr/0031-agent-docs-by-scope.md).
+- **Token naming and authoring rules** live in [`.claude/rules/tokens.md`](.claude/rules/tokens.md), which, like [`CLAUDE.md`](CLAUDE.md), also guides the AI assistant used on this project. Rules for one area are in [`.claude/rules/`](.claude/rules) (Storybook docs, the web build) and [`.claude/skills/figma/`](.claude/skills/figma) (the Figma file); see [ADR 0031](docs/adr/0031-agent-docs-by-scope.md).
 - **Versioning**: one Semantic Version for every package, released as a git tag (`vX.Y.Z`) and a GitHub Release; see [ADR 0014](docs/adr/0014-versioning-policy.md). While in `0.x`, breaking changes bump the minor version. What changed in each version: [`packages/web/CHANGELOG.md`](packages/web/CHANGELOG.md).
 - **Releases** are automated with [Changesets](https://github.com/changesets/changesets): each pull request adds a changeset, and merging the Release pull request tags and publishes the notes; see [ADR 0035](docs/adr/0035-changesets-releases.md).
 

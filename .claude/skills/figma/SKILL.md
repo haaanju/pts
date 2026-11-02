@@ -7,6 +7,8 @@ description: Rules and procedures for the Figma `pts` file (variables, collectio
 
 Figma is one consumer of the tokens. The JSON is the source of truth; nothing syncs automatically (the plan is Pro, and the REST variables API is Enterprise only), so after a token change, update the variables and specimens by hand or with a one-off script.
 
+Read `.claude/rules/tokens.md` first: Figma work may open no repository file, so the token rules don't load on their own.
+
 ## Access
 
 Each Figma MCP server must be authenticated with the personal account that owns the `pts` file; a work account only has view access. To switch, clear the server's authentication in `/mcp` and reconnect.
