@@ -185,6 +185,12 @@ always/        white, black
 - Android follows on the next build (`npm run build`); the demo app shows it after a publish to `mavenLocal` (README, Android section). iOS follows on the next build too, and the demo app on its next run from Xcode (README, iOS section).
 - Add a changeset: the change type (breaking, new, fix) decides the next version; see Git Convention.
 
+## Working on a change
+
+- **Large work starts from a `proposed` ADR** (a new platform, tier, modifier, or output): write what will prove it done and what is still open, and settle those with the owner before implementing. A value adjustment or a small fix doesn't need one.
+- **A review reads the related ADRs with the diff** and reports where they disagree, since no check catches that.
+- **A bug fix starts from a failing test**: commit a test that reproduces the bug and fails for the expected reason, then fix the code without editing that test. If the test turns out to be wrong, tell the owner rather than changing it.
+
 ## Decisions
 
 Record decisions that change token structure, naming, tooling, or the pipeline as ADRs: `docs/adr/NNNN-kebab-case-title.md`.
