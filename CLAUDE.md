@@ -190,6 +190,7 @@ always/        white, black
 - **Large work starts from a `proposed` ADR** (a new platform, tier, modifier, or output): write what will prove it done and what is still open, and settle those with the owner before implementing. A value adjustment or a small fix doesn't need one.
 - **A review reads the related ADRs with the diff** and reports where they disagree, since no check catches that.
 - **A bug fix starts from a failing test**: commit a test that reproduces the bug and fails for the expected reason, then fix the code without editing that test. If the test turns out to be wrong, tell the owner rather than changing it.
+- **A change is cut before it lands**, in a pull request or on `main`: run `/simplify` on changed code, and delete any new line of docs whose loss would cost nothing. Skip it for a typo-sized change.
 
 ## Decisions
 
