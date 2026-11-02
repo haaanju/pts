@@ -22,7 +22,7 @@ Install Node 22.18 or later, then:
 
 ```sh
 git clone <repo> && cd pts
-npm install              # also installs a hook that runs check and typecheck before each commit
+npm install              # also installs a hook that runs check, typecheck, and the ADR length check before each commit
 git switch -c feature/my-change
 npm run check            # every token rule (tz check); the fastest feedback
 npm run storybook        # the docs at http://localhost:6006, with your change

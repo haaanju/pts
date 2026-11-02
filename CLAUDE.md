@@ -85,7 +85,7 @@ docs/progress.md, docs/adr/
 - `npm run compile -w @pts/ios`: builds `@pts/ios` and compiles the Swift package for the iOS Simulator with `xcodebuild`; needs Xcode, so it isn't in `npm test`, and CI runs it on macOS (ADR 0069).
 - `npm run storybook`: docs dev server (http://localhost:6006), builds `@pts/web` and `@pts/components` first. `npm run build-storybook`: static build.
 - `npm run test-a11y`: builds Storybook, then checks every docs page and story with axe-core (WCAG 2.2 A and AA) in light and dark (ADR 0036). Needs Playwright's Chromium once: `npx playwright install chromium`.
-- The pre-commit hook runs check and typecheck and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus `npm test`, both builds, and `test-a11y` on pushes to `main` and on pull requests, and in a second job publishes `pts-android` to the runner's `mavenLocal` and builds the demo app against it, so the Kotlin compiles (ADR 0058), and in a third, on macOS, compiles `@pts/ios` and the iOS demo with Xcode (ADR 0069); and deploys the docs to GitHub Pages on pushes to `main`.
+- The pre-commit hook runs check, typecheck, and the ADR length check and blocks the commit on failure (wired by `prepare` on `npm install`; skip once with `--no-verify`). CI runs the same plus `npm test`, both builds, and `test-a11y` on pushes to `main` and on pull requests, and in a second job publishes `pts-android` to the runner's `mavenLocal` and builds the demo app against it, so the Kotlin compiles (ADR 0058), and in a third, on macOS, compiles `@pts/ios` and the iOS demo with Xcode (ADR 0069); and deploys the docs to GitHub Pages on pushes to `main`.
 
 ## Output (`@pts/web`)
 
@@ -197,6 +197,8 @@ Record decisions that change token structure, naming, tooling, or the pipeline a
 
 - Sections, from 0054 on: `Decision` first, one or two sentences ("Chosen: X, because Y."); `What we learned`, the context with the options considered as a list; `Why it matters`; `Trade-offs`; `Implementation notes`, including what was checked; `Documented in`. They follow MADR (https://adr.github.io/): Decision Outcome, Context and Problem Statement with Considered Options, Consequences, Confirmation, More Information. Earlier ADRs keep their sections.
 
+- `Implementation notes` holds only what the code can't show: what was checked, the owner's choices and why, and surprises. No list of files or functions.
+- From 0079 on, an ADR is at most 800 words (`.github/scripts/check-adr-length.mjs`). If it needs more, split the decision into two ADRs.
 - Status: `proposed` while under discussion, `accepted` once implemented. When a later ADR changes an accepted one, add `(amended by NNNN)`; `superseded by NNNN` only when it is replaced entirely.
 - An accepted ADR's body doesn't grow: a later change to the decision is a new, short ADR, and the old one only gains the status note. Fixing a mistake or a broken link is fine.
 - A rule that follows from a decision goes where the table above says, not into the ADR alone.

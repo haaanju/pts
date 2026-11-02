@@ -3,3 +3,4 @@
 set -e
 npm run check --silent      # tz check in tokens/: Terrazzo's built-in rules and the pts/* rules (ADR 0021)
 npm run typecheck --silent  # every workspace with TypeScript
+node .github/scripts/check-adr-length.mjs  # ADRs from 0079 on, at most 800 words
