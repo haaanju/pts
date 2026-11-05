@@ -2,6 +2,14 @@
 
 The changelog of every `@pts/*` package, which share one version (ADR 0014). Entries from 0.9.4 on come from changesets (ADR 0035); earlier ones are the release tag messages.
 
+## 0.11.1
+
+### Patch Changes
+
+- New: `@pts/android` and `@pts/ios` write the component tier's colors, `PtsComponentColors` (34, the button's and the switch's): a Kotlin class with `Light` and `Dark`, and on iOS a color set each, stronger for Increase Contrast with the semantic color it aliases (ADR 0078).
+- New: `switch/*` component tokens (23) for a switch: the track, thumb, and outline on and off, with hover, pressed, and disabled, the label, and a 48 × 24 track. `@pts/components` adds `<pts-switch>` (ADR 0077).
+- Fix: `@pts/android` and `@pts/ios` bundle Aspekta's and IBM Plex's own TrueType files, unchanged, instead of converting the web fonts, which the OFL counts as a modification that may not keep the Reserved Font Names. The families, names, and versions are the same (ADR 0076).
+
 ## 0.11.0
 
 ### Minor Changes
