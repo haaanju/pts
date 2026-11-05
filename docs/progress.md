@@ -23,6 +23,8 @@ The monorepo comes first. Decide the next step with the owner before starting. L
 
 Waiting for a reason, not scheduled:
 
+- A custom MDX docs site, if the docs outgrow Storybook: [`docs/plans/mdx-docs-site.md`](plans/mdx-docs-site.md). Its rule: MDX never holds a token value.
+
 - Six rules from the pipeline audit (ADR 0039) stay unchecked by choice: every top-level group shown on a docs page, numeric names matching values, headings bold and no semibold text style, z-index order, dark shadows more opaque than light; and the direction of each surface step (darker in light, lighter in dark, intents on their hue; ADR 0045). The tokens follow all six (checked 2026-10-06), these tokens rarely change, and a break shows on the docs page. Add a check once one breaks.
 - An upstream Terrazzo issue for `core/required-children` (ADR 0050): it pools every token a match covers, so one match per intent and part is needed; `main` still does it (checked 2026-10-09), and #804 doesn't cover it. Not filed yet, by the owner's choice; revisit later. Terrazzo's `CONTRIBUTING.md` asks for an issue before any pull request, on the `bug.yml` template (issues without it are closed). Once a fixed release ships, cut the config to three matches and update ADR 0050.
 - Large containers may need more than `padding/xl` (20px since ADR 0052); buttons don't. The answer would be a new role token, not a larger `xl`.
