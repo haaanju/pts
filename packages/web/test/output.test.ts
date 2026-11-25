@@ -1,14 +1,16 @@
-// Contract tests for the @pts/web output: what dist/ must hold for every token in every mode. The expectations come
-// from Terrazzo's resolver (tokens/source.ts), not from a snapshot, so a token change needs no test change, but a
-// mode, token, or output the build drops fails: a new theme context with no CSS block, a modifier block that misses a
-// token (or resets another modifier's), JS or SCSS without a token (sass() before css() builds an empty map). Each
-// product's CSS and JS (products.ts, ADR 0047) is checked the same way at the inputs it fixes.
+// Contract tests for the @pts/web output: what dist/ must hold for every semantic token in every mode, as its value
+// (ADR 0079). The expectations come from Terrazzo's resolver (tokens/source.ts), not from a snapshot, so a token change
+// needs no test change, but a mode, token, or output the build drops fails: a new theme context with no CSS block, a
+// modifier block that misses a token (or resets another modifier's), a primitive or component token that ships, JS or
+// SCSS without a token (sass() before css() builds an empty map). Each product's CSS and JS (products.ts, ADR 0047) is
+// checked the same way at the inputs it fixes.
 // `npm test` builds first (pretest).
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { suite, test } from "node:test";
 import type { TokenNormalizedSet } from "@terrazzo/parser";
-import { loadResolver, permutations } from "../../../tokens/source.ts";
+import { transformCSSValue } from "@terrazzo/token-tools/css";
+import { loadResolver, permutations, tierIds, withoutAliases } from "../../../tokens/source.ts";
 import { products } from "../products.ts";
 
 const read = (file: string) => readFileSync(new URL(`../dist/${file}`, import.meta.url), "utf8");
@@ -16,7 +18,11 @@ const cssVar = (id: string) => `--${id.replaceAll(".", "-")}`;
 const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
 
 const resolver = await loadResolver();
-const all = permutations(resolver).map(({ input, tokens }) => ({ input, tokens: tokens as TokenNormalizedSet }));
+// The package ships the semantic tier only: every permutation's tokens, less the primitives and component tokens
+const shipped = new Set(tierIds(resolver, "semantic"));
+const unshipped = [...tierIds(resolver, "primitive"), ...tierIds(resolver, "component")];
+const ship = (tokens: TokenNormalizedSet) => Object.fromEntries(Object.entries(tokens).filter(([id]) => shipped.has(id)));
+const all = permutations(resolver).map(({ input, tokens }) => ({ input, tokens: ship(tokens as TokenNormalizedSet) }));
 const modifiers = Object.entries(resolver.source.modifiers ?? {}).map(([name, m]) => ({
   name,
   contexts: Object.keys(m.contexts),
@@ -26,21 +32,13 @@ const defaults = Object.fromEntries(modifiers.map((m) => [m.name, m.default]));
 const at = (input: Record<string, string>) =>
   all.find((p) => modifiers.every((m) => p.input[m.name] === (input[m.name] ?? defaults[m.name])))!.tokens;
 
-// What a CSS declaration says: the target of a whole-token alias, the targets of a composite's properties, or the value
-const declared = (token: TokenNormalizedSet[string]) => token.aliasChain?.[0] ?? token.partialAliasOf ?? token.$value;
-
-/**
- * Tokens a modifier changes: two permutations that differ only in it resolve them differently (resolved), or declare
- * them differently (declared). A block on a subtree must repeat the first: a variable declared on :root keeps the value
- * it had there. A block on :root itself (the viewport's media query) needs only the second, since aliases resolve again.
- */
-const dependsOn = (modifier: string, by: "resolved" | "declared" = "resolved") => {
-  const value = (token: TokenNormalizedSet[string] | undefined) => (token && by === "declared" ? declared(token) : token?.$value);
+/** Tokens a modifier changes: two permutations that differ only in it resolve them differently. Its blocks repeat them. */
+const dependsOn = (modifier: string) => {
   const ids = new Set<string>();
   for (const p of all) {
     for (const q of all) {
       const onlyThis = modifiers.every((m) => (m.name === modifier ? p.input[m.name] !== q.input[m.name] : p.input[m.name] === q.input[m.name]));
-      if (onlyThis) for (const id of Object.keys(p.tokens)) if (!same(value(p.tokens[id]), value(q.tokens[id]))) ids.add(id);
+      if (onlyThis) for (const id of Object.keys(p.tokens)) if (!same(p.tokens[id].$value, q.tokens[id].$value)) ids.add(id);
     }
   }
   return ids;
@@ -85,12 +83,19 @@ const selectors = (modifier: string, context: string): string[] => {
     : [attribute];
 };
 
-// A whole-token alias is written as a reference to its target, so the reference shows which permutation filled a block.
-// Composites are written out from their properties instead (a typography alias becomes a font shorthand).
-const COMPOSITES = ["typography", "shadow", "border", "transition", "gradient"];
-const expectReference = (block: Map<string, string>, tokens: TokenNormalizedSet, id: string, where: string) => {
-  const target = COMPOSITES.includes(tokens[id].$type) ? undefined : tokens[id].aliasChain?.[0];
-  if (target) assert.equal(block.get(cssVar(id)), `var(${cssVar(target)})`, `${where}: ${cssVar(id)} should reference ${target}`);
+// Every declaration is the token's value at the block's inputs, written as plugin-css writes a token with no alias, so
+// the value shows which permutation filled the block. The only references left are a composite's shorthand naming its
+// own properties (--text-body-md: var(--text-body-md-font-weight) …); a composite's properties are checked one by one.
+const expectValue = (block: Map<string, string>, tokens: TokenNormalizedSet, id: string, where: string) => {
+  const name = cssVar(id);
+  const refs = [...(block.get(name) ?? "").matchAll(/var\((--[\w-]+)\)/g)].map((m) => m[1]);
+  assert.ok(refs.every((ref) => ref.startsWith(`${name}-`)), `${where}: ${name} references ${refs.join(", ")}`);
+  const value = transformCSSValue(withoutAliases(tokens[id]), { tokensSet: tokens, color: { legacyHex: true }, permutation: {} });
+  const parts = typeof value === "string" ? { ".": value } : (value as Record<string, string>);
+  for (const [part, expected] of Object.entries(parts)) {
+    const declared = part === "." ? name : `${name}-${part}`;
+    assert.equal(block.get(declared), expected, `${where}: ${declared}`);
+  }
 };
 
 // tokens.css fixes no modifier; each product's CSS fixes the ones products.ts lists (ADR 0047). Its :root and every
@@ -111,7 +116,17 @@ for (const { file, fixed } of cssFiles) {
       const tokens = at(fixed);
       for (const id of Object.keys(tokens)) {
         assert.ok(root.has(cssVar(id)), `:root lacks ${cssVar(id)}`);
-        expectReference(root, tokens, id, ":root");
+        expectValue(root, tokens, id, ":root");
+      }
+    });
+
+    test("no block declares a primitive or component token", () => {
+      const names = unshipped.map((id) => [id, cssVar(id)]);
+      for (const [selector, block] of blocks) {
+        for (const name of block.keys()) {
+          const id = names.find(([, other]) => name === other || name.startsWith(`${other}-`))?.[0];
+          assert.ok(!id, `${selector} declares ${name}, from ${id}, which @pts/web doesn't ship`);
+        }
       }
     });
 
@@ -126,8 +141,7 @@ for (const { file, fixed } of cssFiles) {
         });
         continue;
       }
-      const onRoot = modifier.name === "viewport";
-      const own = dependsOn(modifier.name, onRoot ? "declared" : "resolved");
+      const own = dependsOn(modifier.name);
       const others = new Set(modifiers.filter((m) => m !== modifier).flatMap((m) => [...dependsOn(m.name)]));
       for (const context of modifier.contexts) {
         for (const selector of selectors(modifier.name, context)) {
@@ -137,7 +151,7 @@ for (const { file, fixed } of cssFiles) {
             const tokens = at({ ...fixed, [modifier.name]: context });
             for (const id of own) {
               assert.ok(block.has(cssVar(id)), `${selector} lacks ${cssVar(id)}, which ${modifier.name} changes`);
-              expectReference(block, tokens, id, selector);
+              expectValue(block, tokens, id, selector);
             }
             // a declaration of another modifier's token would reset it inside this subtree
             for (const name of block.keys()) {
@@ -199,5 +213,14 @@ suite("tokens.js and tokens.scss", () => {
   test("tokens.scss maps every token", () => {
     const scss = read("tokens.scss");
     for (const id of Object.keys(at({}))) assert.ok(scss.includes(`"${id}": `), `tokens.scss lacks "${id}"`);
+  });
+
+  test("tokens.js and tokens.scss hold no primitive or component token", () => {
+    const js = read("tokens.js");
+    const scss = read("tokens.scss");
+    for (const id of unshipped) {
+      assert.ok(!js.includes(`var(${cssVar(id)})`), `tokens.js holds ${cssVar(id)}`);
+      assert.ok(!scss.includes(`"${id}": `), `tokens.scss holds "${id}"`);
+    }
   });
 });

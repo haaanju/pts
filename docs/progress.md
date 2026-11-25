@@ -7,11 +7,11 @@ The handoff note between work sessions and machines. Read it before starting; up
 - Releases: Changesets and the Release workflow (ADR 0035); the latest version is in `packages/web/CHANGELOG.md` and the tags. CI and the pre-commit hook run check and typecheck.
 - Public repository (ADR 0043); docs on https://haaanju.github.io/pts/, deployed from `main` after CI passes (ADR 0020). `main` requires no pull request (ADR 0042; a ruleset blocks force pushes and deletion only, ADR 0054): workspace changes go through a pull request so the changeset check runs. The Release workflow runs after CI passes on `main` (ADR 0041); `v0.9.5` was its first full run: release PR with `verify`, tag, GitHub Release.
 - Repository: recreated on 2026-10-03 with the commit author emails rewritten; the same files and tags, new commit hashes. The pull requests before that (#1–#29) are in the private `haaanju/pts-archive`.
-- Figma `pts` file: in line with the tokens through ADR 0078 (variables with WEB, ANDROID, and iOS code syntax, ADR 0075, 0078; styles, specimens, the Button and Switch pages and component sets, the Icons page; Overview count 362 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
+- Figma `pts` file: in line with the tokens through ADR 0078, except the `Primitive` variables' WEB code syntax, which ADR 0079 removes (variables with WEB, ANDROID, and iOS code syntax, ADR 0075, 0078; styles, specimens, the Button and Switch pages and component sets, the Icons page; Overview count 362 variables; no binding to a deleted variable). How to keep it so: the `figma` skill.
 
 ## In flight
 
-- `feature/semantic-only-web-output`: ADR 0079, `proposed` (owner, 2026-11-25). `@pts/web` ships semantic tokens only, as values; component tokens go to `apps/components` on `:host`. Next: settle its open points with the owner, then implement on this branch with a `Breaking:` changeset.
+- `feature/semantic-only-web-output`: ADR 0079, implemented, in a pull request. `@pts/web` ships semantic tokens only, as values; component tokens are on each component's `:host`. Left after it lands: in Figma, remove the `Primitive` variables' WEB code syntax (the `figma` skill).
 
 ## Next
 

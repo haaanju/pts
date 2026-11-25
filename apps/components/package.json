@@ -19,7 +19,8 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.build.json && node scripts/summary.ts",
+    "build": "rm -rf dist && tz build --quiet && tsc -p tsconfig.build.json && node scripts/summary.ts",
+    "test": "node --test test/tokens.test.ts",
     "typecheck": "tsc -p . && tsc -p scripts"
   },
   "dependencies": {
@@ -27,6 +28,10 @@
     "lit": "^3.3.3"
   },
   "devDependencies": {
+    "@terrazzo/cli": "^2.7.1",
+    "@terrazzo/plugin-css": "^2.7.1",
+    "@terrazzo/token-tools": "^2.7.1",
+    "@types/node": "^22.20.4",
     "typescript": "~5.9.3"
   }
 }

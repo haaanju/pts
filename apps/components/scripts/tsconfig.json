@@ -1,6 +1,6 @@
 {
-  // Type-checks the Node scripts. They run without a build step (Node's type stripping), so only erasable TypeScript
-  // syntax is allowed.
+  // Type-checks the Node scripts, the token test, and the Terrazzo config. They run without a build step (Node's type
+  // stripping), so only erasable TypeScript syntax is allowed.
   "compilerOptions": {
     "target": "ES2023",
     "module": "NodeNext",
@@ -13,5 +13,5 @@
     "skipLibCheck": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["*.ts"]
+  "include": ["*.ts", "../test/*.ts", "../terrazzo.config.ts"]
 }

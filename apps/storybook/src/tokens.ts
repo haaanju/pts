@@ -15,7 +15,10 @@ export const SHAPES: Shape[] = ["soft", "round"];
 export interface TokenInfo {
   id: string;
   type: string;
-  cssVar: string;
+  /** the folder of its file: primitive, semantic, or component */
+  tier: string;
+  /** its CSS variable; primitives have none, since @pts/web ships the semantic tier only (ADR 0079) */
+  cssVar?: string;
   /** direct alias target, if the token is an alias */
   alias?: string;
   /** fully resolved $value (aliases replaced, including inside composites) */
@@ -72,7 +75,7 @@ const build = (key: Key): Record<string, TokenInfo> => {
   return Object.fromEntries(
     data.tokens
       .filter(({ id }) => values[id])
-      .map(({ id, type, description }) => {
+      .map(({ id, type, description, tier }) => {
         const { value: resolved, alias } = values[id];
         // A line height pairs with the font size of the same name (ADR 0028): show the line it produces
         const size = id.startsWith("line-height.") ? values[id.replace("line-height.", "font-size.")] : undefined;
@@ -80,7 +83,8 @@ const build = (key: Key): Record<string, TokenInfo> => {
         const info: TokenInfo = {
           id,
           type,
-          cssVar: `--${id.replaceAll(".", "-")}`,
+          tier,
+          cssVar: tier === "primitive" ? undefined : `--${id.replaceAll(".", "-")}`,
           alias,
           resolved,
           display: sizePx ? `${fmtNum(resolved as number)} · ${linePx(sizePx, resolved as number)}px line` : format(type, resolved, false),
@@ -122,6 +126,13 @@ export const tokensAt = (input: Record<string, string>) =>
 /** Tokens under a group prefix (e.g. "intent.danger"), or the single token with that id (e.g. "background"), in file order */
 export const group = (prefix: string, theme: Theme = "light", density: Density = "relaxed", viewport: Viewport = "narrow") =>
   Object.values(at(theme, density, viewport)).filter((t) => t.id === prefix || t.id.startsWith(`${prefix}.`));
+
+/**
+ * A component's tokens as an inline style, the references its :host module declares (ADR 0079): a card preview drawn
+ * in the page, outside the component's shadow root, reads them this way. --button-radius → var(--radius-control).
+ */
+export const componentVars = (prefix: string) =>
+  Object.fromEntries(group(prefix).flatMap((t) => (t.alias ? [[t.cssVar, `var(--${t.alias.replaceAll(".", "-")})`]] : [])));
 
 /** True if any token under the prefix resolves differently between themes */
 export const isThemed = (prefix: string) => group(prefix, "light").some((t) => t.css !== token(t.id, "dark").css);

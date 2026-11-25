@@ -1,11 +1,12 @@
 // <pts-button>: the Button spec of ADR 0032 as a web component.
 // A real <button> inside a shadow root does the keyboard, role, and screen-reader work; the host adds what a button
 // inside a shadow root can't do on its own (submitting the surrounding form) and the states the spec adds
-// (aria-disabled that stays focusable, loading). Styles read the button/* tokens from @pts/web/tokens.css, which the
-// page loads: custom properties inherit into the shadow root, so data-theme, data-density, and data-shape reach it
-// unchanged.
+// (aria-disabled that stays focusable, loading). Styles read the button/* tokens, which tokens/button.tokens.ts declares
+// on the host as references to the semantic tokens of @pts/web/tokens.css, which the page loads (ADR 0079): custom
+// properties inherit into the shadow root, so data-theme, data-density, and data-shape reach it unchanged.
 import { css, html, LitElement, type PropertyValues } from "lit";
 import { ifDefined } from "lit/directives/if-defined.js";
+import tokens from "./tokens/button.tokens.js";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md";
@@ -118,7 +119,9 @@ export class PtsButton extends LitElement {
     </button>`;
   }
 
-  static override styles = css`
+  static override styles = [
+    tokens,
+    css`
     :host {
       display: inline-flex;
       vertical-align: middle;
@@ -292,7 +295,8 @@ export class PtsButton extends LitElement {
       }
       /* the spinner keeps turning: it is the only sign that something is happening (WCAG 2.3.3) */
     }
-  `;
+    `,
+  ];
 }
 
 if (!customElements.get("pts-button")) customElements.define("pts-button", PtsButton);

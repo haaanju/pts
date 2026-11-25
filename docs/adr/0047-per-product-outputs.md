@@ -1,6 +1,6 @@
 # 0047. Per-Product Outputs
 
-- Status: accepted (amended by 0048)
+- Status: accepted (amended by 0048, 0079)
 - Date: 2026-10-08
 
 ## What we learned

@@ -20,7 +20,8 @@ Fixtures for the component tier, not a published library (ADR 0034): a component
 
 ## Build and types
 
-- `tsc -p tsconfig.build.json` emits `dist/` (JS and declarations); `lit` stays a dependency, resolved by the consumer's bundler. The page loads `@pts/web/fonts.css` and `tokens.css`.
+- `tz build` first writes `src/tokens/<component>.tokens.ts` (`terrazzo.config.ts`, ADR 0079): the component's tokens on `:host`, as `var()` references to the semantic tokens they alias, in a Lit `css` module the element puts first in `static styles`. Committed, so typecheck and Storybook read them; `npm test` checks them against the resolver, so run `npm run build -w @pts/components` after a component token change.
+- `tsc -p tsconfig.build.json` emits `dist/` (JS and declarations); `lit` stays a dependency, resolved by the consumer's bundler. The page loads `@pts/web/fonts.css` and `tokens.css`, which declares the semantic tokens the components reference.
 - Storybook type-checks against `src/` through a `paths` mapping (`apps/storybook/tsconfig.json`), so `npm run typecheck` needs no build. Storybook's dev server and build use `dist/` (`prestorybook` builds it).
 - React JSX types for the elements live in `apps/storybook/src/component/elements.d.ts`, since Storybook is the only React consumer; ship them from the package when another consumer needs them.
 

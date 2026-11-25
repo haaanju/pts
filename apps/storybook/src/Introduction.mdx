@@ -49,16 +49,16 @@ import { PageHeader, Section, Stats, CategoryCards, TierTable } from "./componen
 @import "@pts/web/tokens.css"; /* token custom properties */
 
 .button {
-  height: var(--button-md-height);
-  padding: 0 var(--button-md-padding-base);
-  border: var(--button-border-width) solid transparent;
-  border-radius: var(--button-radius);
-  background: var(--button-primary-surface-rest);
-  color: var(--button-primary-content);
-  font: var(--button-md-label);
+  height: var(--size-control-md);
+  padding: 0 var(--padding-xl);
+  border: var(--stroke-thin) solid transparent;
+  border-radius: var(--radius-control);
+  background: var(--inverse-base);
+  color: var(--content-inverse-base);
+  font: var(--text-label-lg);
 }
 .button:hover {
-  background: var(--button-primary-surface-hover);
+  background: var(--inverse-strong);
 }
 .button:focus-visible {
   outline: var(--focus-ring-width) solid var(--border-focus);

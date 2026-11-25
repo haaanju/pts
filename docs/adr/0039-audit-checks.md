@@ -1,6 +1,6 @@
 # 0039. Checks from the Pipeline Audit
 
-- Status: accepted
+- Status: accepted (amended by 0079)
 - Date: 2026-10-03
 
 ## What we learned

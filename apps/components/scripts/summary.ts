@@ -5,7 +5,8 @@ import { styleText } from "node:util";
 import { heading, names, print } from "../../../tokens/summary.ts";
 
 const dir = new URL("../", import.meta.url);
-const files = names(readdirSync(new URL("dist/", dir)).sort());
+// dist/tokens/ holds the token modules the components import, not elements
+const files = names(readdirSync(new URL("dist/", dir), { withFileTypes: true }).filter((f) => f.isFile()).map((f) => f.name).sort());
 const elements = files.map((name): [string, string] => [name, `<pts-${name.split(".")[0]}>`]);
 console.log(`\n${heading(dir)}\n${print([["", elements]])}`);
 console.log(`${styleText("green", "✔")}  ${elements.length} component${elements.length === 1 ? "" : "s"} built`);
