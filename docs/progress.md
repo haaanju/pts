@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-- `feature/semantic-only-web-output`: ADR 0079, implemented, in a pull request. `@pts/web` ships semantic tokens only, as values; component tokens are on each component's `:host`. Left after it lands: in Figma, remove the `Primitive` variables' WEB code syntax (the `figma` skill).
+- `feature/semantic-only-web-output`: ADR 0079, implemented, in #62. `@pts/web` ships semantic tokens only, as values; component tokens are on each component's `:host`. Left after it lands: in Figma, remove the `Primitive` variables' WEB code syntax (the `figma` skill).
 
 ## Next
 
