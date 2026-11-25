@@ -53,7 +53,7 @@ The owner chose (2026-11-25):
 - Surprises: `plugin-js` takes no filter, so it gets a resolver that keeps the semantic tier; `plugin-css` doesn't export `buildCSS`, so each component gets its own `css()` instance, whose `prepare` writes the module.
 - The output test, broken on purpose, reported the viewport block without `text/display-lg`, and `:root` with `--always-black: var(--color-black)`.
 - Checked: `npm run check`, `npm test`, `npm run typecheck`, `npm run build`, `npm run test-a11y` (18 pages × 2 themes, no violations); in the built Storybook, `<pts-button>`'s fill, height, and radius follow light and dark, relaxed and compact, soft and round (`#f8f8f8` → `#242424`, 48px → 40px, 8px → 9999px).
-- Left for Figma (the `figma` skill): the `Primitive` variables' WEB code syntax names properties that no longer exist.
+- Figma: the 121 `Primitive` variables lost their WEB code syntax; no text in the file names a removed property.
 
 ## Documented in
 
