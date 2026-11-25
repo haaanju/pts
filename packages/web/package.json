@@ -40,6 +40,7 @@
     "@terrazzo/plugin-css-in-js": "^2.7.1",
     "@terrazzo/plugin-js": "^2.7.1",
     "@terrazzo/plugin-sass": "^2.7.1",
+    "@terrazzo/token-tools": "^2.7.1",
     "@types/node": "^22.20.4",
     "typescript": "~5.9.3"
   }

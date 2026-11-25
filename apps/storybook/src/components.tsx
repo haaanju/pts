@@ -4,6 +4,7 @@ import { products } from "../../../packages/web/products.ts";
 import {
   contrast,
   DENSITIES,
+  componentVars,
   group,
   isDense,
   isExempt,
@@ -91,13 +92,22 @@ export const Section = ({ title, path, lead, divider, children }: { title: strin
 type Category = { title: string; path: string; description: string; preview: ReactNode };
 
 const COMPONENT_PAGES: Category[] = [
-  { title: "Button", path: "component-button", description: "Variants, sizes, and states", preview: <span className="pts-card-button">Button</span> },
+  {
+    title: "Button",
+    path: "component-button",
+    description: "Variants, sizes, and states",
+    preview: (
+      <span className="pts-card-button" style={componentVars("button") as CSSProperties}>
+        Button
+      </span>
+    ),
+  },
   {
     title: "Switch",
     path: "component-switch",
     description: "On and off, with their states",
     preview: (
-      <span className="pts-card-switch">
+      <span className="pts-card-switch" style={componentVars("switch") as CSSProperties}>
         <span />
       </span>
     ),
@@ -201,9 +211,9 @@ export const Stats = () => {
 };
 
 const TIERS = [
-  { tier: "Primitive", files: "primitive/*.tokens.json", role: "Raw values: dimension, color, typeface, weight, tracking, duration, easing" },
-  { tier: "Semantic", files: "semantic/*.tokens.json", role: "Intent: space, background, content, border, text, shadow, size, motion, … Aliases primitives" },
-  { tier: "Component", files: "component/*.tokens.json", role: "What one component uses, per variant, size, and state: button/primary/surface/hover, … Aliases semantic tokens" },
+  { tier: "Primitive", files: "primitive/*.tokens.json", role: "Raw values: dimension, color, typeface, weight, tracking, duration, easing. Not shipped by @pts/web" },
+  { tier: "Semantic", files: "semantic/*.tokens.json", role: "Intent: space, background, content, border, text, shadow, size, motion, … Aliases primitives; @pts/web ships their values" },
+  { tier: "Component", files: "component/*.tokens.json", role: "What one component uses, per variant, size, and state: button/primary/surface/hover, … Aliases semantic tokens, declared on the component's :host" },
 ];
 
 export const TierTable = () => (
@@ -235,9 +245,10 @@ export const TierTable = () => (
 
 // ---------- building blocks ----------
 
-/** CSS variable name that copies itself on click */
-const CopyVar = ({ name }: { name: string }) => {
+/** CSS variable name that copies itself on click; nothing for a primitive, which has no variable (ADR 0079) */
+const CopyVar = ({ name }: { name?: string }) => {
   const [copied, setCopied] = useState(false);
+  if (!name) return null;
   const text = `var(${name})`;
   return (
     <button
@@ -1021,7 +1032,8 @@ export const ProductPreview = () => (
 /** The tokens whose values differ between the products, side by side, each at its product's inputs */
 export const ProductDiff = () => {
   const columns = PRODUCTS.map(([name, input]) => ({ name, tokens: new Map(tokensAt(input).map((t) => [t.id, t])) }));
-  const rows = tokensAt({}).filter((t) => new Set(columns.map((c) => c.tokens.get(t.id)?.css)).size > 1);
+  // A product's files hold the semantic tier only (ADR 0079)
+  const rows = tokensAt({}).filter((t) => t.tier === "semantic" && new Set(columns.map((c) => c.tokens.get(t.id)?.css)).size > 1);
   return (
     <Block className="pts-table-wrap">
       <table className="pts-table" style={cols(columns.length)}>

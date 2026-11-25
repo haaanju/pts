@@ -1,11 +1,12 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "@terrazzo/cli";
-import type { TokenNormalized } from "@terrazzo/parser";
+import type { Plugin, TokenNormalized } from "@terrazzo/parser";
 import css, { type Permutation } from "@terrazzo/plugin-css";
 import cssInJs from "@terrazzo/plugin-css-in-js";
 import js from "@terrazzo/plugin-js";
 import sass from "@terrazzo/plugin-sass";
-import { files, loadResolver, modifierTokens, RESOLVER } from "../../tokens/source.ts";
+import { transformCSSValue } from "@terrazzo/token-tools/css";
+import { loadResolver, modifierTokens, RESOLVER, tierIds, withoutAliases } from "../../tokens/source.ts";
 import summary, { names, type Entry } from "../../tokens/summary.ts";
 import { products } from "./products.ts";
 
@@ -19,29 +20,33 @@ const defaults: Record<string, string> = Object.fromEntries(
   Object.entries(modifiers).flatMap(([name, m]) => (m.default ? [[name, m.default]] : [])),
 );
 
-// Component tokens that reach a modifier's tokens through their aliases (ADR 0032). A custom property resolves where
-// it is declared, so --button-primary-surface-rest: var(--inverse-base) declared on :root keeps the light value inside
-// a [data-theme="dark"] subtree; it has to be declared again in that block. (Viewport tokens only change on :root,
-// where every alias resolves again, so they need nothing.) Terrazzo records every alias a token goes through
-// (aliasChain), and for a composite the token each property aliases (partialAliasOf).
-const leaves = (value: unknown): string[] =>
-  typeof value === "string" ? [value] : value && typeof value === "object" ? Object.values(value).flatMap(leaves) : [];
-// aliasChain is the whole chain; a composite's properties each alias a token whose own chain is followed in turn
-const reaches = (token: TokenNormalized | undefined, targets: Set<string>): boolean =>
-  !!token &&
-  (targets.has(token.id) ||
-    (token.aliasChain ?? []).some((id) => targets.has(id)) ||
-    leaves(token.partialAliasOf).some((id) => reaches(tokens[id], targets)));
-const componentTokens = files(resolver)
-  .filter((file) => file.tier === "component")
-  .flatMap((file) => Object.keys(file.tokens));
+// The package ships the semantic tier only, each token as its value (ADR 0079): no primitive, and the component tier
+// goes to apps/components instead.
+const shipped = new Set(tierIds(resolver, "semantic"));
+const resolved = (token: TokenNormalized, options: Parameters<typeof transformCSSValue>[1]) =>
+  transformCSSValue(withoutAliases(token), options);
 
-// What a modifier's blocks on a subtree repeat: the tokens its contexts define, plus the component tokens that reach them
+// What a modifier's blocks repeat: the tokens its contexts define, plus every shipped token whose value they change
+// (text/display-lg takes its size from font-size/display/xl, which the viewport changes). The other modifiers stay at
+// their defaults: no token is changed by two (pts/orthogonal-modifiers).
 const repeated = (modifier: string) => {
-  const own = modifierTokens(resolver, modifier);
-  const targets = new Set(own);
-  return [...own, ...componentTokens.filter((id) => reaches(tokens[id], targets))];
+  const sets = Object.keys(modifiers[modifier].contexts).map((context) => resolver.apply({ ...defaults, [modifier]: context }));
+  const differs = (id: string) => sets.some((set) => JSON.stringify(set[id].$value) !== JSON.stringify(sets[0][id].$value));
+  return [...new Set([...modifierTokens(resolver, modifier), ...[...shipped].filter(differs)])];
 };
+
+// plugin-js writes every token the resolver applies and takes no filter: hand it a resolver that keeps the shipped ones
+const shippedOnly = (plugin: Plugin): Plugin => ({
+  ...plugin,
+  build: (options) =>
+    plugin.build?.({
+      ...options,
+      resolver: Object.assign(Object.create(options.resolver), {
+        apply: (...args: Parameters<typeof options.resolver.apply>) =>
+          Object.fromEntries(Object.entries(options.resolver.apply(...args)).filter(([id]) => shipped.has(id))),
+      }),
+    }),
+});
 
 // The width where the wide display sizes start (ADR 0029). Custom properties can't be used in media queries, so the
 // query takes the value of breakpoint/md.
@@ -61,7 +66,7 @@ const modifierBlocks = (name: string): Permutation[] => {
     return [
       {
         input: { viewport: "wide" },
-        include: modifierTokens(resolver, "viewport"),
+        include: repeated("viewport"),
         prepare: (contents: string) => `@media (min-width: ${wideFrom}) {\n  :root {\n    ${contents}\n  }\n}`,
       },
     ];
@@ -85,9 +90,9 @@ const modifierBlocks = (name: string): Permutation[] => {
   }));
 };
 
-// :root holds every token at the defaults (light, relaxed, narrow, soft); then each modifier's blocks, in resolver
-// order, repeat only that modifier's tokens, so they nest without resetting each other: a light region inside a
-// compact page stays compact. tokens.js and tokens.scss hold references to these CSS variables, not values (ADR 0030),
+// :root holds every semantic token at the defaults (light, relaxed, narrow, soft); then each modifier's blocks, in
+// resolver order, repeat only that modifier's tokens, so they nest without resetting each other: a light region inside
+// a compact page stays compact. tokens.js and tokens.scss hold references to these CSS variables, not values (ADR 0030),
 // so every modifier keeps working through tokens.css.
 // A product (products.ts, ADR 0047) fixes some modifiers: every block takes those inputs, and a fixed modifier has no
 // blocks of its own. tokens.css fixes none.
@@ -110,7 +115,7 @@ export default defineConfig({
   tokens: [fileURLToPath(RESOLVER)],
   outDir: "./dist/",
   plugins: [
-    css({ filename: "tokens.css", legacyHex: true, permutations: blocks({}) }),
+    css({ filename: "tokens.css", legacyHex: true, include: [...shipped], transform: resolved, permutations: blocks({}) }),
     cssInJs({ filename: "tokens.js" }),
     // After css(): sass reads the CSS variable names css() assigns. Listed before it, the build succeeds with an
     // empty token map.
@@ -118,8 +123,8 @@ export default defineConfig({
     // Each product (products.ts, ADR 0047). Every css() instance also stores its :root values as the default ones;
     // cssInJs() and sass() read only the variable names from them, the same in every instance, so the order is free.
     ...Object.entries(products).flatMap(([name, fixed]) => [
-      css({ filename: `products/${name}.css`, legacyHex: true, permutations: blocks(fixed) }),
-      js({ filename: `products/${name}.js`, contexts: contexts(fixed), properties: ["$type", "$value"] }),
+      css({ filename: `products/${name}.css`, legacyHex: true, include: [...shipped], transform: resolved, permutations: blocks(fixed) }),
+      shippedOnly(js({ filename: `products/${name}.js`, contexts: contexts(fixed), properties: ["$type", "$value"] })),
     ]),
     // What the build wrote (ADR 0074): the shared files with their sizes (a .js's, not its .d.ts's: what a page loads),
     // then each product with the inputs it fixes and its files' sizes

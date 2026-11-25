@@ -4,13 +4,16 @@
 //   loadResolver()      Terrazzo's resolver for pts.resolver.json, parsed once
 //   parseSource()       a fresh parse with the given plugins, for a build of its own (the Storybook docs)
 //   permutations(r)     every theme × density × viewport × shape input with its tokens (resolver.apply)
-//   files(r)            each registered file's tokens as written, with its tier (its folder). The trees are Terrazzo's
-//                       own copy of the files (resolver.source); a resolved token no longer says which file it came from
+//   files(r)            each registered file's tokens as written, with its tier (its folder) and name. The trees are
+//                       Terrazzo's own copy of the files (resolver.source); a resolved token no longer says which file
+//                       it came from
+//   tierIds(r, tier)    the token ids of one tier, e.g. what @pts/web ships (the semantic tier, ADR 0079)
+//   withoutAliases(t)   a token with its aliases dropped, so plugin-css writes its value, not var(--<alias>)
 //   modifierTokens(r)   the token ids a modifier's contexts define (resolver.apply with that modifier only)
 //   registered(), onDisk()  file paths, for pts/registered-files
 import { readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { defineConfig, Logger, parse, type Plugin, type Resolver, type TokenNormalizedSet } from "@terrazzo/parser";
+import { defineConfig, Logger, parse, type Plugin, type Resolver, type TokenNormalized, type TokenNormalizedSet } from "@terrazzo/parser";
 
 const SRC = new URL("./src/", import.meta.url);
 export const RESOLVER = new URL("pts.resolver.json", SRC);
@@ -18,8 +21,8 @@ export const RESOLVER = new URL("pts.resolver.json", SRC);
 type Ref = { $ref: string };
 type Tree = Record<string, any>;
 export type RawToken = { $type?: string; $value: unknown; $description?: string };
-/** layer: the resolver set (base) or modifier (theme, density, viewport, shape) that lists the file */
-export type SourceFile = { path: string; tier: string; layer: string; tokens: Record<string, RawToken> };
+/** layer: the resolver set (base) or modifier (theme, density, viewport, shape) that lists the file; name: its file name without .tokens.json */
+export type SourceFile = { path: string; tier: string; name: string; layer: string; tokens: Record<string, RawToken> };
 export type Permutation = { label: string; input: Record<string, string>; tokens?: TokenNormalizedSet; error?: string };
 
 /** Parses the resolver and every file it lists, with a config that holds the given plugins, for Terrazzo's build(). Each call parses again. */
@@ -85,8 +88,23 @@ export const files = (resolver: Resolver): SourceFile[] => {
   const seen = new Set<string>();
   return pairs
     .filter(([{ $ref }]) => !seen.has($ref) && seen.add($ref))
-    .map(([{ $ref: path }, layer, tree]) => ({ path, tier: path.split("/")[0], layer, tokens: flatten(tree) }));
+    .map(([{ $ref: path }, layer, tree]) => ({
+      path,
+      tier: path.split("/")[0],
+      name: path.split("/").pop()!.replace(/\.tokens\.json$/, ""),
+      layer,
+      tokens: flatten(tree),
+    }));
 };
+
+/** Token ids of one tier, once each though modifier contexts repeat them: tierIds(r, "semantic") → ["space.0", …] */
+export const tierIds = (resolver: Resolver, tier: string): string[] => [
+  ...new Set(files(resolver).filter((f) => f.tier === tier).flatMap((f) => Object.keys(f.tokens))),
+];
+
+/** The token without its aliases: plugin-css writes the value it resolved to, not var(--<alias>) */
+export const withoutAliases = (token: TokenNormalized) =>
+  ({ ...token, aliasOf: undefined, aliasChain: undefined, partialAliasOf: undefined }) as TokenNormalized;
 
 /** Token ids a modifier's contexts define, e.g. modifierTokens(r, "density") → ["gap.between.lg", …, "size.control.sm"] */
 export const modifierTokens = (resolver: Resolver, modifier: string): string[] => {

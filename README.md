@@ -11,7 +11,7 @@ Plain is a personal study project: a small design token monorepo built end to en
 | Package | What it holds |
 |---------|---------------|
 | [`@pts/tokens`](tokens) | The token source (DTCG JSON), the resolver that combines the files and modes, and the lint rules that check them |
-| [`@pts/web`](packages/web) | Web output: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), per-product CSS and JS values (`@pts/web/products/<name>.css`, `.js`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
+| [`@pts/web`](packages/web) | Web output, the semantic tokens as values: CSS custom properties (`@pts/web/tokens.css`), JS/TS and SCSS references to them (`@pts/web/tokens.js`, `@pts/web/tokens.scss`), per-product CSS and JS values (`@pts/web/products/<name>.css`, `.js`), and self-hosted fonts (`@pts/web/fonts.css`: Aspekta, IBM Plex Mono, IBM Plex Serif) |
 | [`@pts/android`](packages/android) | Android output: Kotlin for Jetpack Compose, one class per mode (`PtsColors`, `PtsSpacing`, `PtsBorder`, `PtsTypography`), the component colors (`PtsComponentColors`), and the bundled fonts (`PtsFonts`); a Gradle library in `mavenLocal` |
 | [`apps/android-demo`](apps/android-demo) | Not a package: a Compose app (Gradle) that themes Material 3 from `pts-android` and lists its tokens like the docs |
 | [`@pts/ios`](packages/ios) | iOS output: a Swift package, `Pts`, with the semantic colors as an asset catalog (a light and dark color set each, with stronger values for Increase Contrast) and `PtsColors`, the component tier's colors the same way (`PtsComponentColors`, ADR 0078), the text styles at Apple's sizes (`PtsTypography`), the bundled fonts (`PtsFonts`), the spacing (`PtsSpacing`), and the corners (`PtsBorder`, `PtsShape`) |
@@ -25,9 +25,9 @@ The source lives in `tokens/`, shippable outputs in `packages/` (one package per
 
 Three tiers:
 
-- **Primitive** (`tokens/src/primitive/`): raw values such as `dimension.16`, `color.red.600`, `duration.200`.
+- **Primitive** (`tokens/src/primitive/`): raw values such as `dimension.16`, `color.red.600`, `duration.200`. They define the semantic tokens and aren't shipped (ADR 0079).
 - **Semantic** (`tokens/src/semantic/`): values with a role, such as `space.400`, `content.subtle`, `intent.danger.surface.base`, `text.body-md`. Semantic tokens alias primitives, except `padding`, `gap`, and `text`, which build on other semantic tokens, and `z-index`, `breakpoint`, and `line-height`, which hold values. Product code uses semantic tokens.
-- **Component** (`tokens/src/component/`): what one component uses, per variant, size, and state, such as `button.primary.surface.hover` or `button.md.height`. Component tokens alias semantic tokens; a component's own code uses them (ADR 0032).
+- **Component** (`tokens/src/component/`): what one component uses, per variant, size, and state, such as `button.primary.surface.hover` or `button.md.height`. Component tokens alias semantic tokens; a component's own code uses them (ADR 0032), declared on its host by `@pts/components` rather than in `@pts/web` (ADR 0079).
 
 Categories: color, typography, spacing, border, elevation, size, motion, and layout.
 
@@ -40,16 +40,16 @@ Colors are layers (`background`, `surface`, `inverse`) with the `content` and `b
 @import "@pts/web/tokens.css"; /* token custom properties */
 
 .button {
-  height: var(--button-md-height);
-  padding: 0 var(--button-md-padding-base);
-  border: var(--button-border-width) solid transparent;
-  border-radius: var(--button-radius);
-  background: var(--button-primary-surface-rest);
-  color: var(--button-primary-content);
-  font: var(--button-md-label);
+  height: var(--size-control-md);
+  padding: 0 var(--padding-xl);
+  border: var(--stroke-thin) solid transparent;
+  border-radius: var(--radius-control);
+  background: var(--inverse-base);
+  color: var(--content-inverse-base);
+  font: var(--text-label-lg);
 }
 .button:hover {
-  background: var(--button-primary-surface-hover);
+  background: var(--inverse-strong);
 }
 .button:focus-visible {
   outline: var(--focus-ring-width) solid var(--border-focus);
@@ -100,7 +100,7 @@ const title = { ...text.headingMd }; // fontFamily, fontSize, fontWeight, letter
 
 Since the values are `var(…)`, Sass can't compute with them, and breakpoints can't be used in `@media` (the same limit as in CSS).
 
-**Per-product outputs.** A product fixes some modes at build time; its files hold the tokens at those modes, and the rest still switch. `dense-app` (density compact, shape soft) and `roomy-app` (density relaxed, shape round: pill buttons, 32px containers) are example products, not real ones: they exist to show and test per-product outputs from one source (ADR 0047, 0048, 0049). Import a product's CSS instead of `tokens.css`: its `:root` holds every token at the product's density and shape, with the theme blocks and the viewport media query as in `tokens.css` and no `[data-density]` or `[data-shape]` blocks.
+**Per-product outputs.** A product fixes some modes at build time; its files hold the tokens at those modes, and the rest still switch. `dense-app` (density compact, shape soft) and `roomy-app` (density relaxed, shape round: pill buttons, 32px containers) are example products, not real ones: they exist to show and test per-product outputs from one source (ADR 0047, 0048, 0049). Import a product's CSS instead of `tokens.css`: its `:root` holds every semantic token at the product's density and shape, with the theme blocks and the viewport media query as in `tokens.css` and no `[data-density]` or `[data-shape]` blocks.
 
 ```css
 @import "@pts/web/fonts.css";

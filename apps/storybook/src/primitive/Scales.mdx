@@ -5,7 +5,8 @@ import { PageHeader, Section, Bars, TokenTable, EasingPreview } from "../compone
 
 <PageHeader eyebrow="Primitive" title="Scales" groups={["dimension", "typeface", "weight", "tracking", "duration", "easing"]}>
   The raw values behind the semantic tokens. This is reference for defining semantic tokens: product code uses the
-  semantic tokens (space, font-size, motion, …), never these directly.
+  semantic tokens (space, font-size, motion, …), never these directly. `@pts/web` doesn't ship primitives, so they
+  have no CSS variable.
 </PageHeader>
 
 <Section title="Dimension" path="dimension/*" lead="dimension/N is N px, plus dimension/max (9999px) for fully rounded corners. Used by space, layout, radius, stroke, size, font-size and shadow; breakpoints hold their own values.">
