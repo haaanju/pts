@@ -11,7 +11,7 @@ The handoff note between work sessions and machines. Read it before starting; up
 
 ## In flight
 
-Nothing.
+- `feature/semantic-only-web-output`: ADR 0079, `proposed` (owner, 2026-11-25). `@pts/web` ships semantic tokens only, as values; component tokens go to `apps/components` on `:host`. Next: settle its open points with the owner, then implement on this branch with a `Breaking:` changeset.
 
 ## Next
 
