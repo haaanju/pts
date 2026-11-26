@@ -16,7 +16,8 @@ const defaults = Object.fromEntries(
 );
 
 // plugin-css writes the file; prepare wraps its :host rule in a Lit css`` module, so the CSS reaches the shadow root
-// without a bundler (the package builds with tsc only). plugin-css's header is a /* */ comment, valid TypeScript.
+// without a bundler (the package builds with tsc only). plugin-css's header is a /* */ comment, valid TypeScript;
+// prepare's output follows it, starting with the token file to edit instead.
 export default defineConfig({
   tokens: [fileURLToPath(RESOLVER)],
   outDir: "./src/",
@@ -29,7 +30,10 @@ export default defineConfig({
         permutations: [
           {
             input: defaults,
-            prepare: (contents) => `import { css } from "lit";\n\nexport default css\`\n:host {\n  ${contents}\n}\n\`;`,
+            prepare: (contents) =>
+              `// Generated from tokens/src/${file.path}.\n` +
+              `// To change it, edit that file and run npm run build -w @pts/components.\n\n` +
+              `import { css } from "lit";\n\nexport default css\`\n:host {\n  ${contents}\n}\n\`;`,
           },
         ],
       }),
