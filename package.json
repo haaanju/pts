@@ -25,5 +25,8 @@
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3"
+  },
+  "overrides": {
+    "@joshwooding/vite-plugin-react-docgen-typescript": "^0.9.1"
   }
 }
