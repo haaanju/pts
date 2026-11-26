@@ -112,6 +112,12 @@ docs/progress.md, docs/adr/
 - **A bug fix starts from a failing test**: commit a test that reproduces the bug and fails for the expected reason, then fix the code without editing that test. If the test turns out to be wrong, tell the owner rather than changing it.
 - **A change is cut before it lands**, in a pull request or on `main`: run `/simplify` on changed code, and delete any new line of docs whose loss would cost nothing. Skip it for a typo-sized change.
 
+## Delegation
+
+- **Routine work goes to a background subagent without being asked**, so the conversation goes on in the main session: a short task whose steps are known, such as merging a pull request once CI passes, cleaning up branches, a small mechanical edit, or a lookup. Set its model and effort by the task: `haiku` at `low` for a fixed command sequence (a merge, a cleanup, a status check), `sonnet` at `medium` for a small change that needs judgment. The prompt gives the steps, what not to touch, and what to report; check the report against the repository before passing it on.
+- **Delegating changes who runs a task, not whether it runs**: merging, pushing, and deleting still wait for the owner's go-ahead.
+- **Ask first when the work is large**: several steps across workspaces, decisions still open, or a long run. Say how you would run it (in this session, one subagent, or several, and on which model) and wait for the owner's choice.
+
 ## Decisions
 
 Record decisions that change token structure, naming, tooling, or the pipeline as ADRs: `docs/adr/NNNN-kebab-case-title.md`.
