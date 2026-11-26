@@ -1,4 +1,4 @@
-// The component tier's CSS, one Lit module per component file (ADR 0079): src/tokens/<component>.tokens.ts holds
+// The component tier's CSS, one Lit module per component file (ADR 0079): src/<component>/<component>.tokens.ts holds
 // :host { --button-primary-surface-rest: var(--inverse-base); … }, which the component adds to its shadow styles.
 // Declared on the host, each reference resolves inside whatever theme, density, or shape subtree holds the component,
 // so one block follows every modifier and none is repeated. The references name semantic tokens, which
@@ -19,12 +19,12 @@ const defaults = Object.fromEntries(
 // without a bundler (the package builds with tsc only). plugin-css's header is a /* */ comment, valid TypeScript.
 export default defineConfig({
   tokens: [fileURLToPath(RESOLVER)],
-  outDir: "./src/tokens/",
+  outDir: "./src/",
   plugins: files(resolver)
     .filter((file) => file.tier === "component")
     .map((file) =>
       css({
-        filename: `${file.name}.tokens.ts`,
+        filename: `${file.name}/${file.name}.tokens.ts`,
         include: Object.keys(file.tokens),
         permutations: [
           {

@@ -10,8 +10,12 @@
     "skipLibCheck": true,
     "noEmit": true,
     "types": ["vite/client"],
-    // Type-check against the component source, so typecheck needs no build of @pts/components first
-    "paths": { "@pts/components/*": ["../components/src/*"] }
+    // Type-check against the component source, so typecheck needs no build of @pts/components first. One line per
+    // component, as in its package.json exports: a substitution takes one *, and the source is src/<name>/<name>.ts
+    "paths": {
+      "@pts/components/button.js": ["../components/src/button/button.ts"],
+      "@pts/components/switch.js": ["../components/src/switch/switch.ts"]
+    }
   },
   "include": ["src", ".storybook"],
   // main.ts runs in Node at startup and resolves tokens: scripts/tsconfig.json checks it

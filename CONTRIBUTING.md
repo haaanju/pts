@@ -87,7 +87,7 @@ The full naming and structure rules are in [`.claude/rules/tokens.md`](.claude/r
 | Add a token to an existing group | Add it to the file. For a themed file, add it to both `light` and `dark`; for a density file, to both `relaxed` and `compact` (compact one `space` step smaller); for a viewport file, to both `narrow` and `wide`; for a shape file, to both `soft` and `round`. It appears in the docs by itself |
 | Add a new file | Create it in `primitive/` or `semantic/` and add it to `tokens/src/pts.resolver.json`: mode-independent files in `sets.base`, per-theme files under `modifiers.theme`, per-density files under `modifiers.density`, per-viewport files under `modifiers.viewport`, per-shape files under `modifiers.shape` |
 | Add a new top-level group | As above, then add a section to the matching docs page in `apps/storybook/src/` (e.g. `<Section title="Opacity" path="opacity/*"><TokenTable prefix="opacity" /></Section>`) and add the prefix to the page's `groups` |
-| Change a component token | Edit `component/<component>.tokens.json`, then run `npm run build -w @pts/components` and commit `apps/components/src/tokens/`, which `npm test` checks against the tokens |
+| Change a component token | Edit `component/<component>.tokens.json`, then run `npm run build -w @pts/components` and commit `apps/components/src/<component>/<component>.tokens.ts`, which `npm test` checks against the tokens |
 | Rename or remove a token | A breaking change: write a `Breaking:` changeset. Change it in every file that defines or aliases it; `npm run check` reports an alias left pointing at the old name |
 
 ## What the checks catch

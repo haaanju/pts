@@ -1,4 +1,4 @@
-// The committed Lit token modules (src/tokens/, ADR 0079) against Terrazzo's resolver: :host declares every component
+// The committed Lit token modules (src/<component>/<component>.tokens.ts, ADR 0079) against Terrazzo's resolver: :host declares every component
 // token as a reference to the semantic token it aliases, and nothing else. It reads the committed files without a
 // build, so a token change committed without `npm run build -w @pts/components` fails here.
 import assert from "node:assert/strict";
@@ -21,8 +21,8 @@ const declarations = (id: string): [string, string][] => {
 const shorthand = (id: string) => (tokens[id].$type === "typography" ? [makeCSSVar(id)] : []);
 
 for (const file of files(resolver).filter((f) => f.tier === "component")) {
-  suite(`src/tokens/${file.name}.tokens.ts`, () => {
-    const source = readFileSync(new URL(`../src/tokens/${file.name}.tokens.ts`, import.meta.url), "utf8");
+  suite(`src/${file.name}/${file.name}.tokens.ts`, () => {
+    const source = readFileSync(new URL(`../src/${file.name}/${file.name}.tokens.ts`, import.meta.url), "utf8");
     const host = source.match(/^:host \{\n([\s\S]*?)^\}/m)?.[1] ?? "";
     const declared = new Map([...host.matchAll(/^\s*(--[\w-]+):\s*(.*);$/gm)].map((m) => [m[1], m[2]]));
     const ids = Object.keys(file.tokens);
