@@ -6,7 +6,7 @@ paths:
 
 # @pts/components
 
-Fixtures for the component tier, not a published library (ADR 0034): a component is added only when the tier needs a test it doesn't have. They are written with Lit as web components, one file per element in `src/` (`button.ts` defines `<pts-button>`), each a subpath export (`@pts/components/button.js`). The spec of each lives in its ADR (Button: ADR 0032; Switch: ADR 0077); the code follows it.
+Fixtures for the component tier, not a published library (ADR 0034): a component is added only when the tier needs a test it doesn't have. They are written with Lit as web components, one folder per element in `src/` (`button/button.ts` defines `<pts-button>`, next to its `button.tokens.ts`), each a subpath export (`@pts/components/button.js`). The spec of each lives in its ADR (Button: ADR 0032; Switch: ADR 0077); the code follows it.
 
 ## Code
 
@@ -20,9 +20,9 @@ Fixtures for the component tier, not a published library (ADR 0034): a component
 
 ## Build and types
 
-- `tz build` first writes `src/tokens/<component>.tokens.ts` (`terrazzo.config.ts`, ADR 0079): the component's tokens on `:host`, as `var()` references to the semantic tokens they alias, in a Lit `css` module the element puts first in `static styles`. Committed, so typecheck and Storybook read them; `npm test` checks them against the resolver, so run `npm run build -w @pts/components` after a component token change.
+- `tz build` first writes `src/<component>/<component>.tokens.ts` (`terrazzo.config.ts`, ADR 0079): the component's tokens on `:host`, as `var()` references to the semantic tokens they alias, in a Lit `css` module the element puts first in `static styles`. Committed, so typecheck and Storybook read them; `npm test` checks them against the resolver, so run `npm run build -w @pts/components` after a component token change.
 - `tsc -p tsconfig.build.json` emits `dist/` (JS and declarations); `lit` stays a dependency, resolved by the consumer's bundler. The page loads `@pts/web/fonts.css` and `tokens.css`, which declares the semantic tokens the components reference.
-- Storybook type-checks against `src/` through a `paths` mapping (`apps/storybook/tsconfig.json`), so `npm run typecheck` needs no build. Storybook's dev server and build use `dist/` (`prestorybook` builds it).
+- Storybook type-checks against `src/` through a `paths` mapping (`apps/storybook/tsconfig.json`), so `npm run typecheck` needs no build; a new component adds its line there, as in `package.json` exports. Storybook's dev server and build use `dist/` (`prestorybook` builds it).
 - React JSX types for the elements live in `apps/storybook/src/component/elements.d.ts`, since Storybook is the only React consumer; ship them from the package when another consumer needs them.
 
 ## Stories

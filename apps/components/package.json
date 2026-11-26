@@ -10,12 +10,12 @@
   ],
   "exports": {
     "./button.js": {
-      "types": "./dist/button.d.ts",
-      "default": "./dist/button.js"
+      "types": "./dist/button/button.d.ts",
+      "default": "./dist/button/button.js"
     },
     "./switch.js": {
-      "types": "./dist/switch.d.ts",
-      "default": "./dist/switch.js"
+      "types": "./dist/switch/switch.d.ts",
+      "default": "./dist/switch/switch.js"
     }
   },
   "scripts": {

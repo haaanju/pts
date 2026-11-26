@@ -2,11 +2,11 @@
 // A real <input type="checkbox" role="switch"> inside a shadow root does the keyboard, role, and screen-reader work;
 // the host adds what an input inside a shadow root can't do on its own (taking part in the surrounding form, a change
 // event the page can hear) and the state the spec adds (aria-disabled that stays focusable). Styles read the switch/*
-// tokens, which tokens/switch.tokens.ts declares on the host as references to the semantic tokens of
+// tokens, which switch.tokens.ts declares on the host as references to the semantic tokens of
 // @pts/web/tokens.css, which the page loads (ADR 0079), so data-theme and data-density reach them unchanged.
 import { css, html, LitElement, type PropertyValues } from "lit";
 import { ifDefined } from "lit/directives/if-defined.js";
-import tokens from "./tokens/switch.tokens.js";
+import tokens from "./switch.tokens.js";
 
 export class PtsSwitch extends LitElement {
   static formAssociated = true;
