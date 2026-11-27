@@ -11,7 +11,7 @@ Read `.claude/rules/tokens.md` first: Figma work may open no repository file, so
 
 ## Access
 
-Each Figma MCP server must be authenticated with the personal account that owns the `pts` file; a work account only has view access. To switch, clear the server's authentication in `/mcp` and reconnect.
+Both Figma MCP servers must act as the personal account that owns the `pts` file; a work account only has view access. `figma` signs in with OAuth: to switch, clear its authentication in `/mcp` and reconnect. `figma-console-mcp` writes through the Desktop Bridge plugin as the account signed in to Figma Desktop, and reads through the REST API as the owner of its `FIGMA_ACCESS_TOKEN` (user config): to switch, change the Figma Desktop account or the token.
 
 Two servers: `figma-console-mcp` makes every change (variables, styles, components, specimens); Figma's own server (`figma`) only reads, to see what an agent gets from a selection, such as the code syntax (ADR 0075). Never write to the file from both.
 
